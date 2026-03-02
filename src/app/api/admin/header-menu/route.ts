@@ -31,7 +31,8 @@ export async function GET() {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const slots: any[] = ((data as unknown as any[]) ?? []).map((s: any) => {
+  // @ts-expect-error Supabase typing mismatch; we normalize manually
+  const slots: any[] = (data ?? []).map((s: any) => {
     const slotsCourses: any[] = Array.isArray(s?.header_slot_courses) ? s.header_slot_courses : [];
     const courses =
       slotsCourses

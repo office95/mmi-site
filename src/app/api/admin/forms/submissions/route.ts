@@ -47,7 +47,16 @@ async function buildSubsResponse(submissions: any[], supabase: ReturnType<typeof
       .select("submission_id, field_id, value, value_multi, form_fields(label, type)")
       .in("submission_id", submissionIds);
     if (ansErr) return NextResponse.json({ error: ansErr.message }, { status: 500 });
-    answers = ans ?? [];
+    answers =
+      ans?.map((a: any) => ({
+        submission_id: a.submission_id,
+        field_id: a.field_id,
+        value: a.value ?? null,
+        value_multi: a.value_multi ?? null,
+        form_fields: a.form_fields
+          ? { label: a.form_fields.label ?? null, type: a.form_fields.type ?? null }
+          : null,
+      })) ?? [];
   }
 
   const grouped = submissions.map((s) => ({

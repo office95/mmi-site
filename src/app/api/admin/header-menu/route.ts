@@ -31,23 +31,23 @@ export async function GET() {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const slots =
-    ((data as unknown as any[]) ?? []).map((s: any) => {
-      const slotsCourses = Array.isArray(s.header_slot_courses) ? s.header_slot_courses : [];
-      const courses =
-        slotsCourses
-          .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
-          .flatMap((c: any) => {
-            const list = Array.isArray(c.courses) ? c.courses : c.courses ? [c.courses] : [];
-            return list.map((course: any) => ({
-              id: course?.id ?? "",
-              slug: course?.slug ?? "",
-              title: course?.title ?? "",
-              sort_order: c.sort_order ?? 0,
-            }));
-          }) ?? [];
-      return { id: s.id, label: s.label, courses };
-    });
+  const rawSlots = (data ?? []) as any[];
+  const slots = rawSlots.map((s) => {
+    const slotsCourses = Array.isArray(s.header_slot_courses) ? s.header_slot_courses : [];
+    const courses =
+      slotsCourses
+        .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+        .flatMap((c: any) => {
+          const list = Array.isArray(c.courses) ? c.courses : c.courses ? [c.courses] : [];
+          return list.map((course: any) => ({
+            id: course?.id ?? "",
+            slug: course?.slug ?? "",
+            title: course?.title ?? "",
+            sort_order: c.sort_order ?? 0,
+          }));
+        }) ?? [];
+    return { id: s.id, label: s.label, courses };
+  });
 
   return NextResponse.json({ data: slots });
 }

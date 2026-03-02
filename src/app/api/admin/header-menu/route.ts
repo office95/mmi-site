@@ -32,24 +32,26 @@ export async function GET() {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   const slots =
-    data?.map((s) => ({
-      id: s.id,
-      label: s.label,
-      courses:
-        (s as {
-          header_slot_courses?: {
-            sort_order?: number;
-            courses: { id: string; slug: string; title: string };
-          }[];
-        }).header_slot_courses
+    data?.map((s) => {
+      const slotsCourses = ((s as any).header_slot_courses ?? []) as Array<{
+        sort_order?: number;
+        courses: { id: string; slug: string; title: string };
+      }>;
+      const courses =
+        slotsCourses
           ?.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
           ?.map((c) => ({
             id: c.courses.id,
             slug: c.courses.slug,
             title: c.courses.title,
             sort_order: c.sort_order ?? 0,
-          })) ?? [],
-    })) ?? [];
+          })) ?? [];
+      return {
+        id: s.id,
+        label: s.label,
+        courses,
+      };
+    }) ?? [];
 
   return NextResponse.json({ data: slots });
 }

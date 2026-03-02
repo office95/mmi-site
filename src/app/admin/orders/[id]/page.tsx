@@ -14,10 +14,10 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
     .from("orders")
     .select(
       `id, order_number, created_at, status, amount_cents, deposit_cents, currency, participants, notes,
-       email, customer_name, first_name, last_name, phone, street, zip, city, country, dob,
-       company_name, company_uid, is_company, consent_gdpr, stripe_payment_intent, checkout_session_id, coupon_code,
-       session:sessions(id,start_date,start_time,city,course_id,partner:partners(id,name,city,state,country)),
-       course:courses(id,title,slug,base_price_cents,deposit_cents)`
+      email, customer_name, first_name, last_name, phone, street, zip, city, country, dob,
+      company_name, company_uid, is_company, consent_gdpr, stripe_payment_intent, checkout_session_id, coupon_code,
+      session:sessions(id,start_date,start_time,city,course_id,tax_rate,partner:partners(id,name,city,state,country)),
+      course:courses(id,title,slug,base_price_cents,deposit_cents)`
     )
     .eq("id", id)
     .maybeSingle();

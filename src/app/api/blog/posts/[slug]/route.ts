@@ -5,14 +5,15 @@ export const revalidate = 0;
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
 export async function GET(_: Request, { params }: Params) {
+  const { slug } = await params;
   const supabase = getSupabaseServiceClient();
   const { data, error } = await supabase
     .from("posts")
     .select("*")
-    .eq("slug", params.slug)
+    .eq("slug", slug)
     .eq("status", "published")
     .maybeSingle();
 

@@ -12,11 +12,21 @@ export async function GET() {
     .select("id, created_at, form_id, ip, user_agent, archived")
     .order("created_at", { ascending: false });
   if (subsRes.error && subsRes.error.code === "42703") {
-    subsRes = await supabase.from("form_submissions").select("id, created_at, form_id, ip, user_agent").order("created_at", { ascending: false });
+    const fallback = await supabase
+      .from("form_submissions")
+      .select("id, created_at, form_id, ip, user_agent")
+      .order("created_at", { ascending: false });
+    if (fallback.error) return NextResponse.json({ error: fallback.error.message }, { status: 500 });
+    const submissions = (fallback.data ?? []).map((s: any) => ({ archived: false, ...s }));
+    return await buildResponse(submissions, supabase);
   }
   if (subsRes.error) return NextResponse.json({ error: subsRes.error.message }, { status: 500 });
-  const submissions = (subsRes.data ?? []).map((s: any) => ({ archived: false, ...s }));
+  const submissions = (subsRes.data ?? []).map((s: any) => ({ archived: s.archived ?? false, ...s }));
 
+  return await buildResponse(submissions, supabase);
+}
+
+async function buildResponse(submissions: any[], supabase: ReturnType<typeof getSupabaseServiceClient>) {
   const ids = submissions.map((s) => s.id);
   let answersRes = { data: [], error: null } as any;
   if (ids.length) {

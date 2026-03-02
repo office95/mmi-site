@@ -8,7 +8,7 @@ import LinkExt from "@tiptap/extension-link";
 import ImageExt from "@tiptap/extension-image";
 import YoutubeExt from "@tiptap/extension-youtube";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
-import ClientBlockNote from "./viewer";
+import BlockNoteViewerClient from "@/components/BlockNoteViewer.client";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -89,7 +89,7 @@ export default async function BlogDetailPage({ params }: Params) {
               {htmlContent ? (
                 <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
               ) : isBlocknote && data.content ? (
-                <ClientBlockNote json={data.content} />
+                <BlockNoteViewerClient json={data.content} />
               ) : data.content ? (
                 <ReactMarkdown>{data.content}</ReactMarkdown>
               ) : (

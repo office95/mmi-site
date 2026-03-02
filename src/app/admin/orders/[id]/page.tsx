@@ -24,9 +24,10 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
 
   if (error || !order) return notFound();
 
+  const course = Array.isArray(order.course) ? order.course[0] : order.course;
   const amount = (order.amount_cents ?? 0) / 100;
   const deposit = order.deposit_cents !== null ? (order.deposit_cents ?? 0) / 100 : null;
-  const total = order.course?.base_price_cents ? order.course.base_price_cents / 100 : (order.amount_cents ?? 0) / 100;
+  const total = course?.base_price_cents ? course.base_price_cents / 100 : (order.amount_cents ?? 0) / 100;
   const rawTax = order.session?.tax_rate ?? null;
   const taxRate = rawTax !== null && rawTax !== undefined ? (rawTax > 1 ? rawTax / 100 : rawTax) : null;
   const net = taxRate ? total / (1 + taxRate) : total;
@@ -60,7 +61,7 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
               {order.stripe_payment_intent && <Pill label={`PI: ${order.stripe_payment_intent}`} tone="slate" />}
             </div>
             <div className="text-sm text-slate-800 space-y-1">
-              <div className="font-semibold">Kurs: {order.course?.title ?? "–"}</div>
+              <div className="font-semibold">Kurs: {course?.title ?? "–"}</div>
               {order.session?.start_date && (
                 <div>
                   Termin: {order.session.start_date}

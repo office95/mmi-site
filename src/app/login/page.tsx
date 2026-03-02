@@ -69,6 +69,28 @@ export default function LoginPage() {
     }
   };
 
+  const register = async () => {
+    setIsLoading(true);
+    setError(null);
+    setInfo(null);
+    try {
+      const { error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { role: "employee", status: "pending" },
+        },
+      });
+      if (authError) throw authError;
+      setInfo("Registriert. Bitte E-Mail bestätigen und auf Freischaltung warten.");
+    } catch (err) {
+      if (err instanceof Error) setError(err.message);
+      else setError("Registrierung fehlgeschlagen");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-md space-y-6 rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl">
@@ -169,25 +191,3 @@ export default function LoginPage() {
       </div>
     </div>
   );
-}
-const register = async () => {
-    setIsLoading(true);
-    setError(null);
-    setInfo(null);
-    try {
-      const { error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { role: "employee", status: "pending" },
-        },
-      });
-      if (authError) throw authError;
-      setInfo("Registriert. Bitte E-Mail bestätigen und auf Freischaltung warten.");
-    } catch (err) {
-      if (err instanceof Error) setError(err.message);
-      else setError("Registrierung fehlgeschlagen");
-    } finally {
-      setIsLoading(false);
-    }
-  };

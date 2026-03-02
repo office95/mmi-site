@@ -105,7 +105,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Kurstermin nicht gefunden" }, { status: 404 });
   }
 
-  const course = sessionRow.courses;
+  const course = Array.isArray(sessionRow.courses) ? sessionRow.courses[0] : sessionRow.courses;
   if (!course) {
     return NextResponse.json({ error: "Kurs zum Termin fehlt" }, { status: 400 });
   }

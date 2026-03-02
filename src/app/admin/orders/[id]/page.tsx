@@ -94,9 +94,12 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
                     <br />Netto: {net.toFixed(2)} €
                   </div>
                 )}
-{order.promotion_code || order.coupon_code ? (
-                  <div className="text-xs text-slate-600">Gutschein/Promo: {order.promotion_code || order.coupon_code}
-                    {order.discount_amount_cents ? ` (Rabatt: ${(order.discount_amount_cents/100).toFixed(2)} €)` : ""}
+                {("promotion_code" in order || "coupon_code" in order) && (order as any).promotion_code || (order as any).coupon_code ? (
+                  <div className="text-xs text-slate-600">
+                    Gutschein/Promo: {(order as any).promotion_code || (order as any).coupon_code}
+                    {"discount_amount_cents" in order && (order as any).discount_amount_cents
+                      ? ` (Rabatt: ${(((order as any).discount_amount_cents ?? 0) / 100).toFixed(2)} €)`
+                      : ""}
                   </div>
                 ) : null}
               </div>

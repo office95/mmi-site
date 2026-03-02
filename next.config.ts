@@ -5,7 +5,6 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverComponentsExternalPackages: ["nodemailer"],
-    serverExternalPackages: ["nodemailer"],
   },
   /* config options here */
   images: {

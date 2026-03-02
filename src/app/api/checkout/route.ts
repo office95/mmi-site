@@ -17,6 +17,7 @@ type CheckoutBody = {
   dob?: string;
   company_name?: string;
   company_uid?: string;
+  coupon_code?: string | null;
   is_company?: boolean;
   consent_gdpr?: boolean;
   participants?: number;

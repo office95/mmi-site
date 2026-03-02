@@ -32,7 +32,7 @@ export async function GET() {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   const slots =
-    (data ?? []).map((s: any) => {
+    ((data as unknown as any[]) ?? []).map((s: any) => {
       const slotsCourses = Array.isArray(s.header_slot_courses) ? s.header_slot_courses : [];
       const courses =
         slotsCourses

@@ -5,9 +5,10 @@ const FALLBACK_FORM_ID = "a6b28590-9885-42e8-a460-9ffd27b59ae3";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id: paramId } = await params;
   const supabase = getSupabaseServiceClient();
-  const id = params.id && params.id !== "undefined" ? params.id : FALLBACK_FORM_ID;
+  const id = paramId && paramId !== "undefined" ? paramId : FALLBACK_FORM_ID;
 
   const { data, error } = await supabase
     .from("forms")

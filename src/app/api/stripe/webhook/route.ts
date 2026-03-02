@@ -52,10 +52,10 @@ export async function POST(req: Request) {
     // 2) Falls nur Discount-ID vorhanden: Discount laden und PromotionCode daraus ziehen
     if (!promoCode && discountId && stripe) {
       try {
-        const disc = await stripe.discounts.retrieve(discountId);
+        const disc = await (stripe as any).discounts.retrieve(discountId);
         const promoFromDisc = (disc as any)?.promotion_code as string | undefined;
         if (promoFromDisc) {
-          const pc = await stripe.promotionCodes.retrieve(promoFromDisc);
+          const pc = await (stripe as any).promotionCodes.retrieve(promoFromDisc);
           promoCode = pc?.code || promoCode;
         }
       } catch (_) {

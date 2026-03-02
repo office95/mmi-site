@@ -38,7 +38,7 @@ export default async function BlogDetailPage({ params }: Params) {
 
   const { blocks, meta } = parseContent(data.content);
   const readingTime = computeReadingTime(blocks);
-  const category = meta?.category ?? data.category;
+  const category = (meta as any)?.category ?? data.category ?? null;
 
   let htmlContent: string | null = null;
   let isBlocknote = Array.isArray(blocks);

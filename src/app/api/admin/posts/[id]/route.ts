@@ -5,12 +5,13 @@ export const revalidate = 0;
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-type Params = { params: { id: string } };
+type Params = { params: Promise<{ id: string }> };
 
 export async function GET(req: Request, { params }: Params) {
+  const { id: paramId } = await params;
   const url = new URL(req.url);
   const fallback = url.pathname.split("/").filter(Boolean).pop();
-  const id = params?.id ?? fallback;
+  const id = paramId ?? fallback;
   if (!id || id === "undefined") {
     return NextResponse.json({ error: "id missing" }, { status: 400 });
   }

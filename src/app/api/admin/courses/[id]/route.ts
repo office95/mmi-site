@@ -4,8 +4,9 @@ import { getSupabaseServiceClient } from "@/lib/supabase";
 const TABLE = "courses";
 export const dynamic = "force-dynamic";
 
-export async function DELETE(req: Request, { params }: { params: { id?: string } }) {
-  const courseId = params?.id ?? new URL(req.url).pathname.split("/").pop();
+export async function DELETE(req: Request, { params }: { params: Promise<{ id?: string }> }) {
+  const { id } = await params;
+  const courseId = id ?? new URL(req.url).pathname.split("/").pop();
   if (!courseId || courseId === "undefined") {
     return NextResponse.json({ error: "Missing id" }, { status: 400 });
   }

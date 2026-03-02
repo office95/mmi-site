@@ -4,9 +4,10 @@ import { getSupabaseServiceClient } from "@/lib/supabase";
 export const dynamic = "force-dynamic";
 const TABLE = "course_levels";
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id: paramId } = await params;
   const url = new URL(req.url);
-  const id = params.id || url.searchParams.get("id");
+  const id = paramId || url.searchParams.get("id");
   if (!id || id === "undefined") return NextResponse.json({ error: "Missing id" }, { status: 400 });
   const supabase = getSupabaseServiceClient();
   const { error } = await supabase.from(TABLE).delete().eq("id", id);

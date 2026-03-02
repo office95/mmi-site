@@ -25,10 +25,11 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
   if (error || !order) return notFound();
 
   const course = Array.isArray(order.course) ? order.course[0] : order.course;
+  const session = Array.isArray(order.session) ? order.session[0] : order.session;
   const amount = (order.amount_cents ?? 0) / 100;
   const deposit = order.deposit_cents !== null ? (order.deposit_cents ?? 0) / 100 : null;
   const total = course?.base_price_cents ? course.base_price_cents / 100 : (order.amount_cents ?? 0) / 100;
-  const rawTax = order.session?.tax_rate ?? null;
+  const rawTax = session?.tax_rate ?? null;
   const taxRate = rawTax !== null && rawTax !== undefined ? (rawTax > 1 ? rawTax / 100 : rawTax) : null;
   const net = taxRate ? total / (1 + taxRate) : total;
   const vat = total - net;
@@ -62,19 +63,19 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
             </div>
             <div className="text-sm text-slate-800 space-y-1">
               <div className="font-semibold">Kurs: {course?.title ?? "–"}</div>
-              {order.session?.start_date && (
+              {session?.start_date && (
                 <div>
-                  Termin: {order.session.start_date}
-                  {order.session.start_time ? ` · ${order.session.start_time.slice(0, 5)} Uhr` : ""}
-                  {order.session.city ? ` · ${order.session.city}` : ""}
+                  Termin: {session.start_date}
+                  {session.start_time ? ` · ${session.start_time.slice(0, 5)} Uhr` : ""}
+                  {session.city ? ` · ${session.city}` : ""}
                 </div>
               )}
-              {order.session?.partner && (
+              {session?.partner && (
                 <div className="text-slate-700">
-                  Partner: {order.session.partner.name ?? "–"}
-                  {order.session.partner.city ? ` · ${order.session.partner.city}` : ""}
-                  {order.session.partner.state ? ` · ${order.session.partner.state}` : ""}
-                  {order.session.partner.country ? ` · ${order.session.partner.country}` : ""}
+                  Partner: {session.partner.name ?? "–"}
+                  {session.partner.city ? ` · ${session.partner.city}` : ""}
+                  {session.partner.state ? ` · ${session.partner.state}` : ""}
+                  {session.partner.country ? ` · ${session.partner.country}` : ""}
                 </div>
               )}
               <div className="space-y-0.5">

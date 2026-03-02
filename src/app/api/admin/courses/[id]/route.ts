@@ -14,7 +14,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id?: 
   const supabase = getSupabaseServiceClient();
 
   const step = async (fn: () => Promise<{ error: any }>) => {
-    const { error } = await fn();
+    const result = await fn();
+    const error = (result as any)?.error;
     if (error) throw error;
   };
 

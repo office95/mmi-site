@@ -32,7 +32,6 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-markdown": "^10.1.0",
-    "react-quill": "^2.0.0",
     "react-simple-wysiwyg": "^3.4.1",
     "sharp": "^0.34.5",
     "stripe": "^20.4.0",

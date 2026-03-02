@@ -124,7 +124,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Keine Plätze mehr frei" }, { status: 409 });
   }
 
-  const orderNumber = await generateOrderNumber(supabase, siteUrl);
+  const orderNumber = await generateOrderNumber(supabase);
 
   const { data: orderInsert, error: orderErr } = await supabase
     .from("orders")

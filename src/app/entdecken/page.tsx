@@ -59,8 +59,8 @@ export default function EntdeckenPage() {
               zip: s.zip ?? s.zip,
               state: s.state ?? s.state,
               price_cents: s.price_cents,
-              course: s.courses ?? s.course ?? null,
-              partners: s.partners ?? s.partner ?? null,
+              course: (s.courses ?? s.course ?? undefined) as any,
+              partners: (s.partners ?? s.partner ?? undefined) as any,
               tags,
             };
           })

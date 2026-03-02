@@ -20,7 +20,7 @@ const toUrl = (path: string | null) => {
   if (!path) return null;
   if (path.startsWith("http")) return path;
   const base = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-  return `${base}/storage/v1/object/public/${path.replace(/^\\/+/, "")}`;
+  return `${base}/storage/v1/object/public/${path.replace(/^\/+/, "")}`;
 };
 
 export default async function BlogDetailPage({ params }: Params) {

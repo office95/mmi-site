@@ -9,7 +9,7 @@ const stripeSecret = process.env.STRIPE_SECRET_KEY;
 if (!stripeSecret) {
   console.warn("[stripe] STRIPE_SECRET_KEY fehlt – Checkout-Route deaktiviert");
 }
-const stripe = stripeSecret ? new Stripe(stripeSecret, { apiVersion: "2023-10-16" }) : null;
+const stripe = stripeSecret ? new Stripe(stripeSecret, { apiVersion: "2026-02-25.clover" }) : null;
 
 export async function POST(req: Request) {
   if (!stripe) return NextResponse.json({ error: "Stripe nicht konfiguriert" }, { status: 500 });

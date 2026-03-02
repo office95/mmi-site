@@ -17,15 +17,22 @@ export async function GET(req: Request) {
     .eq("form_id", formId)
     .order("created_at", { ascending: false });
   if (submissionsRes.error && submissionsRes.error.code === "42703") {
-    submissionsRes = await supabase
+    const fallback = await supabase
       .from("form_submissions")
       .select("id, created_at, form_id, ip, user_agent")
       .eq("form_id", formId)
       .order("created_at", { ascending: false });
+    if (fallback.error) return NextResponse.json({ error: fallback.error.message }, { status: 500 });
+    const fallbackSubs = (fallback.data ?? []).map((s: any) => ({ archived: false, ...s }));
+    return await buildSubsResponse(fallbackSubs, supabase);
   }
   if (submissionsRes.error) return NextResponse.json({ error: submissionsRes.error.message }, { status: 500 });
-  const submissions = (submissionsRes.data ?? []).map((s: any) => ({ archived: false, ...s }));
+  const submissions = (submissionsRes.data ?? []).map((s: any) => ({ archived: s.archived ?? false, ...s }));
 
+  return await buildSubsResponse(submissions, supabase);
+}
+
+async function buildSubsResponse(submissions: any[], supabase: ReturnType<typeof getSupabaseServiceClient>) {
   const submissionIds = submissions?.map((s) => s.id) ?? [];
   let answers: {
     submission_id: string;

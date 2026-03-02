@@ -30,6 +30,8 @@ type FormModel = {
 type Submission = {
   id: string;
   created_at: string;
+  form_id?: string;
+  archived?: boolean;
   answers: { label: string; value: string | string[] | null; type: string }[];
 };
 

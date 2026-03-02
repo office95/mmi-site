@@ -3,9 +3,7 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: __dirname, // stellt sicher, dass .env.local im Projekt geladen wird
   },
-  experimental: {
-    serverComponentsExternalPackages: ["nodemailer"],
-  },
+  serverExternalPackages: ["nodemailer"],
   /* config options here */
   images: {
     remotePatterns: [

@@ -5,10 +5,11 @@ export const revalidate = 0; // always fresh in admin
 
 export default async function AdminHeroPage() {
   const supabase = getSupabaseServerClient();
-  const { data: slides = [] } = await supabase
+  const { data: slides } = await supabase
     .from("hero_slides")
     .select("id,title,subtitle,image_url,position,is_active,created_at")
     .order("position", { ascending: true });
+  const safeSlides = slides ?? [];
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
@@ -20,7 +21,7 @@ export default async function AdminHeroPage() {
             <p className="text-sm text-slate-600">Bilder hochladen, Reihenfolge ändern, Slides löschen.</p>
           </div>
         </div>
-        <AdminHeroManager initialSlides={slides} />
+        <AdminHeroManager initialSlides={safeSlides} />
       </div>
     </div>
   );

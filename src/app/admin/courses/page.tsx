@@ -20,6 +20,7 @@ type Course = {
   hero_image_mobile_url?: string | null;
   slogan_image_url?: string | null;
   slogan_image_mobile_url?: string | null;
+  slogan_image_text?: string | null;
   slogan_line1?: string | null;
   slogan_line2?: string | null;
   slogan_line3?: string | null;

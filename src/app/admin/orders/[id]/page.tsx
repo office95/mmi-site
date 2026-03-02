@@ -72,7 +72,7 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
               )}
               {session?.partner && (
                 <div className="text-slate-700">
-                  Partner: {(Array.isArray(session.partner) ? session.partner[0]?.name : session.partner.name) ?? "–"}
+                  Partner: {(Array.isArray(session.partner) ? session.partner[0]?.name : (session.partner as any)?.name) ?? "–"}
                   {Array.isArray(session.partner)
                     ? [
                         session.partner[0]?.city ? ` · ${session.partner[0].city}` : "",
@@ -80,9 +80,9 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
                         session.partner[0]?.country ? ` · ${session.partner[0].country}` : "",
                       ].join("")
                     : [
-                        session.partner.city ? ` · ${session.partner.city}` : "",
-                        session.partner.state ? ` · ${session.partner.state}` : "",
-                        session.partner.country ? ` · ${session.partner.country}` : "",
+                        (session.partner as any)?.city ? ` · ${(session.partner as any).city}` : "",
+                        (session.partner as any)?.state ? ` · ${(session.partner as any).state}` : "",
+                        (session.partner as any)?.country ? ` · ${(session.partner as any).country}` : "",
                       ].join("")}
                 </div>
               )}

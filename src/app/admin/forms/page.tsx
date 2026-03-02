@@ -276,7 +276,7 @@ export default function FormsPage() {
                         <td className="py-2 pr-3 text-xs">{s.archived ? "Archiviert" : "Neu"}</td>
                         <td className="py-2 pr-0 text-right space-x-2">
                           <button
-                            onClick={() => loadSubmissions(s.form_id)}
+                            onClick={() => s.form_id && loadSubmissions(s.form_id)}
                             className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-800 hover:bg-slate-50"
                           >
                             Details

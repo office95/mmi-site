@@ -13,17 +13,16 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id?: 
 
   const supabase = getSupabaseServiceClient();
 
-  const step = async (fn: () => Promise<{ error: any }>) => {
-    const result = await fn();
-    const error = (result as any)?.error;
-    if (error) throw error;
-  };
-
   try {
-    await step(() => supabase.from("course_tags").delete().eq("course_id", courseId));
-    await step(() => supabase.from("sessions").delete().eq("course_id", courseId));
-    await step(() => supabase.from("addons").delete().eq("course_id", courseId));
-    await step(() => supabase.from(TABLE).delete().eq("id", courseId));
+    const del = async (table: string, column = "course_id") => {
+      const { error } = await supabase.from(table).delete().eq(column, courseId);
+      if (error) throw error;
+    };
+
+    await del("course_tags");
+    await del("sessions");
+    await del("addons");
+    await del(TABLE, "id");
     return NextResponse.json({ ok: true });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

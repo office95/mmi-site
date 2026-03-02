@@ -170,7 +170,7 @@ export default function LoginPage() {
     </div>
   );
 }
-  const register = async () => {
+const register = async () => {
     setIsLoading(true);
     setError(null);
     setInfo(null);

@@ -72,10 +72,18 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
               )}
               {session?.partner && (
                 <div className="text-slate-700">
-                  Partner: {session.partner.name ?? "–"}
-                  {session.partner.city ? ` · ${session.partner.city}` : ""}
-                  {session.partner.state ? ` · ${session.partner.state}` : ""}
-                  {session.partner.country ? ` · ${session.partner.country}` : ""}
+                  Partner: {(Array.isArray(session.partner) ? session.partner[0]?.name : session.partner.name) ?? "–"}
+                  {Array.isArray(session.partner)
+                    ? [
+                        session.partner[0]?.city ? ` · ${session.partner[0].city}` : "",
+                        session.partner[0]?.state ? ` · ${session.partner[0].state}` : "",
+                        session.partner[0]?.country ? ` · ${session.partner[0].country}` : "",
+                      ].join("")
+                    : [
+                        session.partner.city ? ` · ${session.partner.city}` : "",
+                        session.partner.state ? ` · ${session.partner.state}` : "",
+                        session.partner.country ? ` · ${session.partner.country}` : "",
+                      ].join("")}
                 </div>
               )}
               <div className="space-y-0.5">

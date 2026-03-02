@@ -33,6 +33,7 @@ type Course = {
   category_id?: string | null;
   format_id?: string | null;
   language_id?: string | null;
+  type_id?: string | null;
   duration_hours?: number | null;
   base_price_cents?: number | null;
   deposit_cents?: number | null;

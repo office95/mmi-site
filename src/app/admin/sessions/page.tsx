@@ -350,7 +350,6 @@ export default function SessionsPage() {
                   onChange={() => {}}
                   options={types}
                   placeholder="—"
-                  disabled
                 />
                 <Select
                   label="Partner"

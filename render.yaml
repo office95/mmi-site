@@ -1,0 +1,39 @@
+services:
+  - name: mmi-website
+    type: web
+    env: node
+    plan: starter # passe an: starter/shared oder fixed CPU/RAM
+    rootDir: .
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_SITE_URL
+        sync: false
+      - key: NEXT_PUBLIC_DOMAIN_AT
+        sync: false
+      - key: NEXT_PUBLIC_DOMAIN_DE
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_PASS
+        sync: false
+      - key: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: NEXT_PUBLIC_STRIPE_PRICE_ID
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_STORAGE_URL
+        sync: false
+    region: frankfurt

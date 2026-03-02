@@ -514,7 +514,6 @@ const updateInstructor = (id: string, patch: Partial<Instructor>) =>
                     label="Hero mobil (URL, 1080x1920 empfohlen)"
                     value={editing.hero1_mobile_path ?? ""}
                     onChange={(v) => updateEdit({ hero1_mobile_path: v })}
-                    placeholder="Optional separate Mobile-Version"
                   />
                   {editing.hero1_mobile_path && <Preview url={editing.hero1_mobile_path} label="Hero mobil" />}
                 </div>
@@ -543,7 +542,6 @@ const updateInstructor = (id: string, patch: Partial<Instructor>) =>
                     label="Promo / Video mobil (URL, 9:16 empfohlen)"
                     value={editing.promo_mobile_path ?? ""}
                     onChange={(v) => updateEdit({ promo_mobile_path: v })}
-                    placeholder="Optionale Mobile-Version"
                   />
                   {editing.promo_mobile_path && <Preview url={editing.promo_mobile_path} label="Promo mobil" />}
                 </div>

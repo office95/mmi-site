@@ -50,7 +50,7 @@ async function generateOrderNumber(supabase: ReturnType<typeof getSupabaseServic
   return `${prefix}${next}-${yearShort}`;
 }
 
-const stripe = stripeSecret ? new Stripe(stripeSecret, { apiVersion: "2023-10-16" }) : null;
+const stripe = stripeSecret ? new Stripe(stripeSecret, { apiVersion: "2024-12-18.acacia" }) : null;
 
 export async function POST(request: Request) {
   let body: CheckoutBody;

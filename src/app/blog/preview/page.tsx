@@ -48,7 +48,7 @@ export default function BlogPreviewPage() {
         } else {
           const { blocks, meta } = parseContent(json.data?.content);
           setMeta(meta ?? null);
-          setCategory(meta?.category ?? json.data?.category ?? null);
+          setCategory((meta as any)?.category ?? json.data?.category ?? null);
           setPost({ ...json.data, content: JSON.stringify(blocks) });
         }
       } catch (e: any) {

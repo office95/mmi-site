@@ -8,11 +8,7 @@ import Image from "next/image";
 import CourseSearch from "@/components/CourseSearch";
 import { getRegion } from "@/lib/region";
 import { headers } from "next/headers";
-import dynamic from "next/dynamic";
-
-const PartnerMarqueeClient = dynamic(() => import("@/components/PartnerMarqueeClient").then((m) => m.PartnerMarqueeClient), {
-  ssr: false,
-});
+import { PartnerMarqueeClient } from "@/components/PartnerMarqueeClient";
 import { URL } from "node:url";
 
 const toUrl = (path: string | null) => {

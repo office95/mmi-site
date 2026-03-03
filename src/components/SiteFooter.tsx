@@ -17,25 +17,31 @@ export default async function SiteFooter() {
 
   return (
     <footer
-      className="relative bg-[#ff1f8f] text-white px-6 sm:px-10 lg:px-20 z-40 pb-0 shadow-[0_-16px_48px_rgba(0,0,0,0.14)] h-auto pt-10 pb-10"
+      className="relative bg-[#ff1f8f] text-white px-6 sm:px-10 lg:px-20 z-40 pb-0 shadow-[0_-16px_48px_rgba(0,0,0,0.14)] h-auto pt-12 pb-12"
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 h-16 sm:h-24 bg-gradient-to-t from-[#ff1f8f] to-transparent" />
-      <div className="mx-auto max-w-[1200px] flex flex-col items-center text-center gap-6 relative z-10">
-        <div className="flex items-center gap-4 flex-wrap justify-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={logo} alt="Music Mission Institute Logo" className="h-14 w-auto" />
-          <div>
-            <p className="font-semibold text-base">Music Mission Institute</p>
-            <p className="text-sm text-white/80">Kurse in Musikproduktion, Tontechnik & Live-Engineering</p>
+      <div className="mx-auto max-w-[1200px] flex flex-col gap-8 relative z-10">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+          <div className="flex items-center gap-4 sm:gap-5">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={logo} alt="Music Mission Institute Logo" className="h-16 w-auto sm:h-20" />
+            <div className="text-left">
+              <p className="font-semibold text-lg sm:text-xl leading-tight">Music Mission Institute</p>
+              <p className="text-sm sm:text-base text-white/80">Kurse in Musikproduktion, Tontechnik & Live-Engineering</p>
+            </div>
+          </div>
+          <div className="flex flex-col sm:items-end text-sm text-white space-y-2">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 sm:justify-end sm:items-center text-center sm:text-right">
+              <a href="#" className="underline underline-offset-4 hover:text-black">Datenschutz</a>
+              <a href="#" className="underline underline-offset-4 hover:text-black">AGB</a>
+              <a href="/impressum" className="underline underline-offset-4 hover:text-black">Impressum</a>
+            </div>
+            <p className="text-white/80 text-xs sm:text-sm">© {new Date().getFullYear()} Music Mission Institute</p>
           </div>
         </div>
-        <div className="text-sm text-white space-y-3">
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center items-center">
-            <a href="#" className="underline underline-offset-4 hover:text-black">Datenschutz</a>
-            <a href="#" className="underline underline-offset-4 hover:text-black">AGB</a>
-            <a href="/impressum" className="underline underline-offset-4 hover:text-black">Impressum</a>
-          </div>
-          <p className="text-white/80 text-xs">© {new Date().getFullYear()} Music Mission Institute</p>
+        <div className="h-px w-full bg-white/30" />
+        <div className="text-center text-xs text-white/75 sm:hidden">
+          Datenschutz · AGB · Impressum
         </div>
       </div>
     </footer>

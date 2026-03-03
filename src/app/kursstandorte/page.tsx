@@ -143,7 +143,7 @@ export default function KursstandortePage() {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
-      <section className="relative h-[25vh] w-full overflow-hidden">
+      <section className="relative h-[40vh] md:h-[32vh] w-full overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={heroImage} alt="Kursstandorte" className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-[#ff1f8f]/35 to-transparent" />
@@ -160,13 +160,13 @@ export default function KursstandortePage() {
         </div>
       </section>
 
-      <section className="px-6 pb-10 pt-[2vh] sm:px-10 lg:px-20 space-y-8 bg-neutral-100">
+      <section className="px-4 pb-10 pt-[2vh] sm:px-10 lg:px-20 space-y-8 bg-neutral-100">
         <div className="mx-auto max-w-[1200px] space-y-5">
           <p className="text-xs text-slate-500 text-center">
             Debug Region: {debugRegion} · host: {debugHost} · x-region: {debugXRegion}
           </p>
-          <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-6 rounded-3xl bg-white/85 shadow-sm shadow-slate-200/60 backdrop-blur px-5 py-4 border border-slate-200">
-            <div className="grid w-full max-w-4xl gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:justify-center sm:gap-6 rounded-3xl bg-white/90 shadow-sm shadow-slate-200/60 backdrop-blur px-4 sm:px-5 py-4 border border-slate-200">
+            <div className="grid w-full max-w-4xl gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               <Select label="Land" value={filterCountry} onChange={setFilterCountry} options={uniqOptions(partners.map((p) => p.country))} placeholder="Alle Länder" />
               <Select label="Bundesland" value={filterState} onChange={setFilterState} options={uniqOptions(partners.map((p) => p.state))} placeholder="Alle Bundesländer" />
               <Select

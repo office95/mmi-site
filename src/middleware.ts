@@ -33,9 +33,23 @@ export async function middleware(req: NextRequest) {
     url.pathname.startsWith("/api/admin") ||
     url.pathname.startsWith("/partner-blog/create");
 
+  // Öffentliche GET-Endpunkte unter /api/admin (Lesezugriff für Kursstandorte etc.)
+  const publicAdminGet =
+    req.method === "GET" &&
+    url.pathname.startsWith("/api/admin/") &&
+    [
+      "/api/admin/partners",
+      "/api/admin/sessions",
+      "/api/admin/courses",
+      "/api/admin/course-categories",
+      "/api/admin/course-types",
+      "/api/admin/course-formats",
+      "/api/admin/course-languages",
+    ].some((p) => url.pathname.startsWith(p));
+
   let res = NextResponse.next({ request: { headers: requestHeaders } });
 
-  if (isAdminRoute) {
+  if (isAdminRoute && !publicAdminGet) {
     const token = getAccessToken(req);
     const allowed = isAllowedSession(token);
 

@@ -197,6 +197,8 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
   const heroDefault = "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=1600&q=80";
   const heroDesktop = toUrl(course.hero_image_url) ?? heroDefault;
   const heroMobile = toUrl(course.hero_image_mobile_url) ?? heroDesktop;
+  const sloganMediaDesktop = course.slogan_image_url ?? course.slogan_image_mobile_url ?? "";
+  const sloganMediaMobile = course.slogan_image_mobile_url ?? course.slogan_image_url ?? "";
 
   const footerLogo =
     toUrl(siteLogoSetting?.value ?? null) ??
@@ -345,10 +347,118 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
 
       </main>
 
+      { (sloganMediaDesktop || sloganMediaMobile) && (
+        <section className="relative h-[80vh] w-full overflow-hidden bg-black">
+          <div className="absolute inset-0">
+            {renderSloganMedia(sloganMediaDesktop, heroDesktop, false)}
+            <div className="block md:hidden h-full">
+              {renderSloganMedia(sloganMediaMobile, heroMobile, true)}
+            </div>
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/15 to-black/35 pointer-events-none" />
+          <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
+            <Reveal delay={80}>
+              <div className="mx-auto max-w-5xl space-y-3">
+                <p className="font-anton text-[clamp(56px,8vw,96px)] leading-[0.95] text-white drop-shadow-[0_12px_30px_rgba(0,0,0,0.55)]">
+                  {course.slogan_line1 || "Music Mission."}
+                </p>
+                <p className="font-anton text-[clamp(42px,6vw,78px)] leading-[0.95] text-white drop-shadow-[0_12px_30px_rgba(0,0,0,0.55)]">
+                  {course.slogan_line2 || "Lerne von den besten."}
+                </p>
+                <p className="text-[clamp(28px,4.5vw,52px)] text-white/85 font-semibold drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+                  {course.slogan_line3 || "Für Anfänger und Fortgeschrittene"}
+                </p>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+      )}
+
       <div className="relative z-20">
         <ConsultBanner overlapOffset="0" height="70vh" zIndex="z-30" />
       </div>
 
     </div>
+  );
+}
+
+function renderSloganMedia(mediaRaw: string, fallback: string, isMobile: boolean) {
+  const media = mediaRaw ? toUrl(mediaRaw) : null;
+  const isVideo = media ? /\.(mp4|mov|webm)$/i.test(media) : false;
+  const isVimeo = mediaRaw.includes("vimeo.com");
+  const isYouTube = mediaRaw.includes("youtube.com") || mediaRaw.includes("youtu.be");
+
+  const baseStyles = {
+    width: "140%",
+    height: "140%",
+    transform: "translate(-50%,-50%)",
+  };
+
+  if (isVimeo) {
+    const match = mediaRaw.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    const vid = match ? match[1] : null;
+    if (vid) {
+      const src = `https://player.vimeo.com/video/${vid}?background=1&autoplay=1&loop=1&muted=1&controls=0`;
+      return (
+        <iframe
+          key={src + String(isMobile)}
+          src={src}
+          className="absolute left-1/2 top-1/2 max-w-none"
+          style={baseStyles}
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowFullScreen
+          loading="lazy"
+          title="Vimeo Slogan Video"
+        />
+      );
+    }
+  }
+
+  if (isYouTube) {
+    const match = mediaRaw.match(/(?:v=|youtu\.be\/)([\w-]+)/);
+    const vid = match ? match[1] : null;
+    if (vid) {
+      const src = `https://www.youtube.com/embed/${vid}?autoplay=1&mute=1&loop=1&playlist=${vid}&controls=0`;
+      return (
+        <iframe
+          key={src + String(isMobile)}
+          src={src}
+          className="absolute left-1/2 top-1/2 max-w-none"
+          style={baseStyles}
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowFullScreen
+          loading="lazy"
+          title="YouTube Slogan Video"
+        />
+      );
+    }
+  }
+
+  if (isVideo && media) {
+    return (
+      <video
+        key={media + String(isMobile)}
+        className="absolute left-1/2 top-1/2 w-[140%] h-[140%] object-cover -translate-x-1/2 -translate-y-1/2 bg-black"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        poster={fallback}
+        controls={false}
+        crossOrigin="anonymous"
+      >
+        <source src={media as string} type="video/mp4" />
+        <source src={media as string} />
+      </video>
+    );
+  }
+
+  return (
+    <img
+      src={media ?? fallback}
+      alt="Kurs Impression"
+      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-auto h-auto object-cover scale-[1.08]"
+    />
   );
 }

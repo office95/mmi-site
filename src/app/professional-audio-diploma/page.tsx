@@ -88,7 +88,7 @@ export default function ProfessionalAudioDiplomaPage() {
                 className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                   activeTab === t.id ? "bg-[#ff1f8f] text-white shadow-md shadow-pink-500/30" : "text-slate-700 hover:bg-slate-100"
                 }`}
-                onClick={() => setActiveTab(t.id)}
+                onClick={() => setActiveTab(t.id as "kurs" | "faq")}
               >
                 {t.label}
               </button>

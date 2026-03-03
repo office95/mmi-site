@@ -244,7 +244,8 @@ export default async function Home() {
           <div className="relative h-full flex items-center justify-center px-4">
             <div className="text-center leading-[1.05] space-y-3 max-w-[80%] mx-auto">
               {[
-                { text: "Unsere Kurse bringen dir Wissen und\nPraxis.", size: "clamp(48px,8vw,90px)" },
+                { text: "Unsere Kurse bringen dir", size: "clamp(48px,8vw,90px)" },
+                { text: "Wissen und Praxis.", size: "clamp(48px,8vw,90px)" },
                 { text: "Direkt im Studio.", size: "clamp(36px,6vw,70px)" },
                 { text: "Direkt von Profis.", size: "clamp(28px,5vw,60px)" },
               ].map((line) => (

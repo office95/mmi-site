@@ -162,7 +162,7 @@ export function SiteHeader() {
 
         {/* Mobile Burger */}
         <button
-          className="header-btn md:hidden inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-slate-800 hover:bg-slate-100"
+          className="header-btn md:hidden ml-auto mr-[2vh] inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-slate-800 hover:bg-slate-100"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Menü"
         >
@@ -171,45 +171,48 @@ export function SiteHeader() {
       </div>
 
       {/* Mobile Drawer */}
-      {mobileOpen && (
-        <div className="md:hidden fixed inset-0 z-40 bg-white px-6 py-6 overflow-y-auto">
-          <div className="flex items-center justify-between mb-6">
-            <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
-              <Image
-                src={logoUrl || "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp"}
-                alt="Music Mission Institute Logo"
-                width={40}
-                height={40}
-                className="h-10 w-10 object-contain"
-                priority
-              />
-              <span className="text-base font-semibold">Music Mission Institute</span>
-            </Link>
-            <button
-              className="header-btn inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-slate-800 hover:bg-slate-100"
-              onClick={() => setMobileOpen(false)}
-              aria-label="Menü schließen"
-            >
-              <X size={18} />
-            </button>
-          </div>
-
-          <div className="space-y-4 text-base font-semibold">
-            <Link href="/entdecken" className="block" onClick={() => setMobileOpen(false)}>
-              Entdecken
-            </Link>
-            <Link href="/professional-audio-diploma" className="block" onClick={() => setMobileOpen(false)}>
-              Professional Audio Diploma
-            </Link>
-            <Link href="/kursstandorte" className="block" onClick={() => setMobileOpen(false)}>
-              Kursstandorte
-            </Link>
-            <Link href="/ueber-uns" className="block" onClick={() => setMobileOpen(false)}>
-              Über uns
-            </Link>
-          </div>
+      <div
+        className={`md:hidden fixed inset-0 z-40 bg-white px-6 py-6 overflow-y-auto transform transition-transform duration-300 ease-out ${
+          mobileOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+        style={{ pointerEvents: mobileOpen ? "auto" : "none" }}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
+            <Image
+              src={logoUrl || "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp"}
+              alt="Music Mission Institute Logo"
+              width={40}
+              height={40}
+              className="h-10 w-10 object-contain"
+              priority
+            />
+            <span className="text-base font-semibold">Music Mission Institute</span>
+          </Link>
+          <button
+            className="header-btn inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-slate-800 hover:bg-slate-100"
+            onClick={() => setMobileOpen(false)}
+            aria-label="Menü schließen"
+          >
+            <X size={18} />
+          </button>
         </div>
-      )}
+
+        <div className="space-y-4 text-base font-semibold">
+          <Link href="/entdecken" className="block" onClick={() => setMobileOpen(false)}>
+            Entdecken
+          </Link>
+          <Link href="/professional-audio-diploma" className="block" onClick={() => setMobileOpen(false)}>
+            Professional Audio Diploma
+          </Link>
+          <Link href="/kursstandorte" className="block" onClick={() => setMobileOpen(false)}>
+            Kursstandorte
+          </Link>
+          <Link href="/ueber-uns" className="block" onClick={() => setMobileOpen(false)}>
+            Über uns
+          </Link>
+        </div>
+      </div>
     </header>
   );
 }

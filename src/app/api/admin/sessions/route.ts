@@ -11,12 +11,13 @@ export async function GET(req: NextRequest) {
   const supabase = getSupabaseServiceClient();
   const region = getRegionFromRequest(req);
   const showAll = req.nextUrl.searchParams.get("all") === "1";
+  const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()},region.is.null,region.eq.`;
 
   // 1) Sessions laden
   const { data: sessions, error: errSes } = await supabase
     .from(TABLE)
     .select("*")
-    .or(showAll ? undefined : `region.eq.${region},region.eq.${region.toLowerCase()},region.is.null,region.eq.`)
+    .or(regionFilter)
     .order("start_date", { ascending: true });
   if (errSes) return NextResponse.json({ error: errSes.message }, { status: 500 });
   if (!sessions || sessions.length === 0) return NextResponse.json({ data: [] });

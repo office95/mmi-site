@@ -93,11 +93,11 @@ export default async function Home() {
   const region = getRegion();
   const supabase = getSupabaseServiceClient();
   const { data: heroRows } = await supabase.from("hero_slides").select("image_url,title,subtitle").order("created_at", { ascending: true });
-  const { data: partnerRows } = await supabase
-    .from("partners")
-    .select("name,slug,state,city,logo_path,region")
-    .or(`region.eq.${region},region.is.null`)
-    .order("name", { ascending: true });
+  const partnerQuery = supabase.from("partners").select("name,slug,state,city,logo_path,region").order("name", { ascending: true });
+  const { data: partnerRows } =
+    region === "DE"
+      ? await partnerQuery.eq("region", "DE")
+      : await partnerQuery.or("region.eq.AT,region.is.null");
 
   const heroSlides =
     (heroRows ?? [])
@@ -175,7 +175,9 @@ export default async function Home() {
           <div className="relative mx-auto max-w-6xl px-6 sm:px-10 lg:px-16 space-y-6">
             <div className="text-center space-y-2">
               <p className="text-xs uppercase tracking-[0.22em] text-slate-500">Partner</p>
-              <h2 className="font-anton text-4xl sm:text-5xl leading-[1.05] text-slate-900">Unsere Partner in Österreich</h2>
+              <h2 className="font-anton text-4xl sm:text-5xl leading-[1.05] text-slate-900">
+                {region === "DE" ? "Unsere Partner in Deutschland" : "Unsere Partner in Österreich"}
+              </h2>
             </div>
 
             <div className="relative overflow-hidden py-4">

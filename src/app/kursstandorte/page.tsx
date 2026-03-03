@@ -72,9 +72,9 @@ export default function KursstandortePage() {
 
   useEffect(() => {
     const host = typeof window !== "undefined" ? window.location.host.toLowerCase() : "";
-    const region = host.includes("musicmission.de") || host.endswith(".de") ? "DE" : "AT";
+    const region = host.includes("musicmission.de") || host.endsWith(".de") ? "DE" : "AT";
     setDebugRegion(region);
-    setDebugHost(host or "(leer)");
+    setDebugHost(host || "(leer)");
     const load = async () => {
       setLoading(true);
       try {

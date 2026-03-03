@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import ConsultBanner from "@/components/ConsultBanner";
-import { headers } from "next/headers";
 
 type Partner = {
   id: string;
@@ -38,10 +37,9 @@ const toUrl = (path: string | null) => {
 };
 
 export default function KursstandortePage() {
-  const hdr = headers();
-  const host = hdr.get("host")?.toLowerCase() || "";
-  const regionHdr = hdr.get("x-region")?.toUpperCase() || "";
-  const region = regionHdr === "DE" || host.endsWith(".de") ? "DE" : "AT";
+  const [debugRegion, setDebugRegion] = useState("AT");
+  const [debugHost, setDebugHost] = useState("");
+  const [debugXRegion] = useState("(client)");
 
   const [partners, setPartners] = useState<Partner[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -73,6 +71,10 @@ export default function KursstandortePage() {
   };
 
   useEffect(() => {
+    const host = typeof window !== "undefined" ? window.location.host.toLowerCase() : "";
+    const region = host.includes("musicmission.de") || host.endswith(".de") ? "DE" : "AT";
+    setDebugRegion(region);
+    setDebugHost(host or "(leer)");
     const load = async () => {
       setLoading(true);
       try {

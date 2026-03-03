@@ -220,6 +220,10 @@ export default async function Home() {
               <h2 className="font-anton text-4xl sm:text-5xl leading-[1.05] text-slate-900">
                 {region === "DE" ? "Unsere Partner in Deutschland" : "Unsere Partner in Österreich"}
               </h2>
+              {/* Debug-Hinweis: nach Fix wieder entfernen */}
+              <p className="text-xs text-slate-500">
+                Region: {region} · host: {host || "(leer)"} · x-region: {regionHeader || "(leer)"} · cookie: {cookieRegion || "(leer)"}
+              </p>
             </div>
 
             <div className="relative overflow-hidden py-4">

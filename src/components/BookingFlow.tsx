@@ -11,7 +11,6 @@ type SessionInfo = {
   deposit_cents?: number | null;
 };
 
-type CourseInfo = { id: string; title: string; slug: string; base_price_cents?: number | null; deposit_cents?: number | null };
 type CourseInfo = {
   id: string;
   title: string;

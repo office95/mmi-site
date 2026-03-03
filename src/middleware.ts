@@ -46,17 +46,10 @@ export const config = {
 function extractEmail(jwt: string): string | null {
   try {
     const payload = jwt.split(".")[1];
-    const json = JSON.parse(Buffer.from(payload.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf8"));
+    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
     return json?.email?.toLowerCase() ?? null;
   } catch {
-    try {
-      // Edge runtime fallback
-      const payload = jwt.split(".")[1];
-      const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
-      return json?.email?.toLowerCase() ?? null;
-    } catch {
-      return null;
-    }
+    return null;
   }
 }
 

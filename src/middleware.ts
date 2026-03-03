@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { createServerClient } from "@supabase/auth-helpers-nextjs";
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "")
   .split(",")
@@ -23,24 +22,15 @@ export async function middleware(req: NextRequest) {
   let res = NextResponse.next();
 
   if (isAdminRoute) {
-    // Supabase Session prüfen (Edge-kompatibel)
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      { request: req, response: res }
-    );
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    const email = session?.user?.email?.toLowerCase();
+    const token = req.cookies.get("sb-access-token")?.value;
+    const email = token ? extractEmail(token) : null;
     const allowed = email && ADMIN_EMAILS.includes(email);
 
     if (!allowed) {
       const redirectTo = `/login?redirect=${encodeURIComponent(url.pathname)}`;
-      res = NextResponse.redirect(new URL(redirectTo, req.url));
-      res.cookies.set("region", region, { path: "/" });
-      return res;
+      const redirect = NextResponse.redirect(new URL(redirectTo, req.url));
+      redirect.cookies.set("region", region, { path: "/" });
+      return redirect;
     }
   }
 
@@ -52,3 +42,20 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: ["/admin/:path*", "/api/admin/:path*", "/partner-blog/create", "/:path*"],
 };
+
+function extractEmail(jwt: string): string | null {
+  try {
+    const payload = jwt.split(".")[1];
+    const json = JSON.parse(Buffer.from(payload.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf8"));
+    return json?.email?.toLowerCase() ?? null;
+  } catch {
+    try {
+      // Edge runtime fallback
+      const payload = jwt.split(".")[1];
+      const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+      return json?.email?.toLowerCase() ?? null;
+    } catch {
+      return null;
+    }
+  }
+}

@@ -5,6 +5,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, LogIn, UserPlus } from "lucide-react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default function LoginPage() {
   const supabase = getSupabaseBrowserClient();
   const router = useRouter();

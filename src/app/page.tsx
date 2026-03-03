@@ -177,14 +177,14 @@ export default async function Home() {
               {/* Lauftext */}
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none px-4">
                 <div className="w-full overflow-hidden">
-                  <div className="marquee-track animate-marquee text-white font-bebas font-semibold uppercase tracking-[0.22em] text-[clamp(32px,5vw,65px)] whitespace-nowrap">
+                  <div className="marquee-track animate-marquee text-white font-bold uppercase tracking-[0.22em] text-[clamp(60px,7vw,110px)] whitespace-nowrap" style={{ fontFamily: "\"Montserrat\", sans-serif" }}>
                     {Array(8)
                       .fill("Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing   ")
                       .join("")}
                   </div>
                 </div>
                 <div className="w-full overflow-hidden">
-                  <div className="marquee-track animate-marquee-reverse text-[#ff1f8f] font-bebas font-semibold uppercase tracking-[0.22em] text-[clamp(32px,5vw,65px)] whitespace-nowrap">
+                  <div className="marquee-track animate-marquee-reverse text-[#ff1f8f] font-bold uppercase tracking-[0.22em] text-[clamp(60px,7vw,110px)] whitespace-nowrap" style={{ fontFamily: "\"Montserrat\", sans-serif" }}>
                     {Array(8)
                       .fill("Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing   ")
                       .join("")}

@@ -85,6 +85,10 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
     }
   }
 
+  if (course && course.region && course.region !== region) {
+    return notFound();
+  }
+
   if (!course) {
     const { data: list } = await supabase.from("courses").select("title, slug").limit(10);
     return (
@@ -114,13 +118,13 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
   let { data: sessions } = await supabase
     .from("sessions")
     .select("*")
-    .or(`region.eq.${region},region.is.null`)
+    .eq("region", region)
     .eq("course_id", course.id);
   if (!sessions || sessions.length === 0) {
     const { data: altSessions } = await supabase
       .from("sessions")
       .select("*, courses!inner(slug)")
-      .or(`region.eq.${region},region.is.null`)
+      .eq("region", region)
       .eq("courses.slug", course.slug);
     sessions = altSessions ?? [];
   }

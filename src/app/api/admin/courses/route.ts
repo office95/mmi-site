@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   const mapped =
     data?.map((c: any) => ({
       ...c,
-      tags: (c.course_tags ?? []).map((t: any) => t.tag?.name).filter(Boolean),
+      tags: ((c.course_tags ?? []).map((t: any) => t.tag?.name).filter(Boolean) ?? []).concat(c.tags ?? []).filter(Boolean),
       sessions: c.sessions ?? [],
       addons: c.addons ?? [],
     })) ?? [];
@@ -37,6 +37,7 @@ export async function POST(req: Request) {
     status: body.status ?? "active",
     title: body.title,
     slug: body.slug || body.title?.toLowerCase().replace(/\s+/g, "-"),
+    tags: Array.isArray(body.tags) ? body.tags.filter((t: string) => !!t?.trim()) : [],
     region: body.region ?? null,
     category_id: body.category_id ?? null,
     subcategory_id: body.subcategory_id ?? null,

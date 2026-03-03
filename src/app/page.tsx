@@ -23,15 +23,6 @@ const toUrl = (path: string | null) => {
   return `${base}/storage/v1/object/public/${clean}`;
 };
 
-const partnerLogos = [
-  { src: "/logos/ableton.svg", alt: "Ableton" },
-  { src: "/logos/akai.svg", alt: "Akai" },
-  { src: "/logos/logic.svg", alt: "Logic" },
-  { src: "/logos/pioneer.svg", alt: "Pioneer" },
-  { src: "/logos/ssl.svg", alt: "SSL" },
-  { src: "/logos/uaudio.svg", alt: "Universal Audio" },
-];
-
 const faqList = [
   {
     q: "Welche Formate bietet ihr an?",
@@ -115,8 +106,8 @@ export default async function Home() {
 
   const { data: partnerRows } =
     region === "DE"
-      ? await partnerQuery.eq("country", "DE")
-      : await partnerQuery.or("country.eq.AT,country.is.null");
+      ? await partnerQuery.or("country.eq.DE,country.eq.de")
+      : await partnerQuery.or("country.eq.AT,country.eq.at,country.is.null");
 
   const heroSlides =
     (heroRows ?? [])
@@ -202,7 +193,10 @@ export default async function Home() {
             <div className="relative overflow-hidden py-4">
               <div className="marquee" style={{ maxWidth: "1600px", margin: "0 auto" }}>
                 <div className="marquee-track animate-marquee">
-                  {(partners.length ? partners : partnerLogos).map((p, idx) => {
+                  {partners.length === 0 && (
+                    <div className="text-center text-slate-600">Keine Partner für diese Region hinterlegt.</div>
+                  )}
+                  {(partners.length ? partners : []).map((p, idx) => {
                     const name = "name" in p ? (p as any).name : (p as any).alt;
                     const state = "state" in p ? (p as any).state : undefined;
                     const logo = "logo_path" in p ? toUrl((p as any).logo_path ?? null) : (p as any).src;
@@ -235,7 +229,7 @@ export default async function Home() {
                     );
                   })}
                   {/* duplicate for seamless loop */}
-                  {(partners.length ? partners : partnerLogos).map((p, idx) => {
+                  {(partners.length ? partners : []).map((p, idx) => {
                     const name = "name" in p ? (p as any).name : (p as any).alt;
                     const state = "state" in p ? (p as any).state : undefined;
                     const logo = "logo_path" in p ? toUrl((p as any).logo_path ?? null) : (p as any).src;

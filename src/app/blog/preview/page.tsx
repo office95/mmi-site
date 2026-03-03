@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import ClientBlockNote from "./viewer";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 type Post = {
   id: string;
   title: string;

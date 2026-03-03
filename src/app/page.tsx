@@ -115,8 +115,8 @@ export default async function Home() {
 
   const { data: partnerRows } =
     region === "DE"
-      ? await partnerQuery.or("country.eq.DE,country.eq.de")
-      : await partnerQuery.or("country.eq.AT,country.eq.at,country.is.null");
+      ? await partnerQuery.eq("country", "DE")
+      : await partnerQuery.or("country.eq.AT,country.is.null");
 
   const heroSlides =
     (heroRows ?? [])
@@ -202,9 +202,6 @@ export default async function Home() {
             <div className="relative overflow-hidden py-4">
               <div className="marquee" style={{ maxWidth: "1600px", margin: "0 auto" }}>
                 <div className="marquee-track animate-marquee">
-                  {partners.length === 0 && (
-                    <div className="text-center text-slate-600">Keine Partner für diese Region hinterlegt.</div>
-                  )}
                   {(partners.length ? partners : partnerLogos).map((p, idx) => {
                     const name = "name" in p ? (p as any).name : (p as any).alt;
                     const state = "state" in p ? (p as any).state : undefined;

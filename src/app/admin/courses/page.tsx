@@ -404,7 +404,6 @@ export default function CoursesPage() {
                   options={regionOptions}
                 />
                 <Input label="Titel *" value={editing.title} onChange={(v) => updateEdit({ title: v })} required />
-                <Input label="Slug" value={editing.slug ?? ""} onChange={(v) => updateEdit({ slug: v })} />
                 <Select
                   label="Kategorie"
                   value={editing.category_id ?? ""}

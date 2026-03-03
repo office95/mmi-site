@@ -53,15 +53,17 @@ export function FlyInCards() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          // Mobile viewports show weniger Fläche; schon ab ~35% sichtbar machen.
-          if (entry.intersectionRatio >= 0.35) {
-            entry.target.classList.add("in-view");
-          } else if (entry.intersectionRatio < 0.15) {
-            entry.target.classList.remove("in-view");
+          const el = entry.target as HTMLElement;
+          const alreadySeen = el.dataset.seen === "1";
+          // Nur beim ersten Eintritt animieren, dann abmelden.
+          if (!alreadySeen && entry.intersectionRatio >= 0.35) {
+            el.dataset.seen = "1";
+            el.classList.add("in-view");
+            observer.unobserve(el);
           }
         });
       },
-      { threshold: [0.15, 0.35, 0.8], rootMargin: "0px 0px -10% 0px" }
+      { threshold: [0.35], rootMargin: "0px 0px -10% 0px" }
     );
     refs.current.forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();

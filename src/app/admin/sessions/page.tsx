@@ -8,6 +8,7 @@ import { v4 as uuid } from "uuid";
 type Session = {
   id: string;
   status?: "active" | "inactive" | string;
+  region?: "AT" | "DE" | null;
   course_id?: string | null;
   partner_id?: string | null;
   start_date?: string | null;
@@ -55,6 +56,7 @@ type Option = { value: string; label: string };
 const emptySession: Session = {
   id: "",
   status: "active",
+  region: "AT",
   course_id: null,
   partner_id: null,
   start_date: null,
@@ -324,6 +326,15 @@ export default function SessionsPage() {
                   options={[
                     { value: "active", label: "Aktiv" },
                     { value: "inactive", label: "Inaktiv" },
+                  ]}
+                />
+                <Select
+                  label="Region"
+                  value={editing.region ?? "AT"}
+                  onChange={(v) => update({ region: (v as "AT" | "DE") ?? null })}
+                  options={[
+                    { value: "AT", label: "Österreich" },
+                    { value: "DE", label: "Deutschland" },
                   ]}
                 />
                 <Select

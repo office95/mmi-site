@@ -8,6 +8,7 @@ import Image from "next/image";
 import CourseSearch from "@/components/CourseSearch";
 import { getRegion } from "@/lib/region";
 import { headers } from "next/headers";
+import { URL } from "node:url";
 
 const toUrl = (path: string | null) => {
   if (!path) return null;
@@ -94,11 +95,21 @@ export default async function Home() {
   const hdr = headers();
   const get = (key: string) => (typeof (hdr as any).get === "function" ? ((hdr as any).get(key) as string | null) : null);
   const regionHeader = get("x-region")?.toUpperCase();
-  const hostRaw = get("x-forwarded-host") || get("host") || "";
+  const vercelHost = get("x-vercel-deployment-url") || "";
+  const hostRaw = get("x-forwarded-host") || get("host") || vercelHost || "";
   const host = hostRaw.toLowerCase();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
+  const siteHost = (() => {
+    try {
+      return siteUrl ? new URL(siteUrl).host.toLowerCase() : "";
+    } catch {
+      return "";
+    }
+  })();
 
   // HARDCODE fallback: wenn Domain musicmission.de → DE, musicmission.at → AT
-  const forcedRegion = host.includes("musicmission.de") ? "DE" : host.includes("musicmission.at") ? "AT" : null;
+  const targetHost = host || siteHost;
+  const forcedRegion = targetHost.includes("musicmission.de") ? "DE" : targetHost.includes("musicmission.at") ? "AT" : null;
 
   const region =
     forcedRegion ??

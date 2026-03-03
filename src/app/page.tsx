@@ -106,6 +106,11 @@ export default async function Home() {
       return "";
     }
   })();
+  const cookieRegion = (() => {
+    const ck = get("cookie") || "";
+    const m = ck.match(/region=(DE|AT)/i);
+    return m ? m[1].toUpperCase() : null;
+  })();
 
   // HARDCODE fallback: wenn Domain musicmission.de → DE, musicmission.at → AT
   const targetHost = host || siteHost;
@@ -113,6 +118,7 @@ export default async function Home() {
 
   const region =
     forcedRegion ??
+    cookieRegion ??
     (regionHeader === "DE"
       ? "DE"
       : regionHeader === "AT"

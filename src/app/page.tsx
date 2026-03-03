@@ -7,7 +7,7 @@ import { getSupabaseServiceClient } from "@/lib/supabase";
 import Image from "next/image";
 import CourseSearch from "@/components/CourseSearch";
 import { getRegion } from "@/lib/region";
-import { headers, cookies } from "next/headers";
+import { headers } from "next/headers";
 
 const toUrl = (path: string | null) => {
   if (!path) return null;
@@ -92,7 +92,6 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const hdr = headers();
-  const ck = cookies();
   const get = (key: string) => (typeof (hdr as any).get === "function" ? ((hdr as any).get(key) as string | null) : null);
   const regionHeader = get("x-region")?.toUpperCase();
   const hostRaw = get("x-forwarded-host") || get("host") || "";
@@ -103,7 +102,6 @@ export default async function Home() {
 
   const region =
     forcedRegion ??
-    ck.get?.("region")?.value?.toUpperCase() ??
     (regionHeader === "DE"
       ? "DE"
       : regionHeader === "AT"

@@ -539,9 +539,9 @@ export default function PartnerPage() {
               <div className="mx-auto max-w-[1600px] space-y-2">
                 {(partner?.slogan && partner.slogan.trim().length > 0 ? partner.slogan : "Music Mission. Lerne von den besten. Für Anfänger und Fortgeschrittene")
                   .split(".")
-                  .map((line) => line.trim())
+                  .map((line: string) => line.trim())
                   .filter(Boolean)
-                  .map((line, idx) => (
+                  .map((line: string, idx: number) => (
                     <span
                       key={idx}
                       className={`block font-anton text-white drop-shadow-[0_18px_36px_rgba(0,0,0,0.75)] ${

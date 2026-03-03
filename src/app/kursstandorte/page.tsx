@@ -193,7 +193,7 @@ export default function KursstandortePage() {
             </div>
             <button
               onClick={resetFilters}
-              className="inline-flex items-center rounded-full border border-pink-500 bg-white px-4 py-2 text-sm font-semibold text-pink-600 hover:bg-pink-50 transition shadow-sm"
+              className="inline-flex items-center rounded-full border border-pink-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-pink-50 transition shadow-sm"
             >
               Filter zurücksetzen
             </button>

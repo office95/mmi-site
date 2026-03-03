@@ -7,6 +7,7 @@ import SessionCheckout from "@/components/SessionCheckout";
 import Reveal from "@/components/Reveal";
 import Parallax from "@/components/Parallax";
 import ConsultBanner from "@/components/ConsultBanner";
+import { headers } from "next/headers";
 import { getRegion } from "@/lib/region";
 
 export const revalidate = 0;
@@ -41,27 +42,31 @@ const toHtml = (text: string | null | undefined) => {
 
 export default async function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const region = getRegion();
+  const hdr = headers();
+  const host = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
+  const region =
+    host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
   const supabase = getSupabaseServiceClient();
-  const normalize = (s: string) => s.toLowerCase().replace(/\s+/g, "-");
+  const normalize = (s: string) => s.trim().toLowerCase().replace(/\s+/g, "-");
+  const slugClean = slug.trim();
 
   let course: any = null;
 
-  const uuidMatch = slug.match(/^[0-9a-fA-F-]{36}$/);
+  const uuidMatch = slugClean.match(/^[0-9a-fA-F-]{36}$/);
   if (uuidMatch) {
-    const { data } = await supabase.from("courses").select("*").eq("id", slug).maybeSingle();
+    const { data } = await supabase.from("courses").select("*").eq("id", slugClean).maybeSingle();
     if (data) course = data;
   }
 
   if (!course) {
     const candidates = Array.from(
       new Set<string>([
-        slug,
-        slug.toLowerCase(),
-        slug.replace(/_/g, "-"),
-        slug.replace(/-/g, "_"),
-        normalize(slug),
-        normalize(slug).replace(/_/g, "-"),
+        slugClean,
+        slugClean.toLowerCase(),
+        slugClean.replace(/_/g, "-"),
+        slugClean.replace(/-/g, "_"),
+        normalize(slugClean),
+        normalize(slugClean).replace(/_/g, "-"),
       ]).values()
     ).filter(Boolean);
 
@@ -69,7 +74,10 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
     if (orFilter) {
       const { data } = await supabase.from("courses").select("*").or(orFilter);
       if (data && data.length > 0) {
-        course = data.find((c: any) => c.slug === slug) || data[0];
+        course =
+          data.find((c: any) => c.slug?.trim() === slugClean) ||
+          data.find((c: any) => normalize(c.slug ?? "") === normalize(slugClean)) ||
+          data[0];
       }
     }
   }
@@ -85,7 +93,18 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
     }
   }
 
-  if (course && course.region && course.region !== region) {
+  // Fallback: ilike-Search (case-insensitive) auf slug
+  if (!course) {
+    const { data: ilikeCourse } = await supabase
+      .from("courses")
+      .select("*")
+      .ilike("slug", `%${slugClean}%`)
+      .maybeSingle();
+    if (ilikeCourse) course = ilikeCourse;
+  }
+
+  const courseRegion = (course?.region ?? "").toString().trim().toUpperCase();
+  if (course && courseRegion && courseRegion !== region) {
     return notFound();
   }
 
@@ -115,17 +134,19 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
     );
   }
 
+  const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()},region.is.null,region.eq.`; // allow null/empty, case-insensitive
+
   let { data: sessions } = await supabase
     .from("sessions")
     .select("*")
-    .eq("region", region)
-    .eq("course_id", course.id);
+    .eq("course_id", course.id)
+    .or(regionFilter);
   if (!sessions || sessions.length === 0) {
     const { data: altSessions } = await supabase
       .from("sessions")
       .select("*, courses!inner(slug)")
-      .eq("region", region)
-      .eq("courses.slug", course.slug);
+      .eq("courses.slug", course.slug)
+      .or(regionFilter);
     sessions = altSessions ?? [];
   }
 

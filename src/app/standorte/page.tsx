@@ -12,7 +12,7 @@ export default async function StandortePage() {
   const { data: partners } = await supabase
     .from("partners")
     .select("id,name,slug,hero1_path,region")
-    .or(`region.eq.${region},region.is.null`)
+    .or(`region.eq.${region},region.eq.${region.toLowerCase()},region.is.null,region.eq.`)
     .not("hero1_path", "is", null)
     .limit(1);
 

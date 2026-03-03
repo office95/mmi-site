@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
   const { data, error } = await supabase
     .from(TABLE)
     .select("*")
-    .or(`region.eq.${region},region.is.null`)
+    .or(`region.eq.${region},region.eq.${region.toLowerCase()},region.is.null,region.eq.`)
     .order("name", { ascending: true });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ data });

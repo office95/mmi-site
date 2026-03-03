@@ -265,7 +265,7 @@ export default function PartnerPage() {
             <source media="(max-width: 768px)" srcSet={heroMobile as string} />
             <Image src={heroDesktop} alt={partner?.name || slug || "Partner"} fill className="object-cover" priority />
           </picture>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/55" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/20 to-black/35" />
           <div className="absolute left-6 sm:left-12 top-[20%] text-left space-y-3">
             <p className="text-sm uppercase tracking-[0.22em] text-white/70">Partner</p>
             <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl text-white leading-tight drop-shadow-lg">

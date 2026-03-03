@@ -14,6 +14,10 @@ export function getRegion(): "AT" | "DE" {
     const headerRegion = getHeader("x-region")?.toUpperCase();
     if (headerRegion === "AT" || headerRegion === "DE") return headerRegion;
 
+    const host = getHeader("host")?.toLowerCase();
+    if (host?.endsWith(".de")) return "DE";
+    if (host?.endsWith(".at")) return "AT";
+
     const cookie = getHeader("cookie") || "";
     const match = typeof cookie === "string" ? cookie.match(/region=(AT|DE)/) : null;
     if (match) return match[1] as "AT" | "DE";

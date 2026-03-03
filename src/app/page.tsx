@@ -7,6 +7,7 @@ import { getSupabaseServiceClient } from "@/lib/supabase";
 import Image from "next/image";
 import CourseSearch from "@/components/CourseSearch";
 import { getRegion } from "@/lib/region";
+import { headers } from "next/headers";
 
 const toUrl = (path: string | null) => {
   if (!path) return null;
@@ -90,7 +91,9 @@ export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const region = getRegion();
+  const hdr = headers();
+  const host = hdr.get("host")?.toLowerCase() ?? "";
+  const region = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
   const supabase = getSupabaseServiceClient();
   const { data: heroRows } = await supabase.from("hero_slides").select("image_url,title,subtitle").order("created_at", { ascending: true });
   const partnerQuery = supabase.from("partners").select("name,slug,state,city,logo_path,region").order("name", { ascending: true });

@@ -671,22 +671,6 @@ export default function CoursesPage() {
               />
             )}
 
-            {tab === "faqs" && (
-              <FAQsEditor
-                faqs={editing.faqs ?? []}
-                onChange={(faqs) => updateEdit({ faqs })}
-                disabled={getName(editing?.type_id, types) !== "Intensiv"}
-              />
-            )}
-
-            {tab === "inhalt" && (
-              <ModulesEditor
-                modules={editing.modules ?? []}
-                onChange={(modules) => updateEdit({ modules })}
-                disabled={getName(editing?.type_id, types) !== "Intensiv"}
-              />
-            )}
-
             <div className="pt-3 flex items-center gap-3">
               <button
                 onClick={save}

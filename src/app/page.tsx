@@ -219,21 +219,21 @@ export default async function Home() {
           <iframe
             title="MMI Video"
             src="https://player.vimeo.com/video/1169223499?background=1&autoplay=1&loop=1&muted=1&controls=0"
-            className="absolute inset-0 h-full w-full"
+            className="absolute left-1/2 top-1/2 min-w-[120%] min-h-[120%] -translate-x-1/2 -translate-y-1/2"
             allow="autoplay; fullscreen; picture-in-picture"
             allowFullScreen
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/35 to-black/70 pointer-events-none" />
-          <div className="relative h-full flex items-center justify-center">
-            <div className="text-center leading-[1.05] space-y-2">
+          <div className="relative h-full flex items-center justify-center px-4">
+            <div className="text-center leading-[1.05] space-y-3 max-w-[80%] mx-auto">
               {[
-                { text: "Unsere Kurse bringen dir Wissen und Praxis.", size: "clamp(48px,8vw,90px)" },
+                { text: "Unsere Kurse bringen dir Wissen und\nPraxis.", size: "clamp(48px,8vw,90px)" },
                 { text: "Direkt im Studio.", size: "clamp(36px,6vw,70px)" },
                 { text: "Direkt von Profis.", size: "clamp(28px,5vw,60px)" },
               ].map((line) => (
                 <p
                   key={line.text}
-                  className="font-anton font-bold drop-shadow-[0_10px_32px_rgba(0,0,0,0.55)] whitespace-nowrap"
+                  className="font-anton font-bold drop-shadow-[0_10px_32px_rgba(0,0,0,0.55)] whitespace-pre-line"
                   style={{
                     fontSize: line.size,
                     backgroundImage: "linear-gradient(90deg,#ff1f8f 0%, #ff70c5 40%, #ffffff 100%)",

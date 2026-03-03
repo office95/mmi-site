@@ -255,7 +255,7 @@ export default async function Home() {
         <section id="faq" className="relative z-30 bg-[#f3f4f6] px-6 py-20 sm:px-10 lg:px-20 min-h-[70vh]">
           <div className="mx-auto max-w-6xl space-y-10">
             <div className="text-center space-y-4">
-              <h2 className="font-anton text-[64px] sm:text-[80px] lg:text-[100px] leading-[0.9] text-slate-900">Fragen? Wir haben die Antworten.</h2>
+              <h2 className="font-anton text-[clamp(72px,9vw,90px)] leading-[0.9] text-slate-900">Fragen? Wir haben die Antworten.</h2>
             </div>
             <FAQAccordion items={faqList} initiallyOpen={0} />
           </div>

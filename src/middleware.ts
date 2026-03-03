@@ -23,13 +23,17 @@ export async function middleware(req: NextRequest) {
   // Domain → Region Mapping
   const region = host.endsWith(".at") ? "AT" : host.endsWith(".de") ? "DE" : "AT";
 
+  // Header nach vorne durchreichen, damit RSC getRegion() den Wert sieht
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-region", region);
+
   // Admin-Guard
   const isAdminRoute =
     url.pathname.startsWith("/admin") ||
     url.pathname.startsWith("/api/admin") ||
     url.pathname.startsWith("/partner-blog/create");
 
-  let res = NextResponse.next();
+  let res = NextResponse.next({ request: { headers: requestHeaders } });
 
   if (isAdminRoute) {
     const token = getAccessToken(req);

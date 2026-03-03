@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import ClientBlockNote from "./viewer";
+import { parseContent } from "@/components/BlockNoteEditor"; // contains helper used elsewhere
 
 type Post = {
   id: string;

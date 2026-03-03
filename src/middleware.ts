@@ -6,6 +6,15 @@ const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "")
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean);
 
+function isAllowedSession(token: string | null): boolean {
+  if (!token) return false;
+  const email = extractEmail(token);
+  const role = extractRole(token);
+  const allowEmail = email && ADMIN_EMAILS.includes(email);
+  const allowRole = role === "admin";
+  return !!(allowEmail || allowRole);
+}
+
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const host = url.hostname.toLowerCase();
@@ -23,8 +32,7 @@ export async function middleware(req: NextRequest) {
 
   if (isAdminRoute) {
     const token = getAccessToken(req);
-    const email = token ? extractEmail(token) : null;
-    const allowed = email && ADMIN_EMAILS.includes(email);
+    const allowed = isAllowedSession(token);
 
     if (!allowed) {
       if (url.pathname.startsWith("/api/")) {
@@ -51,6 +59,16 @@ function extractEmail(jwt: string): string | null {
     const payload = jwt.split(".")[1];
     const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
     return json?.email?.toLowerCase() ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function extractRole(jwt: string): string | null {
+  try {
+    const payload = jwt.split(".")[1];
+    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    return json?.user_metadata?.role ?? json?.role ?? null;
   } catch {
     return null;
   }

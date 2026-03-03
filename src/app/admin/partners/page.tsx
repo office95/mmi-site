@@ -183,6 +183,7 @@ export default function PartnersPage() {
     try {
       const payload = {
         ...editing,
+        references_list: editing.references ?? [],
         slug: editing.name
           .toLowerCase()
           .trim()

@@ -3,7 +3,24 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import ClientBlockNote from "./viewer";
-import { parseContent } from "@/components/BlockNoteEditor"; // contains helper used elsewhere
+
+function parseContent(raw: any): { blocks: any[]; meta?: { name?: string; bio?: string; avatar?: string; category?: string } } {
+  if (!raw) return { blocks: [] };
+  try {
+    const json = typeof raw === "string" ? JSON.parse(raw) : raw;
+    if (Array.isArray(json)) return { blocks: json };
+    if (json && typeof json === "object") {
+      if (Array.isArray((json as any).blocks)) {
+        return { blocks: (json as any).blocks, meta: (json as any).meta };
+      }
+      if (Array.isArray((json as any).content)) return { blocks: (json as any).content };
+      if (Array.isArray((json as any).document)) return { blocks: (json as any).document };
+    }
+  } catch {
+    return { blocks: [] };
+  }
+  return { blocks: [] };
+}
 
 type Post = {
   id: string;

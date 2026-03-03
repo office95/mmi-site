@@ -107,11 +107,16 @@ export default async function Home() {
     : getRegion();
   const supabase = getSupabaseServiceClient();
   const { data: heroRows } = await supabase.from("hero_slides").select("image_url,title,subtitle").order("created_at", { ascending: true });
-  const partnerQuery = supabase.from("partners").select("name,slug,state,city,logo_path,region").order("name", { ascending: true });
+  // Filter nach Land (Spalte "country" in partners). Fallback: AT wenn leer.
+  const partnerQuery = supabase
+    .from("partners")
+    .select("name,slug,state,city,logo_path,country")
+    .order("name", { ascending: true });
+
   const { data: partnerRows } =
     region === "DE"
-      ? await partnerQuery.eq("region", "DE")
-      : await partnerQuery.or("region.eq.AT,region.is.null");
+      ? await partnerQuery.eq("country", "DE")
+      : await partnerQuery.or("country.eq.AT,country.is.null");
 
   const heroSlides =
     (heroRows ?? [])

@@ -26,7 +26,8 @@ export async function middleware(req: NextRequest) {
     // Supabase Session prüfen (Edge-kompatibel)
     const supabase = createServerClient(
       { supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!, supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY! },
-      { request: req, response: res }
+      { request: req, response: res },
+      { cookies: { getAll: () => req.cookies.getAll(), setAll: (cookies) => cookies.forEach((c) => res.cookies.set(c)) } }
     );
     const {
       data: { session },

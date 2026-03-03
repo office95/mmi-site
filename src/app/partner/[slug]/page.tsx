@@ -546,10 +546,10 @@ export default function PartnerPage() {
                       key={idx}
                       className={`block font-anton text-white drop-shadow-[0_18px_36px_rgba(0,0,0,0.75)] ${
                         idx === 0
-                          ? "text-[clamp(48px,10vw,120px)]"
+                          ? "text-[clamp(64px,8vw,90px)]"
                           : idx === 1
-                            ? "text-[clamp(38px,7vw,90px)]"
-                            : "text-[clamp(26px,5vw,60px)] text-white/90"
+                            ? "text-[clamp(48px,6vw,72px)]"
+                            : "text-[clamp(32px,5vw,56px)] text-white/90"
                       } leading-[0.9] tracking-[-0.02em]`}
                     >
                       {line}.

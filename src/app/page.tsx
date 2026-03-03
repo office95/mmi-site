@@ -8,6 +8,11 @@ import Image from "next/image";
 import CourseSearch from "@/components/CourseSearch";
 import { getRegion } from "@/lib/region";
 import { headers } from "next/headers";
+import dynamic from "next/dynamic";
+
+const PartnerMarqueeClient = dynamic(() => import("@/components/PartnerMarqueeClient").then((m) => m.PartnerMarqueeClient), {
+  ssr: false,
+});
 import { URL } from "node:url";
 
 const toUrl = (path: string | null) => {
@@ -130,16 +135,11 @@ export default async function Home() {
       : getRegion());
   const supabase = getSupabaseServiceClient();
   const { data: heroRows } = await supabase.from("hero_slides").select("image_url,title,subtitle").order("created_at", { ascending: true });
-  // Filter nach Land (Spalte "country" in partners). Fallback: AT wenn leer.
-  const partnerQuery = supabase
+  // Partner laden (Filter passiert im Client anhand Host)
+  const { data: partnerRows } = await supabase
     .from("partners")
     .select("name,slug,state,city,logo_path,country")
     .order("name", { ascending: true });
-
-  const { data: partnerRows } =
-    region === "DE"
-      ? await partnerQuery.eq("country", "DE")
-      : await partnerQuery.or("country.eq.AT,country.is.null");
 
   const heroSlides =
     (heroRows ?? [])
@@ -212,133 +212,14 @@ export default async function Home() {
           <FlyInCards />
         </section>
 
-        {/* Partner Abschnitt – Logo Marquee */}
+                {/* Partner Abschnitt – Logo Marquee (Client) */}
         <section className="relative z-30 bg-[#f3f4f6] text-slate-900 overflow-hidden py-14 sm:py-16">
           <div className="relative mx-auto max-w-6xl px-6 sm:px-10 lg:px-16 space-y-6">
-            <div className="text-center space-y-2">
-              <p className="text-xs uppercase tracking-[0.22em] text-slate-500">Partner</p>
-              <h2 className="font-anton text-4xl sm:text-5xl leading-[1.05] text-slate-900">
-                {region === "DE" ? "Unsere Partner in Deutschland" : "Unsere Partner in Österreich"}
-              </h2>
-              {/* Debug-Hinweis: nach Fix wieder entfernen */}
-              <p className="text-xs text-slate-500">
-                Region: {region} · host: {host || "(leer)"} · x-region: {regionHeader || "(leer)"} · cookie: {cookieRegion || "(leer)"}
-              </p>
-            </div>
-
-            <div className="relative overflow-hidden py-4">
-              <div className="marquee" style={{ maxWidth: "1600px", margin: "0 auto" }}>
-                <div className="marquee-track animate-marquee">
-                  {(partners.length ? partners : partnerLogos).map((p, idx) => {
-                    const name = "name" in p ? (p as any).name : (p as any).alt;
-                    const state = "state" in p ? (p as any).state : undefined;
-                    const logo = "logo_path" in p ? toUrl((p as any).logo_path ?? null) : (p as any).src;
-                    const slug = "slug" in p ? (p as any).slug : undefined;
-                    return (
-                      <a
-                        key={idx}
-                        href={slug ? `/partner/${slug}` : "#"}
-                        className="group mx-6 flex flex-col items-center gap-3 min-w-[25vh]"
-                        style={{ width: "25vh" }}
-                      >
-                        <div className="relative h-[25vh] w-[25vh] overflow-hidden flex items-center justify-center rounded-3xl">
-                          {state ? (
-                            <span className="absolute right-2 top-2 z-20 rounded-full bg-white px-2 py-1 text-[11px] font-semibold text-slate-800 shadow-sm">
-                              {state}
-                            </span>
-                          ) : null}
-                          {logo ? (
-                            <Image
-                              src={logo}
-                              alt={name ?? "Partner Logo"}
-                              fill
-                              className="object-contain opacity-90 group-hover:opacity-100 transition duration-500"
-                              sizes="25vh"
-                            />
-                          ) : (
-                            <span className="text-white/70 text-lg">{name ?? "Partner"}</span>
-                          )}
-                        </div>
-                        <span className="text-base font-semibold text-slate-900 text-center whitespace-nowrap">{name ?? "Partner"}</span>
-                        {state ? (
-                          <span className="text-[12px] uppercase tracking-[0.12em] text-slate-600">{state}</span>
-                        ) : null}
-                      </a>
-                    );
-                  })}
-                  {/* duplicate for seamless loop */}
-                  {(partners.length ? partners : partnerLogos).map((p, idx) => {
-                    const name = "name" in p ? (p as any).name : (p as any).alt;
-                    const state = "state" in p ? (p as any).state : undefined;
-                    const logo = "logo_path" in p ? toUrl((p as any).logo_path ?? null) : (p as any).src;
-                    const slug = "slug" in p ? (p as any).slug : undefined;
-                    return (
-                      <a
-                        key={`dup-${idx}`}
-                        href={slug ? `/partner/${slug}` : "#"}
-                        className="group mx-6 flex flex-col items-center gap-3 min-w-[25vh]"
-                        style={{ width: "25vh" }}
-                      >
-                        <div className="relative h-[25vh] w-[25vh] overflow-hidden flex items-center justify-center rounded-3xl">
-                          {state ? (
-                            <span className="absolute right-2 top-2 z-20 rounded-full bg-white px-2 py-1 text-[11px] font-semibold text-slate-800 shadow-sm">
-                              {state}
-                            </span>
-                          ) : null}
-                          {logo ? (
-                            <Image
-                              src={logo}
-                              alt={name ?? "Partner Logo"}
-                              fill
-                              className="object-contain opacity-90 group-hover:opacity-100 transition duration-500"
-                              sizes="25vh"
-                            />
-                          ) : (
-                            <span className="text-white/70 text-lg">{name ?? "Partner"}</span>
-                          )}
-                        </div>
-                        <span className="text-base font-semibold text-slate-900 text-center whitespace-nowrap">{name ?? "Partner"}</span>
-                        {state ? (
-                          <span className="text-[12px] uppercase tracking-[0.12em] text-slate-600">{state}</span>
-                        ) : null}
-                      </a>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+            <PartnerMarqueeClient partners={partners} fallbackLogos={partnerLogos} />
           </div>
         </section>
 
-        {/* Video Abschnitt */}
-        <section className="relative z-40 min-h-[100vh] h-[100svh] w-screen overflow-hidden bg-black">
-          <div className="absolute inset-0 bg-black/60 pointer-events-none z-10" />
-          <div className="absolute inset-0">
-            <iframe
-              src="https://player.vimeo.com/video/1169223499?background=1&autoplay=1&loop=1&muted=1&controls=0"
-              title="MMI Video"
-              allow="autoplay; fullscreen; picture-in-picture"
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-none z-0"
-              style={{
-                width: "100vw",
-                height: "56.25vw",
-                minWidth: "177.78vh",
-                minHeight: "100vh",
-              }}
-              loading="lazy"
-            />
-          </div>
-          <div className="absolute inset-0 flex items-center justify-center px-6 text-center z-20">
-            <div className="max-w-5xl space-y-4">
-              <h2 className="font-anton text-white text-[60px] sm:text-[80px] lg:text-[100px] leading-[1.05]">
-                Unsere Kurse bringen dir Wissen und Praxis.
-              </h2>
-              <h3 className="font-anton text-white text-[60px] sm:text-[80px] lg:text-[100px] leading-[1.05]">
-                Direkt im Studio. Direkt von Profis.
-              </h3>
-            </div>
-          </div>
-        </section>
+
 
         {/* FAQ Abschnitt */}
         <section id="faq" className="relative z-30 bg-[#f3f4f6] px-6 py-20 sm:px-10 lg:px-20 min-h-[70vh]">

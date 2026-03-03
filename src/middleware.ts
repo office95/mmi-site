@@ -59,8 +59,9 @@ function getAccessToken(req: NextRequest): string | null {
     .find((c) => c.name.endsWith("auth-token") || c.name.includes("auth-token"));
   if (!authCookie) return null;
   try {
-    const parsed = JSON.parse(authCookie.value);
-    return parsed?.access_token || parsed?.accessToken || null;
+    const raw = decodeURIComponent(authCookie.value);
+    const parsed = JSON.parse(raw);
+    return parsed?.access_token || parsed?.accessToken || parsed?.token || null;
   } catch {
     return authCookie.value;
   }

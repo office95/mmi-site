@@ -560,6 +560,11 @@ export default function PartnerPage() {
           </div>
         </section>
 
+        {/* Beratung CTA vor Footer */}
+        <section className="relative bg-white">
+          <ConsultBanner height="80vh" overlapOffset="0" zIndex="z-30" />
+        </section>
+
       </main>
     </div>
   );

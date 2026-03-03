@@ -155,7 +155,7 @@ export default function DynamicForm() {
                   className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900"
                   placeholder={f.placeholder ?? ""}
                   required={!!f.required}
-                  value={values[f.id] ?? ""}
+                  value={(values[f.id] ?? "") as string}
                   onChange={(e) => handleChange(f, e.target.value)}
                 />
               )}
@@ -165,7 +165,7 @@ export default function DynamicForm() {
                   placeholder={f.placeholder ?? ""}
                   rows={3}
                   required={!!f.required}
-                  value={values[f.id] ?? ""}
+                  value={(values[f.id] ?? "") as string}
                   onChange={(e) => handleChange(f, e.target.value)}
                 />
               )}

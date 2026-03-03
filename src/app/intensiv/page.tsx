@@ -1,6 +1,8 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import ConsultBanner from "@/components/ConsultBanner";
 import { getSupabaseServiceClient } from "@/lib/supabase";
+import { headers } from "next/headers";
+import { getRegion } from "@/lib/region";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
@@ -16,9 +18,11 @@ type Course = {
   hero_image_url?: string | null;
   hero_image_mobile_url?: string | null;
   base_price_cents?: number | null;
+  modules?: { title: string; hours: number | null }[];
+  faqs?: { question: string; answer: string }[];
 };
 
-async function loadCourses(): Promise<Course[]> {
+async function loadCourses(region: "AT" | "DE"): Promise<Course[]> {
   const supabase = getSupabaseServiceClient();
 
   const { data: type } = await supabase.from("course_types").select("id").ilike("name", "%intensiv%").maybeSingle();
@@ -26,15 +30,27 @@ async function loadCourses(): Promise<Course[]> {
 
   const { data } = await supabase
     .from("courses")
-    .select("id,title,slug,summary,hero_image_url,hero_image_mobile_url,base_price_cents")
+    .select("id,title,slug,summary,hero_image_url,hero_image_mobile_url,base_price_cents,modules,faqs,region")
     .eq("type_id", type.id)
+    .or(`region.eq.${region},region.eq.${region.toLowerCase()},region.is.null,region.eq.`)
     .order("title", { ascending: true });
 
   return data ?? [];
 }
 
 export default async function IntensivPage() {
-  const courses = await loadCourses();
+  const hdr = await headers();
+  const host = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
+  const region: "AT" | "DE" = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
+
+  const courses = await loadCourses(region);
+  const modules = courses.flatMap((c) => (c.modules ?? []).map((m) => ({ ...m, course: c.title })));
+  const faqs = courses.flatMap((c) => (c.faqs ?? []).map((f) => ({ ...f, course: c.title })));
+  const tabOptions: Array<"inhalt" | "faqs"> = [
+    ...(modules.length ? ["inhalt" as const] : []),
+    ...(faqs.length ? ["faqs" as const] : []),
+  ];
+  const hasTabs = tabOptions.length > 0;
   const heroVideo = null;
   const heroFallback = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/3e6eb2cb-ad29-4c6f-a4b5-973b9d56f70e.webp";
 
@@ -131,6 +147,55 @@ export default async function IntensivPage() {
           </div>
         </div>
       </section>
+
+      {hasTabs && (
+        <section className="mx-auto max-w-6xl px-6 pb-16 space-y-6">
+          <div className="flex gap-3 text-xs font-semibold flex-wrap">
+            {tabOptions.map((t) => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                className={`rounded-full px-3 py-2 border transition ${
+                  tab === t ? "border-[#ff1f8f] text-[#ff1f8f] bg-[#ff1f8f]/10" : "border-slate-200 text-slate-600 hover:border-[#ff1f8f]/50"
+                }`}
+              >
+                {t === "inhalt" ? "Kursinhalt" : "FAQs"}
+              </button>
+            ))}
+          </div>
+
+          {tab === "inhalt" && modules.length > 0 && (
+            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <div className="grid grid-cols-12 bg-slate-50 text-xs font-semibold text-slate-600 uppercase tracking-[0.12em]">
+                <div className="col-span-5 sm:col-span-6 px-4 py-3">Modul / Thema</div>
+                <div className="col-span-4 sm:col-span-4 px-4 py-3">Kurs</div>
+                <div className="col-span-3 sm:col-span-2 px-4 py-3 text-right">Zeit (Std.)</div>
+              </div>
+              <div className="divide-y divide-slate-100">
+                {modules.map((m, idx) => (
+                  <div key={idx} className="grid grid-cols-12 items-center px-4 py-3 text-sm text-slate-800">
+                    <div className="col-span-5 sm:col-span-6 font-semibold">{m.title || "Modul"}</div>
+                    <div className="col-span-4 sm:col-span-4 text-slate-600">{m.course}</div>
+                    <div className="col-span-3 sm:col-span-2 text-right text-slate-700">{m.hours ? `${m.hours} h` : "—"}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {tab === "faqs" && faqs.length > 0 && (
+            <div className="space-y-2">
+              {faqs.map((f, idx) => (
+                <div key={idx} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500 mb-1">{f.course}</p>
+                  <p className="text-lg font-semibold text-slate-900">{f.question || "Frage"}</p>
+                  <p className="text-sm text-slate-700 mt-1">{f.answer || "Antwort folgt."}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Kurs-Grid */}
       <section id="kurse" className="mx-auto max-w-6xl px-6 pb-16 space-y-6 scroll-mt-32 lg:scroll-mt-40">

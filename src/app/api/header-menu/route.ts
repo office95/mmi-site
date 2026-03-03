@@ -1,12 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getSupabaseServiceClient } from "@/lib/supabase";
+import { getRegionFromRequest } from "@/lib/region-request";
 
 export const dynamic = "force-dynamic";
 
 const SLOT_INTENSIV = "00000000-0000-0000-0000-000000000102";
 const SLOT_EXTREM = "00000000-0000-0000-0000-000000000103";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const region = getRegionFromRequest(req);
   const supabase = getSupabaseServiceClient();
 
   const { data, error } = await supabase
@@ -16,7 +18,7 @@ export async function GET() {
       id,label,sort_order,
       header_slot_courses(
         sort_order,
-        courses!inner(id,slug,title)
+        courses!inner(id,slug,title,region)
       )
     `
     )
@@ -33,12 +35,17 @@ export async function GET() {
           .sort((a: any, b: any) => (a?.sort_order ?? 0) - (b?.sort_order ?? 0))
           .flatMap((c: any) => {
             const list = Array.isArray(c?.courses) ? c.courses : c?.courses ? [c.courses] : [];
-            return list.map((course: any) => ({
-              id: course?.id ?? "",
-              slug: course?.slug ?? "",
-              title: course?.title ?? "",
-              sort_order: c?.sort_order ?? 0,
-            }));
+            return list
+              .filter((course: any) => {
+                const cr = (course?.region ?? "").toString().trim().toUpperCase();
+                return !cr || cr === region;
+              })
+              .map((course: any) => ({
+                id: course?.id ?? "",
+                slug: course?.slug ?? "",
+                title: course?.title ?? "",
+                sort_order: c?.sort_order ?? 0,
+              }));
           }) ?? [];
       return {
         id: s?.id ?? "",

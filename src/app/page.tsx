@@ -170,21 +170,21 @@ export default async function Home() {
             <div className="h-[80vh] overflow-visible bg-black relative">
               <HeroSlider slides={heroSlides} />
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="font-anton text-[240px] sm:text-[320px] lg:text-[440px] xl:text-[520px] leading-none text-white/40 select-none">
+                <span className="font-anton text-[240px] sm:text-[320px] lg:text-[440px] xl:text-[520px] leading-none text-white/30 select-none">
                   MMI
                 </span>
               </div>
               {/* Lauftext */}
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none px-4">
                 <div className="w-full overflow-hidden">
-                  <div className="marquee-track animate-marquee text-white font-semibold uppercase tracking-[0.22em] text-[clamp(14px,2vw,20px)] whitespace-nowrap">
+                  <div className="marquee-track animate-marquee text-white font-semibold uppercase tracking-[0.22em] text-[clamp(24px,4vw,40px)] whitespace-nowrap">
                     {Array(8)
                       .fill("Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing   ")
                       .join("")}
                   </div>
                 </div>
                 <div className="w-full overflow-hidden">
-                  <div className="marquee-track animate-marquee-reverse text-[#ff1f8f] font-semibold uppercase tracking-[0.22em] text-[clamp(14px,2vw,20px)] whitespace-nowrap">
+                  <div className="marquee-track animate-marquee-reverse text-[#ff1f8f] font-semibold uppercase tracking-[0.22em] text-[clamp(24px,4vw,40px)] whitespace-nowrap">
                     {Array(8)
                       .fill("Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing   ")
                       .join("")}

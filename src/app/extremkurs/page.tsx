@@ -1,6 +1,8 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import ConsultBanner from "@/components/ConsultBanner";
 import { getSupabaseServiceClient } from "@/lib/supabase";
+import { headers } from "next/headers";
+import { getRegion } from "@/lib/region";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
@@ -18,23 +20,35 @@ type Course = {
   base_price_cents?: number | null;
 };
 
-async function loadCourses(): Promise<Course[]> {
+async function loadCourses(region: "AT" | "DE"): Promise<Course[]> {
   const supabase = getSupabaseServiceClient();
 
-  const { data: type } = await supabase.from("course_types").select("id").ilike("name", "%extrem%").maybeSingle();
+  const regionOr = `region.eq.${region},region.eq.${region.toLowerCase()},region.is.null,region.eq.`; // allow null/empty/case-insensitive
+
+  const { data: type } = await supabase
+    .from("course_types")
+    .select("id")
+    .ilike("name", "%extrem%")
+    .or(regionOr)
+    .maybeSingle();
   if (!type?.id) return [];
 
   const { data } = await supabase
     .from("courses")
     .select("id,title,slug,summary,hero_image_url,hero_image_mobile_url,base_price_cents")
     .eq("type_id", type.id)
+    .or(regionOr)
     .order("title", { ascending: true });
 
   return data ?? [];
 }
 
 export default async function ExtremkursPage() {
-  const courses = await loadCourses();
+  const hdr = await headers();
+  const host = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
+  const region: "AT" | "DE" = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
+
+  const courses = await loadCourses(region);
   const heroVideo = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/3fb0f96e-9ba1-4d7b-b2ba-c3a30fb4ecff.mp4";
   const heroFallback =
     courses[0]?.hero_image_url ??

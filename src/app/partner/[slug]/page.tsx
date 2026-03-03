@@ -54,23 +54,24 @@ export default function PartnerPage() {
     if (!slug) return;
     const load = async () => {
       setLoading(true);
-      const region = getRegionFromCookie();
+      const region = (getRegionFromCookie() as "AT" | "DE") || "AT";
+      const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase?.()},region.is.null,region.eq.`;
       let p1: any = null;
       try {
         const res1 = await supabase
           .from("partners")
           .select("id,name,slug,state,city,zip,street,website,hero1_path,hero1_mobile_path,tags,genre,genres,references_list,instructor_profiles,gallery_paths,promo_path,promo_mobile_path,slogan,region")
-          .or(`region.eq.${region},region.is.null`)
+          .or(regionFilter)
           .eq("slug", slug)
           .maybeSingle();
         p1 = res1.data ?? null;
         if (!p1) {
-          const res2 = await supabase
-            .from("partners_public")
-            .select("id,name,slug,state,city,zip,street,website,hero1_path,hero1_mobile_path,tags,genre,genres,references_list,instructor_profiles,gallery_paths,promo_path,promo_mobile_path,slogan,region")
-            .or(`region.eq.${region},region.is.null`)
-            .eq("slug", slug)
-            .maybeSingle();
+            const res2 = await supabase
+              .from("partners_public")
+              .select("id,name,slug,state,city,zip,street,website,hero1_path,hero1_mobile_path,tags,genre,genres,references_list,instructor_profiles,gallery_paths,promo_path,promo_mobile_path,slogan,region")
+              .or(regionFilter)
+              .eq("slug", slug)
+              .maybeSingle();
           p1 = res2.data ?? null;
         }
       } catch (_) {
@@ -89,9 +90,10 @@ export default function PartnerPage() {
           const { data: ses } = await supabase
             .from("sessions")
             .select(
-              "id,start_date,start_time,price_cents,deposit_cents,seats_taken,max_participants,course:course_id(id,title,slug,hero_image_url,duration_hours,created_at)"
+              "id,start_date,start_time,price_cents,deposit_cents,seats_taken,max_participants,region,course:course_id(id,title,slug,hero_image_url,duration_hours,created_at,region)"
             )
             .eq("partner_id", p1.id)
+            .or(regionFilter)
             .order("start_date", { ascending: true });
           sessionsFetched = ses ?? [];
           setSessions(sessionsFetched);

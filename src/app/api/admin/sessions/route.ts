@@ -73,6 +73,7 @@ export async function POST(req: Request) {
 
   const payload = {
     id,
+    region: body.region ?? null,
     course_id: body.course_id ?? null,
     partner_id: body.partner_id ?? null,
     start_date: body.start_date ?? null,

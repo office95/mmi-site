@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { createServerClient } from "@supabase/auth-helpers-nextjs";
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "")
   .split(",")
@@ -23,18 +23,8 @@ export async function middleware(req: NextRequest) {
   let res = NextResponse.next();
 
   if (isAdminRoute) {
-    // Supabase Session prüfen
-    const supabase = createServerClient(
-      {
-        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      },
-      {
-        request: req,
-        response: res,
-      }
-    );
-
+    // Supabase Session prüfen (middleware helper kümmert sich um Cookies)
+    const supabase = createMiddlewareClient({ req, res });
     const {
       data: { session },
     } = await supabase.auth.getSession();
@@ -50,7 +40,6 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  res = res || NextResponse.next();
   res.headers.set("x-region", region);
   res.cookies.set("region", region, { path: "/" });
   return res;

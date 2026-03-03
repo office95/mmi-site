@@ -133,7 +133,7 @@ export default async function Home() {
   // Partner laden (Filter passiert im Client anhand Host)
   const { data: partnerRows } = await supabase
     .from("partners")
-    .select("name,slug,state,city,logo_path,country")
+    .select("name,slug,state,city,logo_path,country,region")
     .order("name", { ascending: true });
 
   const heroSlides =

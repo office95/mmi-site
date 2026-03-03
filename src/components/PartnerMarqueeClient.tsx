@@ -10,6 +10,7 @@ type Partner = {
   city?: string | null;
   logo_path?: string | null;
   country?: string | null;
+  region?: string | null;
 };
 
 type Props = {
@@ -37,9 +38,12 @@ export function PartnerMarqueeClient({ partners, fallbackLogos }: Props) {
 
   const list = useMemo(() => {
     const filtered = partners.filter((p) => {
+      const pr = (p.region || "").toString().trim().toUpperCase();
       const c = (p.country || "").toUpperCase();
-      if (region === "DE") return c === "DE";
-      return c === "AT" || c === "" || p.country === null;
+      const matchRegion = pr ? pr === region : false;
+      const matchCountry = c ? c === region : false;
+      const noRegion = !pr && !c;
+      return matchRegion || matchCountry || noRegion;
     });
     return filtered.length ? filtered : fallbackLogos;
   }, [partners, region, fallbackLogos]);

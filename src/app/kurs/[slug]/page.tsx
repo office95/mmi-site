@@ -233,7 +233,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
           {Array.isArray(course.tags) && course.tags.length > 0 && (
             <div className="flex flex-wrap gap-2 pt-2">
               {course.tags.map((t: string, idx: number) => (
-                <span key={idx} className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold text-white">
+                <span key={idx} className="rounded-full bg-[#ff1f8f] px-3 py-1 text-[11px] font-semibold text-white shadow-sm shadow-black/20">
                   {t}
                 </span>
               ))}

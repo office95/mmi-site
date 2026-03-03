@@ -103,7 +103,7 @@ export default async function Home() {
 
   const region =
     forcedRegion ??
-    ck.get("region")?.value?.toUpperCase() ??
+    ck.get?.("region")?.value?.toUpperCase() ??
     (regionHeader === "DE"
       ? "DE"
       : regionHeader === "AT"

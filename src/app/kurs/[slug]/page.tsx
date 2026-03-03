@@ -44,20 +44,13 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
   const region = getRegion();
   const supabase = getSupabaseServiceClient();
   const normalize = (s: string) => s.toLowerCase().replace(/\s+/g, "-");
-  const matchesRegion = (item: any) => !item?.region || item.region === region;
 
   let course: any = null;
 
   const uuidMatch = slug.match(/^[0-9a-fA-F-]{36}$/);
   if (uuidMatch) {
-    const { data } = await supabase
-      .from("courses")
-      .select("*")
-      .or(`region.eq.${region},region.is.null`)
-      .or(region === "DE" ? `country.eq.DE` : `country.eq.AT,country.is.null`)
-      .eq("id", slug)
-      .maybeSingle();
-    if (data && matchesRegion(data)) course = data;
+    const { data } = await supabase.from("courses").select("*").eq("id", slug).maybeSingle();
+    if (data) course = data;
   }
 
   if (!course) {
@@ -74,42 +67,26 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
 
     const orFilter = candidates.map((c) => `slug.eq.${c}`).join(",");
     if (orFilter) {
-      const { data } = await supabase
-        .from("courses")
-        .select("*")
-        .or(orFilter)
-        .or(`region.eq.${region},region.is.null`)
-        .or(region === "DE" ? `country.eq.DE` : `country.eq.AT,country.is.null`);
+      const { data } = await supabase.from("courses").select("*").or(orFilter);
       if (data && data.length > 0) {
-        const filtered = data.filter(matchesRegion);
-        course = filtered.find((c: any) => c.slug === slug) || filtered[0] || null;
+        course = data.find((c: any) => c.slug === slug) || data[0];
       }
     }
   }
 
   if (!course) {
-    const { data: allCourses } = await supabase
-      .from("courses")
-      .select("*")
-      .or(`region.eq.${region},region.is.null`)
-      .or(region === "DE" ? `country.eq.DE` : `country.eq.AT,country.is.null`);
+    const { data: allCourses } = await supabase.from("courses").select("*");
     if (allCourses) {
       const target = normalize(slug);
-      const filtered = allCourses.filter(matchesRegion);
       course =
-        filtered.find((c: any) => normalize(c.slug ?? "") === target || normalize(c.title ?? "") === target) ||
-        filtered.find((c: any) => normalize(c.slug ?? "").startsWith(target) || normalize(c.title ?? "").startsWith(target)) ||
+        allCourses.find((c: any) => normalize(c.slug ?? "") === target || normalize(c.title ?? "") === target) ||
+        allCourses.find((c: any) => normalize(c.slug ?? "").startsWith(target) || normalize(c.title ?? "").startsWith(target)) ||
         null;
     }
   }
 
   if (!course) {
-    const { data: list } = await supabase
-      .from("courses")
-      .select("title, slug, region, country")
-      .or(`region.eq.${region},region.is.null`)
-      .or(region === "DE" ? `country.eq.DE` : `country.eq.AT,country.is.null`)
-      .limit(10);
+    const { data: list } = await supabase.from("courses").select("title, slug").limit(10);
     return (
       <div className="min-h-screen bg-white text-slate-900">
         <SiteHeader />

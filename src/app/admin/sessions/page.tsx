@@ -110,8 +110,8 @@ export default function SessionsPage() {
   useEffect(() => {
     const load = async () => {
       const [sRes, cRes, pRes, catRes, fRes, lRes, tRes] = await Promise.all([
-        fetch("/api/admin/sessions"),
-        fetch("/api/admin/courses"),
+        fetch("/api/admin/sessions?all=1"),
+        fetch("/api/admin/courses?all=1"),
         fetch("/api/admin/partners"),
         fetch("/api/admin/course-categories"),
         fetch("/api/admin/course-formats"),

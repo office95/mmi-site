@@ -8,14 +8,15 @@ const TABLE = "sessions";
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
-  const region = getRegionFromRequest(req);
   const supabase = getSupabaseServiceClient();
+  const region = getRegionFromRequest(req);
+  const showAll = req.nextUrl.searchParams.get("all") === "1";
 
   // 1) Sessions laden
   const { data: sessions, error: errSes } = await supabase
     .from(TABLE)
     .select("*")
-    .or(`region.eq.${region},region.eq.${region.toLowerCase()},region.is.null,region.eq.`)
+    .or(showAll ? undefined : `region.eq.${region},region.eq.${region.toLowerCase()},region.is.null,region.eq.`)
     .order("start_date", { ascending: true });
   if (errSes) return NextResponse.json({ error: errSes.message }, { status: 500 });
   if (!sessions || sessions.length === 0) return NextResponse.json({ data: [] });

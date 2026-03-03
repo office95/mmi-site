@@ -175,7 +175,7 @@ export default async function Home() {
                 </span>
               </div>
               {/* Lauftext */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none px-4">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-[1vh] pointer-events-none px-4">
                 <div className="w-full overflow-hidden">
                   <div className="marquee-track animate-marquee text-white font-bold uppercase tracking-[0.22em] text-[clamp(60px,7vw,110px)] whitespace-nowrap" style={{ fontFamily: "\"Montserrat\", sans-serif" }}>
                     {Array(8)

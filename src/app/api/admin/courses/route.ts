@@ -24,6 +24,8 @@ export async function GET(req: NextRequest) {
       tags: ((c.course_tags ?? []).map((t: any) => t.tag?.name).filter(Boolean) ?? []).concat(c.tags ?? []).filter(Boolean),
       sessions: c.sessions ?? [],
       addons: c.addons ?? [],
+      faqs: c.faqs ?? [],
+      modules: c.modules ?? [],
     })) ?? [];
   return NextResponse.json({ data: mapped });
 }
@@ -66,6 +68,8 @@ export async function POST(req: Request) {
     duration_hours: body.duration_hours ?? null,
     language: body.language ?? "de",
     price_tiers: body.price_tiers ?? [], // optional array of {label, price_cents, deposit_cents, tax_rate}
+    faqs: body.faqs ?? [],
+    modules: body.modules ?? [],
     updated_at: new Date().toISOString(),
   };
 

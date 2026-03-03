@@ -35,6 +35,8 @@ type Course = {
   price_tiers?: PriceTier[];
   addons?: Addon[];
   tags?: string[];
+  faqs?: { question: string; answer: string }[];
+  modules?: { title: string; hours: number | null }[];
 };
 
 type PriceTier = {
@@ -77,6 +79,8 @@ const emptyCourse: Course = {
   price_tiers: [],
   addons: [],
   tags: [],
+  faqs: [],
+  modules: [],
 };
 
 export default function CoursesPage() {
@@ -90,7 +94,7 @@ export default function CoursesPage() {
   const [filterFormat, setFilterFormat] = useState("");
   const [filterRegion, setFilterRegion] = useState("");
   const [editing, setEditing] = useState<Course | null>(null);
-  const [tab, setTab] = useState<"stammdaten" | "website" | "medien" | "preise" | "addons" | "tags">("stammdaten");
+  const [tab, setTab] = useState<"stammdaten" | "website" | "medien" | "preise" | "addons" | "tags" | "faqs" | "inhalt">("stammdaten");
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<{ id: string; name: string; parent_id: string | null }[]>([]);
   const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
@@ -365,17 +369,21 @@ export default function CoursesPage() {
                 { id: "preise", label: "Preis" },
                 { id: "addons", label: "Add-ons" },
                 { id: "tags", label: "Tags" },
-              ].map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => setTab(t.id as typeof tab)}
-                  className={`rounded-full px-3 py-2 border transition ${
-                    tab === t.id ? "border-[#ff1f8f] text-[#ff1f8f] bg-[#ff1f8f]/10" : "border-slate-200 text-slate-600 hover:border-[#ff1f8f]/50"
-                  }`}
-                >
-                  {t.label}
-                </button>
-              ))}
+                { id: "faqs", label: "FAQs", onlyType: "Intensiv" },
+                { id: "inhalt", label: "Kursinhalt", onlyType: "Intensiv" },
+              ]
+                .filter((t) => !t.onlyType || getName(editing?.type_id, types) === t.onlyType || editing?.type_id === t.onlyType)
+                .map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setTab(t.id as typeof tab)}
+                    className={`rounded-full px-3 py-2 border transition ${
+                      tab === t.id ? "border-[#ff1f8f] text-[#ff1f8f] bg-[#ff1f8f]/10" : "border-slate-200 text-slate-600 hover:border-[#ff1f8f]/50"
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
             </div>
 
             {tab === "stammdaten" && (
@@ -647,6 +655,38 @@ export default function CoursesPage() {
               </div>
             )}
 
+            {tab === "faqs" && (
+              <FAQsEditor
+                faqs={editing.faqs ?? []}
+                onChange={(faqs) => updateEdit({ faqs })}
+                disabled={getName(editing?.type_id, types) !== "Intensiv"}
+              />
+            )}
+
+            {tab === "inhalt" && (
+              <ModulesEditor
+                modules={editing.modules ?? []}
+                onChange={(modules) => updateEdit({ modules })}
+                disabled={getName(editing?.type_id, types) !== "Intensiv"}
+              />
+            )}
+
+            {tab === "faqs" && (
+              <FAQsEditor
+                faqs={editing.faqs ?? []}
+                onChange={(faqs) => updateEdit({ faqs })}
+                disabled={getName(editing?.type_id, types) !== "Intensiv"}
+              />
+            )}
+
+            {tab === "inhalt" && (
+              <ModulesEditor
+                modules={editing.modules ?? []}
+                onChange={(modules) => updateEdit({ modules })}
+                disabled={getName(editing?.type_id, types) !== "Intensiv"}
+              />
+            )}
+
             <div className="pt-3 flex items-center gap-3">
               <button
                 onClick={save}
@@ -772,6 +812,100 @@ function TagInput({ tags, onAdd, onRemove }: { tags: string[]; onAdd: (t: string
   );
 }
 
+function FAQsEditor({
+  faqs,
+  onChange,
+  disabled,
+}: {
+  faqs: { question: string; answer: string }[];
+  onChange: (faqs: { question: string; answer: string }[]) => void;
+  disabled?: boolean;
+}) {
+  const add = () => onChange([...(faqs ?? []), { question: "", answer: "" }]);
+  const update = (idx: number, patch: Partial<{ question: string; answer: string }>) =>
+    onChange(faqs.map((f, i) => (i === idx ? { ...f, ...patch } : f)));
+  const remove = (idx: number) => onChange(faqs.filter((_, i) => i !== idx));
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold text-slate-700">FAQs</p>
+        <button
+          type="button"
+          onClick={add}
+          disabled={disabled}
+          className="text-xs font-semibold text-[#ff1f8f] hover:underline disabled:opacity-50"
+        >
+          + FAQ
+        </button>
+      </div>
+      <div className="space-y-2">
+        {faqs.map((f, idx) => (
+          <div key={idx} className="rounded-xl border border-slate-200 p-3 shadow-sm space-y-2 bg-white/80">
+            <div className="flex items-center justify-between text-xs text-slate-500">
+              <span>FAQ {idx + 1}</span>
+              <button onClick={() => remove(idx)} disabled={disabled} className="text-red-500 hover:underline disabled:opacity-50">
+                Entfernen
+              </button>
+            </div>
+            <Input label="Frage" value={f.question} onChange={(v) => update(idx, { question: v })} />
+            <Textarea label="Antwort" value={f.answer} onChange={(v) => update(idx, { answer: v })} />
+          </div>
+        ))}
+        {faqs.length === 0 && <p className="text-xs text-slate-500">Noch keine FAQs.</p>}
+      </div>
+    </div>
+  );
+}
+
+function ModulesEditor({
+  modules,
+  onChange,
+  disabled,
+}: {
+  modules: { title: string; hours: number | null }[];
+  onChange: (modules: { title: string; hours: number | null }[]) => void;
+  disabled?: boolean;
+}) {
+  const add = () => onChange([...(modules ?? []), { title: "", hours: null }]);
+  const update = (idx: number, patch: Partial<{ title: string; hours: number | null }>) =>
+    onChange(modules.map((m, i) => (i === idx ? { ...m, ...patch } : m)));
+  const remove = (idx: number) => onChange(modules.filter((_, i) => i !== idx));
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold text-slate-700">Kursinhalt (Module)</p>
+        <button
+          type="button"
+          onClick={add}
+          disabled={disabled}
+          className="text-xs font-semibold text-[#ff1f8f] hover:underline disabled:opacity-50"
+        >
+          + Modul
+        </button>
+      </div>
+      <div className="space-y-2">
+        {modules.map((m, idx) => (
+          <div key={idx} className="rounded-xl border border-slate-200 p-3 shadow-sm space-y-2 bg-white/80">
+            <div className="flex items-center justify-between text-xs text-slate-500">
+              <span>Modul {idx + 1}</span>
+              <button onClick={() => remove(idx)} disabled={disabled} className="text-red-500 hover:underline disabled:opacity-50">
+                Entfernen
+              </button>
+            </div>
+            <Input label="Thema" value={m.title} onChange={(v) => update(idx, { title: v })} />
+            <Input
+              label="Dauer (Stunden)"
+              value={m.hours !== null && m.hours !== undefined ? String(m.hours) : ""}
+              onChange={(v) => update(idx, { hours: v ? Number(v) : null })}
+              placeholder="z.B. 4"
+            />
+          </div>
+        ))}
+        {modules.length === 0 && <p className="text-xs text-slate-500">Noch keine Module.</p>}
+      </div>
+    </div>
+  );
+}
 function KeyFacts({ facts, onChange }: { facts: string[]; onChange: (f: string[]) => void }) {
   const update = (idx: number, val: string) => onChange(facts.map((f, i) => (i === idx ? val : f)));
   const add = () => {

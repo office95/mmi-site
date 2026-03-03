@@ -98,14 +98,6 @@ export default async function Home() {
   const vercelHost = get("x-vercel-deployment-url") || "";
   const hostRaw = get("x-forwarded-host") || get("host") || vercelHost || "";
   const host = hostRaw.toLowerCase();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
-  const siteHost = (() => {
-    try {
-      return siteUrl ? new URL(siteUrl).host.toLowerCase() : "";
-    } catch {
-      return "";
-    }
-  })();
   const cookieRegion = (() => {
     const ck = get("cookie") || "";
     const m = ck.match(/region=(DE|AT)/i);
@@ -113,12 +105,12 @@ export default async function Home() {
   })();
 
   // HARDCODE fallback: wenn Domain musicmission.de → DE, musicmission.at → AT
-  const targetHost = host || siteHost;
+  const targetHost = host;
   const forcedRegion = targetHost.includes("musicmission.de") ? "DE" : targetHost.includes("musicmission.at") ? "AT" : null;
 
   const region =
-    forcedRegion ??
     cookieRegion ??
+    forcedRegion ??
     (regionHeader === "DE"
       ? "DE"
       : regionHeader === "AT"

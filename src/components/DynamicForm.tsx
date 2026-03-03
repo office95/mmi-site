@@ -174,7 +174,11 @@ export default function DynamicForm() {
                   multiple={f.type === "multiselect"}
                   className="w-full rounded-lg border border-slate-200 px-3 py-2 text-slate-900"
                   required={!!f.required}
-                  value={values[f.id] ?? (f.type === "multiselect" ? [] : "")}
+                  value={
+                    f.type === "multiselect"
+                      ? ((values[f.id] ?? []) as string[])
+                      : ((values[f.id] ?? "") as string)
+                  }
                   onChange={(e) =>
                     handleChange(
                       f,

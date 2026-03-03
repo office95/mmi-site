@@ -96,20 +96,21 @@ export default async function Home() {
   const regionHeader = get("x-region")?.toUpperCase();
   const hostRaw = get("x-forwarded-host") || get("host") || "";
   const host = hostRaw.toLowerCase();
+
+  // HARDCODE fallback: wenn Domain musicmission.de → DE, musicmission.at → AT
+  const forcedRegion = host.includes("musicmission.de") ? "DE" : host.includes("musicmission.at") ? "AT" : null;
+
   const region =
-    regionHeader === "DE"
+    forcedRegion ??
+    (regionHeader === "DE"
       ? "DE"
       : regionHeader === "AT"
-      ? "AT"
-      : host.includes("musicmission.de")
-      ? "DE"
-      : host.includes("musicmission.at")
       ? "AT"
       : host.endsWith(".de")
       ? "DE"
       : host.endsWith(".at")
       ? "AT"
-      : getRegion();
+      : getRegion());
   const supabase = getSupabaseServiceClient();
   const { data: heroRows } = await supabase.from("hero_slides").select("image_url,title,subtitle").order("created_at", { ascending: true });
   // Filter nach Land (Spalte "country" in partners). Fallback: AT wenn leer.

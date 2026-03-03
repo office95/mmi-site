@@ -855,17 +855,7 @@ function ModulesEditor({
   const remove = (idx: number) => onChange(modules.filter((_, i) => i !== idx));
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <p className="text-sm font-semibold text-slate-700">Kursinhalt (Module)</p>
-        <button
-          type="button"
-          onClick={add}
-          disabled={disabled}
-          className="text-xs font-semibold text-[#ff1f8f] hover:underline disabled:opacity-50"
-        >
-          + Modul
-        </button>
-      </div>
+      <p className="text-sm font-semibold text-slate-700">Kursinhalt (Module)</p>
       <div className="space-y-2">
         {modules.map((m, idx) => (
           <div key={idx} className="rounded-xl border border-slate-200 p-3 shadow-sm space-y-2 bg-white/80">
@@ -885,6 +875,16 @@ function ModulesEditor({
           </div>
         ))}
         {modules.length === 0 && <p className="text-xs text-slate-500">Noch keine Module.</p>}
+      </div>
+      <div className="pt-2 flex justify-end">
+        <button
+          type="button"
+          onClick={add}
+          disabled={disabled}
+          className="rounded-lg border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-700 hover:border-[#ff1f8f] hover:text-[#ff1f8f] disabled:opacity-50"
+        >
+          + Modul hinzufügen
+        </button>
       </div>
     </div>
   );

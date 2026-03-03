@@ -7,6 +7,14 @@ import { getRegionFromRequest } from "@/lib/region-request";
 const TABLE = "courses";
 export const dynamic = "force-dynamic";
 
+const slugify = (name: string) =>
+  name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9äöüß -]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+
 export async function GET(req: NextRequest) {
   const region = getRegionFromRequest(req);
   const showAll = req.nextUrl.searchParams.get("all") === "1";
@@ -35,12 +43,27 @@ export async function POST(req: Request) {
   const supabase = getSupabaseServiceClient();
 
   const courseId = body.id ?? randomUUID();
+  const baseSlug = body.slug || slugify(body.title ?? "") || `kurs-${Date.now()}`;
 
+  // slug-Helper, damit unique constraint nicht knallt
+  const ensureUniqueSlug = async (slugBase: string): Promise<string> => {
+    let candidate = slugBase;
+    let i = 2;
+    while (true) {
+      const { data, error } = await supabase.from(TABLE).select("id").eq("slug", candidate).maybeSingle();
+      if (error) break; // Im Zweifel abbrechen und nehmen, was da ist
+      if (!data || data.id === courseId) return candidate;
+      candidate = `${slugBase}-${i++}`;
+    }
+    return candidate;
+  };
+
+  const finalSlug = await ensureUniqueSlug(baseSlug);
   const payload = {
     id: courseId,
     status: body.status ?? "active",
     title: body.title,
-    slug: body.slug || body.title?.toLowerCase().replace(/\s+/g, "-"),
+    slug: finalSlug,
     tags: Array.isArray(body.tags) ? body.tags.filter((t: string) => !!t?.trim()) : [],
     region: body.region ?? null,
     category_id: body.category_id ?? null,

@@ -533,7 +533,7 @@ export default function PartnerPage() {
             return <img src={media} alt="Galerie" className="absolute inset-0 h-full w-full object-cover scale-[1.08]" />;
           })()}
           {/* Overlay & Slogan */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/65 to-black/85" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/50" />
           <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
             <ScrollReveal delay={150}>
               <div className="mx-auto max-w-[1600px] space-y-2">

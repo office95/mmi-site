@@ -225,7 +225,27 @@ export default async function Home() {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/35 to-black/70 pointer-events-none" />
           <div className="relative h-full flex items-center justify-center">
-            <h2 className="font-anton text-4xl sm:text-5xl text-white drop-shadow-[0_8px_24px_rgba(0,0,0,0.55)]">Video</h2>
+            <div className="text-center leading-[1.05] space-y-2">
+              {[
+                { text: "Unsere Kurse bringen dir Wissen und Praxis.", size: "clamp(48px,8vw,90px)" },
+                { text: "Direkt im Studio.", size: "clamp(36px,6vw,70px)" },
+                { text: "Direkt von Profis.", size: "clamp(28px,5vw,60px)" },
+              ].map((line) => (
+                <p
+                  key={line.text}
+                  className="font-anton font-bold drop-shadow-[0_10px_32px_rgba(0,0,0,0.55)] whitespace-nowrap"
+                  style={{
+                    fontSize: line.size,
+                    backgroundImage: "linear-gradient(90deg,#ff1f8f 0%, #ff70c5 40%, #ffffff 100%)",
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    color: "transparent",
+                  }}
+                >
+                  {line.text}
+                </p>
+              ))}
+            </div>
           </div>
         </section>
 

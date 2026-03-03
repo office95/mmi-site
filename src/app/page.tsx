@@ -215,6 +215,11 @@ export default async function Home() {
                         style={{ width: "25vh" }}
                       >
                         <div className="relative h-[25vh] w-[25vh] overflow-hidden flex items-center justify-center rounded-3xl">
+                          {state ? (
+                            <span className="absolute right-2 top-2 z-20 rounded-full bg-white px-2 py-1 text-[11px] font-semibold text-slate-800 shadow-sm">
+                              {state}
+                            </span>
+                          ) : null}
                           {logo ? (
                             <Image
                               src={logo}
@@ -248,6 +253,11 @@ export default async function Home() {
                         style={{ width: "25vh" }}
                       >
                         <div className="relative h-[25vh] w-[25vh] overflow-hidden flex items-center justify-center rounded-3xl">
+                          {state ? (
+                            <span className="absolute right-2 top-2 z-20 rounded-full bg-white px-2 py-1 text-[11px] font-semibold text-slate-800 shadow-sm">
+                              {state}
+                            </span>
+                          ) : null}
                           {logo ? (
                             <Image
                               src={logo}

@@ -163,7 +163,7 @@ export default function KursstandortePage() {
       <section className="px-6 pb-10 pt-[2vh] sm:px-10 lg:px-20 space-y-8 bg-neutral-100">
         <div className="mx-auto max-w-[1200px] space-y-5">
           <p className="text-xs text-slate-500 text-center">
-            Debug Region: {region} · host: {host || "(leer)"} · x-region: {regionHdr || "(leer)"}
+            Debug Region: {debugRegion} · host: {debugHost} · x-region: {debugXRegion}
           </p>
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-6 rounded-3xl bg-white/85 shadow-sm shadow-slate-200/60 backdrop-blur px-5 py-4 border border-slate-200">
             <div className="grid w-full max-w-4xl gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

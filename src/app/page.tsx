@@ -236,7 +236,7 @@ export default async function Home() {
           <iframe
             title="MMI Video"
             src="https://player.vimeo.com/video/1169223499?background=1&autoplay=1&loop=1&muted=1&controls=0"
-            className="absolute left-1/2 top-1/2 min-w-[120%] min-h-[120%] -translate-x-1/2 -translate-y-1/2"
+            className="absolute left-1/2 top-1/2 min-w-[140%] min-h-[140%] -translate-x-1/2 -translate-y-1/2"
             allow="autoplay; fullscreen; picture-in-picture"
             allowFullScreen
           />

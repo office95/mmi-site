@@ -199,6 +199,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
   const heroMobile = toUrl(course.hero_image_mobile_url) ?? heroDesktop;
   const sloganMediaDesktop = course.slogan_image_url ?? course.slogan_image_mobile_url ?? "";
   const sloganMediaMobile = course.slogan_image_mobile_url ?? course.slogan_image_url ?? "";
+  const stateText = states.length ? states.join(" | ") : "Bundesland folgt";
 
   const footerLogo =
     toUrl(siteLogoSetting?.value ?? null) ??
@@ -239,14 +240,12 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
               ))}
             </div>
           )}
-          {states.length > 0 && (
-            <p
-              className="font-semibold leading-tight text-white/90"
-              style={{ fontSize: "clamp(22px, 3.2vw, 40px)" }}
-            >
-              {states.join(" | ")}
-            </p>
-          )}
+          <p
+            className="font-semibold leading-tight text-white/90"
+            style={{ fontSize: "clamp(22px, 3.2vw, 40px)" }}
+          >
+            {stateText}
+          </p>
         </div>
       </section>
 

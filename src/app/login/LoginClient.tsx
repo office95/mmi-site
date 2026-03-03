@@ -56,13 +56,12 @@ export default function LoginClient() {
     setIsLoading(true);
     setError(null);
     try {
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== "undefined" ? window.location.origin : "");
+      const redirectHost = siteUrl || (typeof window !== "undefined" ? window.location.origin : "");
       const { error: authError } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo:
-            typeof window !== "undefined"
-              ? `${window.location.origin}/auth/callback?redirect=${encodeURIComponent(redirect)}`
-              : undefined,
+          emailRedirectTo: `${redirectHost}/auth/callback?redirect=${encodeURIComponent(redirect)}`,
         },
       });
       if (authError) throw authError;

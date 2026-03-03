@@ -169,11 +169,11 @@ export default async function Home() {
           <div className="flex h-full flex-col">
             <div className="h-[80vh] overflow-visible bg-black relative">
               <HeroSlider slides={heroSlides} />
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="font-anton text-[240px] sm:text-[320px] lg:text-[440px] xl:text-[520px] leading-none text-white/5 select-none">
-                  MMI
-                </span>
-              </div>
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <span className="font-anton text-[240px] sm:text-[320px] lg:text-[440px] xl:text-[520px] leading-none text-white/40 select-none">
+                    MMI
+                  </span>
+                </div>
               <div className="absolute inset-x-0 bottom-[5%] z-30 px-6 sm:px-10 lg:px-20">
                 <div className="mx-auto w-full max-w-[540px]">
                   <p className="text-center text-white font-anton text-xl sm:text-2xl mb-2 leading-tight">

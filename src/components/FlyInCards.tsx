@@ -73,7 +73,9 @@ export function FlyInCards() {
         {cards.map((card, idx) => (
           <div
             key={card.title}
-            ref={(el) => (refs.current[idx] = el)}
+            ref={(el) => {
+              refs.current[idx] = el;
+            }}
             className="group relative flex min-h-[40vh] rounded-3xl bg-black border border-black/30 overflow-hidden card-reveal shadow-lg shadow-black/30"
             data-direction={card.align}
           >

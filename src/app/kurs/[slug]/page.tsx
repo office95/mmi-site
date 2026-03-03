@@ -42,7 +42,6 @@ const toHtml = (text: string | null | undefined) => {
 export default async function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const region = getRegion();
-  const countryFilter = region === "DE" ? "DE" : "AT";
   const supabase = getSupabaseServiceClient();
   const normalize = (s: string) => s.toLowerCase().replace(/\s+/g, "-");
   const matchesRegion = (item: any) => !item?.region || item.region === region;
@@ -139,14 +138,12 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
     .from("sessions")
     .select("*")
     .or(`region.eq.${region},region.is.null`)
-    .or(region === "DE" ? `country.eq.DE` : `country.eq.AT,country.is.null`)
     .eq("course_id", course.id);
   if (!sessions || sessions.length === 0) {
     const { data: altSessions } = await supabase
       .from("sessions")
       .select("*, courses!inner(slug)")
       .or(`region.eq.${region},region.is.null`)
-      .or(region === "DE" ? `country.eq.DE` : `country.eq.AT,country.is.null`)
       .eq("courses.slug", course.slug);
     sessions = altSessions ?? [];
   }
@@ -157,8 +154,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
     const { data: partnerRows } = await supabase
       .from("partners")
       .select("*")
-      .in("id", partnerIds as string[])
-      .or(region === "DE" ? `country.eq.DE` : `country.eq.AT,country.is.null`);
+      .in("id", partnerIds as string[]);
     partnerMap = new Map((partnerRows ?? []).map((p: any) => [p.id, p]));
   }
   const sessionsWithPartner = (sessions ?? []).map((s: any) => ({
@@ -176,8 +172,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
     const { data: partnerRows } = await supabase
       .from("partners")
       .select("id,state,city,country")
-      .in("id", sessionPartners as string[])
-      .or(region === "DE" ? `country.eq.DE` : `country.eq.AT,country.is.null`);
+      .in("id", sessionPartners as string[]);
     const partnerMap2 = new Map<string, any>((partnerRows ?? []).map((p: any) => [p.id, p]));
     states = Array.from(
       new Set(

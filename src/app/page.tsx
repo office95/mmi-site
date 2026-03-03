@@ -92,19 +92,24 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const hdr = headers();
-  const host =
-    typeof (hdr as any).get === "function"
-      ? ((hdr as any).get("host") as string | null)?.toLowerCase() ?? ""
-      : "";
-  const region = host.includes("musicmission.de")
-    ? "DE"
-    : host.includes("musicmission.at")
-    ? "AT"
-    : host.endsWith(".de")
-    ? "DE"
-    : host.endsWith(".at")
-    ? "AT"
-    : getRegion();
+  const get = (key: string) => (typeof (hdr as any).get === "function" ? ((hdr as any).get(key) as string | null) : null);
+  const regionHeader = get("x-region")?.toUpperCase();
+  const hostRaw = get("x-forwarded-host") || get("host") || "";
+  const host = hostRaw.toLowerCase();
+  const region =
+    regionHeader === "DE"
+      ? "DE"
+      : regionHeader === "AT"
+      ? "AT"
+      : host.includes("musicmission.de")
+      ? "DE"
+      : host.includes("musicmission.at")
+      ? "AT"
+      : host.endsWith(".de")
+      ? "DE"
+      : host.endsWith(".at")
+      ? "AT"
+      : getRegion();
   const supabase = getSupabaseServiceClient();
   const { data: heroRows } = await supabase.from("hero_slides").select("image_url,title,subtitle").order("created_at", { ascending: true });
   // Filter nach Land (Spalte "country" in partners). Fallback: AT wenn leer.

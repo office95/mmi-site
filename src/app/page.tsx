@@ -96,7 +96,15 @@ export default async function Home() {
     typeof (hdr as any).get === "function"
       ? ((hdr as any).get("host") as string | null)?.toLowerCase() ?? ""
       : "";
-  const region = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
+  const region = host.includes("musicmission.de")
+    ? "DE"
+    : host.includes("musicmission.at")
+    ? "AT"
+    : host.endsWith(".de")
+    ? "DE"
+    : host.endsWith(".at")
+    ? "AT"
+    : getRegion();
   const supabase = getSupabaseServiceClient();
   const { data: heroRows } = await supabase.from("hero_slides").select("image_url,title,subtitle").order("created_at", { ascending: true });
   const partnerQuery = supabase.from("partners").select("name,slug,state,city,logo_path,region").order("name", { ascending: true });

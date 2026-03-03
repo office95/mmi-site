@@ -27,6 +27,9 @@ export async function middleware(req: NextRequest) {
     const allowed = email && ADMIN_EMAILS.includes(email);
 
     if (!allowed) {
+      if (url.pathname.startsWith("/api/")) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
       const redirectTo = `/login?redirect=${encodeURIComponent(url.pathname)}`;
       const redirect = NextResponse.redirect(new URL(redirectTo, req.url));
       redirect.cookies.set("region", region, { path: "/" });

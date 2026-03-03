@@ -96,15 +96,12 @@ export default async function Home() {
   const regionHeader = get("x-region")?.toUpperCase();
   const hostRaw = get("x-forwarded-host") || get("host") || "";
   const host = hostRaw.toLowerCase();
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.toLowerCase() ?? "";
 
   // HARDCODE fallback: wenn Domain musicmission.de → DE, musicmission.at → AT
   const forcedRegion = host.includes("musicmission.de") ? "DE" : host.includes("musicmission.at") ? "AT" : null;
-  const envRegion = siteUrl.includes("musicmission.de") ? "DE" : siteUrl.includes("musicmission.at") ? "AT" : null;
 
   const region =
     forcedRegion ??
-    envRegion ??
     (regionHeader === "DE"
       ? "DE"
       : regionHeader === "AT"
@@ -206,11 +203,6 @@ export default async function Home() {
               <h2 className="font-anton text-4xl sm:text-5xl leading-[1.05] text-slate-900">
                 {region === "DE" ? "Unsere Partner in Deutschland" : "Unsere Partner in Österreich"}
               </h2>
-              {/* Debug-Hinweis zur erkannten Region/Host – nach Fix bitte wieder entfernen */}
-              <p className="text-xs text-slate-500">
-                erkannte Region: {region} · host: {host || "(leer)"} · x-region: {regionHeader || "(leer)"} · siteUrl:
-                {siteUrl || "(leer)"}
-              </p>
             </div>
 
             <div className="relative overflow-hidden py-4">

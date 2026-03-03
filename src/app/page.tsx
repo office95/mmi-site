@@ -216,16 +216,14 @@ export default async function Home() {
 
         {/* Video Abschnitt */}
         <section className="relative h-[70vh] w-full overflow-hidden bg-black">
-          <div className="absolute inset-0">
-            <iframe
-              title="MMI Video"
-              src="https://player.vimeo.com/video/1169223499?background=1&autoplay=1&loop=1&muted=1&controls=0"
-              className="absolute inset-0 h-full w-full"
-              allow="autoplay; fullscreen; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/35 to-black/70" />
+          <iframe
+            title="MMI Video"
+            src="https://player.vimeo.com/video/1169223499?background=1&autoplay=1&loop=1&muted=1&controls=0"
+            className="absolute inset-0 h-full w-full"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowFullScreen
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/35 to-black/70 pointer-events-none" />
           <div className="relative h-full flex items-center justify-center">
             <h2 className="font-anton text-4xl sm:text-5xl text-white drop-shadow-[0_8px_24px_rgba(0,0,0,0.55)]">Video</h2>
           </div>

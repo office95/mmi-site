@@ -22,7 +22,7 @@ export async function middleware(req: NextRequest) {
   let res = NextResponse.next();
 
   if (isAdminRoute) {
-    const token = req.cookies.get("sb-access-token")?.value;
+    const token = getAccessToken(req);
     const email = token ? extractEmail(token) : null;
     const allowed = email && ADMIN_EMAILS.includes(email);
 
@@ -57,5 +57,18 @@ function extractEmail(jwt: string): string | null {
     } catch {
       return null;
     }
+  }
+}
+
+function getAccessToken(req: NextRequest): string | null {
+  const authCookie = req.cookies
+    .getAll()
+    .find((c) => c.name.endsWith("auth-token") || c.name.includes("auth-token"));
+  if (!authCookie) return null;
+  try {
+    const parsed = JSON.parse(authCookie.value);
+    return parsed?.access_token || parsed?.accessToken || null;
+  } catch {
+    return authCookie.value;
   }
 }

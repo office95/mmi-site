@@ -84,6 +84,7 @@ export default function PartnerPage() {
       setPartner(p1);
 
       if (p1?.id) {
+        let sessionsFetched: any[] = [];
         try {
           const { data: ses } = await supabase
             .from("sessions")
@@ -92,7 +93,8 @@ export default function PartnerPage() {
             )
             .eq("partner_id", p1.id)
             .order("start_date", { ascending: true });
-          setSessions(ses ?? []);
+          sessionsFetched = ses ?? [];
+          setSessions(sessionsFetched);
         } catch (_) {
           setSessions([]);
         }
@@ -113,7 +115,7 @@ export default function PartnerPage() {
 
         // Course-Badges
         try {
-          const courseIds = (ses ?? []).map((s: any) => s.course?.id).filter(Boolean);
+          const courseIds = sessionsFetched.map((s: any) => s.course?.id).filter(Boolean);
           if (courseIds.length) {
             const { data: cb } = await supabase
               .from("course_badges")

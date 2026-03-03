@@ -50,9 +50,9 @@ export async function POST(req: Request) {
     let candidate = slugBase;
     let i = 2;
     while (true) {
-      const { data, error } = await supabase.from(TABLE).select("id").eq("slug", candidate).maybeSingle();
-      if (error) break; // Im Zweifel abbrechen und nehmen, was da ist
-      if (!data || data.id === courseId) return candidate;
+      const { data } = await supabase.from(TABLE).select("id").eq("slug", candidate).limit(1);
+      const existingId = data?.[0]?.id;
+      if (!existingId || existingId === courseId) return candidate;
       candidate = `${slugBase}-${i++}`;
     }
     return candidate;

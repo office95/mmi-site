@@ -6,13 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const supabase = getSupabaseServiceClient();
-  const { data: orders, error } = await supabase
-    .from("orders")
-    .select(
-      "id, order_number, created_at, status, amount_cents, deposit_cents, currency, email, customer_name, first_name, last_name, course_id, session_id, coupon_code, promotion_code, discount_amount_cents"
-    )
-    .order("created_at", { ascending: false })
-    .limit(200);
+  const { data: orders, error } = await supabase.from("orders").select("*").order("created_at", { ascending: false }).limit(200);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   if (!orders || orders.length === 0) return NextResponse.json({ data: [] });

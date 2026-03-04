@@ -138,11 +138,16 @@ export async function POST(req: Request) {
       <p><strong>Kunde:</strong> ${cs.customer_details?.name ?? ""} (${cs.customer_details?.email ?? ""})</p>
       <p><a href="${orderLink}" target="_blank" rel="noreferrer">Zur Bestellung</a></p>
     `;
-    await sendMail({
-      to: "office@musicmission.at",
-      subject: "Du hast eine neue Buchung",
-      html,
-    });
+    try {
+      await sendMail({
+        to: "office@musicmission.at",
+        subject: "Du hast eine neue Buchung",
+        html,
+      });
+    } catch (err) {
+      console.error("E-Mail Versand fehlgeschlagen", err);
+      // Webhook trotzdem erfolgreich quittieren, damit Stripe nicht neu sendet
+    }
   }
 
   return NextResponse.json({ received: true });

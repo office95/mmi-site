@@ -22,17 +22,22 @@ export async function sendMail({ to, subject, html }: MailPayload) {
 
   const nodemailer = await import("nodemailer");
   const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user,
-      pass,
-    },
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: { user, pass },
   });
 
-  await transporter.sendMail({
-    from: `"Music Mission Institute" <${user}>`,
-    to,
-    subject,
-    html,
-  });
+  try {
+    const info = await transporter.sendMail({
+      from: `"Music Mission Institute" <${user}>`,
+      to,
+      subject,
+      html,
+    });
+    console.info("sendMail success", { to, subject, messageId: info.messageId });
+  } catch (err) {
+    console.error("sendMail failed", err);
+    throw err;
+  }
 }

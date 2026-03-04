@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
 import { ChevronDown, Menu, X } from "lucide-react";
 
 type SlotCourse = { id: string; slug: string; title: string };
@@ -20,6 +21,7 @@ export function SiteHeader() {
   const [mobileExtremOpen, setMobileExtremOpen] = useState(false);
   const [closeTimer, setCloseTimer] = useState<NodeJS.Timeout | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     let active = true;
@@ -97,6 +99,12 @@ export function SiteHeader() {
     );
   };
 
+  const isActive = (href: string) => {
+    if (!pathname) return false;
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(href + "/");
+  };
+
   return (
     <header
       className={`site-header fixed top-0 left-0 right-0 z-50 w-full text-slate-900 shadow-sm transition-colors transition-backdrop duration-200 ${
@@ -117,7 +125,10 @@ export function SiteHeader() {
         </Link>
 
         <nav className="relative hidden flex-1 justify-center items-center gap-8 lg:gap-10 xl:gap-12 text-[13px] sm:text-sm xl:flex">
-          <Link href="/entdecken" className="nav-link">
+          <Link
+            href="/entdecken"
+            className={`nav-link ${isActive("/entdecken") ? "bg-slate-900 text-white" : ""}`}
+          >
             Entdecken
           </Link>
           <div
@@ -125,7 +136,11 @@ export function SiteHeader() {
             onMouseLeave={armClose}
             className="relative"
           >
-            <button className="header-btn nav-link inline-flex items-center gap-2 px-2 py-1 rounded-full">
+            <button
+              className={`header-btn nav-link inline-flex items-center gap-2 px-2 py-1 rounded-full ${
+                isActive("/intensiv") ? "bg-slate-900 text-white" : ""
+              }`}
+            >
               Intensiv-Ausbildungen <ChevronDown size={14} />
             </button>
             {activeMenu === "intensiv" && (
@@ -146,7 +161,11 @@ export function SiteHeader() {
             onMouseLeave={armClose}
             className="relative"
           >
-            <button className="header-btn nav-link inline-flex items-center gap-2 px-2 py-1 rounded-full">
+            <button
+              className={`header-btn nav-link inline-flex items-center gap-2 px-2 py-1 rounded-full ${
+                isActive("/extrem") ? "bg-slate-900 text-white" : ""
+              }`}
+            >
               Extremkurse <ChevronDown size={14} />
             </button>
             {activeMenu === "extrem" && (
@@ -162,14 +181,20 @@ export function SiteHeader() {
             )}
           </div>
 
-          <Link href="/professional-audio-diploma" className="nav-link">
+          <Link
+            href="/professional-audio-diploma"
+            className={`nav-link ${isActive("/professional-audio-diploma") ? "bg-slate-900 text-white" : ""}`}
+          >
             Professional Audio Diploma
           </Link>
 
-          <Link href="/kursstandorte" className="nav-link">
+          <Link
+            href="/kursstandorte"
+            className={`nav-link ${isActive("/kursstandorte") ? "bg-slate-900 text-white" : ""}`}
+          >
             Kursstandorte
           </Link>
-          <Link href="/ueber-uns" className="nav-link">
+          <Link href="/ueber-uns" className={`nav-link ${isActive("/ueber-uns") ? "bg-slate-900 text-white" : ""}`}>
             Über uns
           </Link>
         </nav>
@@ -215,7 +240,11 @@ export function SiteHeader() {
         <div className="space-y-5 text-base font-semibold">
           <div className="rounded-2xl border border-slate-200 bg-white/90 shadow-sm shadow-slate-200/70 px-4 py-4 space-y-3">
             <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Navigation</p>
-            <Link href="/entdecken" className="block rounded-xl px-3 py-2 hover:bg-slate-100" onClick={() => setMobileOpen(false)}>
+            <Link
+              href="/entdecken"
+              className={`block rounded-xl px-3 py-2 hover:bg-slate-100 ${isActive("/entdecken") ? "bg-slate-900 text-white" : ""}`}
+              onClick={() => setMobileOpen(false)}
+            >
               Entdecken
             </Link>
 
@@ -285,13 +314,27 @@ export function SiteHeader() {
               )}
             </div>
 
-            <Link href="/professional-audio-diploma" className="block rounded-xl px-3 py-2 hover:bg-slate-100" onClick={() => setMobileOpen(false)}>
+            <Link
+              href="/professional-audio-diploma"
+              className={`block rounded-xl px-3 py-2 hover:bg-slate-100 ${
+                isActive("/professional-audio-diploma") ? "bg-slate-900 text-white" : ""
+              }`}
+              onClick={() => setMobileOpen(false)}
+            >
               Professional Audio Diploma
             </Link>
-            <Link href="/kursstandorte" className="block rounded-xl px-3 py-2 hover:bg-slate-100" onClick={() => setMobileOpen(false)}>
+            <Link
+              href="/kursstandorte"
+              className={`block rounded-xl px-3 py-2 hover:bg-slate-100 ${isActive("/kursstandorte") ? "bg-slate-900 text-white" : ""}`}
+              onClick={() => setMobileOpen(false)}
+            >
               Kursstandorte
             </Link>
-            <Link href="/ueber-uns" className="block rounded-xl px-3 py-2 hover:bg-slate-100" onClick={() => setMobileOpen(false)}>
+            <Link
+              href="/ueber-uns"
+              className={`block rounded-xl px-3 py-2 hover:bg-slate-100 ${isActive("/ueber-uns") ? "bg-slate-900 text-white" : ""}`}
+              onClick={() => setMobileOpen(false)}
+            >
               Über uns
             </Link>
           </div>

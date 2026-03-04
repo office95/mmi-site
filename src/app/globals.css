@@ -197,11 +197,17 @@ a {
   font-weight: 700;
   box-shadow: 0 10px 30px rgba(255, 31, 143, 0.35);
   transition: transform 120ms ease, box-shadow 160ms ease, background 120ms ease;
+  outline: none;
 }
 .btn-primary:hover {
   transform: translateY(-1px);
   box-shadow: 0 14px 34px rgba(255, 31, 143, 0.42);
   background: #e40073;
+}
+.btn-primary:focus-visible {
+  box-shadow:
+    0 0 0 3px rgba(255, 31, 143, 0.32),
+    0 10px 30px rgba(255, 31, 143, 0.35);
 }
 .btn-outline {
   display: inline-flex;
@@ -215,12 +221,19 @@ a {
   color: #0f172a !important;
   font-weight: 600;
   transition: transform 120ms ease, box-shadow 160ms ease, border-color 120ms ease;
+  outline: none;
 }
 .btn-outline:hover {
   transform: translateY(-1px);
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
   border-color: rgba(15, 23, 42, 0.2);
   color: #0f172a !important;
+}
+.btn-outline:focus-visible {
+  box-shadow:
+    0 0 0 3px rgba(15, 23, 42, 0.18),
+    0 10px 24px rgba(15, 23, 42, 0.08);
+  border-color: rgba(15, 23, 42, 0.28);
 }
 
 .nav-link {

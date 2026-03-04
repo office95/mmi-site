@@ -9,10 +9,14 @@ type Setting = {
 };
 
 const LOGO_KEY = "site_logo_url";
+const AGB_KEY = "pdf_agb_url";
+const DATENSCHUTZ_KEY = "pdf_datenschutz_url";
 
 export default function SettingsPage() {
   const supabase = getSupabaseBrowserClient();
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [agbUrl, setAgbUrl] = useState<string | null>(null);
+  const [dsUrl, setDsUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -20,8 +24,12 @@ export default function SettingsPage() {
 
   useEffect(() => {
     const load = async () => {
-      const { data, error } = await supabase.from("settings").select("key,value").eq("key", LOGO_KEY).single();
-      if (!error && data) setLogoUrl(data.value as string);
+      const { data } = await supabase.from("settings").select("key,value").in("key", [LOGO_KEY, AGB_KEY, DATENSCHUTZ_KEY]);
+      data?.forEach((row) => {
+        if (row.key === LOGO_KEY) setLogoUrl(row.value as string);
+        if (row.key === AGB_KEY) setAgbUrl(row.value as string);
+        if (row.key === DATENSCHUTZ_KEY) setDsUrl(row.value as string);
+      });
     };
     load();
   }, [supabase]);
@@ -46,17 +54,39 @@ export default function SettingsPage() {
     }
   };
 
-  const save = async () => {
-    if (!logoUrl) {
-      setError("Bitte zuerst ein Logo hochladen");
-      return;
+  const uploadPdf = async (file: File, setter: (v: string) => void) => {
+    setUploading(true);
+    setError(null);
+    setInfo(null);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      form.append("title", file.name);
+      const res = await fetch("/api/upload", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload fehlgeschlagen");
+      setter(data.url);
+      setInfo("PDF hochgeladen. Speichern, um es zu übernehmen.");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Upload fehlgeschlagen");
+    } finally {
+      setUploading(false);
     }
+  };
+
+  const save = async () => {
     setSaving(true);
     setError(null);
     setInfo(null);
-    const { error } = await supabase.from("settings").upsert({ key: LOGO_KEY, value: logoUrl }, { onConflict: "key" });
+    const rows = [
+      logoUrl ? { key: LOGO_KEY, value: logoUrl } : null,
+      agbUrl ? { key: AGB_KEY, value: agbUrl } : null,
+      dsUrl ? { key: DATENSCHUTZ_KEY, value: dsUrl } : null,
+    ].filter(Boolean);
+
+    const { error } = await supabase.from("settings").upsert(rows as any[], { onConflict: "key" });
     if (error) setError(error.message);
-    else setInfo("Gespeichert. Header wird das neue Logo nutzen, sobald die Seite neu geladen wird.");
+    else setInfo("Gespeichert.");
     setSaving(false);
   };
 
@@ -92,7 +122,48 @@ export default function SettingsPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={save}
-              disabled={saving || !logoUrl}
+              disabled={saving}
+              className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-black shadow-md shadow-[#ff1f8f]/30 hover:bg-[#e40073] disabled:opacity-60"
+            >
+              {saving ? "Speichern…" : "Speichern"}
+            </button>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+          <h2 className="text-lg font-semibold text-slate-900">Rechtliche Dokumente</h2>
+          <p className="text-sm text-slate-600">PDFs für AGB und Datenschutz hochladen.</p>
+
+          <div className="space-y-3">
+            <label className="text-sm font-semibold text-slate-800">AGB (PDF)</label>
+            <div className="flex items-center gap-3">
+              <input type="file" accept="application/pdf" onChange={(e) => e.target.files?.[0] && uploadPdf(e.target.files[0], setAgbUrl)} className="text-sm" />
+              {uploading && <span className="text-xs text-slate-500">Upload…</span>}
+            </div>
+            {agbUrl && (
+              <a href={agbUrl} target="_blank" rel="noreferrer" className="text-xs text-pink-600 underline break-all">
+                {agbUrl}
+              </a>
+            )}
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-sm font-semibold text-slate-800">Datenschutz (PDF)</label>
+            <div className="flex items-center gap-3">
+              <input type="file" accept="application/pdf" onChange={(e) => e.target.files?.[0] && uploadPdf(e.target.files[0], setDsUrl)} className="text-sm" />
+              {uploading && <span className="text-xs text-slate-500">Upload…</span>}
+            </div>
+            {dsUrl && (
+              <a href={dsUrl} target="_blank" rel="noreferrer" className="text-xs text-pink-600 underline break-all">
+                {dsUrl}
+              </a>
+            )}
+          </div>
+
+          <div className="pt-2">
+            <button
+              onClick={save}
+              disabled={saving}
               className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-black shadow-md shadow-[#ff1f8f]/30 hover:bg-[#e40073] disabled:opacity-60"
             >
               {saving ? "Speichern…" : "Speichern"}

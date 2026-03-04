@@ -125,10 +125,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="relative hidden flex-1 justify-center items-center gap-8 lg:gap-10 xl:gap-12 text-[13px] sm:text-sm xl:flex">
-          <Link
-            href="/entdecken"
-            className={`nav-link ${isActive("/entdecken") ? "bg-slate-900 text-white" : ""}`}
-          >
+          <Link href="/entdecken" className={`nav-link ${isActive("/entdecken") ? "underline underline-offset-4" : ""}`}>
             Entdecken
           </Link>
           <div
@@ -138,7 +135,7 @@ export function SiteHeader() {
           >
             <button
               className={`header-btn nav-link inline-flex items-center gap-2 px-2 py-1 rounded-full ${
-                isActive("/intensiv") ? "bg-slate-900 text-white" : ""
+                isActive("/intensiv") ? "underline underline-offset-4" : ""
               }`}
             >
               Intensiv-Ausbildungen <ChevronDown size={14} />
@@ -163,7 +160,7 @@ export function SiteHeader() {
           >
             <button
               className={`header-btn nav-link inline-flex items-center gap-2 px-2 py-1 rounded-full ${
-                isActive("/extrem") ? "bg-slate-900 text-white" : ""
+                isActive("/extrem") ? "underline underline-offset-4" : ""
               }`}
             >
               Extremkurse <ChevronDown size={14} />
@@ -181,20 +178,14 @@ export function SiteHeader() {
             )}
           </div>
 
-          <Link
-            href="/professional-audio-diploma"
-            className={`nav-link ${isActive("/professional-audio-diploma") ? "bg-slate-900 text-white" : ""}`}
-          >
+          <Link href="/professional-audio-diploma" className={`nav-link ${isActive("/professional-audio-diploma") ? "underline underline-offset-4" : ""}`}>
             Professional Audio Diploma
           </Link>
 
-          <Link
-            href="/kursstandorte"
-            className={`nav-link ${isActive("/kursstandorte") ? "bg-slate-900 text-white" : ""}`}
-          >
+          <Link href="/kursstandorte" className={`nav-link ${isActive("/kursstandorte") ? "underline underline-offset-4" : ""}`}>
             Kursstandorte
           </Link>
-          <Link href="/ueber-uns" className={`nav-link ${isActive("/ueber-uns") ? "bg-slate-900 text-white" : ""}`}>
+          <Link href="/ueber-uns" className={`nav-link ${isActive("/ueber-uns") ? "underline underline-offset-4" : ""}`}>
             Über uns
           </Link>
         </nav>
@@ -242,7 +233,7 @@ export function SiteHeader() {
             <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Navigation</p>
             <Link
               href="/entdecken"
-              className={`block rounded-xl px-3 py-2 hover:bg-slate-100 ${isActive("/entdecken") ? "bg-slate-900 text-white" : ""}`}
+              className={`block rounded-xl px-3 py-2 hover:bg-slate-100 ${isActive("/entdecken") ? "underline underline-offset-4" : ""}`}
               onClick={() => setMobileOpen(false)}
             >
               Entdecken
@@ -317,7 +308,7 @@ export function SiteHeader() {
             <Link
               href="/professional-audio-diploma"
               className={`block rounded-xl px-3 py-2 hover:bg-slate-100 ${
-                isActive("/professional-audio-diploma") ? "bg-slate-900 text-white" : ""
+                isActive("/professional-audio-diploma") ? "underline underline-offset-4" : ""
               }`}
               onClick={() => setMobileOpen(false)}
             >
@@ -325,14 +316,14 @@ export function SiteHeader() {
             </Link>
             <Link
               href="/kursstandorte"
-              className={`block rounded-xl px-3 py-2 hover:bg-slate-100 ${isActive("/kursstandorte") ? "bg-slate-900 text-white" : ""}`}
+              className={`block rounded-xl px-3 py-2 hover:bg-slate-100 ${isActive("/kursstandorte") ? "underline underline-offset-4" : ""}`}
               onClick={() => setMobileOpen(false)}
             >
               Kursstandorte
             </Link>
             <Link
               href="/ueber-uns"
-              className={`block rounded-xl px-3 py-2 hover:bg-slate-100 ${isActive("/ueber-uns") ? "bg-slate-900 text-white" : ""}`}
+              className={`block rounded-xl px-3 py-2 hover:bg-slate-100 ${isActive("/ueber-uns") ? "underline underline-offset-4" : ""}`}
               onClick={() => setMobileOpen(false)}
             >
               Über uns

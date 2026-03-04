@@ -128,14 +128,15 @@ export async function POST(req: Request) {
         ? `${adminBase}/admin/orders/${cs.metadata?.order_id ?? ""}`
         : `${adminBase}/admin/orders`;
 
+    const customerPhone = cs.customer_details?.phone || cs.metadata?.phone || cs.metadata?.customer_phone || "";
     const html = `
       <h3>Du hast eine neue Buchung</h3>
       <p><strong>Kurs:</strong> ${courseRow?.data?.title ?? "n/a"}</p>
       <p><strong>Termin:</strong> ${formatDate(sessionRow?.data?.start_date)} ${formatTime(sessionRow?.data?.start_time)}</p>
       <p><strong>Partner:</strong> ${partnerRow?.data?.name ?? "n/a"} (${partnerRow?.data?.city ?? sessionRow?.data?.city ?? ""})</p>
-      <p><strong>Teilnehmer:</strong> ${participants}</p>
+      <p><strong>Teilnehmer (Anzahl):</strong> ${participants}</p>
+      <p><strong>Kursteilnehmer:</strong> ${cs.customer_details?.name ?? "n/a"} ${customerPhone ? "· " + customerPhone : ""} (${cs.customer_details?.email ?? ""})</p>
       <p><strong>Order:</strong> ${cs.metadata?.order_number ?? "—"}</p>
-      <p><strong>Kunde:</strong> ${cs.customer_details?.name ?? ""} (${cs.customer_details?.email ?? ""})</p>
       <p><a href="${orderLink}" target="_blank" rel="noreferrer">Zur Bestellung</a></p>
     `;
     try {

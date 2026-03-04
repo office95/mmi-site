@@ -122,6 +122,12 @@ export async function POST(req: Request) {
     const formatDate = (d?: string | null) => (d ? new Date(d + "T00:00:00").toLocaleDateString("de-AT") : "n/a");
     const formatTime = (t?: string | null) => (t ? t.substring(0, 5) : "n/a");
 
+    const adminBase = process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at";
+    const orderLink =
+      cs.metadata?.order_id || cs.metadata?.order_number
+        ? `${adminBase}/admin/orders/${cs.metadata?.order_id ?? ""}`
+        : `${adminBase}/admin/orders`;
+
     const html = `
       <h3>Du hast eine neue Buchung</h3>
       <p><strong>Kurs:</strong> ${courseRow?.data?.title ?? "n/a"}</p>
@@ -130,10 +136,11 @@ export async function POST(req: Request) {
       <p><strong>Teilnehmer:</strong> ${participants}</p>
       <p><strong>Order:</strong> ${cs.metadata?.order_number ?? "—"}</p>
       <p><strong>Kunde:</strong> ${cs.customer_details?.name ?? ""} (${cs.customer_details?.email ?? ""})</p>
+      <p><a href="${orderLink}" target="_blank" rel="noreferrer">Zur Bestellung</a></p>
     `;
     await sendMail({
       to: "office@musicmission.at",
-      subject: "Neue Kursbuchung",
+      subject: "Du hast eine neue Buchung",
       html,
     });
   }

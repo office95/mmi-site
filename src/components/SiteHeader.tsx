@@ -90,7 +90,7 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="site-header sticky top-0 z-50 w-full bg-white text-slate-900 shadow-sm">
+    <header className="site-header sticky top-0 z-50 w-full bg-white/90 backdrop-blur-xl text-slate-900 shadow-sm transition-colors">
       <div className="flex h-14 w-full items-center pl-[2vh] pr-3 text-sm font-semibold tracking-tight sm:pr-6 lg:pr-20">
         <Link href="/" className="flex items-center gap-2 hover:opacity-90 transition">
           <Image

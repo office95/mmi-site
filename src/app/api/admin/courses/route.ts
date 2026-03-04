@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
   const { data, error } = await supabase
     .from(TABLE)
     .select("*, sessions(*), addons(*), course_tags(tag:tags(name))")
-    .or(showAll ? undefined : regionFilter)
+    .or(showAll ? undefined! : regionFilter) // showAll nicht genutzt, aber TS will string; undefined! = noop
     .order("updated_at", { ascending: false });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   const mapped =

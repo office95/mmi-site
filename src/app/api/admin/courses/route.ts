@@ -101,7 +101,15 @@ export async function POST(req: Request) {
 
   // Tags
   if (Array.isArray(body.tags)) {
-    const tagNames: string[] = body.tags.filter((t: string) => !!t?.trim());
+    // Deduplizieren, sonst knallt ON CONFLICT, wenn derselbe Tag mehrfach im Payload steckt
+    const tagNames: string[] = Array.from(
+      new Set(
+        body.tags
+          .map((t: string) => t?.trim())
+          .filter((t: string | undefined | null): t is string => !!t)
+          .map((t) => t.toLowerCase())
+      )
+    );
     const tagIds: number[] = [];
     if (tagNames.length) {
       const { data: tagsRows, error: tagErr } = await supabase

@@ -56,10 +56,12 @@ export default async function CoursePage({
   let allowAllHosts = false;
 
   try {
+    const safeTrim = (v: unknown) => (typeof v === "string" ? v.trim() : "");
+
     const slugParam = params?.slug;
     if (!slugParam) return notFound();
     const slug = slugParam.toString();
-    slugClean = slug.trim();
+    slugClean = safeTrim(slug);
     const hdr = await headers();
     const rawHost = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
     const host = rawHost.replace(/^www\./, "").split(":")[0]; // strip www + port
@@ -68,7 +70,7 @@ export default async function CoursePage({
     region = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
 
     supabase = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
-    const normalize = (s: string) => s.trim().toLowerCase().replace(/\s+/g, "-");
+    const normalize = (s: string) => safeTrim(s).toLowerCase().replace(/\s+/g, "-");
 
     const uuidMatch = slugClean.match(/^[0-9a-fA-F-]{36}$/);
     if (uuidMatch) {
@@ -93,7 +95,7 @@ export default async function CoursePage({
         const { data } = await supabase.from("courses").select("*").or(orFilter);
         if (data && data.length > 0) {
           course =
-            data.find((c: any) => c.slug?.trim() === slugClean) ||
+            data.find((c: any) => safeTrim(c.slug) === slugClean) ||
             data.find((c: any) => normalize(c.slug ?? "") === normalize(slugClean)) ||
             data[0];
         }

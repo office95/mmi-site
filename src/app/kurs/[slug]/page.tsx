@@ -54,6 +54,7 @@ export default async function CoursePage({
   let supabase: ReturnType<typeof getSupabaseServerClient> | ReturnType<typeof getSupabaseServiceClient> | null = null;
   let slugClean = "";
   let allowAllHosts = false;
+  let lastError: any = null;
 
   try {
     const safeTrim = (v: unknown) => (typeof v === "string" ? v.trim() : "");
@@ -124,7 +125,7 @@ export default async function CoursePage({
     }
   } catch (err) {
     console.error("CoursePage fatal error", err);
-    return notFound();
+    lastError = err instanceof Error ? err.message : String(err);
   }
 
   const bookingFlag = typeof searchParams === "object" && searchParams
@@ -134,8 +135,8 @@ export default async function CoursePage({
   // Region-Mismatch nicht blockieren (insb. Preview/Mehrsprach-Domains)
 
   if (!course) {
-    const supabase = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
-    const activeClient = supabase || getSupabaseServerClient();
+    const supa = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
+    const activeClient = supa || getSupabaseServerClient();
     const { data: list } = await activeClient.from("courses").select("title, slug").limit(10);
     return (
       <div className="min-h-screen bg-white text-slate-900">
@@ -143,6 +144,7 @@ export default async function CoursePage({
         <div className="px-6 py-20 text-center space-y-4">
           <h1 className="text-2xl font-semibold">Kurs nicht gefunden</h1>
           <p className="text-slate-600 mt-2">Für den Slug „{params.slug}“ wurde kein Kurs gefunden.</p>
+          {lastError && <p className="text-xs text-red-600">Fehler: {lastError}</p>}
           {list && (
             <div className="mx-auto max-w-lg text-left text-sm text-slate-700">
               <p className="font-semibold mb-2">Vorhandene Slugs (Top 10):</p>

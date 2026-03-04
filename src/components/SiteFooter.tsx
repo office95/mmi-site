@@ -20,25 +20,21 @@ export default async function SiteFooter() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-14 sm:h-20 bg-gradient-to-t from-[#ff1f8f] to-transparent" />
       <div className="mx-auto max-w-[1200px] relative z-10">
         {/* Mobile Layout */}
-        <div className="flex flex-col gap-6 sm:hidden">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-4 sm:hidden">
+          <div className="flex items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={logo} alt="Music Mission Institute Logo" className="h-14 w-auto" />
+            <img src={logo} alt="Music Mission Institute Logo" className="h-12 w-auto" />
             <div className="text-left">
-              <p className="font-semibold text-lg leading-tight">Music Mission Institute</p>
-              <p className="text-sm text-white/80">Kurse in Musikproduktion, Tontechnik & Live-Engineering</p>
+              <p className="font-semibold text-base leading-tight">Music Mission Institute</p>
+              <p className="text-xs text-white/80">Kurse in Musikproduktion, Tontechnik & Live-Engineering</p>
             </div>
           </div>
-          <div className="grid grid-cols-1 gap-3">
-            <a href="#" className="rounded-xl bg-white text-[#ff1f8f] px-4 py-3 text-center font-semibold shadow-md hover:bg-white/90">
-              Datenschutz
-            </a>
-            <a href="#" className="rounded-xl bg-white text-[#ff1f8f] px-4 py-3 text-center font-semibold shadow-md hover:bg-white/90">
-              AGB
-            </a>
-            <a href="/impressum" className="rounded-xl bg-white text-[#ff1f8f] px-4 py-3 text-center font-semibold shadow-md hover:bg-white/90">
-              Impressum
-            </a>
+          <div className="flex items-center justify-center gap-3 text-sm font-semibold text-white/90">
+            <a href="#" className="underline underline-offset-4 hover:text-black">Datenschutz</a>
+            <span className="text-white/60">•</span>
+            <a href="#" className="underline underline-offset-4 hover:text-black">AGB</a>
+            <span className="text-white/60">•</span>
+            <a href="/impressum" className="underline underline-offset-4 hover:text-black">Impressum</a>
           </div>
           <p className="text-white/80 text-xs text-center">© {new Date().getFullYear()} Music Mission Institute</p>
         </div>

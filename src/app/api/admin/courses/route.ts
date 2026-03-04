@@ -57,16 +57,17 @@ export async function POST(req: Request) {
   const ensureUniqueSlug = async (slugBase: string, regionCode: string | null): Promise<string> => {
     const base = slugBase || `kurs-${Date.now()}`;
     const regionPart = regionCode ? `-${regionCode.toLowerCase()}` : "";
-    // Versuch 1: base + region
     let candidate = `${base}${regionPart}`;
-    for (let i = 0; i < 20; i++) {
+
+    // bis zu 25 Versuche mit Zähler
+    for (let i = 0; i < 25; i++) {
       const { data } = await supabase.from(TABLE).select("id").eq("slug", candidate).maybeSingle();
       const existingId = data?.id;
       if (!existingId || existingId === courseId) return candidate;
       candidate = `${base}${regionPart}-${i + 2}`;
     }
-    // Fallback: kurs-{courseId}
-    return `${base}-${courseId.slice(0, 6).toLowerCase()}`;
+    // Fallback: base + kurze UUID
+    return `${base}${regionPart}-${randomUUID().slice(0, 6).toLowerCase()}`;
   };
 
   const finalSlug = await ensureUniqueSlug(baseSlug, regionNormalized);
@@ -121,7 +122,22 @@ export async function POST(req: Request) {
   updated_at: new Date().toISOString(),
   };
 
-  const { data: courseData, error: courseError } = await supabase.from(TABLE).upsert(payload, { onConflict: "id" }).select().single();
+  // Upsert mit Retry falls Slug in letzter Millisekunde vergeben wurde
+  let courseData = null;
+  let courseError: any = null;
+  let attemptSlug = finalSlug;
+  for (let i = 0; i < 5; i++) {
+    const attemptPayload = { ...payload, slug: attemptSlug };
+    const { data, error } = await supabase.from(TABLE).upsert(attemptPayload, { onConflict: "id" }).select().single();
+    courseData = data;
+    courseError = error;
+    if (!error) break;
+    if (error.message && error.message.includes("courses_slug_key")) {
+      attemptSlug = `${baseSlug || "kurs"}-${regionNormalized ? regionNormalized.toLowerCase() : "x"}-${Date.now().toString().slice(-5)}-${i + 1}`;
+      continue;
+    }
+    break;
+  }
   if (courseError) return NextResponse.json({ error: courseError.message }, { status: 500 });
 
   // Tags

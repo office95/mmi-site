@@ -96,6 +96,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const region = getRegion();
+  const siteUrl = siteUrlEnv;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",

@@ -200,75 +200,94 @@ export function SiteHeader() {
           </button>
         </div>
 
-        <div className="space-y-4 text-base font-semibold">
-          <Link href="/entdecken" className="block" onClick={() => setMobileOpen(false)}>
-            Entdecken
-          </Link>
-          <button
-            className="flex w-full items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-left font-semibold"
-            onClick={() => setMobileIntensivOpen((v) => !v)}
-          >
-            <span>Intensiv-Ausbildungen</span>
-            <ChevronDown size={16} className={`transition ${mobileIntensivOpen ? "rotate-180" : ""}`} />
-          </button>
-          {mobileIntensivOpen && (
-            <div className="ml-3 space-y-2 text-sm font-normal text-slate-800">
-              {(intensivSlot?.courses ?? []).map((c) => (
-                <Link
-                  key={c.id}
-                  href={`/kurs/${c.slug}`}
-                  className="block rounded-md px-2 py-1 hover:bg-slate-100"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {c.title}
-                </Link>
-              ))}
-              <Link
-                href="/intensiv"
-                className="block rounded-md px-2 py-1 font-semibold text-pink-600 hover:bg-pink-50"
-                onClick={() => setMobileOpen(false)}
+        <div className="space-y-5 text-base font-semibold">
+          <div className="rounded-2xl border border-slate-200 bg-white/90 shadow-sm shadow-slate-200/70 px-4 py-4 space-y-3">
+            <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Navigation</p>
+            <Link href="/entdecken" className="block rounded-xl px-3 py-2 hover:bg-slate-100" onClick={() => setMobileOpen(false)}>
+              Entdecken
+            </Link>
+
+            <div className="rounded-xl border border-slate-200 bg-slate-50/60">
+              <button
+                className="flex w-full items-center justify-between px-3 py-2 text-left font-semibold"
+                onClick={() => setMobileIntensivOpen((v) => !v)}
               >
-                Alle Intensiv-Ausbildungen
-              </Link>
+                <span>Intensiv-Ausbildungen</span>
+                <ChevronDown size={16} className={`transition ${mobileIntensivOpen ? "rotate-180" : ""}`} />
+              </button>
+              {mobileIntensivOpen && (
+                <div className="border-t border-slate-200 bg-white">
+                  <div className="space-y-1.5 px-3 py-3 text-sm font-normal text-slate-800">
+                    {(intensivSlot?.courses ?? []).map((c) => (
+                      <Link
+                        key={c.id}
+                        href={`/kurs/${c.slug}`}
+                        className="block rounded-lg px-2 py-1 hover:bg-slate-100"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        {c.title}
+                      </Link>
+                    ))}
+                    <Link
+                      href="/intensiv"
+                      className="block rounded-lg px-2 py-2 font-semibold text-pink-600 hover:bg-pink-50"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      Alle Intensiv-Ausbildungen
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-          <button
-            className="flex w-full items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-left font-semibold"
-            onClick={() => setMobileExtremOpen((v) => !v)}
-          >
-            <span>Extremkurse</span>
-            <ChevronDown size={16} className={`transition ${mobileExtremOpen ? "rotate-180" : ""}`} />
-          </button>
-          {mobileExtremOpen && (
-            <div className="ml-3 space-y-2 text-sm font-normal text-slate-800">
-              {(extremSlot?.courses ?? []).map((c) => (
-                <Link
-                  key={c.id}
-                  href={`/kurs/${c.slug}`}
-                  className="block rounded-md px-2 py-1 hover:bg-slate-100"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {c.title}
-                </Link>
-              ))}
-              <Link
-                href="/extremkurs"
-                className="block rounded-md px-2 py-1 font-semibold text-pink-600 hover:bg-pink-50"
-                onClick={() => setMobileOpen(false)}
+
+            <div className="rounded-xl border border-slate-200 bg-slate-50/60">
+              <button
+                className="flex w-full items-center justify-between px-3 py-2 text-left font-semibold"
+                onClick={() => setMobileExtremOpen((v) => !v)}
               >
-                Alle Extremkurse
-              </Link>
+                <span>Extremkurse</span>
+                <ChevronDown size={16} className={`transition ${mobileExtremOpen ? "rotate-180" : ""}`} />
+              </button>
+              {mobileExtremOpen && (
+                <div className="border-t border-slate-200 bg-white">
+                  <div className="space-y-1.5 px-3 py-3 text-sm font-normal text-slate-800">
+                    {(extremSlot?.courses ?? []).map((c) => (
+                      <Link
+                        key={c.id}
+                        href={`/kurs/${c.slug}`}
+                        className="block rounded-lg px-2 py-1 hover:bg-slate-100"
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        {c.title}
+                      </Link>
+                    ))}
+                    <Link
+                      href="/extremkurs"
+                      className="block rounded-lg px-2 py-2 font-semibold text-pink-600 hover:bg-pink-50"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      Alle Extremkurse
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-          <Link href="/professional-audio-diploma" className="block" onClick={() => setMobileOpen(false)}>
-            Professional Audio Diploma
-          </Link>
-          <Link href="/kursstandorte" className="block" onClick={() => setMobileOpen(false)}>
-            Kursstandorte
-          </Link>
-          <Link href="/ueber-uns" className="block" onClick={() => setMobileOpen(false)}>
-            Über uns
-          </Link>
+
+            <Link href="/professional-audio-diploma" className="block rounded-xl px-3 py-2 hover:bg-slate-100" onClick={() => setMobileOpen(false)}>
+              Professional Audio Diploma
+            </Link>
+            <Link href="/kursstandorte" className="block rounded-xl px-3 py-2 hover:bg-slate-100" onClick={() => setMobileOpen(false)}>
+              Kursstandorte
+            </Link>
+            <Link href="/ueber-uns" className="block rounded-xl px-3 py-2 hover:bg-slate-100" onClick={() => setMobileOpen(false)}>
+              Über uns
+            </Link>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-white/90 shadow-sm px-4 py-3 text-sm text-slate-700">
+            <p className="font-semibold text-slate-900 mb-1">Kontakt</p>
+            <p>office@musicmission.at</p>
+          </div>
         </div>
       </div>
     </header>

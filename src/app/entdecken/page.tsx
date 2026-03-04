@@ -161,7 +161,7 @@ export default function EntdeckenPage() {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
-      <section className="relative h-[25vh] w-full overflow-hidden text-white">
+      <section className="relative h-[40vh] sm:h-[50vh] lg:h-[60vh] w-full overflow-hidden text-white">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/b4f50227-9cbd-44d9-8947-2afdf30e801d.webp"
@@ -169,7 +169,7 @@ export default function EntdeckenPage() {
           className="h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-[#ff1f8f]/35 to-transparent" />
-        <div className="absolute inset-0 flex items-center justify-center px-6">
+        <div className="absolute inset-0 flex items-center justify-center px-6 pb-6">
           <div className="text-center text-white space-y-3 max-w-4xl">
             <p className="text-sm uppercase tracking-[0.2em] text-white/70">Entdecken</p>
             <h1 className="font-anton text-4xl sm:text-5xl leading-tight drop-shadow-[0_8px_30px_rgba(0,0,0,0.35)]">Alle Kurstermine. Auf einen Blick.</h1>
@@ -189,7 +189,7 @@ export default function EntdeckenPage() {
       </section>
 
       <section className="w-full bg-neutral-100">
-        <div className="mx-auto max-w-6xl px-6 pb-16 space-y-6 pt-[2vh] sm:pt-[2vh]">
+        <div className="mx-auto max-w-6xl px-6 pb-16 space-y-6 pt-6 sm:pt-8">
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap items-center gap-3">
               <div className="grid w-full max-w-4xl gap-3 sm:grid-cols-3">

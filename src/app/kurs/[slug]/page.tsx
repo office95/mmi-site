@@ -146,6 +146,7 @@ export default async function CoursePage({
   // Region-Mismatch nicht blockieren (insb. Preview/Mehrsprach-Domains)
 
   if (!course) {
+    console.warn("[Kursseite] Kurs nicht gefunden", { slug: slugClean, host, region, lastError });
     const supa = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
     const activeClient = supa || getSupabaseServerClient();
     const { data: list } = await activeClient.from("courses").select("title, slug").limit(10);

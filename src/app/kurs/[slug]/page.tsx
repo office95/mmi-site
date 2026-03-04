@@ -9,6 +9,7 @@ import Parallax from "@/components/Parallax";
 import ConsultBanner from "@/components/ConsultBanner";
 import { headers } from "next/headers";
 import { getRegion } from "@/lib/region";
+import { CourseTabs } from "./CourseTabs";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -264,6 +265,8 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
                 <div className="prose prose-slate mt-3 text-lg max-w-none" dangerouslySetInnerHTML={{ __html: toHtml(course.summary) }} />
               )}
             </div>
+
+            <CourseTabs modules={course.modules ?? []} faqs={course.faqs ?? []} />
 
             {(!course.sessions || course.sessions.length === 0) && (
               <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">

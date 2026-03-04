@@ -110,14 +110,18 @@ export async function POST(req: Request) {
       sessionId
         ? supabase
             .from("sessions")
-            .select("start_date,start_time,partner_id,city,state,country")
+            .select("start_date,start_time,partner_id,city,state,country,address,zip")
             .eq("id", sessionId)
             .maybeSingle()
         : Promise.resolve({ data: null }),
     ]);
     const partnerRow =
       sessionRow?.data?.partner_id &&
-      (await supabase.from("partners").select("name,city,state,country").eq("id", sessionRow.data.partner_id).maybeSingle());
+      (await supabase
+        .from("partners")
+        .select("name,city,state,country,street,zip,address")
+        .eq("id", sessionRow.data.partner_id)
+        .maybeSingle());
 
     const formatDate = (d?: string | null) => (d ? new Date(d + "T00:00:00").toLocaleDateString("de-AT") : "n/a");
     const formatTime = (t?: string | null) => (t ? t.substring(0, 5) : "n/a");
@@ -149,6 +153,39 @@ export async function POST(req: Request) {
       console.error("E-Mail Versand fehlgeschlagen", err);
       // Webhook trotzdem erfolgreich quittieren, damit Stripe nicht neu sendet
     }
+  }
+
+  // Kundenbestätigung
+  try {
+    const customerEmail =
+      event.type === "checkout.session.completed"
+        ? (event.data.object as Stripe.Checkout.Session).customer_details?.email ?? null
+        : null;
+    if (customerEmail) {
+      const cs = event.data.object as Stripe.Checkout.Session;
+      const courseTitle = cs.metadata?.course_title || "";
+      const startDate = cs.metadata?.start_date || "";
+      const partnerName = cs.metadata?.partner_name || "";
+      const partnerAddress = cs.metadata?.partner_address || "";
+
+      const htmlCustomer = `
+        <p>Hallo,</p>
+        <p>vielen Dank für deine Buchung beim Music Mission Institute.<br/>Dein Platz im Kurs ist fix reserviert.</p>
+        <p><strong>Kurs:</strong> ${courseTitle}</p>
+        <p><strong>Termin:</strong> ${startDate}</p>
+        <p><strong>Ort:</strong> ${partnerName}${partnerAddress ? ", " + partnerAddress : ""}</p>
+        <p>Weitere Infos erhältst du rechtzeitig vor Kursbeginn.</p>
+        <p>Wir freuen uns auf dich!</p>
+        <p>Beste Grüße<br/>Music Mission Institute<br/>www.musicmission.at</p>
+      `;
+      await sendMail({
+        to: customerEmail,
+        subject: "Bestätigung deiner Kursbuchung",
+        html: htmlCustomer,
+      });
+    }
+  } catch (err) {
+    console.error("Customer mail failed", err);
   }
 
   return NextResponse.json({ received: true });

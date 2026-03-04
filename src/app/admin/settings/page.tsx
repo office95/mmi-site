@@ -196,7 +196,7 @@ export default function SettingsPage() {
           <p className="text-sm text-slate-500">Globale Einstellungen & FAQs für die Startseite.</p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <button
             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
               tab === "settings" ? "bg-slate-900 text-white" : "border border-slate-200 bg-white text-slate-700"
@@ -213,6 +213,36 @@ export default function SettingsPage() {
           >
             FAQs Startseite
           </button>
+          <a
+            href="/admin/hero"
+            className="rounded-full px-4 py-2 text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+          >
+            Hero
+          </a>
+          <a
+            href="/admin/media"
+            className="rounded-full px-4 py-2 text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+          >
+            Medien
+          </a>
+          <a
+            href="/admin/header-menu"
+            className="rounded-full px-4 py-2 text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+          >
+            Header-Menü
+          </a>
+          <a
+            href="/admin/users"
+            className="rounded-full px-4 py-2 text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+          >
+            Benutzer
+          </a>
+          <a
+            href="/admin/automationen"
+            className="rounded-full px-4 py-2 text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+          >
+            Automationen
+          </a>
         </div>
 
         {tab === "settings" && (

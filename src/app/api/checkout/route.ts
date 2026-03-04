@@ -163,8 +163,8 @@ export async function POST(request: Request) {
   const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "localhost:3000";
   const proto = (request.headers.get("x-forwarded-proto") || "").includes("http") ? request.headers.get("x-forwarded-proto")! : "https";
   const baseUrl = `${proto}://${host}`.replace(/\/+$/, "");
-  const successUrl = `${baseUrl}/kurs/${course.slug}?booking=success`;
-  const cancelUrl = `${baseUrl}/kurs/${course.slug}?booking=cancel`;
+  const successUrl = `${baseUrl}/buchen/success?course=${course.slug}&order=${orderInsert.id}`;
+  const cancelUrl = `${baseUrl}/buchen/cancel?course=${course.slug}`;
 
   // Wenn kein Stripe-Key vorhanden → klarer Fehler
   if (!stripe) {

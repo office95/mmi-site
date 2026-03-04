@@ -29,7 +29,14 @@ export async function GET(req: NextRequest) {
   const mapped =
     data?.map((c: any) => ({
       ...c,
-      tags: ((c.course_tags ?? []).map((t: any) => t.tag?.name).filter(Boolean) ?? []).concat(c.tags ?? []).filter(Boolean),
+      tags: Array.from(
+        new Set(
+          [
+            ...((c.course_tags ?? []).map((t: any) => t.tag?.name).filter(Boolean) ?? []),
+            ...((c.tags ?? []).filter(Boolean) ?? []),
+          ].map((t: any) => (typeof t === "string" ? t.trim() : "")).filter(Boolean)
+        )
+      ),
       sessions: c.sessions ?? [],
       addons: c.addons ?? [],
       faqs: c.faqs ?? [],
@@ -60,12 +67,26 @@ export async function POST(req: Request) {
   };
 
   const finalSlug = await ensureUniqueSlug(baseSlug);
+  const cleanTags = (() => {
+    const seen = new Set<string>();
+    const list: string[] = [];
+    for (const raw of Array.isArray(body.tags) ? body.tags : []) {
+      if (!raw) continue;
+      const trimmed = String(raw).trim();
+      if (!trimmed) continue;
+      const key = trimmed.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      list.push(trimmed);
+    }
+    return list;
+  })();
   const payload = {
     id: courseId,
     status: body.status ?? "active",
     title: body.title,
     slug: finalSlug,
-    tags: Array.isArray(body.tags) ? body.tags.filter((t: string) => !!t?.trim()) : [],
+    tags: cleanTags,
     region: regionNormalized,
     category_id: body.category_id ?? null,
     subcategory_id: body.subcategory_id ?? null,
@@ -103,14 +124,7 @@ export async function POST(req: Request) {
   // Tags
   if (Array.isArray(body.tags)) {
     // Deduplizieren, sonst knallt ON CONFLICT, wenn derselbe Tag mehrfach im Payload steckt
-    const tagNames: string[] = Array.from(
-      new Set(
-        body.tags
-          .map((t: string) => t?.trim())
-          .filter((t: string | undefined | null): t is string => !!t)
-          .map((t: string) => t.toLowerCase())
-      )
-    );
+    const tagNames: string[] = Array.from(new Set(cleanTags.map((t) => t.toLowerCase())));
     const tagIds: number[] = [];
     if (tagNames.length) {
       const { data: tagsRows, error: tagErr } = await supabase

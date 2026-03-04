@@ -51,6 +51,8 @@ export default async function CoursePage({
 }) {
   let course: any = null;
   let region: "AT" | "DE";
+  let supabase = getSupabaseServerClient();
+  let slugClean = params.slug.trim();
 
   try {
     const { slug } = params;
@@ -59,9 +61,9 @@ export default async function CoursePage({
     const host = rawHost.replace(/^www\./, "").split(":")[0]; // strip www + port
     region = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
 
-    const supabase = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
+    supabase = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
     const normalize = (s: string) => s.trim().toLowerCase().replace(/\s+/g, "-");
-    const slugClean = slug.trim();
+    slugClean = slug.trim();
 
     const uuidMatch = slugClean.match(/^[0-9a-fA-F-]{36}$/);
     if (uuidMatch) {

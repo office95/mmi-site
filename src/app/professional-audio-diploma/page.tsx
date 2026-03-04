@@ -8,13 +8,54 @@ const heroImg =
 
 export default function ProfessionalAudioDiplomaPage() {
   const [sending, setSending] = useState(false);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"kurs" | "faq">("kurs");
   const [openFaq, setOpenFaq] = useState<number>(0);
+  const [form, setForm] = useState({
+    first_name: "",
+    last_name: "",
+    birthdate: "",
+    phone: "",
+    email: "",
+    street: "",
+    zip: "",
+    city: "",
+    location_preference: "",
+    consent: false,
+  });
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError(null);
+    setSuccess(null);
     setSending(true);
-    setTimeout(() => setSending(false), 800);
+    try {
+      const res = await fetch("/api/diploma/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.error || "Senden fehlgeschlagen");
+      setSuccess("Danke! Wir melden uns in Kürze mit allen Infos.");
+      setForm({
+        first_name: "",
+        last_name: "",
+        birthdate: "",
+        phone: "",
+        email: "",
+        street: "",
+        zip: "",
+        city: "",
+        location_preference: "",
+        consent: false,
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Senden fehlgeschlagen");
+    } finally {
+      setSending(false);
+    }
   };
 
   const semesters = [
@@ -218,17 +259,29 @@ export default function ProfessionalAudioDiplomaPage() {
             <p className="text-slate-600">Wir melden uns mit allen Infos zu Startterminen, Studios und Zahlungsoptionen.</p>
           </div>
           <form onSubmit={handleSubmit} className="mt-8 grid gap-4 sm:grid-cols-2">
-            <Input label="Vorname" required />
-            <Input label="Nachname" required />
-            <Input label="Geburtsdatum" type="date" required />
-            <Input label="Telefon" type="tel" required />
-            <Input label="E-Mail" type="email" required className="sm:col-span-2" />
-            <Input label="Straße & Hausnummer" required className="sm:col-span-2" />
-            <Input label="PLZ" required />
-            <Input label="Ort" required />
-            <Input label="Kursstandort" placeholder="z. B. Wien, Graz, Klagenfurt" className="sm:col-span-2" />
+            <Input label="Vorname" required value={form.first_name} onChange={(v) => setForm((f) => ({ ...f, first_name: v }))} />
+            <Input label="Nachname" required value={form.last_name} onChange={(v) => setForm((f) => ({ ...f, last_name: v }))} />
+            <Input label="Geburtsdatum" type="date" required value={form.birthdate} onChange={(v) => setForm((f) => ({ ...f, birthdate: v }))} />
+            <Input label="Telefon" type="tel" required value={form.phone} onChange={(v) => setForm((f) => ({ ...f, phone: v }))} />
+            <Input label="E-Mail" type="email" required className="sm:col-span-2" value={form.email} onChange={(v) => setForm((f) => ({ ...f, email: v }))} />
+            <Input label="Straße & Hausnummer" required className="sm:col-span-2" value={form.street} onChange={(v) => setForm((f) => ({ ...f, street: v }))} />
+            <Input label="PLZ" required value={form.zip} onChange={(v) => setForm((f) => ({ ...f, zip: v }))} />
+            <Input label="Ort" required value={form.city} onChange={(v) => setForm((f) => ({ ...f, city: v }))} />
+            <Input
+              label="Kursstandort"
+              placeholder="z. B. Wien, Graz, Klagenfurt"
+              className="sm:col-span-2"
+              value={form.location_preference}
+              onChange={(v) => setForm((f) => ({ ...f, location_preference: v }))}
+            />
             <div className="sm:col-span-2 flex items-start gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-              <input type="checkbox" required className="mt-1 h-4 w-4 rounded border-slate-300 text-[#ff1f8f] focus:ring-[#ff1f8f]" />
+              <input
+                type="checkbox"
+                required
+                checked={form.consent}
+                onChange={(e) => setForm((f) => ({ ...f, consent: e.target.checked }))}
+                className="mt-1 h-4 w-4 rounded border-slate-300 text-[#ff1f8f] focus:ring-[#ff1f8f]"
+              />
               <p className="text-sm text-slate-600">
                 Ich stimme AGB und Datenschutz zu und möchte über Termine & Angebote informiert werden. Widerruf jederzeit möglich.
               </p>
@@ -240,6 +293,8 @@ export default function ProfessionalAudioDiplomaPage() {
             >
               {sending ? "Wird gesendet…" : "Jetzt anmelden"}
             </button>
+            {success && <p className="sm:col-span-2 text-sm text-emerald-700">{success}</p>}
+            {error && <p className="sm:col-span-2 text-sm text-red-600">{error}</p>}
           </form>
         </div>
       </section>
@@ -310,12 +365,16 @@ function Input({
   required,
   className,
   placeholder,
+  value,
+  onChange,
 }: {
   label: string;
   type?: string;
   required?: boolean;
   className?: string;
   placeholder?: string;
+  value?: string;
+  onChange?: (v: string) => void;
 }) {
   return (
     <label className={`flex flex-col gap-1 text-sm font-semibold text-slate-800 ${className ?? ""}`}>
@@ -324,6 +383,8 @@ function Input({
         type={type}
         required={required}
         placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange?.(e.target.value)}
         className="rounded-xl border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-[#ff1f8f] focus:outline-none"
       />
     </label>

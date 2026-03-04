@@ -209,9 +209,9 @@ export default function SettingsPage() {
 
         {tab === "settings" && (
           <div className="space-y-6">
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
-            <h2 className="text-lg font-semibold text-slate-900">Header-Logo</h2>
-            <p className="text-sm text-slate-600">Hier kannst du das Logo für den Website-Header hochladen.</p>
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+              <h2 className="text-lg font-semibold text-slate-900">Header-Logo</h2>
+              <p className="text-sm text-slate-600">Hier kannst du das Logo für den Website-Header hochladen.</p>
 
               <div className="flex items-center gap-3">
                 <input
@@ -245,19 +245,19 @@ export default function SettingsPage() {
               </div>
             </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
-            <h2 className="text-lg font-semibold text-slate-900">Rechtliche Dokumente</h2>
-            <p className="text-sm text-slate-600">PDFs für AGB und Datenschutz hochladen.</p>
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+              <h2 className="text-lg font-semibold text-slate-900">Rechtliche Dokumente</h2>
+              <p className="text-sm text-slate-600">PDFs für AGB und Datenschutz hochladen.</p>
 
               <div className="space-y-3">
                 <label className="text-sm font-semibold text-slate-800">AGB (PDF)</label>
                 <div className="flex items-center gap-3">
-                <input
-                  type="file"
-                  accept="application/pdf"
-                  onChange={(e) => e.target.files?.[0] && uploadFileToSetting(e.target.files[0], setAgbUrl, AGB_KEY)}
-                  className="text-sm"
-                />
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    onChange={(e) => e.target.files?.[0] && uploadFileToSetting(e.target.files[0], setAgbUrl, AGB_KEY)}
+                    className="text-sm"
+                  />
                   {uploading && <span className="text-xs text-slate-500">Upload…</span>}
                 </div>
                 {agbUrl && (
@@ -270,12 +270,12 @@ export default function SettingsPage() {
               <div className="space-y-3">
                 <label className="text-sm font-semibold text-slate-800">Datenschutz (PDF)</label>
                 <div className="flex items-center gap-3">
-                <input
-                  type="file"
-                  accept="application/pdf"
-                  onChange={(e) => e.target.files?.[0] && uploadFileToSetting(e.target.files[0], setDsUrl, DATENSCHUTZ_KEY)}
-                  className="text-sm"
-                />
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    onChange={(e) => e.target.files?.[0] && uploadFileToSetting(e.target.files[0], setDsUrl, DATENSCHUTZ_KEY)}
+                    className="text-sm"
+                  />
                   {uploading && <span className="text-xs text-slate-500">Upload…</span>}
                 </div>
                 {dsUrl && (
@@ -295,35 +295,35 @@ export default function SettingsPage() {
                 </button>
               </div>
             </div>
-          </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
-            <h2 className="text-lg font-semibold text-slate-900">Favicon</h2>
-            <p className="text-sm text-slate-600">Bild für das Browser-Tab/Favicon hochladen (PNG/ICO, quadratisch empfohlen).</p>
-            <div className="flex items-center gap-3">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => e.target.files?.[0] && uploadFileToSetting(e.target.files[0], setFaviconUrl, FAVICON_KEY)}
-                className="text-sm"
-              />
-              {uploading && <span className="text-xs text-slate-500">Upload…</span>}
-            </div>
-            {faviconUrl && (
-              <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={faviconUrl} alt="Favicon Preview" className="h-10 w-10 rounded" />
-                <p className="text-xs text-slate-500 break-all">{faviconUrl}</p>
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+              <h2 className="text-lg font-semibold text-slate-900">Favicon</h2>
+              <p className="text-sm text-slate-600">Bild für das Browser-Tab/Favicon hochladen (PNG/ICO, quadratisch empfohlen).</p>
+              <div className="flex items-center gap-3">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => e.target.files?.[0] && uploadFileToSetting(e.target.files[0], setFaviconUrl, FAVICON_KEY)}
+                  className="text-sm"
+                />
+                {uploading && <span className="text-xs text-slate-500">Upload…</span>}
               </div>
-            )}
-            <div className="flex items-center gap-3">
-              <button
-                onClick={save}
-                disabled={saving}
-                className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-black shadow-md shadow-[#ff1f8f]/30 hover:bg-[#e40073] disabled:opacity-60"
-              >
-                {saving ? "Speichern…" : "Speichern"}
-              </button>
+              {faviconUrl && (
+                <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={faviconUrl} alt="Favicon Preview" className="h-10 w-10 rounded" />
+                  <p className="text-xs text-slate-500 break-all">{faviconUrl}</p>
+                </div>
+              )}
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={save}
+                  disabled={saving}
+                  className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-black shadow-md shadow-[#ff1f8f]/30 hover:bg-[#e40073] disabled:opacity-60"
+                >
+                  {saving ? "Speichern…" : "Speichern"}
+                </button>
+              </div>
             </div>
           </div>
         )}

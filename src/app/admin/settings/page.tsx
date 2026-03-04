@@ -9,12 +9,14 @@ type Faq = { id: number; question: string; answer: string; region: string | null
 const LOGO_KEY = "site_logo_url";
 const AGB_KEY = "pdf_agb_url";
 const DATENSCHUTZ_KEY = "pdf_datenschutz_url";
+const FAVICON_KEY = "site_favicon_url";
 
 export default function SettingsPage() {
   const supabase = getSupabaseBrowserClient();
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [agbUrl, setAgbUrl] = useState<string | null>(null);
   const [dsUrl, setDsUrl] = useState<string | null>(null);
+  const [faviconUrl, setFaviconUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -33,11 +35,12 @@ export default function SettingsPage() {
 
   useEffect(() => {
     const load = async () => {
-      const { data } = await supabase.from("settings").select("key,value").in("key", [LOGO_KEY, AGB_KEY, DATENSCHUTZ_KEY]);
+      const { data } = await supabase.from("settings").select("key,value").in("key", [LOGO_KEY, AGB_KEY, DATENSCHUTZ_KEY, FAVICON_KEY]);
       data?.forEach((row) => {
         if (row.key === LOGO_KEY) setLogoUrl(row.value as string);
         if (row.key === AGB_KEY) setAgbUrl(row.value as string);
         if (row.key === DATENSCHUTZ_KEY) setDsUrl(row.value as string);
+        if (row.key === FAVICON_KEY) setFaviconUrl(row.value as string);
       });
     };
     load();
@@ -112,6 +115,7 @@ export default function SettingsPage() {
       logoUrl ? { key: LOGO_KEY, value: logoUrl } : null,
       agbUrl ? { key: AGB_KEY, value: agbUrl } : null,
       dsUrl ? { key: DATENSCHUTZ_KEY, value: dsUrl } : null,
+      faviconUrl ? { key: FAVICON_KEY, value: faviconUrl } : null,
     ].filter(Boolean);
 
     const { error } = await supabase.from("settings").upsert(rows as any[], { onConflict: "key" });
@@ -218,9 +222,9 @@ export default function SettingsPage() {
 
         {tab === "settings" && (
           <div className="space-y-6">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
-              <h2 className="text-lg font-semibold text-slate-900">Header-Logo</h2>
-              <p className="text-sm text-slate-600">Hier kannst du das Logo für den Website-Header hochladen.</p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+            <h2 className="text-lg font-semibold text-slate-900">Header-Logo</h2>
+            <p className="text-sm text-slate-600">Hier kannst du das Logo für den Website-Header hochladen.</p>
 
               <div className="flex items-center gap-3">
                 <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && uploadLogo(e.target.files[0])} className="text-sm" />
@@ -249,9 +253,9 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
-              <h2 className="text-lg font-semibold text-slate-900">Rechtliche Dokumente</h2>
-              <p className="text-sm text-slate-600">PDFs für AGB und Datenschutz hochladen.</p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+            <h2 className="text-lg font-semibold text-slate-900">Rechtliche Dokumente</h2>
+            <p className="text-sm text-slate-600">PDFs für AGB und Datenschutz hochladen.</p>
 
               <div className="space-y-3">
                 <label className="text-sm font-semibold text-slate-800">AGB (PDF)</label>
@@ -288,6 +292,31 @@ export default function SettingsPage() {
                   {saving ? "Speichern…" : "Speichern"}
                 </button>
               </div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+            <h2 className="text-lg font-semibold text-slate-900">Favicon</h2>
+            <p className="text-sm text-slate-600">Bild für das Browser-Tab/Favicon hochladen (PNG/ICO, quadratisch empfohlen).</p>
+            <div className="flex items-center gap-3">
+              <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && uploadLogo(e.target.files[0])} className="text-sm" />
+              {uploading && <span className="text-xs text-slate-500">Upload…</span>}
+            </div>
+            {faviconUrl && (
+              <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={faviconUrl} alt="Favicon Preview" className="h-10 w-10 rounded" />
+                <p className="text-xs text-slate-500 break-all">{faviconUrl}</p>
+              </div>
+            )}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={save}
+                disabled={saving}
+                className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-black shadow-md shadow-[#ff1f8f]/30 hover:bg-[#e40073] disabled:opacity-60"
+              >
+                {saving ? "Speichern…" : "Speichern"}
+              </button>
             </div>
           </div>
         )}

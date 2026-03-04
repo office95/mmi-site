@@ -67,13 +67,14 @@ export async function POST(req: Request) {
   const supabase = getSupabaseServiceClient();
 
   const id = body.id ?? randomUUID();
+  const regionNormalized = body.region ? String(body.region).trim().toUpperCase() : null;
   if (!body.start_date) {
     return NextResponse.json({ error: "start_date ist erforderlich" }, { status: 400 });
   }
 
   const payload = {
     id,
-    region: body.region ?? null,
+    region: regionNormalized,
     course_id: body.course_id ?? null,
     partner_id: body.partner_id ?? null,
     start_date: body.start_date ?? null,

@@ -171,8 +171,8 @@ export default async function Home() {
               <HeroSlider slides={heroSlides} />
               <div className="absolute inset-0 pointer-events-none">
                 <span
-                  className="block text-center font-anton text-[220px] sm:text-[300px] lg:text-[420px] xl:text-[520px] leading-none text-white/30 select-none max-w-[80vw]"
-                  style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
+                  className="block text-center font-anton text-[200px] sm:text-[280px] lg:text-[420px] xl:text-[520px] leading-none text-white/30 select-none whitespace-nowrap"
+                  style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "100%" }}
                 >
                   MMI
                 </span>

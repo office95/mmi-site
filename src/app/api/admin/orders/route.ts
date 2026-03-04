@@ -10,7 +10,7 @@ export async function GET() {
     const { data: orders, error } = await supabase
       .from("orders")
       .select(
-        "*, course:courses(title,slug), session:sessions(start_date,start_time,city,partner_id, partners(name,city,state,country))"
+        "*, course:courses!orders_course_id_fkey(title,slug,base_price_cents,deposit_cents), session:sessions!orders_session_id_fkey(start_date,start_time,city,partner_id, partner:partners(name,city,state,country))"
       )
       .order("created_at", { ascending: false })
       .limit(200);

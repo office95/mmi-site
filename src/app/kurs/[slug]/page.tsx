@@ -122,7 +122,7 @@ export default async function CoursePage({
       const { data: allCourses, error } = await supabase.from("courses").select("*");
       if (error) lastError = error.message;
       if (allCourses) {
-        const target = normalize(slug);
+        const target = normalize(slugClean);
         course =
           allCourses.find((c: any) => normalize(c.slug ?? "") === target || normalize(c.title ?? "") === target) ||
           allCourses.find((c: any) => normalize(c.slug ?? "").startsWith(target) || normalize(c.title ?? "").startsWith(target)) ||

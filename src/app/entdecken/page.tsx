@@ -29,6 +29,9 @@ export default function EntdeckenPage() {
   const [filterCategory, setFilterCategory] = useState("");
   const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [debugHost, setDebugHost] = useState("");
+  const [debugRegion, setDebugRegion] = useState("");
+  const [debugXRegion, setDebugXRegion] = useState("");
 
   useEffect(() => {
     const loadSessions = async () => {
@@ -72,6 +75,17 @@ export default function EntdeckenPage() {
       }
     };
     loadSessions();
+  }, []);
+
+  // Debug-Anzeige: Region + Host
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const host = window.location.host;
+    const hostname = host.replace(/^www\./, "").split(":")[0];
+    const region = hostname.endsWith(".de") ? "DE" : hostname.endsWith(".at") ? "AT" : "";
+    setDebugHost(hostname);
+    setDebugRegion(region || "unbekannt");
+    setDebugXRegion((window as any).__REGION || "");
   }, []);
 
   // Stammdaten für Filter laden
@@ -234,6 +248,10 @@ export default function EntdeckenPage() {
                 Filter zurücksetzen
               </button>
             </div>
+
+            <p className="text-xs text-slate-500">
+              Debug Region: {debugRegion || "—"} · host: {debugHost || "—"} · x-region: {debugXRegion || "(client)"}
+            </p>
 
             <div className="flex items-center justify-between mt-6 sm:mt-8">
               <div>

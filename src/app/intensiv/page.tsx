@@ -33,7 +33,7 @@ async function loadCourses(region: "AT" | "DE"): Promise<Course[]> {
     .from("courses")
     .select("id,title,slug,summary,hero_image_url,hero_image_mobile_url,base_price_cents,modules,faqs,region")
     .eq("type_id", type.id)
-    .or(`region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.`)
+    .or(`region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%`)
     .order("title", { ascending: true });
 
   return data ?? [];

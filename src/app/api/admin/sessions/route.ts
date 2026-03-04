@@ -11,13 +11,13 @@ export async function GET(req: NextRequest) {
   const supabase = getSupabaseServiceClient();
   const region = getRegionFromRequest(req);
   const showAll = req.nextUrl.searchParams.get("all") === "1";
-  const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()},region.is.null,region.eq.`;
+  const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()}`;
 
   // 1) Sessions laden
   const { data: sessions, error: errSes } = await supabase
     .from(TABLE)
     .select("*")
-    .or(regionFilter)
+    .or(showAll ? undefined : regionFilter)
     .order("start_date", { ascending: true });
   if (errSes) return NextResponse.json({ error: errSes.message }, { status: 500 });
   if (!sessions || sessions.length === 0) return NextResponse.json({ data: [] });
@@ -31,7 +31,7 @@ export async function GET(req: NextRequest) {
     const { data: courses, error: errC } = await supabase
       .from("courses")
       .select("id,slug,title,hero_image_url,type_id,category_id,region")
-      .or(`region.eq.${region},region.eq.${region.toLowerCase()},region.is.null,region.eq.`)
+      .or(showAll ? undefined : `region.eq.${region},region.eq.${region.toLowerCase()}`)
       .in("id", courseIds);
     if (errC) return NextResponse.json({ error: errC.message }, { status: 500 });
     coursesMap = Object.fromEntries((courses ?? []).map((c) => [c.id, c]));
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
     const { data: partners, error: errP } = await supabase
       .from("partners")
       .select("id,name,city,state,country,region")
-      .or(`region.eq.${region},region.eq.${region.toLowerCase()},region.is.null,region.eq.`)
+      .or(showAll ? undefined : `region.eq.${region},region.eq.${region.toLowerCase()}`)
       .in("id", partnerIds);
     if (errP) return NextResponse.json({ error: errP.message }, { status: 500 });
     partnersMap = Object.fromEntries((partners ?? []).map((p) => [p.id, p]));

@@ -185,6 +185,17 @@ a {
   color: #0f172a !important;
 }
 
+.nav-link {
+  position: relative;
+  padding: 6px 10px;
+  border-radius: 999px;
+  transition: color 120ms ease, background-color 150ms ease;
+}
+.nav-link:hover {
+  color: #ff1f8f;
+  background: rgba(255, 31, 143, 0.08);
+}
+
 .marquee:hover .animate-marquee {
   animation-play-state: paused;
 }

@@ -105,7 +105,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="relative hidden flex-1 justify-center items-center gap-8 lg:gap-10 xl:gap-12 text-[13px] sm:text-sm xl:flex">
-          <Link href="/entdecken" className="hover:text-pink-600">
+          <Link href="/entdecken" className="nav-link">
             Entdecken
           </Link>
           <div
@@ -113,7 +113,7 @@ export function SiteHeader() {
             onMouseLeave={armClose}
             className="relative"
           >
-            <button className="header-btn inline-flex items-center gap-2 px-2 py-1 rounded-full hover:bg-slate-100 hover:text-pink-600 transition">
+            <button className="header-btn nav-link inline-flex items-center gap-2 px-2 py-1 rounded-full">
               Intensiv-Ausbildungen <ChevronDown size={14} />
             </button>
             {activeMenu === "intensiv" && (
@@ -134,7 +134,7 @@ export function SiteHeader() {
             onMouseLeave={armClose}
             className="relative"
           >
-            <button className="header-btn inline-flex items-center gap-2 px-2 py-1 rounded-full hover:bg-slate-100 hover:text-pink-600 transition">
+            <button className="header-btn nav-link inline-flex items-center gap-2 px-2 py-1 rounded-full">
               Extremkurse <ChevronDown size={14} />
             </button>
             {activeMenu === "extrem" && (
@@ -150,14 +150,14 @@ export function SiteHeader() {
             )}
           </div>
 
-          <Link href="/professional-audio-diploma" className="hover:text-pink-600">
+          <Link href="/professional-audio-diploma" className="nav-link">
             Professional Audio Diploma
           </Link>
 
-          <Link href="/kursstandorte" className="hover:text-pink-600">
+          <Link href="/kursstandorte" className="nav-link">
             Kursstandorte
           </Link>
-          <Link href="/ueber-uns" className="hover:text-pink-600">
+          <Link href="/ueber-uns" className="nav-link">
             Über uns
           </Link>
         </nav>

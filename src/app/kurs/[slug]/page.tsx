@@ -168,7 +168,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
   }));
 
   const { data: addons } = await supabase.from("addons").select("*").eq("course_id", course.id);
-  course.sessions = sessionsWithPartner;
+  course.sessions = sessionsFiltered;
   course.addons = addons ?? [];
 
   let states: string[] = [];
@@ -200,6 +200,16 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
       )
     );
   }
+
+  // Region-basierte Session-Filter: auf AT-Seite keine DE-Sessions anzeigen (und umgekehrt)
+  const allowedCountries =
+    region === "DE" ? ["deutschland", "germany"] : region === "AT" ? ["österreich", "austria"] : null;
+  const sessionsFiltered = sessionsWithPartner.filter((s: any) => {
+    if (!allowedCountries) return true;
+    const country = (s.country || s.partners?.country || "").toString().toLowerCase();
+    if (!country) return true; // wenn nicht gesetzt, zulassen
+    return allowedCountries.some((c) => country.includes(c));
+  });
 
   const { data: siteLogoSetting } = await supabase.from("settings").select("value").eq("key", "site_logo_url").maybeSingle();
 

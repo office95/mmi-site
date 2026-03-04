@@ -10,22 +10,21 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
   const { id } = await params;
   const supabase = getSupabaseServiceClient();
 
-  const { data: order, error } = await supabase
-    .from("orders")
-    .select(
-      `id, order_number, created_at, status, amount_cents, deposit_cents, currency, participants, notes,
-      email, customer_name, first_name, last_name, phone, street, zip, city, country, dob,
-      company_name, company_uid, is_company, consent_gdpr, stripe_payment_intent, checkout_session_id, coupon_code,
-      session:sessions(id,start_date,start_time,city,course_id,tax_rate,partner:partners(id,name,city,state,country)),
-      course:courses(id,title,slug,base_price_cents,deposit_cents)`
-    )
-    .eq("id", id)
-    .maybeSingle();
-
+  const { data: order, error } = await supabase.from("orders").select("*").eq("id", id).maybeSingle();
   if (error || !order) return notFound();
 
-  const course = Array.isArray(order.course) ? order.course[0] : order.course;
-  const session = Array.isArray(order.session) ? order.session[0] : order.session;
+  const [courseRes, sessionRes] = await Promise.all([
+    order.course_id ? supabase.from("courses").select("id,title,slug,base_price_cents,deposit_cents").eq("id", order.course_id).maybeSingle() : null,
+    order.session_id
+      ? supabase.from("sessions").select("id,start_date,start_time,city,state,country,partner_id,tax_rate").eq("id", order.session_id).maybeSingle()
+      : null,
+  ]);
+
+  const course = courseRes?.data ?? null;
+  const session = sessionRes?.data ?? null;
+  const partner =
+    session?.partner_id &&
+    (await supabase.from("partners").select("id,name,city,state,country").eq("id", session.partner_id).maybeSingle()).data;
   const amount = (order.amount_cents ?? 0) / 100;
   const deposit = order.deposit_cents !== null ? (order.deposit_cents ?? 0) / 100 : null;
   const total = course?.base_price_cents ? course.base_price_cents / 100 : (order.amount_cents ?? 0) / 100;
@@ -70,20 +69,9 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
                   {session.city ? ` · ${session.city}` : ""}
                 </div>
               )}
-              {session?.partner && (
+              {partner && (
                 <div className="text-slate-700">
-                  Partner: {(Array.isArray(session.partner) ? session.partner[0]?.name : (session.partner as any)?.name) ?? "–"}
-                  {Array.isArray(session.partner)
-                    ? [
-                        session.partner[0]?.city ? ` · ${session.partner[0].city}` : "",
-                        session.partner[0]?.state ? ` · ${session.partner[0].state}` : "",
-                        session.partner[0]?.country ? ` · ${session.partner[0].country}` : "",
-                      ].join("")
-                    : [
-                        (session.partner as any)?.city ? ` · ${(session.partner as any).city}` : "",
-                        (session.partner as any)?.state ? ` · ${(session.partner as any).state}` : "",
-                        (session.partner as any)?.country ? ` · ${(session.partner as any).country}` : "",
-                      ].join("")}
+                  Partner: {partner.name ?? "–"}{partner.city ? ` · ${partner.city}` : ""}{partner.state ? ` · ${partner.state}` : ""}{partner.country ? ` · ${partner.country}` : ""}
                 </div>
               )}
               <div className="space-y-0.5">

@@ -19,6 +19,7 @@ export function SiteHeader() {
   const [mobileIntensivOpen, setMobileIntensivOpen] = useState(false);
   const [mobileExtremOpen, setMobileExtremOpen] = useState(false);
   const [closeTimer, setCloseTimer] = useState<NodeJS.Timeout | null>(null);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -33,6 +34,13 @@ export function SiteHeader() {
     return () => {
       active = false;
     };
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
@@ -90,7 +98,11 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="site-header fixed top-0 left-0 right-0 z-50 w-full bg-white text-slate-900 shadow-sm transition-colors">
+    <header
+      className={`site-header fixed top-0 left-0 right-0 z-50 w-full text-slate-900 shadow-sm transition-colors transition-backdrop duration-200 ${
+        scrolled ? "bg-white/88 backdrop-blur-xl" : "bg-white"
+      }`}
+    >
       <div className="flex h-14 w-full items-center pl-[2vh] pr-3 text-sm font-semibold tracking-tight sm:pr-6 lg:pr-20">
         <Link href="/" className="flex items-center gap-2 hover:opacity-90 transition">
           <Image

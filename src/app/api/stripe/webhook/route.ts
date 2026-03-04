@@ -78,7 +78,6 @@ export async function POST(req: Request) {
     // Order aktualisieren, falls bereits angelegt (checkout-Route), sonst neu erstellen
     const payload = {
       session_id: sessionId,
-      course_id: courseId,
       email: cs.customer_details?.email ?? null,
       amount_cents: cs.amount_total,
       currency: cs.currency?.toUpperCase() ?? "EUR",
@@ -88,7 +87,6 @@ export async function POST(req: Request) {
       stripe_payment_intent: cs.payment_intent ?? null,
       notes: priceMode,
       coupon_code: couponCode,
-      order_number: cs.metadata?.order_number || null,
       promotion_code: promoCode || couponCode || promoId,
       discount_amount_cents: discountAmount,
     };

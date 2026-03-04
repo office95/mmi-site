@@ -51,7 +51,7 @@ export async function POST(req: Request) {
 
   const courseId = body.id ?? randomUUID();
   const baseSlug = slugify(body.slug || body.title || `kurs-${Date.now()}`) || `kurs-${Date.now()}`;
-  const regionNormalized = body.region ? String(body.region).trim().toUpperCase() : "X";
+  const regionNormalized = body.region ? String(body.region).trim().toUpperCase() : null;
 
   // slug-Helper, damit unique constraint nicht knallt
   const ensureUniqueSlug = async (slugBase: string, regionCode: string | null): Promise<string> => {

@@ -174,7 +174,7 @@ export function SiteHeader() {
 
       {/* Mobile Drawer */}
       <div
-        className={`xl:hidden fixed inset-0 z-40 bg-white px-6 py-6 overflow-y-auto transform transition-transform duration-300 ease-out ${
+        className={`xl:hidden fixed inset-0 z-40 bg-white/85 backdrop-blur-xl px-6 py-6 overflow-y-auto transform transition-transform duration-300 ease-out ${
           mobileOpen ? "translate-x-0" : "translate-x-full"
         }`}
         style={{ pointerEvents: mobileOpen ? "auto" : "none" }}

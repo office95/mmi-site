@@ -210,7 +210,7 @@ export default async function CoursePage({
   let states: string[] = [];
   const sessionPartners = Array.from(new Set((course.sessions ?? []).map((s: any) => s.partner_id).filter(Boolean)));
   if (sessionPartners.length) {
-    const { data: partnerRows } = await supabase
+    const { data: partnerRows } = await db
       .from("partners")
       .select("id,state,city,country")
       .in("id", sessionPartners as string[]);

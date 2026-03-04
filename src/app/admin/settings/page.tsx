@@ -196,7 +196,7 @@ export default function SettingsPage() {
           <p className="text-sm text-slate-500">Globale Einstellungen & FAQs für die Startseite.</p>
         </div>
 
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-2 flex-wrap items-center">
           <button
             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
               tab === "settings" ? "bg-slate-900 text-white" : "border border-slate-200 bg-white text-slate-700"
@@ -213,36 +213,7 @@ export default function SettingsPage() {
           >
             FAQs Startseite
           </button>
-          <a
-            href="/admin/hero"
-            className="rounded-full px-4 py-2 text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-          >
-            Hero
-          </a>
-          <a
-            href="/admin/media"
-            className="rounded-full px-4 py-2 text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-          >
-            Medien
-          </a>
-          <a
-            href="/admin/header-menu"
-            className="rounded-full px-4 py-2 text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-          >
-            Header-Menü
-          </a>
-          <a
-            href="/admin/users"
-            className="rounded-full px-4 py-2 text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-          >
-            Benutzer
-          </a>
-          <a
-            href="/admin/automationen"
-            className="rounded-full px-4 py-2 text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-          >
-            Automationen
-          </a>
+          <MoreLinks />
         </div>
 
         {tab === "settings" && (
@@ -424,6 +395,34 @@ export default function SettingsPage() {
             {info && <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{info}</div>}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function MoreLinks() {
+  return (
+    <div className="relative group">
+      <button className="rounded-full px-4 py-2 text-sm font-semibold border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 inline-flex items-center gap-2">
+        Weitere Bereiche
+        <span className="text-xs">▾</span>
+      </button>
+      <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-150 absolute z-10 mt-2 w-56 rounded-xl border border-slate-200 bg-white shadow-lg">
+        {[
+          { href: "/admin/hero", label: "Hero" },
+          { href: "/admin/media", label: "Medien" },
+          { href: "/admin/header-menu", label: "Header-Menü" },
+          { href: "/admin/users", label: "Benutzer" },
+          { href: "/admin/automationen", label: "Automationen (Doku)" },
+        ].map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            className="block px-4 py-2 text-sm text-slate-800 hover:bg-slate-50"
+          >
+            {item.label}
+          </a>
+        ))}
       </div>
     </div>
   );

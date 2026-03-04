@@ -9,6 +9,7 @@ import Parallax from "@/components/Parallax";
 import ConsultBanner from "@/components/ConsultBanner";
 import { headers } from "next/headers";
 import { getRegion } from "@/lib/region";
+import { CourseModulesAccordion } from "./CourseModulesAccordion";
 import { FaqAccordion } from "./FaqAccordion";
 
 export const revalidate = 0;
@@ -266,21 +267,6 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
               )}
             </div>
 
-            {(course.modules ?? []).length > 0 && (
-              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white/85 shadow-sm">
-                <div className="grid grid-cols-12 bg-slate-50 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-600">
-                  <div className="col-span-9 px-4 py-3">Modul / Thema</div>
-                  <div className="col-span-3 px-4 py-3 text-right">Zeitumfang</div>
-                </div>
-                {(course.modules ?? []).map((m: any, idx: number) => (
-                  <div key={idx} className="grid grid-cols-12 items-center px-4 py-3 text-sm text-slate-800">
-                    <div className="col-span-9 font-semibold">{m.title || "Modul"}</div>
-                    <div className="col-span-3 text-right text-slate-700">{m.hours ? `${m.hours} h` : "—"}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-
             {(!course.sessions || course.sessions.length === 0) && (
               <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
                 Für diesen Kurs sind aktuell keine Termine hinterlegt.
@@ -303,6 +289,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
 
             {(course.key_facts ?? []).length > 0 && (
               <div className="space-y-4">
+                {(course.modules ?? []).length > 0 && <CourseModulesAccordion modules={course.modules ?? []} />}
                 <h3 className="text-2xl font-semibold text-slate-900">Das erwartet dich</h3>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {(course.key_facts ?? []).map((f: string, i: number) => (

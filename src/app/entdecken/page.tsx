@@ -194,12 +194,6 @@ export default function EntdeckenPage() {
 
       <section className="w-full bg-neutral-100">
         <div className="mx-auto max-w-6xl px-6 pb-16 space-y-6 pt-6 sm:pt-8">
-          <div className="text-center text-slate-700 space-y-2">
-            <h2 className="font-anton text-[clamp(28px,5vw,40px)] text-slate-900">Alle Kurstermine auf einen Blick</h2>
-            <p className="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto">
-              Finde deinen nächsten Termin in {regionText} und filtere nach Kurs, Standort oder Format. Live- und Intensivkurse mit unseren Partnerstudios – direkt buchbar.
-            </p>
-          </div>
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap items-center gap-3">
               <div className="grid w-full max-w-4xl gap-3 sm:grid-cols-3">

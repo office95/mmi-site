@@ -49,19 +49,19 @@ export default async function CoursePage({
   params: { slug: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
+  let course: any = null;
+  let region: "AT" | "DE";
+
   try {
     const { slug } = params;
     const hdr = await headers();
     const rawHost = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
     const host = rawHost.replace(/^www\./, "").split(":")[0]; // strip www + port
-    const region =
-      host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
-    // Verwende Anon-Server-Client, Service-Key nur wenn gesetzt
+    region = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
+
     const supabase = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
     const normalize = (s: string) => s.trim().toLowerCase().replace(/\s+/g, "-");
     const slugClean = slug.trim();
-
-    let course: any = null;
 
     const uuidMatch = slugClean.match(/^[0-9a-fA-F-]{36}$/);
     if (uuidMatch) {
@@ -113,19 +113,17 @@ export default async function CoursePage({
         .maybeSingle();
       if (ilikeCourse) course = ilikeCourse;
     }
-
-    const bookingFlag = typeof searchParams === "object" && searchParams
-      ? (Array.isArray(searchParams.booking) ? searchParams.booking[0] : searchParams.booking) ?? null
-      : null;
-
-    const courseRegion = (course?.region ?? "").toString().trim().toUpperCase();
-    if (course && courseRegion && courseRegion !== region && !bookingFlag) {
-      return notFound();
-    }
-
-    // ... rest of render stays unchanged
   } catch (err) {
     console.error("CoursePage fatal error", err);
+    return notFound();
+  }
+
+  const bookingFlag = typeof searchParams === "object" && searchParams
+    ? (Array.isArray(searchParams.booking) ? searchParams.booking[0] : searchParams.booking) ?? null
+    : null;
+
+  const courseRegion = (course?.region ?? "").toString().trim().toUpperCase();
+  if (course && courseRegion && courseRegion !== region && !bookingFlag) {
     return notFound();
   }
 

@@ -104,7 +104,7 @@ export function SiteHeader() {
           <span className="hidden sm:inline text-base">Music Mission Institute</span>
         </Link>
 
-        <nav className="relative hidden flex-1 justify-center items-center gap-5 text-[13px] sm:text-sm xl:flex">
+        <nav className="relative hidden flex-1 justify-center items-center gap-8 lg:gap-10 xl:gap-12 text-[13px] sm:text-sm xl:flex">
           <Link href="/entdecken" className="hover:text-pink-600">
             Entdecken
           </Link>
@@ -113,16 +113,16 @@ export function SiteHeader() {
             onMouseLeave={armClose}
             className="relative"
           >
-            <button className="header-btn inline-flex items-center gap-1 hover:text-pink-600">
+            <button className="header-btn inline-flex items-center gap-2 px-2 py-1 rounded-full hover:bg-slate-100 hover:text-pink-600 transition">
               Intensiv-Ausbildungen <ChevronDown size={14} />
             </button>
             {activeMenu === "intensiv" && (
               <div
-                className="absolute left-0 top-full z-50 mt-3 w-[520px] max-w-[90vw] bg-white shadow-2xl transition-all duration-150 ease-out origin-top border border-slate-200"
+                className="absolute left-0 top-full z-50 mt-4 w-[560px] max-w-[92vw] bg-white/95 backdrop-blur-lg shadow-2xl transition-all duration-150 ease-out origin-top border border-slate-200 rounded-2xl"
                 onMouseEnter={() => keepOpen("intensiv")}
                 onMouseLeave={armClose}
               >
-                <div className="px-5 py-5">
+                <div className="px-6 py-6">
                   {renderCourses(intensivSlot?.courses ?? [])}
                 </div>
               </div>
@@ -134,16 +134,16 @@ export function SiteHeader() {
             onMouseLeave={armClose}
             className="relative"
           >
-            <button className="header-btn inline-flex items-center gap-1 hover:text-pink-600">
+            <button className="header-btn inline-flex items-center gap-2 px-2 py-1 rounded-full hover:bg-slate-100 hover:text-pink-600 transition">
               Extremkurse <ChevronDown size={14} />
             </button>
             {activeMenu === "extrem" && (
               <div
-                className="absolute left-0 top-full z-50 mt-3 w-[520px] max-w-[90vw] bg-white shadow-2xl transition-all duration-150 ease-out origin-top border border-slate-200"
+                className="absolute left-0 top-full z-50 mt-4 w-[560px] max-w-[92vw] bg-white/95 backdrop-blur-lg shadow-2xl transition-all duration-150 ease-out origin-top border border-slate-200 rounded-2xl"
                 onMouseEnter={() => keepOpen("extrem")}
                 onMouseLeave={armClose}
               >
-                <div className="px-5 py-5">
+                <div className="px-6 py-6">
                   {renderCourses(extremSlot?.courses ?? [])}
                 </div>
               </div>

@@ -57,9 +57,9 @@ export function PartnerMarqueeClient({ partners, fallbackLogos }: Props) {
         </h2>
         <p className="text-xs text-slate-500">Debug Region: {region} · host: {host}</p>
       </div>
-      <div className="relative overflow-hidden py-4">
+      <div className="relative overflow-x-auto overflow-y-hidden py-4">
         <div className="marquee" style={{ maxWidth: "1600px", margin: "0 auto" }}>
-          <div className="marquee-track animate-marquee">
+          <div className="marquee-track animate-marquee-fast min-w-max">
             {list.map((p, idx) => {
               const name = (p as any).name || (p as any).alt;
               const state = (p as any).state;

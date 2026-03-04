@@ -135,7 +135,7 @@ export default async function CoursePage({
         <SiteHeader />
         <div className="px-6 py-20 text-center space-y-4">
           <h1 className="text-2xl font-semibold">Kurs nicht gefunden</h1>
-          <p className="text-slate-600 mt-2">Für den Slug „{slug}“ wurde kein Kurs gefunden.</p>
+          <p className="text-slate-600 mt-2">Für den Slug „{params.slug}“ wurde kein Kurs gefunden.</p>
           {list && (
             <div className="mx-auto max-w-lg text-left text-sm text-slate-700">
               <p className="font-semibold mb-2">Vorhandene Slugs (Top 10):</p>

@@ -39,10 +39,6 @@ export default async function SiteFooter() {
             <p className="text-white/80 text-xs sm:text-sm">© {new Date().getFullYear()} Music Mission Institute</p>
           </div>
         </div>
-        <div className="h-px w-full bg-white/30" />
-        <div className="text-center text-xs text-white/75 sm:hidden">
-          Datenschutz · AGB · Impressum
-        </div>
       </div>
     </footer>
   );

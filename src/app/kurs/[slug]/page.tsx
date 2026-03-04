@@ -391,7 +391,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
               {renderSloganMedia(sloganMediaMobile, heroMobile, true)}
             </div>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/15 to-black/35 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/55 pointer-events-none" />
           <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
             <Reveal delay={80}>
               <div className="mx-auto max-w-5xl space-y-3">

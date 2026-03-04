@@ -3,7 +3,6 @@ import ConsultBanner from "@/components/ConsultBanner";
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import { headers } from "next/headers";
 import { getRegion } from "@/lib/region";
-import { IntensivTabs } from "./IntensivTabs";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
@@ -46,8 +45,6 @@ export default async function IntensivPage() {
   const region: "AT" | "DE" = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
 
   const courses = await loadCourses(region);
-  const modules = courses.flatMap((c) => (c.modules ?? []).map((m) => ({ ...m, course: c.title })));
-  const faqs = courses.flatMap((c) => (c.faqs ?? []).map((f) => ({ ...f, course: c.title })));
   const heroVideo = null;
   const heroFallback = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/3e6eb2cb-ad29-4c6f-a4b5-973b9d56f70e.webp";
 
@@ -144,8 +141,6 @@ export default async function IntensivPage() {
           </div>
         </div>
       </section>
-
-      <IntensivTabs modules={modules} faqs={faqs} />
 
       {/* Kurs-Grid */}
       <section id="kurse" className="mx-auto max-w-6xl px-6 pb-16 space-y-6 scroll-mt-32 lg:scroll-mt-40">

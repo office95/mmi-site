@@ -34,7 +34,7 @@ const partnerLogos = [
   { src: "/logos/uaudio.svg", alt: "Universal Audio" },
 ];
 
-type HomeFaq = { q: string; a: string[] };
+type HomeFaq = { q: string; a: string | string[] };
 
 export const revalidate = 0;
 
@@ -114,13 +114,10 @@ export default async function Home() {
   const slides = heroSlides.length ? heroSlides : fallbackSlides;
   const partners = partnerRows ?? [];
   const faqList: HomeFaq[] =
-    (faqRows ?? []).map((f: any) => {
-      const answer = typeof f.answer === "string" ? f.answer : "";
-      const parts = answer.includes("\n")
-        ? answer.split("\n").map((s: string) => s.trim()).filter(Boolean)
-        : [answer.trim()].filter(Boolean);
-      return { q: f.question, a: parts };
-    }) || [];
+    (faqRows ?? []).map((f: any) => ({
+      q: f.question,
+      a: typeof f.answer === "string" ? f.answer : "",
+    })) || [];
 
   return (
     <div className="min-h-screen text-foreground bg-white">

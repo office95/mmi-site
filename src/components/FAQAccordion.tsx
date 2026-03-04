@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type FAQ = { q: string; a: string[] };
+type FAQ = { q: string; a: string | string[] };
 
 export function FAQAccordion({ items, initiallyOpen = 0 }: { items: FAQ[]; initiallyOpen?: number }) {
   const [open, setOpen] = useState<number>(initiallyOpen);
@@ -23,9 +23,11 @@ export function FAQAccordion({ items, initiallyOpen = 0 }: { items: FAQ[]; initi
           </button>
           {open === idx && (
             <div className="mt-3 space-y-2 text-sm text-slate-700 leading-relaxed">
-              {faq.a.map((p) => (
-                <p key={p}>{p}</p>
-              ))}
+              {Array.isArray(faq.a) ? (
+                faq.a.map((p) => <p key={p}>{p}</p>)
+              ) : (
+                <p className="whitespace-pre-line">{faq.a}</p>
+              )}
             </div>
           )}
         </div>

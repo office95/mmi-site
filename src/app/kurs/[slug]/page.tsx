@@ -53,6 +53,7 @@ export default async function CoursePage({
   let region: "AT" | "DE";
   let supabase: ReturnType<typeof getSupabaseServerClient> | ReturnType<typeof getSupabaseServiceClient> | null = null;
   let slugClean = "";
+  let allowAllHosts = false;
 
   try {
     const slugParam = params?.slug;
@@ -62,6 +63,8 @@ export default async function CoursePage({
     const hdr = await headers();
     const rawHost = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
     const host = rawHost.replace(/^www\./, "").split(":")[0]; // strip www + port
+    const isPreview = host.includes("vercel.app") || host.includes("localhost");
+    allowAllHosts = isPreview;
     region = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
 
     supabase = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
@@ -127,7 +130,7 @@ export default async function CoursePage({
     : null;
 
   const courseRegion = (course?.region ?? "").toString().trim().toUpperCase();
-  if (course && courseRegion && courseRegion !== region && !bookingFlag) {
+  if (course && courseRegion && courseRegion !== region && !bookingFlag && !allowAllHosts) {
     return notFound();
   }
 

@@ -175,16 +175,16 @@ export default async function Home() {
                 </span>
               </div>
               {/* Lauftext */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-[0.5vh] pointer-events-none px-4">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-[0.2vh] pointer-events-none px-4">
                 <div className="w-full overflow-hidden">
-                  <div className="marquee-track animate-marquee text-white font-bold uppercase tracking-[0.22em] text-[clamp(60px,7vw,110px)] whitespace-nowrap" style={{ fontFamily: "\"Montserrat\", sans-serif" }}>
+                  <div className="marquee-track animate-marquee text-white font-bold uppercase tracking-[0.18em] text-[clamp(48px,6vw,96px)] whitespace-nowrap" style={{ fontFamily: "\"Montserrat\", sans-serif" }}>
                     {Array(8)
                       .fill("Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing   ")
                       .join("")}
                   </div>
                 </div>
                 <div className="w-full overflow-hidden">
-                  <div className="marquee-track animate-marquee-reverse text-[#ff1f8f] font-bold uppercase tracking-[0.22em] text-[clamp(60px,7vw,110px)] whitespace-nowrap" style={{ fontFamily: "\"Montserrat\", sans-serif" }}>
+                  <div className="marquee-track animate-marquee-reverse text-[#ff1f8f] font-bold uppercase tracking-[0.18em] text-[clamp(48px,6vw,96px)] whitespace-nowrap" style={{ fontFamily: "\"Montserrat\", sans-serif" }}>
                     {Array(8)
                       .fill("Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing   ")
                       .join("")}

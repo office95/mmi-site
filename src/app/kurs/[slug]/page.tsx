@@ -165,13 +165,15 @@ export default async function CoursePage({
 
   const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.,region.eq.%20`; // strikt, aber erlaubt leere/null -> global
 
-  let { data: sessions } = await supabase
+  const db = supabase ?? getSupabaseServerClient();
+
+  let { data: sessions } = await db
     .from("sessions")
     .select("*")
     .eq("course_id", course.id)
     .or(regionFilter);
   if (!sessions || sessions.length === 0) {
-    const { data: altSessions } = await supabase
+    const { data: altSessions } = await db
       .from("sessions")
       .select("*, courses!inner(slug)")
       .eq("courses.slug", course.slug)
@@ -182,7 +184,7 @@ export default async function CoursePage({
   const partnerIds = Array.from(new Set((sessions ?? []).map((s: any) => s.partner_id).filter(Boolean)));
   let partnerMap = new Map<string, any>();
   if (partnerIds.length) {
-    const { data: partnerRows } = await supabase
+    const { data: partnerRows } = await db
       .from("partners")
       .select("*")
       .in("id", partnerIds as string[]);
@@ -193,7 +195,7 @@ export default async function CoursePage({
     partners: partnerMap.get(s.partner_id as string) || null,
   }));
 
-  const { data: addons } = await supabase.from("addons").select("*").eq("course_id", course.id);
+  const { data: addons } = await db.from("addons").select("*").eq("course_id", course.id);
   // Region-basierte Session-Filter: auf AT-Seite keine DE-Sessions anzeigen (und umgekehrt)
   const allowedCountries =
     region === "DE" ? ["deutschland", "germany"] : region === "AT" ? ["österreich", "austria"] : null;

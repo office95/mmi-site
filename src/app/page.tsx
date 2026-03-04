@@ -34,60 +34,7 @@ const partnerLogos = [
   { src: "/logos/uaudio.svg", alt: "Universal Audio" },
 ];
 
-const faqList = [
-  {
-    q: "Welche Formate bietet ihr an?",
-    a: [
-      "Extremkurse (kompakt, maximale Praxis in kurzer Zeit) und Intensiv-Ausbildungen (berufsbegleitend).",
-      "Professional Audio Diploma (Tontechnik) und Vorbereitung auf den Bachelor of Science sind möglich.",
-    ],
-  },
-  {
-    q: "Wie buche ich einen Kurs?",
-    a: [
-      "Online über Stripe Checkout. Du siehst Preis, Steuer, optionalen Rabattcode und wählst Termin & Kurs.",
-      "Nach erfolgreicher Zahlung bekommst du sofort die Bestätigung per E-Mail.",
-    ],
-  },
-  {
-    q: "Kann ich nur eine Anzahlung leisten?",
-    a: [
-      "Ja. Viele Termine bieten eine Anzahlung (Deposit) an. Der Restbetrag wird später fällig; Reminder folgt.",
-      "Die Sitzplatz-Reservierung erfolgt erst nach erfolgreicher Zahlung (Webhook-Update).",
-    ],
-  },
-  {
-    q: "Wie funktionieren Gutscheine/Promotion Codes?",
-    a: [
-      "Gutscheine werden direkt im Stripe Checkout Feld „Promotion Code“ eingegeben.",
-      "Rabatte, Coupon-Code und Discount-Betrag werden in deiner Bestellung gespeichert.",
-    ],
-  },
-  {
-    q: "Wo finden die Kurse statt?",
-    a: [
-      "An Partnerstandorten in Österreich & Deutschland, meist in professionellen Studios.",
-      "Die genaue Adresse steht beim gewählten Termin (Standort/Partner-Seite).",
-    ],
-  },
-  {
-    q: "Wie viele Teilnehmerplätze gibt es?",
-    a: [
-      "Limitierte Plätze pro Termin; die Plätze werden erst nach Zahlung im System geblockt.",
-      "Sobald die maximale Teilnehmerzahl erreicht ist, wird der Termin als ausgebucht markiert.",
-    ],
-  },
-  {
-    q: "Welche Zahlungsarten bietet ihr an?",
-    a: ["Stripe Checkout: Kredit-/Debitkarte, Apple Pay, Google Pay (abhängig vom Gerät)."],
-  },
-  {
-    q: "Kann ich stornieren?",
-    a: [
-      "Storno-Regeln variieren je nach Kurs/Termin. Bitte melde dich zeitnah, damit wir deinen Platz freigeben können.",
-    ],
-  },
-];
+type HomeFaq = { q: string; a: string[] };
 
 export const revalidate = 0;
 
@@ -135,6 +82,12 @@ export default async function Home() {
     .from("partners")
     .select("name,slug,state,city,logo_path,country,region")
     .order("name", { ascending: true });
+  const { data: faqRows } = await supabase
+    .from("homepage_faqs")
+    .select("question,answer,region,sort")
+    .or(`region.is.null,region.eq.${region}`)
+    .order("sort", { ascending: true })
+    .order("created_at", { ascending: true });
 
   const heroSlides =
     (heroRows ?? [])
@@ -160,6 +113,14 @@ export default async function Home() {
 
   const slides = heroSlides.length ? heroSlides : fallbackSlides;
   const partners = partnerRows ?? [];
+  const faqList: HomeFaq[] =
+    (faqRows ?? []).map((f: any) => {
+      const answer = typeof f.answer === "string" ? f.answer : "";
+      const parts = answer.includes("\n")
+        ? answer.split("\n").map((s: string) => s.trim()).filter(Boolean)
+        : [answer.trim()].filter(Boolean);
+      return { q: f.question, a: parts };
+    }) || [];
 
   return (
     <div className="min-h-screen text-foreground bg-white">
@@ -272,15 +233,16 @@ export default async function Home() {
 
 
 
-        {/* FAQ Abschnitt */}
-        <section id="faq" className="relative z-30 bg-[#f3f4f6] px-6 py-20 sm:px-10 lg:px-20 min-h-[70vh]">
-          <div className="mx-auto max-w-6xl space-y-10">
-            <div className="text-center space-y-4">
-              <h2 className="font-anton text-[clamp(72px,9vw,90px)] leading-[0.9] text-slate-900">Fragen? Wir haben die Antworten.</h2>
+        {faqList.length > 0 && (
+          <section id="faq" className="relative z-30 bg-[#f3f4f6] px-6 py-20 sm:px-10 lg:px-20 min-h-[70vh]">
+            <div className="mx-auto max-w-6xl space-y-10">
+              <div className="text-center space-y-4">
+                <h2 className="font-anton text-[clamp(72px,9vw,90px)] leading-[0.9] text-slate-900">Fragen? Wir haben die Antworten.</h2>
+              </div>
+              <FAQAccordion items={faqList} initiallyOpen={0} />
             </div>
-            <FAQAccordion items={faqList} initiallyOpen={0} />
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Consult CTA */}
         <section className="relative bg-white">

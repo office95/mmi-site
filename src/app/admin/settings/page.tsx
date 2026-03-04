@@ -67,27 +67,12 @@ export default function SettingsPage() {
     }
   }, [tab, faqs.length, loadingFaqs]);
 
-  const uploadLogo = async (file: File) => {
-    setUploading(true);
-    setError(null);
-    setInfo(null);
-    try {
-      const form = new FormData();
-      form.append("file", file);
-      form.append("title", "site-header-logo");
-      const res = await fetch("/api/upload", { method: "POST", body: form });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload fehlgeschlagen");
-      setLogoUrl(data.url);
-      setInfo("Logo hochgeladen. Speichern, um es zu übernehmen.");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Upload fehlgeschlagen");
-    } finally {
-      setUploading(false);
-    }
+  const upsertSetting = async (key: string, value: string) => {
+    const { error } = await supabase.from("settings").upsert({ key, value }, { onConflict: "key" });
+    if (error) throw new Error(error.message);
   };
 
-  const uploadPdf = async (file: File, setter: (v: string) => void) => {
+  const uploadFileToSetting = async (file: File, setter: (v: string) => void, key: string) => {
     setUploading(true);
     setError(null);
     setInfo(null);
@@ -98,8 +83,10 @@ export default function SettingsPage() {
       const res = await fetch("/api/upload", { method: "POST", body: form });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Upload fehlgeschlagen");
-      setter(data.url);
-      setInfo("PDF hochgeladen. Speichern, um es zu übernehmen.");
+      const url = data.url as string;
+      setter(url);
+      await upsertSetting(key, url);
+      setInfo("Hochgeladen und gespeichert.");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Upload fehlgeschlagen");
     } finally {
@@ -227,7 +214,12 @@ export default function SettingsPage() {
             <p className="text-sm text-slate-600">Hier kannst du das Logo für den Website-Header hochladen.</p>
 
               <div className="flex items-center gap-3">
-                <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && uploadLogo(e.target.files[0])} className="text-sm" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => e.target.files?.[0] && uploadFileToSetting(e.target.files[0], setLogoUrl, LOGO_KEY)}
+                  className="text-sm"
+                />
                 {uploading && <span className="text-xs text-slate-500">Upload…</span>}
               </div>
 
@@ -260,7 +252,12 @@ export default function SettingsPage() {
               <div className="space-y-3">
                 <label className="text-sm font-semibold text-slate-800">AGB (PDF)</label>
                 <div className="flex items-center gap-3">
-                  <input type="file" accept="application/pdf" onChange={(e) => e.target.files?.[0] && uploadPdf(e.target.files[0], setAgbUrl)} className="text-sm" />
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={(e) => e.target.files?.[0] && uploadFileToSetting(e.target.files[0], setAgbUrl, AGB_KEY)}
+                  className="text-sm"
+                />
                   {uploading && <span className="text-xs text-slate-500">Upload…</span>}
                 </div>
                 {agbUrl && (
@@ -273,7 +270,12 @@ export default function SettingsPage() {
               <div className="space-y-3">
                 <label className="text-sm font-semibold text-slate-800">Datenschutz (PDF)</label>
                 <div className="flex items-center gap-3">
-                  <input type="file" accept="application/pdf" onChange={(e) => e.target.files?.[0] && uploadPdf(e.target.files[0], setDsUrl)} className="text-sm" />
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={(e) => e.target.files?.[0] && uploadFileToSetting(e.target.files[0], setDsUrl, DATENSCHUTZ_KEY)}
+                  className="text-sm"
+                />
                   {uploading && <span className="text-xs text-slate-500">Upload…</span>}
                 </div>
                 {dsUrl && (
@@ -299,7 +301,12 @@ export default function SettingsPage() {
             <h2 className="text-lg font-semibold text-slate-900">Favicon</h2>
             <p className="text-sm text-slate-600">Bild für das Browser-Tab/Favicon hochladen (PNG/ICO, quadratisch empfohlen).</p>
             <div className="flex items-center gap-3">
-              <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && uploadLogo(e.target.files[0])} className="text-sm" />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => e.target.files?.[0] && uploadFileToSetting(e.target.files[0], setFaviconUrl, FAVICON_KEY)}
+                className="text-sm"
+              />
               {uploading && <span className="text-xs text-slate-500">Upload…</span>}
             </div>
             {faviconUrl && (

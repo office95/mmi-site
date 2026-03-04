@@ -61,7 +61,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       .maybeSingle();
     if (!course) return { title: "Kurs | Music Mission Institute" };
     const desc = course.subtitle || course.summary || "Kurs beim Music Mission Institute.";
-    const image = course.hero_image_url ? toUrl(course.hero_image_url) : OG_FALLBACK;
+    const image = course.hero_image_url ? toUrl(course.hero_image_url) || OG_FALLBACK : OG_FALLBACK;
     const canonical = `${SITE_AT}/kurs/${course.slug ?? slug}`;
     return {
       title: `${course.title} | Music Mission Institute`,

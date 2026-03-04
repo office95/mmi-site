@@ -129,10 +129,7 @@ export default async function CoursePage({
     ? (Array.isArray(searchParams.booking) ? searchParams.booking[0] : searchParams.booking) ?? null
     : null;
 
-  const courseRegion = (course?.region ?? "").toString().trim().toUpperCase();
-  if (course && courseRegion && courseRegion !== region && !bookingFlag && !allowAllHosts) {
-    return notFound();
-  }
+  // Region-Mismatch nicht blockieren (insb. Preview/Mehrsprach-Domains)
 
   if (!course) {
     const supabase = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();

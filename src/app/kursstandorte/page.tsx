@@ -144,8 +144,7 @@ export default function KursstandortePage() {
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
       <section className="relative h-[40vh] md:h-[32vh] w-full overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={heroImage} alt="Kursstandorte" className="h-full w-full object-cover" />
+        <Image src={heroImage} alt="Kursstandorte" fill priority sizes="100vw" className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-[#ff1f8f]/35 to-transparent" />
         <div className="absolute inset-0 flex items-center justify-center px-6">
           <div className="text-center text-white space-y-3 max-w-4xl">

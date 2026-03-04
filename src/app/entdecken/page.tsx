@@ -162,11 +162,13 @@ export default function EntdeckenPage() {
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
       <section className="relative h-[40vh] sm:h-[50vh] lg:h-[60vh] w-full overflow-hidden text-white">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/b4f50227-9cbd-44d9-8947-2afdf30e801d.webp"
           alt="Entdecken"
-          className="h-full w-full object-cover"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-[#ff1f8f]/35 to-transparent" />
         <div className="absolute inset-0 flex items-center justify-center px-6 pb-6">

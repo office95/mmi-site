@@ -200,7 +200,7 @@ export default async function Home() {
                 </div>
               </div>
             </div>
-            <div className="h-[16vh] sm:h-[20vh] bg-white px-6 py-6 sm:px-12 flex items-center justify-center">
+            <div className="bg-white px-6 py-10 sm:px-12 sm:py-12 md:py-14 flex items-center justify-center">
               <div className="flex flex-col items-center gap-5 text-center">
                 <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 whitespace-nowrap font-semibold text-[#ff1f8f] font-anton leading-[1.05] pb-2 sm:pb-0">
                   <span className="text-[clamp(20px,4vw,40px)]">Top-bewertet auf</span>
@@ -220,7 +220,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="relative bg-white min-h-screen -mt-12 sm:-mt-14">
+        <section className="relative bg-white min-h-screen">
           <FlyInCards />
         </section>
 

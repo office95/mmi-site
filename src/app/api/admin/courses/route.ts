@@ -50,24 +50,22 @@ export async function POST(req: Request) {
   const supabase = getSupabaseServiceClient();
 
   const courseId = body.id ?? randomUUID();
-  const baseSlug = body.slug || slugify(body.title ?? "") || `kurs-${Date.now()}`;
-  const regionNormalized = body.region ? String(body.region).trim().toUpperCase() : null;
+  const baseSlug = slugify(body.slug || body.title || `kurs-${Date.now()}`) || `kurs-${Date.now()}`;
+  const regionNormalized = body.region ? String(body.region).trim().toUpperCase() : "X";
 
   // slug-Helper, damit unique constraint nicht knallt
   const ensureUniqueSlug = async (slugBase: string, regionCode: string | null): Promise<string> => {
     const base = slugBase || `kurs-${Date.now()}`;
-    const regionPart = regionCode ? `-${regionCode.toLowerCase()}` : "";
+    const regionPart = `-${(regionCode || "x").toLowerCase()}`;
     let candidate = `${base}${regionPart}`;
 
-    // bis zu 25 Versuche mit Zähler
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 50; i++) {
       const { data } = await supabase.from(TABLE).select("id").eq("slug", candidate).maybeSingle();
       const existingId = data?.id;
       if (!existingId || existingId === courseId) return candidate;
       candidate = `${base}${regionPart}-${i + 2}`;
     }
-    // Fallback: base + kurze UUID
-    return `${base}${regionPart}-${randomUUID().slice(0, 6).toLowerCase()}`;
+    return `${base}${regionPart}-${randomUUID().slice(0, 8).toLowerCase()}`;
   };
 
   const finalSlug = await ensureUniqueSlug(baseSlug, regionNormalized);

@@ -16,6 +16,8 @@ export function SiteHeader() {
   const [slots, setSlots] = useState<Slot[]>([]);
   const [activeMenu, setActiveMenu] = useState<"discover" | "intensiv" | "extrem" | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileIntensivOpen, setMobileIntensivOpen] = useState(false);
+  const [mobileExtremOpen, setMobileExtremOpen] = useState(false);
   const [closeTimer, setCloseTimer] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -202,6 +204,62 @@ export function SiteHeader() {
           <Link href="/entdecken" className="block" onClick={() => setMobileOpen(false)}>
             Entdecken
           </Link>
+          <button
+            className="flex w-full items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-left font-semibold"
+            onClick={() => setMobileIntensivOpen((v) => !v)}
+          >
+            <span>Intensiv-Ausbildungen</span>
+            <ChevronDown size={16} className={`transition ${mobileIntensivOpen ? "rotate-180" : ""}`} />
+          </button>
+          {mobileIntensivOpen && (
+            <div className="ml-3 space-y-2 text-sm font-normal text-slate-800">
+              {(intensivSlot?.courses ?? []).map((c) => (
+                <Link
+                  key={c.id}
+                  href={`/kurs/${c.slug}`}
+                  className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {c.title}
+                </Link>
+              ))}
+              <Link
+                href="/intensiv"
+                className="block rounded-md px-2 py-1 font-semibold text-pink-600 hover:bg-pink-50"
+                onClick={() => setMobileOpen(false)}
+              >
+                Alle Intensiv-Ausbildungen
+              </Link>
+            </div>
+          )}
+          <button
+            className="flex w-full items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-left font-semibold"
+            onClick={() => setMobileExtremOpen((v) => !v)}
+          >
+            <span>Extremkurse</span>
+            <ChevronDown size={16} className={`transition ${mobileExtremOpen ? "rotate-180" : ""}`} />
+          </button>
+          {mobileExtremOpen && (
+            <div className="ml-3 space-y-2 text-sm font-normal text-slate-800">
+              {(extremSlot?.courses ?? []).map((c) => (
+                <Link
+                  key={c.id}
+                  href={`/kurs/${c.slug}`}
+                  className="block rounded-md px-2 py-1 hover:bg-slate-100"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {c.title}
+                </Link>
+              ))}
+              <Link
+                href="/extremkurs"
+                className="block rounded-md px-2 py-1 font-semibold text-pink-600 hover:bg-pink-50"
+                onClick={() => setMobileOpen(false)}
+              >
+                Alle Extremkurse
+              </Link>
+            </div>
+          )}
           <Link href="/professional-audio-diploma" className="block" onClick={() => setMobileOpen(false)}>
             Professional Audio Diploma
           </Link>

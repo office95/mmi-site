@@ -53,11 +53,27 @@ function StatusSelect({ app, mutate }: { app: any; mutate: () => void }) {
   );
 }
 
+function KpiCard({ label, value, tone }: { label: string; value: string; tone: "green" | "amber" | "blue" }) {
+  const colors =
+    tone === "green"
+      ? "bg-emerald-50 border-emerald-100 text-emerald-800"
+      : tone === "amber"
+      ? "bg-amber-50 border-amber-100 text-amber-800"
+      : "bg-blue-50 border-blue-100 text-blue-800";
+  return (
+    <div className={`rounded-2xl border px-4 py-3 shadow-sm ${colors}`}>
+      <p className="text-xs uppercase tracking-[0.2em] text-slate-600">{label}</p>
+      <p className="text-2xl font-semibold mt-1">{value}</p>
+    </div>
+  );
+}
+
 export default function OrdersPage() {
   const { data, error, isLoading } = useSWR("/api/admin/orders", fetcher);
   const { data: appsData, error: appsError, isLoading: appsLoading, mutate: mutateApps } = useSWR("/api/admin/diploma-applications", fetcher);
   const [query, setQuery] = useState("");
   const [tab, setTab] = useState<"orders" | "applications">("orders");
+  const [selectedApp, setSelectedApp] = useState<any | null>(null);
 
   const orders = data?.data ?? [];
   const applications = appsData?.data ?? [];
@@ -82,6 +98,17 @@ export default function OrdersPage() {
     });
   }, [orders, query]);
 
+  const kpiPaid = useMemo(() => orders.filter((o: any) => o.status === "paid"), [orders]);
+  const kpiPending = useMemo(() => orders.filter((o: any) => o.status !== "paid"), [orders]);
+  const sum = (arr: any[]) =>
+    arr.reduce((acc, o) => {
+      const val = typeof o.amount_cents === "number" ? o.amount_cents : o.course?.base_price_cents ?? 0;
+      return acc + (val || 0);
+    }, 0);
+  const totalPaid = sum(kpiPaid) / 100;
+  const totalPending = sum(kpiPending) / 100;
+  const applicationsOpen = applications.filter((a: any) => a.status === "open").length;
+
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
@@ -100,6 +127,13 @@ export default function OrdersPage() {
               className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
           </div>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 mb-4">
+          <KpiCard label="Bezahlt (Summe)" value={`${totalPaid.toFixed(2)} €`} tone="green" />
+          <KpiCard label="Offen (Summe)" value={`${totalPending.toFixed(2)} €`} tone="amber" />
+          <KpiCard label="Orders (paid)" value={kpiPaid.length.toString()} tone="green" />
+          <KpiCard label="Anmeldungen offen" value={applicationsOpen.toString()} tone="blue" />
         </div>
 
         <div className="flex gap-2 mb-4">
@@ -230,7 +264,7 @@ export default function OrdersPage() {
                 {!appsLoading &&
                   !appsError &&
                   applications.map((a: any) => (
-                    <tr key={a.id} className="hover:bg-slate-50">
+                    <tr key={a.id} className="hover:bg-slate-50 cursor-pointer" onClick={() => setSelectedApp(a)}>
                       <td className="px-4 py-3 text-slate-800">{new Date(a.created_at).toLocaleString("de-AT")}</td>
                       <td className="px-4 py-3">
                         <div className="font-semibold text-slate-900">
@@ -275,6 +309,60 @@ export default function OrdersPage() {
           </div>
         )}
       </div>
+
+      {selectedApp && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" onClick={() => setSelectedApp(null)}>
+          <div
+            className="max-w-lg w-full rounded-2xl bg-white shadow-2xl p-6 space-y-3"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Anmeldung</p>
+                <h3 className="text-xl font-semibold text-slate-900">
+                  {selectedApp.first_name} {selectedApp.last_name}
+                </h3>
+                <p className="text-xs text-slate-500">{new Date(selectedApp.created_at).toLocaleString("de-AT")}</p>
+              </div>
+              <button className="text-slate-500 hover:text-slate-700" onClick={() => setSelectedApp(null)}>
+                ×
+              </button>
+            </div>
+            <div className="space-y-1 text-sm text-slate-800">
+              <p>
+                <strong>E-Mail:</strong> {selectedApp.email}
+              </p>
+              {selectedApp.phone && (
+                <p>
+                  <strong>Telefon:</strong> {selectedApp.phone}
+                </p>
+              )}
+              {selectedApp.birthdate && (
+                <p>
+                  <strong>Geburtsdatum:</strong> {selectedApp.birthdate}
+                </p>
+              )}
+              {(selectedApp.street || selectedApp.zip || selectedApp.city) && (
+                <p>
+                  <strong>Adresse:</strong> {[selectedApp.street, selectedApp.zip, selectedApp.city].filter(Boolean).join(", ")}
+                </p>
+              )}
+              {selectedApp.location_preference && (
+                <p>
+                  <strong>Kursstandort Wunsch:</strong> {selectedApp.location_preference}
+                </p>
+              )}
+              <p>
+                <strong>Status:</strong> {selectedApp.status}
+              </p>
+              <p className="text-xs text-slate-500">Quelle: Professional Audio Diploma</p>
+            </div>
+            <div className="pt-2">
+              <StatusSelect app={selectedApp} mutate={mutateApps} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

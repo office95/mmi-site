@@ -49,10 +49,13 @@ export default async function CoursePage({
   params: { slug: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  // Slug vor dem try/catch ermitteln – nur params.slug ist gültig für /kurs/[slug]
-  const raw = params?.slug;
-  const slugFromParams = Array.isArray(raw) ? raw[0] : raw;
-  const slugCleanInitial = typeof slugFromParams === "string" ? slugFromParams.trim() : "";
+  // Slug vor dem try/catch ermitteln – primär aus params, fallback auf searchParams.slug (zur Sicherheit bei fehlerhaften Links)
+  const pickSlugEarly = () => {
+    const raw = params?.slug ?? searchParams?.slug;
+    if (Array.isArray(raw)) return raw[0];
+    return typeof raw === "string" ? raw : "";
+  };
+  const slugCleanInitial = pickSlugEarly().trim();
   if (!slugCleanInitial) {
     // Ohne Slug ist diese Route ungültig -> 404
     return notFound();

@@ -372,12 +372,14 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
 
       </main>
 
-      <section className="bg-slate-100 py-10 sm:py-12">
-        <div className="mx-auto max-w-[1200px] px-4 sm:px-8 lg:px-20 space-y-4">
-          <h3 className="text-xl font-semibold text-slate-900">FAQs</h3>
-          <FaqAccordion faqs={course.faqs ?? []} />
-        </div>
-      </section>
+      {(course.faqs ?? []).length > 0 && (
+        <section className="bg-slate-100 py-10 sm:py-12">
+          <div className="mx-auto max-w-[1200px] px-4 sm:px-8 lg:px-20 space-y-4">
+            <h3 className="text-xl font-semibold text-slate-900">FAQs</h3>
+            <FaqAccordion faqs={course.faqs ?? []} />
+          </div>
+        </section>
+      )}
 
       { (sloganMediaDesktop || sloganMediaMobile) && (
         <section className="relative h-[80vh] w-full overflow-hidden bg-black">

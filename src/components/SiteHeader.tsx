@@ -76,7 +76,7 @@ export function SiteHeader() {
               <Link
                 key={c.id}
                 href={`/kurs/${c.slug}`}
-                className="block text-sm leading-tight text-slate-900 transition hover:text-pink-600"
+                className="block text-sm leading-tight whitespace-nowrap text-slate-900 transition hover:text-pink-600"
               >
                 {c.title}
               </Link>

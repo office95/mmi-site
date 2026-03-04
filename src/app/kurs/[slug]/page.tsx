@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import Image from "next/image";
 import { getSupabaseServerClient, getSupabaseServiceClient } from "@/lib/supabase";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -41,6 +42,36 @@ const toHtml = (text: string | null | undefined) => {
   }
   return `<p>${fmtInline(lines.join("<br>"))}</p>`;
 };
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const supabase = getSupabaseServiceClient();
+  const slug = params?.slug;
+  if (!slug) return { title: "Kurs | Music Mission Institute" };
+  try {
+    const { data: course } = await supabase.from("courses").select("title,subtitle,summary,hero_image_url,slug").eq("slug", slug).maybeSingle();
+    if (!course) return { title: "Kurs | Music Mission Institute" };
+    const desc = course.subtitle || course.summary || "Kurs beim Music Mission Institute.";
+    const image = course.hero_image_url ? toUrl(course.hero_image_url) : undefined;
+    return {
+      title: `${course.title} | Music Mission Institute`,
+      description: desc.slice(0, 155),
+      openGraph: {
+        title: `${course.title} | Music Mission Institute`,
+        description: desc.slice(0, 200),
+        url: `/kurs/${course.slug ?? slug}`,
+        images: image ? [{ url: image }] : undefined,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: `${course.title} | Music Mission Institute`,
+        description: desc.slice(0, 200),
+        images: image ? [image] : undefined,
+      },
+    };
+  } catch {
+    return { title: "Kurs | Music Mission Institute" };
+  }
+}
 
 export default async function CoursePage({
   params,

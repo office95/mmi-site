@@ -170,7 +170,7 @@ export default async function Home() {
             <div className="h-[80vh] overflow-visible bg-black relative">
               <HeroSlider slides={heroSlides} />
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="font-anton text-[220px] sm:text-[300px] lg:text-[420px] xl:text-[520px] leading-none text-white/30 select-none max-w-[80vw] text-center">
+                <span className="block w-full text-center font-anton text-[220px] sm:text-[300px] lg:text-[420px] xl:text-[520px] leading-none text-white/30 select-none max-w-[80vw] mx-auto">
                   MMI
                 </span>
               </div>

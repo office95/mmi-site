@@ -168,6 +168,12 @@ a {
 .animate-marquee-reverse {
   animation: marquee-reverse 110s linear infinite;
 }
+.animate-marquee-fast {
+  animation: marquee 45s linear infinite;
+}
+.animate-marquee-fast-reverse {
+  animation: marquee-reverse 45s linear infinite;
+}
 
 /* Header: Basisfarbe schwarz für Links/Buttons, Hover aus Tailwind bleibt erhalten */
 .site-header a {

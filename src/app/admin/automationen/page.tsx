@@ -109,7 +109,7 @@ export default function AutomationenPage() {
           <ul className="list-disc list-inside space-y-1">
             <li>Restbetrag-Reminder (E-Mail + optional Link für Restzahlung).</li>
             <li>Automatisches Freigeben von Plätzen bei Storno.</li>
-            <li>Health-Check: Warn-Mail, wenn Webhook-Fehler > 3x/Tag.</li>
+            <li>Health-Check: Warn-Mail, wenn Webhook-Fehler &gt; 3x/Tag.</li>
           </ul>
         </div>
 

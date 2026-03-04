@@ -51,7 +51,7 @@ export default async function CoursePage({
 }) {
   let course: any = null;
   let region: "AT" | "DE";
-  let supabase = getSupabaseServerClient();
+  let supabase: ReturnType<typeof getSupabaseServerClient> | ReturnType<typeof getSupabaseServiceClient> | null = null;
   let slugClean = params.slug.trim();
 
   try {
@@ -131,7 +131,8 @@ export default async function CoursePage({
 
   if (!course) {
     const supabase = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
-    const { data: list } = await supabase.from("courses").select("title, slug").limit(10);
+    const activeClient = supabase || getSupabaseServerClient();
+    const { data: list } = await activeClient.from("courses").select("title, slug").limit(10);
     return (
       <div className="min-h-screen bg-white text-slate-900">
         <SiteHeader />

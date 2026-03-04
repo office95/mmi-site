@@ -123,9 +123,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Keine Plätze mehr frei" }, { status: 409 });
   }
 
+  const orderNumber = await generateOrderNumber(supabase);
+
   const { data: orderInsert, error: orderErr } = await supabase
     .from("orders")
     .insert({
+      order_number: orderNumber,
+      course_id: course.id,
       session_id: sessionRow.id,
       email,
       customer_name: customer_name || null,
@@ -148,7 +152,7 @@ export async function POST(request: Request) {
       status: stripe ? "pending" : "paid",
       participants,
     })
-    .select("id")
+    .select("id, order_number")
     .single();
 
   if (orderErr || !orderInsert) {
@@ -191,6 +195,7 @@ export async function POST(request: Request) {
         course_id: course.id,
         participants: String(participants),
         price_mode: depositCents ? "deposit" : "full",
+        order_number: orderNumber,
         coupon_code: coupon_code || "",
       },
       success_url: successUrl,

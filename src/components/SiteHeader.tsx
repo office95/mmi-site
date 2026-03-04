@@ -73,20 +73,20 @@ export function SiteHeader() {
 
   const renderCourses = (list: SlotCourse[]) => {
     if (!list || list.length === 0) return <p className="text-sm text-slate-600">Noch keine Kurse zugeordnet.</p>;
-    // in Spalten à 5 Einträge, mit 3vh Abstand zwischen den Blöcken
-    const columns: SlotCourse[][] = [];
-    for (let i = 0; i < list.length; i += 5) {
-      columns.push(list.slice(i, i + 5));
-    }
+    const midpoint = Math.ceil(list.length / 2);
+    const columns: SlotCourse[][] = [list.slice(0, midpoint), list.slice(midpoint)];
     return (
-      <div className="grid gap-8 sm:gap-10 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-8 sm:gap-10 sm:grid-cols-2">
         {columns.map((col, colIdx) => (
-          <div key={colIdx} className="space-y-2">
+          <div
+            key={colIdx}
+            className={`space-y-2.5 ${colIdx === 1 ? "sm:border-l sm:border-slate-200/80 sm:pl-6" : ""}`}
+          >
             {col.map((c) => (
               <Link
                 key={c.id}
                 href={`/kurs/${c.slug}`}
-                className="block text-sm leading-tight whitespace-nowrap text-slate-900 transition hover:text-pink-600"
+                className="block text-sm leading-5 whitespace-nowrap text-slate-900 transition hover:text-pink-600"
               >
                 {c.title}
               </Link>

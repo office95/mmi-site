@@ -104,7 +104,7 @@ export function SiteHeader() {
           <span className="hidden sm:inline text-base">Music Mission Institute</span>
         </Link>
 
-        <nav className="relative hidden flex-1 justify-center items-center gap-5 text-[13px] sm:text-sm md:flex">
+        <nav className="relative hidden flex-1 justify-center items-center gap-5 text-[13px] sm:text-sm lg:flex">
           <Link href="/entdecken" className="hover:text-pink-600">
             Entdecken
           </Link>
@@ -164,7 +164,7 @@ export function SiteHeader() {
 
         {/* Mobile Burger */}
         <button
-          className="header-btn md:hidden ml-auto mr-[2vh] inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-slate-800 hover:bg-slate-100"
+          className="header-btn lg:hidden ml-auto mr-[2vh] inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-slate-800 hover:bg-slate-100"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Menü"
         >

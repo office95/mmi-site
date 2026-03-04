@@ -237,7 +237,7 @@ export default async function CoursePage({
     );
   }
 
-  const { data: siteLogoSetting } = await supabase.from("settings").select("value").eq("key", "site_logo_url").maybeSingle();
+  const { data: siteLogoSetting } = await db.from("settings").select("value").eq("key", "site_logo_url").maybeSingle();
 
   const heroDefault = "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=1600&q=80";
   const heroDesktop = toUrl(course.hero_image_url) ?? heroDefault;

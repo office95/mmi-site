@@ -49,10 +49,19 @@ export default async function CoursePage({
   params: { slug: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
+  // Slug vor dem try/catch ermitteln – nur params.slug ist gültig für /kurs/[slug]
+  const raw = params?.slug;
+  const slugFromParams = Array.isArray(raw) ? raw[0] : raw;
+  const slugCleanInitial = typeof slugFromParams === "string" ? slugFromParams.trim() : "";
+  if (!slugCleanInitial) {
+    // Ohne Slug ist diese Route ungültig -> 404
+    return notFound();
+  }
+
   let course: any = null;
   let region: "AT" | "DE" = getRegion(); // Default, wird im try ggf. überschrieben
   let supabase: ReturnType<typeof getSupabaseServerClient> | ReturnType<typeof getSupabaseServiceClient> | null = null;
-  let slugClean = "";
+  let slugClean = slugCleanInitial;
   let allowAllHosts = false;
   let lastError: any = null;
   let host = "";
@@ -60,17 +69,6 @@ export default async function CoursePage({
   try {
     const safeTrim = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 
-    const pickSlug = () => {
-      let slugParam: string | string[] | undefined = params?.slug;
-      if (!slugParam && searchParams?.slug) slugParam = searchParams.slug;
-      if (Array.isArray(slugParam)) slugParam = slugParam[0];
-      return typeof slugParam === "string" ? slugParam : "";
-    };
-
-    const slugRaw = pickSlug();
-    if (!slugRaw) return notFound();
-    const slug = slugRaw.toString();
-    slugClean = safeTrim(slug);
     const hdr = await headers();
     const rawHost = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
     host = rawHost.replace(/^www\./, "").split(":")[0]; // strip www + port

@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-const stripe = stripeSecret ? new Stripe(stripeSecret, { apiVersion: "2026-02-25.clover" }) : null;
+const stripe = stripeSecret ? new Stripe(stripeSecret, { apiVersion: "2023-10-16" }) : null;
 
 export async function POST(req: Request) {
   if (!stripe || !webhookSecret) return NextResponse.json({ error: "Stripe nicht konfiguriert" }, { status: 500 });
@@ -152,6 +152,23 @@ export async function POST(req: Request) {
     } catch (err) {
       console.error("E-Mail Versand fehlgeschlagen", err);
       // Webhook trotzdem erfolgreich quittieren, damit Stripe nicht neu sendet
+    }
+  }
+
+  if (event.type === "payment_intent.succeeded") {
+    const pi = event.data.object as Stripe.PaymentIntent;
+    const meta = pi.metadata || {};
+    const orderId = meta.order_id;
+    if (orderId) {
+      const supabase = getSupabaseServiceClient();
+      await supabase
+        .from("orders")
+        .update({
+          status: "paid",
+          stripe_payment_intent: pi.id,
+          amount_cents: pi.amount_received ?? pi.amount ?? null,
+        })
+        .eq("id", orderId);
     }
   }
 

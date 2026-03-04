@@ -209,16 +209,6 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
     );
   }
 
-  // Region-basierte Session-Filter: auf AT-Seite keine DE-Sessions anzeigen (und umgekehrt)
-  const allowedCountries =
-    region === "DE" ? ["deutschland", "germany"] : region === "AT" ? ["österreich", "austria"] : null;
-  const sessionsFiltered = sessionsWithPartner.filter((s: any) => {
-    if (!allowedCountries) return true;
-    const country = (s.country || s.partners?.country || "").toString().toLowerCase();
-    if (!country) return true; // wenn nicht gesetzt, zulassen
-    return allowedCountries.some((c) => country.includes(c));
-  });
-
   const { data: siteLogoSetting } = await supabase.from("settings").select("value").eq("key", "site_logo_url").maybeSingle();
 
   const heroDefault = "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=1600&q=80";

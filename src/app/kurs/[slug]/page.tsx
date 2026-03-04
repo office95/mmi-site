@@ -50,16 +50,16 @@ export default async function CoursePage({
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   // Slug vor dem try/catch ermitteln – primär aus params, fallback auf searchParams.slug (zur Sicherheit bei fehlerhaften Links)
-  const pickSlugEarly = () => {
+  const pickSlugEarly = async () => {
     const raw = params?.slug ?? searchParams?.slug;
     if (Array.isArray(raw)) return raw[0];
     return typeof raw === "string" ? raw : "";
   };
-  let slugCleanInitial = pickSlugEarly().trim();
+  let slugCleanInitial = (await pickSlugEarly()).trim();
   if (!slugCleanInitial) {
     // Letzter Fallback: Path aus Header lesen (wird in middleware gesetzt)
     try {
-      const hdr = headers();
+      const hdr = await headers();
       const pathHeader = hdr.get("x-pathname") || "";
       const parts = pathHeader.split("/").filter(Boolean);
       const last = parts[parts.length - 1];

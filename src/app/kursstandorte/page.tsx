@@ -161,9 +161,12 @@ export default function KursstandortePage() {
 
       <section className="px-4 pb-10 pt-[2vh] sm:px-10 lg:px-20 space-y-8 bg-neutral-100">
         <div className="mx-auto max-w-[1200px] space-y-5">
-          <p className="text-xs text-slate-500 text-center">
-            Debug Region: {debugRegion} · host: {debugHost} · x-region: {debugXRegion}
-          </p>
+          <div className="text-center text-slate-700 space-y-2">
+            <h2 className="font-anton text-[clamp(28px,5vw,40px)] text-slate-900">Unsere Standorte</h2>
+            <p className="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto">
+              Studios und Partner in Österreich & Deutschland. Filtere nach Region oder Kursformat und finde den Standort, der zu deinem Kurs passt.
+            </p>
+          </div>
 
           {/* Mobile Accordion for Filters */}
           <div className="sm:hidden">

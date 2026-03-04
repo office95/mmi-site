@@ -17,6 +17,11 @@ import Script from "next/script";
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
+const SITE_AT = process.env.NEXT_PUBLIC_DOMAIN_AT || process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at";
+const SITE_DE = process.env.NEXT_PUBLIC_DOMAIN_DE || "https://musicmission.de";
+const OG_FALLBACK =
+  "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=1600&q=80&sat=-15&exp=5";
+
 const toUrl = (path: string | null) => {
   if (!path) return null;
   if (path.startsWith("http")) return path;
@@ -49,24 +54,37 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const slug = params?.slug;
   if (!slug) return { title: "Kurs | Music Mission Institute" };
   try {
-    const { data: course } = await supabase.from("courses").select("title,subtitle,summary,hero_image_url,slug").eq("slug", slug).maybeSingle();
+    const { data: course } = await supabase
+      .from("courses")
+      .select("title,subtitle,summary,hero_image_url,slug")
+      .eq("slug", slug)
+      .maybeSingle();
     if (!course) return { title: "Kurs | Music Mission Institute" };
     const desc = course.subtitle || course.summary || "Kurs beim Music Mission Institute.";
-    const image = course.hero_image_url ? toUrl(course.hero_image_url) : undefined;
+    const image = course.hero_image_url ? toUrl(course.hero_image_url) : OG_FALLBACK;
+    const canonical = `${SITE_AT}/kurs/${course.slug ?? slug}`;
     return {
       title: `${course.title} | Music Mission Institute`,
       description: desc.slice(0, 155),
+      alternates: {
+        canonical,
+        languages: {
+          "de-AT": `${SITE_AT}/kurs/${course.slug ?? slug}`,
+          "de-DE": `${SITE_DE}/kurs/${course.slug ?? slug}`,
+          "x-default": canonical,
+        },
+      },
       openGraph: {
         title: `${course.title} | Music Mission Institute`,
         description: desc.slice(0, 200),
-        url: `/kurs/${course.slug ?? slug}`,
-        images: image ? [{ url: image }] : undefined,
+        url: canonical,
+        images: [{ url: image }],
       },
       twitter: {
         card: "summary_large_image",
         title: `${course.title} | Music Mission Institute`,
         description: desc.slice(0, 200),
-        images: image ? [image] : undefined,
+        images: [image],
       },
     };
   } catch {
@@ -332,13 +350,15 @@ export default async function CoursePage({
   const sloganMediaMobile = course.slogan_image_mobile_url ?? course.slogan_image_url ?? "";
   const stateText = states.length ? states.join(" | ") : region === "DE" ? "Standort in Deutschland" : "Bundesland folgt";
 
+  const canonical = `${region === "DE" ? SITE_DE : SITE_AT}/kurs/${course.slug}`;
+
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Startseite", item: process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at" },
-      { "@type": "ListItem", position: 2, name: "Kurse", item: `${process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at"}/entdecken` },
-      { "@type": "ListItem", position: 3, name: course.title, item: `${process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at"}/kurs/${course.slug}` },
+      { "@type": "ListItem", position: 1, name: "Startseite", item: SITE_AT },
+      { "@type": "ListItem", position: 2, name: "Kurse", item: `${SITE_AT}/entdecken` },
+      { "@type": "ListItem", position: 3, name: course.title, item: `${SITE_AT}/kurs/${course.slug}` },
     ],
   };
 
@@ -356,6 +376,54 @@ export default async function CoursePage({
         })),
       }
     : null;
+
+  const courseLd = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: course.title,
+    description: course.subtitle || course.summary || "",
+    url: canonical,
+    provider: {
+      "@type": "Organization",
+      name: "Music Mission Institute",
+      url: SITE_AT,
+    },
+    hasCourseInstance: (course.sessions ?? []).map((s: any) => {
+      const start = s.start_date ? `${s.start_date}T${s.start_time || "00:00"}` : null;
+      const end = s.end_time ? `${s.start_date}T${s.end_time}` : null;
+      const partner = s.partners ?? {};
+      const address = {
+        "@type": "PostalAddress",
+        streetAddress: s.address || partner.street || "",
+        addressLocality: s.city || partner.city || "",
+        addressRegion: s.state || partner.state || "",
+        postalCode: s.zip || partner.zip || "",
+        addressCountry: s.country || partner.country || "",
+      };
+      const locationName = partner.name || s.city || "Kursstandort";
+      return {
+        "@type": "CourseInstance",
+        name: `${course.title} - Termin`,
+        startDate: start,
+        endDate: end,
+        courseMode: "Onsite",
+        location: {
+          "@type": "Place",
+          name: locationName,
+          address,
+        },
+        offers: [
+          {
+            "@type": "Offer",
+            priceCurrency: "EUR",
+            price: ((s.price_cents ?? course.base_price_cents ?? 0) / 100).toFixed(2),
+            availability: "https://schema.org/InStock",
+            url: canonical,
+          },
+        ],
+      };
+    }),
+  };
 
   const footerLogo =
     toUrl(siteLogoSetting?.value ?? null) ??
@@ -518,6 +586,7 @@ export default async function CoursePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      <Script id="course-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(courseLd) }} />
       {faqLd && (
         <Script id="course-faq" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       )}

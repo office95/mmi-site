@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   const region = getRegionFromRequest(req);
   const showAll = req.nextUrl.searchParams.get("all") === "1";
   const supabase = getSupabaseServiceClient();
-  const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()},region.is.null,region.eq.`;
+  const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.`;
   const { data, error } = await supabase
     .from(TABLE)
     .select("*, sessions(*), addons(*), course_tags(tag:tags(name))")
@@ -44,6 +44,7 @@ export async function POST(req: Request) {
 
   const courseId = body.id ?? randomUUID();
   const baseSlug = body.slug || slugify(body.title ?? "") || `kurs-${Date.now()}`;
+  const regionNormalized = body.region ? String(body.region).trim().toUpperCase() : null;
 
   // slug-Helper, damit unique constraint nicht knallt
   const ensureUniqueSlug = async (slugBase: string): Promise<string> => {
@@ -65,7 +66,7 @@ export async function POST(req: Request) {
     title: body.title,
     slug: finalSlug,
     tags: Array.isArray(body.tags) ? body.tags.filter((t: string) => !!t?.trim()) : [],
-    region: body.region ?? null,
+    region: regionNormalized,
     category_id: body.category_id ?? null,
     subcategory_id: body.subcategory_id ?? null,
     type_id: body.type_id ?? null,

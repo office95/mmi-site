@@ -42,8 +42,14 @@ const toHtml = (text: string | null | undefined) => {
   return `<p>${fmtInline(lines.join("<br>"))}</p>`;
 };
 
-export default async function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function CoursePage({
+  params,
+  searchParams,
+}: {
+  params: { slug: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
+  const { slug } = params;
   const hdr = await headers();
   const rawHost = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
   const host = rawHost.replace(/^www\./, "").split(":")[0]; // strip www + port
@@ -106,8 +112,12 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
     if (ilikeCourse) course = ilikeCourse;
   }
 
+  const bookingFlag = typeof searchParams === "object" && searchParams
+    ? (Array.isArray(searchParams.booking) ? searchParams.booking[0] : searchParams.booking) ?? null
+    : null;
+
   const courseRegion = (course?.region ?? "").toString().trim().toUpperCase();
-  if (course && courseRegion && courseRegion !== region) {
+  if (course && courseRegion && courseRegion !== region && !bookingFlag) {
     return notFound();
   }
 

@@ -7,7 +7,8 @@ export const dynamic = "force-dynamic";
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-const stripe = stripeSecret ? new Stripe(stripeSecret, { apiVersion: "2023-10-16" }) : null;
+// Verwende die Stripe-Standard-API-Version der verwendeten SDK-Version.
+const stripe = stripeSecret ? new Stripe(stripeSecret) : null;
 
 export async function POST(req: Request) {
   if (!stripe || !webhookSecret) return NextResponse.json({ error: "Stripe nicht konfiguriert" }, { status: 500 });

@@ -203,6 +203,8 @@ export default function OrdersPage() {
                 <th className="px-4 py-3 text-left">Datum</th>
                 <th className="px-4 py-3 text-left">Kunde</th>
                 <th className="px-4 py-3 text-left">Kurs</th>
+                <th className="px-4 py-3 text-left">Termin/Partner</th>
+                <th className="px-4 py-3 text-left">Teilnehmer</th>
                 <th className="px-4 py-3 text-left">Gesamt</th>
                 <th className="px-4 py-3 text-left">Gutschein</th>
                 <th className="px-4 py-3 text-left">Status</th>
@@ -228,6 +230,7 @@ export default function OrdersPage() {
                 const total = o.course?.base_price_cents ? o.course.base_price_cents / 100 : (o.amount_cents ?? 0) / 100;
                 const statusColor =
                   o.status === "paid" ? "bg-emerald-100 text-emerald-700" : o.status === "pending" ? "bg-amber-100 text-amber-700" : "bg-slate-200 text-slate-700";
+                const partner = o.session?.partners;
                 return (
                   <tr key={o.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3 font-semibold text-slate-900">{o.order_number ?? "–"}</td>
@@ -240,6 +243,17 @@ export default function OrdersPage() {
                       <div className="text-slate-900 font-semibold">{o.course?.title ?? "–"}</div>
                       <div className="text-xs text-slate-500">{o.course?.slug ?? ""}</div>
                     </td>
+                    <td className="px-4 py-3 text-slate-800 text-sm">
+                      {o.session?.start_date ? (
+                        <div>
+                          {o.session.start_date} {o.session.start_time ? `· ${o.session.start_time.slice(0, 5)} Uhr` : ""}
+                        </div>
+                      ) : (
+                        "–"
+                      )}
+                      {partner?.name && <div className="text-xs text-slate-500">{partner.name}{partner.city ? ` · ${partner.city}` : ""}</div>}
+                    </td>
+                    <td className="px-4 py-3 text-slate-800">{o.participants ?? 1}</td>
                     <td className="px-4 py-3 text-slate-800 font-semibold align-top">{total ? `${total.toFixed(2)} €` : "–"}</td>
                     <td className="px-4 py-3 text-slate-700 text-xs">
                       {o.promotion_code || o.coupon_code || "–"}

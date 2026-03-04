@@ -127,15 +127,6 @@ export default async function CoursePage({
     return notFound();
   }
 
-  const bookingFlag = typeof searchParams === "object" && searchParams
-    ? (Array.isArray(searchParams.booking) ? searchParams.booking[0] : searchParams.booking) ?? null
-    : null;
-
-  const courseRegion = (course?.region ?? "").toString().trim().toUpperCase();
-  if (course && courseRegion && courseRegion !== region && !bookingFlag) {
-    return notFound();
-  }
-
   if (!course) {
     const { data: list } = await supabase.from("courses").select("title, slug").limit(10);
     return (

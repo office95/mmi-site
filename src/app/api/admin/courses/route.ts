@@ -54,19 +54,27 @@ export async function POST(req: Request) {
   const regionNormalized = body.region ? String(body.region).trim().toUpperCase() : null;
 
   // slug-Helper, damit unique constraint nicht knallt
-  const ensureUniqueSlug = async (slugBase: string): Promise<string> => {
-    let candidate = slugBase;
+  const ensureUniqueSlug = async (slugBase: string, regionCode: string | null): Promise<string> => {
+    let candidate = slugBase || `kurs-${Date.now()}`;
     let i = 2;
+    const regionSuffix = regionCode ? `-${regionCode.toLowerCase()}` : "";
+
     while (true) {
-      const { data } = await supabase.from(TABLE).select("id").eq("slug", candidate).limit(1);
-      const existingId = data?.[0]?.id;
-      if (!existingId || existingId === courseId) return candidate;
+      const { data } = await supabase.from(TABLE).select("id, region").eq("slug", candidate).limit(1);
+      const existing = data?.[0];
+      if (!existing || existing.id === courseId) return candidate;
+
+      // Falls gleicher Slug, aber andere Region -> erst region-Suffix versuchen
+      if (regionCode && existing.region && String(existing.region).toUpperCase() !== regionCode && !candidate.endsWith(regionSuffix)) {
+        candidate = `${slugBase}${regionSuffix}`;
+        continue;
+      }
+
       candidate = `${slugBase}-${i++}`;
     }
-    return candidate;
   };
 
-  const finalSlug = await ensureUniqueSlug(baseSlug);
+  const finalSlug = await ensureUniqueSlug(baseSlug, regionNormalized);
   const cleanTags = (() => {
     const seen = new Set<string>();
     const list: string[] = [];

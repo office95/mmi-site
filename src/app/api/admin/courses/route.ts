@@ -107,7 +107,7 @@ export async function POST(req: Request) {
         body.tags
           .map((t: string) => t?.trim())
           .filter((t: string | undefined | null): t is string => !!t)
-          .map((t) => t.toLowerCase())
+          .map((t: string) => t.toLowerCase())
       )
     );
     const tagIds: number[] = [];

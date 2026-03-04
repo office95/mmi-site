@@ -55,6 +55,7 @@ export default async function CoursePage({
   let slugClean = "";
   let allowAllHosts = false;
   let lastError: any = null;
+  let host = "";
 
   try {
     const safeTrim = (v: unknown) => (typeof v === "string" ? v.trim() : "");
@@ -65,7 +66,7 @@ export default async function CoursePage({
     slugClean = safeTrim(slug);
     const hdr = await headers();
     const rawHost = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
-    const host = rawHost.replace(/^www\./, "").split(":")[0]; // strip www + port
+    host = rawHost.replace(/^www\./, "").split(":")[0]; // strip www + port
     const isPreview = host.includes("vercel.app") || host.includes("localhost");
     allowAllHosts = isPreview;
     region = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
@@ -75,7 +76,14 @@ export default async function CoursePage({
 
     const uuidMatch = slugClean.match(/^[0-9a-fA-F-]{36}$/);
     if (uuidMatch) {
-      const { data } = await supabase.from("courses").select("*").eq("id", slugClean).maybeSingle();
+      const { data, error } = await supabase.from("courses").select("*").eq("id", slugClean).maybeSingle();
+      if (error) lastError = error.message;
+      if (data) course = data;
+    }
+
+    if (!course && slugClean) {
+      const { data, error } = await supabase.from("courses").select("*").eq("slug", slugClean).maybeSingle();
+      if (error) lastError = error.message;
       if (data) course = data;
     }
 
@@ -93,7 +101,8 @@ export default async function CoursePage({
 
       const orFilter = candidates.map((c) => `slug.eq.${c}`).join(",");
       if (orFilter) {
-        const { data } = await supabase.from("courses").select("*").or(orFilter);
+        const { data, error } = await supabase.from("courses").select("*").or(orFilter);
+        if (error) lastError = error.message;
         if (data && data.length > 0) {
           course =
             data.find((c: any) => safeTrim(c.slug) === slugClean) ||
@@ -104,7 +113,8 @@ export default async function CoursePage({
     }
 
     if (!course) {
-      const { data: allCourses } = await supabase.from("courses").select("*");
+      const { data: allCourses, error } = await supabase.from("courses").select("*");
+      if (error) lastError = error.message;
       if (allCourses) {
         const target = normalize(slug);
         course =
@@ -116,11 +126,12 @@ export default async function CoursePage({
 
     // Fallback: ilike-Search (case-insensitive) auf slug
     if (!course) {
-      const { data: ilikeCourse } = await supabase
+      const { data: ilikeCourse, error } = await supabase
         .from("courses")
         .select("*")
         .ilike("slug", `%${slugClean}%`)
         .maybeSingle();
+      if (error) lastError = error.message;
       if (ilikeCourse) course = ilikeCourse;
     }
   } catch (err) {
@@ -143,8 +154,9 @@ export default async function CoursePage({
         <SiteHeader />
         <div className="px-6 py-20 text-center space-y-4">
           <h1 className="text-2xl font-semibold">Kurs nicht gefunden</h1>
-          <p className="text-slate-600 mt-2">Für den Slug „{params.slug}“ wurde kein Kurs gefunden.</p>
+          <p className="text-slate-600 mt-2">Für den Slug „{slugClean || params.slug || "(leer)"}“ wurde kein Kurs gefunden.</p>
           {lastError && <p className="text-xs text-red-600">Fehler: {lastError}</p>}
+          <p className="text-[11px] text-slate-500">Host: {host || "unbekannt"} · Region: {region || "?"}</p>
           {list && (
             <div className="mx-auto max-w-lg text-left text-sm text-slate-700">
               <p className="font-semibold mb-2">Vorhandene Slugs (Top 10):</p>

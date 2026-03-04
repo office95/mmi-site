@@ -50,7 +50,7 @@ export default async function CoursePage({
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
   let course: any = null;
-  let region: "AT" | "DE";
+  let region: "AT" | "DE" = getRegion(); // Default, wird im try ggf. überschrieben
   let supabase: ReturnType<typeof getSupabaseServerClient> | ReturnType<typeof getSupabaseServiceClient> | null = null;
   let slugClean = "";
   let allowAllHosts = false;

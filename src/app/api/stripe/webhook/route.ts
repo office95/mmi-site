@@ -171,9 +171,7 @@ export async function POST(req: Request) {
       const htmlCustomer = `
         <p>Hallo,</p>
         <p>vielen Dank für deine Buchung beim Music Mission Institute.<br/>Dein Platz im Kurs ist fix reserviert.</p>
-        <p><strong>Kurs:</strong> ${courseTitle}</p>
-        <p><strong>Termin:</strong> ${startDate}</p>
-        <p><strong>Ort:</strong> ${partnerName}${partnerAddress ? ", " + partnerAddress : ""}</p>
+        <p>${courseTitle ? `<strong>Kurs:</strong> ${courseTitle}<br/>` : ""}${startDate ? `<strong>Termin:</strong> ${startDate}<br/>` : ""}${partnerName ? `<strong>Ort:</strong> ${partnerName}${partnerAddress ? ", " + partnerAddress : ""}<br/>` : ""}</p>
         <p>Weitere Infos erhältst du rechtzeitig vor Kursbeginn.</p>
         <p>Wir freuen uns auf dich!</p>
         <p>Beste Grüße<br/>Music Mission Institute<br/>www.musicmission.at</p>

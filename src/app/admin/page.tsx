@@ -56,6 +56,12 @@ export default function AdminHome() {
           >
             Bestellungen
           </a>
+          <a
+            href="/admin/automationen"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+          >
+            Automationen (Doku)
+          </a>
         </div>
         <div className="pt-6">
           <button

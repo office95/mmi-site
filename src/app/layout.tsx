@@ -3,6 +3,7 @@ import { Space_Grotesk, Archivo_Black, Anton, Lato } from "next/font/google";
 import "./globals.css";
 import SiteFooter from "@/components/SiteFooter";
 import { getRegion } from "@/lib/region";
+import { Analytics } from "@vercel/analytics/next";
 
 const display = Space_Grotesk({
   variable: "--font-display",
@@ -100,6 +101,7 @@ export default function RootLayout({
       <body className={`${display.variable} ${sans.variable} ${archivo.variable} ${anton.variable} antialiased pt-14 sm:pt-16`}>
         <script type="application/ld+json" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         {children}
+        <Analytics />
         <SiteFooter />
       </body>
     </html>

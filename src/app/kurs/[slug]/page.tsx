@@ -167,6 +167,16 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
     partners: partnerMap.get(s.partner_id as string) || null,
   }));
 
+  // Region-basierte Session-Filter: auf AT-Seite keine DE-Sessions anzeigen (und umgekehrt)
+  const allowedCountries =
+    region === "DE" ? ["deutschland", "germany"] : region === "AT" ? ["österreich", "austria"] : null;
+  const sessionsFiltered = sessionsWithPartner.filter((s: any) => {
+    if (!allowedCountries) return true;
+    const country = (s.country || s.partners?.country || "").toString().toLowerCase();
+    if (!country) return true; // wenn nicht gesetzt, zulassen
+    return allowedCountries.some((c) => country.includes(c));
+  });
+
   const { data: addons } = await supabase.from("addons").select("*").eq("course_id", course.id);
   course.sessions = sessionsFiltered;
   course.addons = addons ?? [];

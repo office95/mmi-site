@@ -71,12 +71,12 @@ export function SiteHeader() {
     return (
       <div className="grid gap-8 sm:gap-10 md:grid-cols-2 lg:grid-cols-3">
         {columns.map((col, colIdx) => (
-          <div key={colIdx} className="space-y-3">
+          <div key={colIdx} className="space-y-2">
             {col.map((c) => (
               <Link
                 key={c.id}
                 href={`/kurs/${c.slug}`}
-                className="block text-base text-slate-900 transition hover:text-pink-600"
+                className="block text-sm leading-tight text-slate-900 transition hover:text-pink-600"
               >
                 {c.title}
               </Link>

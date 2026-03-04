@@ -61,55 +61,60 @@ export default async function CoursePage({
 
   let course: any = null;
 
-  const uuidMatch = slugClean.match(/^[0-9a-fA-F-]{36}$/);
-  if (uuidMatch) {
-    const { data } = await supabase.from("courses").select("*").eq("id", slugClean).maybeSingle();
-    if (data) course = data;
-  }
+  try {
+    const uuidMatch = slugClean.match(/^[0-9a-fA-F-]{36}$/);
+    if (uuidMatch) {
+      const { data } = await supabase.from("courses").select("*").eq("id", slugClean).maybeSingle();
+      if (data) course = data;
+    }
 
-  if (!course) {
-    const candidates = Array.from(
-      new Set<string>([
-        slugClean,
-        slugClean.toLowerCase(),
-        slugClean.replace(/_/g, "-"),
-        slugClean.replace(/-/g, "_"),
-        normalize(slugClean),
-        normalize(slugClean).replace(/_/g, "-"),
-      ]).values()
-    ).filter(Boolean);
+    if (!course) {
+      const candidates = Array.from(
+        new Set<string>([
+          slugClean,
+          slugClean.toLowerCase(),
+          slugClean.replace(/_/g, "-"),
+          slugClean.replace(/-/g, "_"),
+          normalize(slugClean),
+          normalize(slugClean).replace(/_/g, "-"),
+        ]).values()
+      ).filter(Boolean);
 
-    const orFilter = candidates.map((c) => `slug.eq.${c}`).join(",");
-    if (orFilter) {
-      const { data } = await supabase.from("courses").select("*").or(orFilter);
-      if (data && data.length > 0) {
-        course =
-          data.find((c: any) => c.slug?.trim() === slugClean) ||
-          data.find((c: any) => normalize(c.slug ?? "") === normalize(slugClean)) ||
-          data[0];
+      const orFilter = candidates.map((c) => `slug.eq.${c}`).join(",");
+      if (orFilter) {
+        const { data } = await supabase.from("courses").select("*").or(orFilter);
+        if (data && data.length > 0) {
+          course =
+            data.find((c: any) => c.slug?.trim() === slugClean) ||
+            data.find((c: any) => normalize(c.slug ?? "") === normalize(slugClean)) ||
+            data[0];
+        }
       }
     }
-  }
 
-  if (!course) {
-    const { data: allCourses } = await supabase.from("courses").select("*");
-    if (allCourses) {
-      const target = normalize(slug);
-      course =
-        allCourses.find((c: any) => normalize(c.slug ?? "") === target || normalize(c.title ?? "") === target) ||
-        allCourses.find((c: any) => normalize(c.slug ?? "").startsWith(target) || normalize(c.title ?? "").startsWith(target)) ||
-        null;
+    if (!course) {
+      const { data: allCourses } = await supabase.from("courses").select("*");
+      if (allCourses) {
+        const target = normalize(slug);
+        course =
+          allCourses.find((c: any) => normalize(c.slug ?? "") === target || normalize(c.title ?? "") === target) ||
+          allCourses.find((c: any) => normalize(c.slug ?? "").startsWith(target) || normalize(c.title ?? "").startsWith(target)) ||
+          null;
+      }
     }
-  }
 
-  // Fallback: ilike-Search (case-insensitive) auf slug
-  if (!course) {
-    const { data: ilikeCourse } = await supabase
-      .from("courses")
-      .select("*")
-      .ilike("slug", `%${slugClean}%`)
-      .maybeSingle();
-    if (ilikeCourse) course = ilikeCourse;
+    // Fallback: ilike-Search (case-insensitive) auf slug
+    if (!course) {
+      const { data: ilikeCourse } = await supabase
+        .from("courses")
+        .select("*")
+        .ilike("slug", `%${slugClean}%`)
+        .maybeSingle();
+      if (ilikeCourse) course = ilikeCourse;
+    }
+  } catch (err) {
+    console.error("CoursePage load error", err);
+    return notFound();
   }
 
   const bookingFlag = typeof searchParams === "object" && searchParams

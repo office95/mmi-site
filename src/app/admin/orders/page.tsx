@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import useSWR from "swr";
+import { ChevronDown } from "lucide-react";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url, { cache: "no-store" });
@@ -68,10 +69,42 @@ function KpiCard({ label, value, tone }: { label: string; value: string; tone: "
   );
 }
 
+function FilterDropdown({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+}) {
+  const activeLabel = options.find((o) => o.value === value)?.label ?? "Filter";
+  return (
+    <div className="relative inline-block text-left">
+      <button className="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50">
+        <ChevronDown size={14} />
+        {activeLabel}
+      </button>
+      <div className="absolute right-0 mt-2 w-40 rounded-xl border border-slate-200 bg-white shadow-lg">
+        {options.map((o) => (
+          <button
+            key={o.value}
+            className={`block w-full px-3 py-2 text-left text-sm hover:bg-slate-50 ${o.value === value ? "font-semibold text-slate-900" : "text-slate-700"}`}
+            onClick={() => onChange(o.value)}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function OrdersPage() {
   const { data, error, isLoading } = useSWR("/api/admin/orders", fetcher);
   const { data: appsData, error: appsError, isLoading: appsLoading, mutate: mutateApps } = useSWR("/api/admin/diploma-applications", fetcher);
   const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [tab, setTab] = useState<"orders" | "applications">("orders");
   const [selectedApp, setSelectedApp] = useState<any | null>(null);
 
@@ -79,9 +112,10 @@ export default function OrdersPage() {
   const applications = appsData?.data ?? [];
 
   const filtered = useMemo(() => {
-    if (!query.trim()) return orders;
+    const list = statusFilter === "all" ? orders : orders.filter((o: any) => o.status === statusFilter);
+    if (!query.trim()) return list;
     const q = query.toLowerCase();
-    return orders.filter((o: any) => {
+    return list.filter((o: any) => {
       const hay = [
         o.order_number,
         o.email,
@@ -96,7 +130,7 @@ export default function OrdersPage() {
         .toLowerCase();
       return hay.includes(q);
     });
-  }, [orders, query]);
+  }, [orders, query, statusFilter]);
 
   const kpiPaid = useMemo(() => orders.filter((o: any) => o.status === "paid"), [orders]);
   const kpiPending = useMemo(() => orders.filter((o: any) => o.status !== "paid"), [orders]);
@@ -113,19 +147,24 @@ export default function OrdersPage() {
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
       <div className="mx-auto max-w-6xl px-6 py-12">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between mb-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between mb-4">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Admin</p>
             <h1 className="font-anton text-3xl">Bestellungen & Anmeldungen</h1>
             <p className="text-sm text-slate-600">Bestellungen (Stripe) und Diploma-Anmeldungen.</p>
           </div>
-          <div className="w-full sm:w-64">
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Suche nach Nr., Kunde, E-Mail, Kurs"
-              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
-            />
+          <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+            <div className="w-full sm:w-64">
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Suche nach Nr., Kunde, E-Mail, Kurs"
+                className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+            </div>
+            {tab === "orders" && (
+              <FilterDropdown value={statusFilter} onChange={setStatusFilter} options={[{ value: "all", label: "Alle" }, { value: "paid", label: "Paid" }, { value: "pending", label: "Pending" }, { value: "canceled", label: "Canceled" }]} />
+            )}
           </div>
         </div>
 

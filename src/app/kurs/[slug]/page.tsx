@@ -9,7 +9,7 @@ import Parallax from "@/components/Parallax";
 import ConsultBanner from "@/components/ConsultBanner";
 import { headers } from "next/headers";
 import { getRegion } from "@/lib/region";
-import { CourseTabs } from "./CourseTabs";
+import { FaqAccordion } from "./FaqAccordion";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -266,7 +266,20 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
               )}
             </div>
 
-            <CourseTabs modules={course.modules ?? []} faqs={course.faqs ?? []} />
+            {(course.modules ?? []).length > 0 && (
+              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white/85 shadow-sm">
+                <div className="grid grid-cols-12 bg-slate-50 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-600">
+                  <div className="col-span-9 px-4 py-3">Modul / Thema</div>
+                  <div className="col-span-3 px-4 py-3 text-right">Zeitumfang</div>
+                </div>
+                {(course.modules ?? []).map((m: any, idx: number) => (
+                  <div key={idx} className="grid grid-cols-12 items-center px-4 py-3 text-sm text-slate-800">
+                    <div className="col-span-9 font-semibold">{m.title || "Modul"}</div>
+                    <div className="col-span-3 text-right text-slate-700">{m.hours ? `${m.hours} h` : "—"}</div>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {(!course.sessions || course.sessions.length === 0) && (
               <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
@@ -330,6 +343,15 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
                 </div>
               </Reveal>
             )}
+
+            <Reveal delay={140}>
+              <section className="rounded-3xl border border-slate-200 bg-slate-100 px-5 py-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-slate-900">FAQs</h3>
+                </div>
+                <FaqAccordion faqs={course.faqs ?? []} />
+              </section>
+            </Reveal>
           </div>
 
           <aside className="space-y-6">

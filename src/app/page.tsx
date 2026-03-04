@@ -211,7 +211,7 @@ export default async function Home() {
                   <span className="text-[clamp(22px,4.5vw,44px)]">Trustpilot</span>
                 </div>
                 <a
-                  className="inline-flex items-center justify-center rounded-full bg-[#ff1f8f] px-5 py-2 text-sm sm:text-base font-semibold text-white shadow-lg shadow-pink-500/30 hover:-translate-y-0.5 transition whitespace-nowrap"
+                  className="btn-primary text-sm sm:text-base whitespace-nowrap"
                   href="https://at.trustpilot.com/review/musicmission.at"
                   target="_blank"
                   rel="noreferrer"

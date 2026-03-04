@@ -185,6 +185,44 @@ a {
   color: #0f172a !important;
 }
 
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0.65rem 1.2rem;
+  border-radius: 999px;
+  background: #ff1f8f;
+  color: #0f172a !important;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(255, 31, 143, 0.35);
+  transition: transform 120ms ease, box-shadow 160ms ease, background 120ms ease;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 34px rgba(255, 31, 143, 0.42);
+  background: #e40073;
+}
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0.55rem 1.05rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #fff;
+  color: #0f172a !important;
+  font-weight: 600;
+  transition: transform 120ms ease, box-shadow 160ms ease, border-color 120ms ease;
+}
+.btn-outline:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  border-color: rgba(255, 31, 143, 0.45);
+  color: #ff1f8f !important;
+}
+
 .nav-link {
   position: relative;
   padding: 6px 10px;

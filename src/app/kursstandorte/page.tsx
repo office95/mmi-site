@@ -199,10 +199,7 @@ export default function KursstandortePage() {
                   <Select label="Format" value={filterFormat} onChange={setFilterFormat} options={formats} placeholder="Alle Formate" />
                   <Select label="Sprache" value={filterLanguage} onChange={setFilterLanguage} options={languages} placeholder="Alle Sprachen" />
                 </div>
-                <button
-                  onClick={resetFilters}
-                  className="inline-flex items-center justify-center rounded-full border border-pink-500 text-pink-600 bg-white px-4 py-2 text-sm font-semibold hover:bg-pink-50 transition shadow-sm"
-                >
+                <button onClick={resetFilters} className="btn-outline text-sm">
                   Filter zurücksetzen
                 </button>
               </div>
@@ -236,10 +233,7 @@ export default function KursstandortePage() {
               <Select label="Format" value={filterFormat} onChange={setFilterFormat} options={formats} placeholder="Alle Formate" />
               <Select label="Sprache" value={filterLanguage} onChange={setFilterLanguage} options={languages} placeholder="Alle Sprachen" />
             </div>
-            <button
-              onClick={resetFilters}
-              className="inline-flex items-center rounded-full border border-pink-200 bg-white px-4 py-2 text-sm font-semibold text-pink-600 hover:bg-pink-50 transition shadow-sm"
-            >
+            <button onClick={resetFilters} className="btn-outline text-sm">
               Filter zurücksetzen
             </button>
           </div>

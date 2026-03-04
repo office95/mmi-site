@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import Script from "next/script";
 import ConsultBanner from "@/components/ConsultBanner";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -261,6 +262,23 @@ export default function PartnerPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white text-slate-900">
       <SiteHeader />
+      {partner?.name && (
+        <Script
+          id="partner-breadcrumb"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Startseite", item: process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at" },
+                { "@type": "ListItem", position: 2, name: "Partner", item: `${process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at"}/kursstandorte` },
+                { "@type": "ListItem", position: 3, name: partner.name, item: `${process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at"}/partner/${partner.slug}` },
+              ],
+            }),
+          }}
+        />
+      )}
       <main className="flex-1">
         <section className="relative h-[75vh] w-full overflow-hidden bg-black">
           <picture>

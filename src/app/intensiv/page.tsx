@@ -3,6 +3,7 @@ import ConsultBanner from "@/components/ConsultBanner";
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import { headers } from "next/headers";
 import { getRegion } from "@/lib/region";
+import { IntensivTabs } from "./IntensivTabs";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
@@ -46,11 +47,6 @@ export default async function IntensivPage() {
   const courses = await loadCourses(region);
   const modules = courses.flatMap((c) => (c.modules ?? []).map((m) => ({ ...m, course: c.title })));
   const faqs = courses.flatMap((c) => (c.faqs ?? []).map((f) => ({ ...f, course: c.title })));
-  const tabOptions: Array<"inhalt" | "faqs"> = [
-    ...(modules.length ? ["inhalt" as const] : []),
-    ...(faqs.length ? ["faqs" as const] : []),
-  ];
-  const hasTabs = tabOptions.length > 0;
   const heroVideo = null;
   const heroFallback = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/3e6eb2cb-ad29-4c6f-a4b5-973b9d56f70e.webp";
 
@@ -148,54 +144,7 @@ export default async function IntensivPage() {
         </div>
       </section>
 
-      {hasTabs && (
-        <section className="mx-auto max-w-6xl px-6 pb-16 space-y-6">
-          <div className="flex gap-3 text-xs font-semibold flex-wrap">
-            {tabOptions.map((t) => (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                className={`rounded-full px-3 py-2 border transition ${
-                  tab === t ? "border-[#ff1f8f] text-[#ff1f8f] bg-[#ff1f8f]/10" : "border-slate-200 text-slate-600 hover:border-[#ff1f8f]/50"
-                }`}
-              >
-                {t === "inhalt" ? "Kursinhalt" : "FAQs"}
-              </button>
-            ))}
-          </div>
-
-          {tab === "inhalt" && modules.length > 0 && (
-            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-              <div className="grid grid-cols-12 bg-slate-50 text-xs font-semibold text-slate-600 uppercase tracking-[0.12em]">
-                <div className="col-span-5 sm:col-span-6 px-4 py-3">Modul / Thema</div>
-                <div className="col-span-4 sm:col-span-4 px-4 py-3">Kurs</div>
-                <div className="col-span-3 sm:col-span-2 px-4 py-3 text-right">Zeit (Std.)</div>
-              </div>
-              <div className="divide-y divide-slate-100">
-                {modules.map((m, idx) => (
-                  <div key={idx} className="grid grid-cols-12 items-center px-4 py-3 text-sm text-slate-800">
-                    <div className="col-span-5 sm:col-span-6 font-semibold">{m.title || "Modul"}</div>
-                    <div className="col-span-4 sm:col-span-4 text-slate-600">{m.course}</div>
-                    <div className="col-span-3 sm:col-span-2 text-right text-slate-700">{m.hours ? `${m.hours} h` : "—"}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {tab === "faqs" && faqs.length > 0 && (
-            <div className="space-y-2">
-              {faqs.map((f, idx) => (
-                <div key={idx} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500 mb-1">{f.course}</p>
-                  <p className="text-lg font-semibold text-slate-900">{f.question || "Frage"}</p>
-                  <p className="text-sm text-slate-700 mt-1">{f.answer || "Antwort folgt."}</p>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      )}
+      <IntensivTabs modules={modules} faqs={faqs} />
 
       {/* Kurs-Grid */}
       <section id="kurse" className="mx-auto max-w-6xl px-6 pb-16 space-y-6 scroll-mt-32 lg:scroll-mt-40">

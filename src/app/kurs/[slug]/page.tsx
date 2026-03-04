@@ -57,8 +57,26 @@ export default async function CoursePage({
   };
   const slugCleanInitial = pickSlugEarly().trim();
   if (!slugCleanInitial) {
-    // Ohne Slug ist diese Route ungültig -> 404
-    return notFound();
+    // Diagnose-Seite statt 404, damit wir sehen, was wirklich ankommt
+    return (
+      <div className="min-h-screen bg-white text-slate-900">
+        <SiteHeader />
+        <div className="px-6 py-16 space-y-4 max-w-3xl mx-auto">
+          <h1 className="text-2xl font-semibold text-red-600">Kurs-Slug fehlt</h1>
+          <p className="text-slate-700">Die Route /kurs/[slug] wurde ohne Slug aufgerufen.</p>
+          <div className="rounded border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">
+            <p className="font-semibold mb-2">Request-Daten (Debug):</p>
+            <pre className="whitespace-pre-wrap break-all text-xs">
+{JSON.stringify({ params, searchParams }, null, 2)}
+            </pre>
+          </div>
+          <p className="text-sm text-slate-600">
+            Bitte prüfe den Link, der auf diese Seite führt. Er muss die Form <code>/kurs/&lt;slug&gt;</code> haben, z.B.
+            <code>/kurs/music-producer-station-r</code>.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   let course: any = null;

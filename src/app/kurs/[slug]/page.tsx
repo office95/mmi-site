@@ -237,7 +237,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
             />
           </picture>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/20" />
         <div className="absolute left-6 sm:left-12 right-6 sm:right-12 top-[20%] text-left space-y-3 drop-shadow-[0_18px_40px_rgba(0,0,0,0.45)]">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-white/80">
             <span className="h-2 w-2 rounded-full bg-[#ff1f8f]" /> Kurs

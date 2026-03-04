@@ -24,7 +24,6 @@ type CheckoutBody = {
 };
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3005";
 
 async function generateOrderNumber(supabase: ReturnType<typeof getSupabaseServiceClient>) {
   const year = new Date().getFullYear();
@@ -156,17 +155,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: orderErr?.message || "Bestellung konnte nicht angelegt werden" }, { status: 500 });
   }
 
-  const successUrl = `${siteUrl}/kurs/${course.slug}?booking=success`;
-  const cancelUrl = `${siteUrl}/kurs/${course.slug}?booking=cancel`;
+  // Base URL dynamisch aus Host (Fallback auf https)
+  const host = request.headers.get("x-forwarded-host") || request.headers.get("host") || "localhost:3000";
+  const proto = (request.headers.get("x-forwarded-proto") || "").includes("http") ? request.headers.get("x-forwarded-proto")! : "https";
+  const baseUrl = `${proto}://${host}`.replace(/\/+$/, "");
+  const successUrl = `${baseUrl}/kurs/${course.slug}?booking=success`;
+  const cancelUrl = `${baseUrl}/kurs/${course.slug}?booking=cancel`;
 
-  // Wenn kein Stripe-Key vorhanden, direkt buchen und Plätze hochzählen
+  // Wenn kein Stripe-Key vorhanden → klarer Fehler
   if (!stripe) {
-    await supabase
-      .from("sessions")
-      .update({ seats_taken: (sessionRow.seats_taken ?? 0) + participants })
-      .eq("id", sessionRow.id);
-
-    return NextResponse.json({ url: successUrl });
+    return NextResponse.json({ error: "Stripe ist nicht konfiguriert (STRIPE_SECRET_KEY fehlt)" }, { status: 500 });
   }
 
   try {

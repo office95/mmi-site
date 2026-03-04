@@ -179,17 +179,23 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
       .select("id,state,city,country")
       .in("id", sessionPartners as string[]);
     const partnerMap2 = new Map<string, any>((partnerRows ?? []).map((p: any) => [p.id, p]));
+    const regionCountry = region === "DE" ? "deutschland" : region === "AT" ? "österreich" : "";
     states = Array.from(
       new Set(
         (course.sessions ?? [])
-          .map(
-            (s: any) =>
+          .map((s: any) => {
+            const p = partnerMap2.get(s.partner_id as string);
+            const country = (p?.country || s.country || "").toString().toLowerCase();
+            const candidate =
               s.state ||
-              partnerMap2.get(s.partner_id as string)?.state ||
-              partnerMap2.get(s.partner_id as string)?.city ||
-              partnerMap2.get(s.partner_id as string)?.country ||
-              ""
-          )
+              p?.state ||
+              p?.city ||
+              country ||
+              "";
+            // Nur Länder/Regionen anzeigen, die zur aktuellen Region passen, damit kein „Deutschland“ auf der AT-Seite auftaucht (und umgekehrt).
+            if (regionCountry && country && country !== regionCountry) return "";
+            return candidate;
+          })
           .filter(Boolean)
       )
     );
@@ -202,7 +208,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
   const heroMobile = toUrl(course.hero_image_mobile_url) ?? heroDesktop;
   const sloganMediaDesktop = course.slogan_image_url ?? course.slogan_image_mobile_url ?? "";
   const sloganMediaMobile = course.slogan_image_mobile_url ?? course.slogan_image_url ?? "";
-  const stateText = states.length ? states.join(" | ") : "Bundesland folgt";
+  const stateText = states.length ? states.join(" | ") : region === "DE" ? "Standort in Deutschland" : "Bundesland folgt";
 
   const footerLogo =
     toUrl(siteLogoSetting?.value ?? null) ??

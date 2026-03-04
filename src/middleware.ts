@@ -26,6 +26,7 @@ export async function middleware(req: NextRequest) {
   // Header nach vorne durchreichen, damit RSC getRegion() den Wert sieht
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-region", region);
+  requestHeaders.set("x-pathname", url.pathname);
 
   // Admin-Guard
   const isAdminRoute =

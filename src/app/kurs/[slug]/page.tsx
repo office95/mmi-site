@@ -55,7 +55,21 @@ export default async function CoursePage({
     if (Array.isArray(raw)) return raw[0];
     return typeof raw === "string" ? raw : "";
   };
-  const slugCleanInitial = pickSlugEarly().trim();
+  let slugCleanInitial = pickSlugEarly().trim();
+  if (!slugCleanInitial) {
+    // Letzter Fallback: Path aus Header lesen (wird in middleware gesetzt)
+    try {
+      const hdr = headers();
+      const pathHeader = hdr.get("x-pathname") || "";
+      const parts = pathHeader.split("/").filter(Boolean);
+      const last = parts[parts.length - 1];
+      if (last && last !== "kurs") {
+        slugCleanInitial = last.trim();
+      }
+    } catch {
+      // headers() kann hier noch nicht genutzt werden, ignorieren
+    }
+  }
   if (!slugCleanInitial) {
     // Diagnose-Seite statt 404, damit wir sehen, was wirklich ankommt
     return (

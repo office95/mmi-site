@@ -100,11 +100,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     await sendMail({
       to: "office@musicmission.at",
-      subject: "Neues Beratungsgespräch eingereicht!",
-      html: `<p>Es wurde ein neues Beratungsgespräch eingereicht.</p>
+      subject: "Kostenloses Beratungsgespräch beantragt",
+      html: `<p>Ein Formular wurde soeben eingereicht: <strong>Kostenloses Beratungsgespräch</strong>.</p>
              <p><strong>Formular-ID:</strong> ${formId}<br/>
              <strong>Submission:</strong> ${submissionId}</p>
-             <p><a href="${adminLink}">Zum Admin-Dashboard</a></p>
+             <p><a href="${adminLink}" target="_blank" rel="noreferrer">Zum Formular / Admin-Dashboard</a></p>
              <p style="margin-top:12px;font-weight:700;color:#0f172a;">Antworten</p>
              <div style="border:1px solid #e2e8f0;border-radius:12px;padding:12px;background:#f8fafc;">
                ${answersHtml || "<em>Keine Angaben</em>"}

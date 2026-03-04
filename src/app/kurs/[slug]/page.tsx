@@ -128,6 +128,7 @@ export default async function CoursePage({
   }
 
   if (!course) {
+    const supabase = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
     const { data: list } = await supabase.from("courses").select("title, slug").limit(10);
     return (
       <div className="min-h-screen bg-white text-slate-900">

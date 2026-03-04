@@ -130,11 +130,8 @@ export async function POST(req: Request) {
     courseData = data;
     courseError = error;
     if (!error) break;
-    if (error.message && error.message.includes("courses_slug_key")) {
-      attemptSlug = `${baseSlug || "kurs"}-${regionNormalized ? regionNormalized.toLowerCase() : "x"}-${Date.now().toString().slice(-5)}-${i + 1}`;
-      continue;
-    }
-    break;
+    // Bei ANY Fehler neuen Slug probieren, um Unique-Constraint zu umgehen
+    attemptSlug = `${baseSlug}-${regionNormalized ? regionNormalized.toLowerCase() : "x"}-${randomUUID().slice(0, 6).toLowerCase()}-${i + 1}`;
   }
   if (courseError) return NextResponse.json({ error: courseError.message }, { status: 500 });
 

@@ -20,6 +20,7 @@ const nav = [
   { href: "/admin/header-menu", label: "Header-Menü" },
   { href: "/admin/forms", label: "Formulare" },
   { href: "/admin/blog", label: "Blog" },
+  { href: "/admin/automationen", label: "Automationen" },
   { href: "/admin/settings", label: "Verwaltung" },
   { href: "/admin/users", label: "Benutzer" },
 ];

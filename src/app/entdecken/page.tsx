@@ -150,6 +150,8 @@ export default function EntdeckenPage() {
     });
   }, [futureSessions, qSearch, filterState, filterType, filterCategory]);
 
+  const regionText = debugRegion === "DE" ? "Deutschland" : "Österreich";
+
   const sessionBadges = (s: SessionCard) => {
     const badges: { name: string; color: string }[] = [];
     const typeName = types.find((t) => t.id === s.course?.type_id)?.name?.toLowerCase();
@@ -195,7 +197,7 @@ export default function EntdeckenPage() {
           <div className="text-center text-slate-700 space-y-2">
             <h2 className="font-anton text-[clamp(28px,5vw,40px)] text-slate-900">Alle Kurstermine auf einen Blick</h2>
             <p className="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto">
-              Finde deinen nächsten Termin in Österreich oder Deutschland und filtere nach Kurs, Standort oder Format. Live- und Intensivkurse mit unseren Partnerstudios – direkt buchbar.
+              Finde deinen nächsten Termin in {regionText} und filtere nach Kurs, Standort oder Format. Live- und Intensivkurse mit unseren Partnerstudios – direkt buchbar.
             </p>
           </div>
           <div className="flex flex-col gap-4">

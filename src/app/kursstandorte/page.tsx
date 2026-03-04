@@ -58,6 +58,7 @@ export default function KursstandortePage() {
   const [filterType, setFilterType] = useState("");
   const [filterFormat, setFilterFormat] = useState("");
   const [filterLanguage, setFilterLanguage] = useState("");
+  const regionLabel = debugRegion === "DE" ? "Deutschland" : "Österreich";
 
   const resetFilters = () => {
     setSearch("");
@@ -164,7 +165,7 @@ export default function KursstandortePage() {
           <div className="text-center text-slate-700 space-y-2">
             <h2 className="font-anton text-[clamp(28px,5vw,40px)] text-slate-900">Unsere Standorte</h2>
             <p className="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto">
-              Studios und Partner in Österreich & Deutschland. Filtere nach Region oder Kursformat und finde den Standort, der zu deinem Kurs passt.
+              Studios und Partner in {regionLabel}. Filtere nach Region oder Kursformat und finde den Standort, der zu deinem Kurs passt.
             </p>
           </div>
 

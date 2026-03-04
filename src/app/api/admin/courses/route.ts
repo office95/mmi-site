@@ -55,22 +55,18 @@ export async function POST(req: Request) {
 
   // slug-Helper, damit unique constraint nicht knallt
   const ensureUniqueSlug = async (slugBase: string, regionCode: string | null): Promise<string> => {
-    let base = slugBase || `kurs-${Date.now()}`;
-    const regionSuffix = regionCode ? `-${regionCode.toLowerCase()}` : "";
-
-    // 1) Wenn Region vorhanden, zunächst basis + regionSuffix versuchen
-    const firstCandidate = regionSuffix ? `${base}${regionSuffix}` : base;
-    const { data: firstHit } = await supabase.from(TABLE).select("id").eq("slug", firstCandidate).maybeSingle();
-    if (!firstHit || firstHit.id === courseId) return firstCandidate;
-
-    // 2) Laufnummer anhängen bis frei
-    let i = 2;
-    while (true) {
-      const candidate = `${firstCandidate}-${i++}`;
+    const base = slugBase || `kurs-${Date.now()}`;
+    const regionPart = regionCode ? `-${regionCode.toLowerCase()}` : "";
+    // Versuch 1: base + region
+    let candidate = `${base}${regionPart}`;
+    for (let i = 0; i < 20; i++) {
       const { data } = await supabase.from(TABLE).select("id").eq("slug", candidate).maybeSingle();
       const existingId = data?.id;
       if (!existingId || existingId === courseId) return candidate;
+      candidate = `${base}${regionPart}-${i + 2}`;
     }
+    // Fallback: kurs-{courseId}
+    return `${base}-${courseId.slice(0, 6).toLowerCase()}`;
   };
 
   const finalSlug = await ensureUniqueSlug(baseSlug, regionNormalized);
@@ -88,7 +84,7 @@ export async function POST(req: Request) {
     }
     return list;
   })();
-  const basePayload = {
+  const payload = {
     id: courseId,
     status: body.status ?? "active",
     title: body.title,
@@ -121,27 +117,11 @@ export async function POST(req: Request) {
     language: body.language ?? "de",
     price_tiers: body.price_tiers ?? [], // optional array of {label, price_cents, deposit_cents, tax_rate}
     faqs: body.faqs ?? [],
-    modules: body.modules ?? [],
-    updated_at: new Date().toISOString(),
+  modules: body.modules ?? [],
+  updated_at: new Date().toISOString(),
   };
 
-  // Upsert mit Retry bei Slug-Kollision (Race)
-  let courseData = null;
-  let courseError: any = null;
-  let attemptSlug = finalSlug;
-  for (let i = 0; i < 3; i++) {
-    const payload = { ...basePayload, slug: attemptSlug };
-    const { data, error } = await supabase.from(TABLE).upsert(payload, { onConflict: "id" }).select().single();
-    courseData = data;
-    courseError = error;
-    if (!error) break;
-    if (error.message && error.message.includes("courses_slug_key")) {
-      const suffix = `${regionNormalized ? regionNormalized.toLowerCase() : "x"}-${Date.now().toString().slice(-4)}-${i + 1}`;
-      attemptSlug = `${baseSlug || "kurs"}-${suffix}`;
-      continue;
-    }
-    break;
-  }
+  const { data: courseData, error: courseError } = await supabase.from(TABLE).upsert(payload, { onConflict: "id" }).select().single();
   if (courseError) return NextResponse.json({ error: courseError.message }, { status: 500 });
 
   // Tags

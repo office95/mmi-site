@@ -1,6 +1,6 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import ConsultBanner from "@/components/ConsultBanner";
-import { getSupabaseServiceClient } from "@/lib/supabase";
+import { getSupabaseServerClient } from "@/lib/supabase";
 import { headers } from "next/headers";
 import { getRegion } from "@/lib/region";
 import Image from "next/image";
@@ -23,7 +23,7 @@ type Course = {
 };
 
 async function loadCourses(region: "AT" | "DE"): Promise<Course[]> {
-  const supabase = getSupabaseServiceClient();
+  const supabase = getSupabaseServerClient();
 
   const { data: type } = await supabase.from("course_types").select("id").ilike("name", "%intensiv%").maybeSingle();
   if (!type?.id) return [];

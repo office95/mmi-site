@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { getSupabaseServiceClient } from "@/lib/supabase";
+import { getSupabaseServerClient } from "@/lib/supabase";
 import { SiteHeader } from "@/components/SiteHeader";
 import SessionCheckout from "@/components/SessionCheckout";
 import Reveal from "@/components/Reveal";
@@ -55,7 +55,7 @@ export default async function CoursePage({
   const host = rawHost.replace(/^www\./, "").split(":")[0]; // strip www + port
   const region =
     host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
-  const supabase = getSupabaseServiceClient();
+  const supabase = getSupabaseServerClient();
   const normalize = (s: string) => s.trim().toLowerCase().replace(/\s+/g, "-");
   const slugClean = slug.trim();
 

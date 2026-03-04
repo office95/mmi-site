@@ -165,7 +165,52 @@ export default function KursstandortePage() {
           <p className="text-xs text-slate-500 text-center">
             Debug Region: {debugRegion} · host: {debugHost} · x-region: {debugXRegion}
           </p>
-          <div className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:justify-center sm:gap-6 rounded-3xl bg-white/90 shadow-sm shadow-slate-200/60 backdrop-blur px-4 sm:px-5 py-4 border border-slate-200">
+
+          {/* Mobile Accordion for Filters */}
+          <div className="sm:hidden">
+            <details className="rounded-3xl border border-slate-200 bg-white/95 shadow-sm shadow-slate-200/60">
+              <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-slate-900">
+                <span>Filter anzeigen</span>
+                <span className="text-xs text-slate-500">Tippen zum Aufklappen</span>
+              </summary>
+              <div className="px-4 pb-4 space-y-3">
+                <div className="grid w-full gap-3">
+                  <Select label="Land" value={filterCountry} onChange={setFilterCountry} options={uniqOptions(partners.map((p) => p.country))} placeholder="Alle Länder" />
+                  <Select label="Bundesland" value={filterState} onChange={setFilterState} options={uniqOptions(partners.map((p) => p.state))} placeholder="Alle Bundesländer" />
+                  <Select
+                    label="Kategorie"
+                    value={filterCategory}
+                    onChange={(v) => {
+                      setFilterCategory(v);
+                      setFilterSubcategory("");
+                    }}
+                    options={categories.filter((c) => !c.parent).map((c) => ({ value: c.value, label: c.label }))}
+                    placeholder="Alle Kategorien"
+                  />
+                  <Select
+                    label="Unterkategorie"
+                    value={filterSubcategory}
+                    onChange={setFilterSubcategory}
+                    options={categories.filter((c) => c.parent === filterCategory).map((c) => ({ value: c.value, label: c.label }))}
+                    placeholder={filterCategory ? "Unterkategorie" : "Erst Kategorie wählen"}
+                    disabled={!filterCategory}
+                  />
+                  <Select label="Kurstyp" value={filterType} onChange={setFilterType} options={types} placeholder="Alle Kurstypen" />
+                  <Select label="Format" value={filterFormat} onChange={setFilterFormat} options={formats} placeholder="Alle Formate" />
+                  <Select label="Sprache" value={filterLanguage} onChange={setFilterLanguage} options={languages} placeholder="Alle Sprachen" />
+                </div>
+                <button
+                  onClick={resetFilters}
+                  className="inline-flex items-center justify-center rounded-full border border-pink-500 text-pink-600 bg-white px-4 py-2 text-sm font-semibold hover:bg-pink-50 transition shadow-sm"
+                >
+                  Filter zurücksetzen
+                </button>
+              </div>
+            </details>
+          </div>
+
+          {/* Desktop/Tablet Filters */}
+          <div className="hidden sm:flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:justify-center sm:gap-6 rounded-3xl bg-white/90 shadow-sm shadow-slate-200/60 backdrop-blur px-4 sm:px-5 py-4 border border-slate-200">
             <div className="grid w-full max-w-4xl gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               <Select label="Land" value={filterCountry} onChange={setFilterCountry} options={uniqOptions(partners.map((p) => p.country))} placeholder="Alle Länder" />
               <Select label="Bundesland" value={filterState} onChange={setFilterState} options={uniqOptions(partners.map((p) => p.state))} placeholder="Alle Bundesländer" />
@@ -193,7 +238,7 @@ export default function KursstandortePage() {
             </div>
             <button
               onClick={resetFilters}
-              className="inline-flex items-center rounded-full border border-pink-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-pink-50 transition shadow-sm"
+              className="inline-flex items-center rounded-full border border-pink-200 bg-white px-4 py-2 text-sm font-semibold text-pink-600 hover:bg-pink-50 transition shadow-sm"
             >
               Filter zurücksetzen
             </button>

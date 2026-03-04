@@ -55,22 +55,21 @@ export async function POST(req: Request) {
 
   // slug-Helper, damit unique constraint nicht knallt
   const ensureUniqueSlug = async (slugBase: string, regionCode: string | null): Promise<string> => {
-    let candidate = slugBase || `kurs-${Date.now()}`;
-    let i = 2;
+    let base = slugBase || `kurs-${Date.now()}`;
     const regionSuffix = regionCode ? `-${regionCode.toLowerCase()}` : "";
 
+    // 1) Wenn Region vorhanden, zunächst basis + regionSuffix versuchen
+    const firstCandidate = regionSuffix ? `${base}${regionSuffix}` : base;
+    const { data: firstHit } = await supabase.from(TABLE).select("id").eq("slug", firstCandidate).maybeSingle();
+    if (!firstHit || firstHit.id === courseId) return firstCandidate;
+
+    // 2) Laufnummer anhängen bis frei
+    let i = 2;
     while (true) {
-      const { data } = await supabase.from(TABLE).select("id, region").eq("slug", candidate).limit(1);
-      const existing = data?.[0];
-      if (!existing || existing.id === courseId) return candidate;
-
-      // Falls gleicher Slug, aber andere Region -> erst region-Suffix versuchen
-      if (regionCode && existing.region && String(existing.region).toUpperCase() !== regionCode && !candidate.endsWith(regionSuffix)) {
-        candidate = `${slugBase}${regionSuffix}`;
-        continue;
-      }
-
-      candidate = `${slugBase}-${i++}`;
+      const candidate = `${firstCandidate}-${i++}`;
+      const { data } = await supabase.from(TABLE).select("id").eq("slug", candidate).maybeSingle();
+      const existingId = data?.id;
+      if (!existingId || existingId === courseId) return candidate;
     }
   };
 

@@ -219,8 +219,8 @@ a {
 .btn-outline:hover {
   transform: translateY(-1px);
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-  border-color: rgba(255, 31, 143, 0.45);
-  color: #ff1f8f !important;
+  border-color: rgba(15, 23, 42, 0.2);
+  color: #0f172a !important;
 }
 
 .nav-link {

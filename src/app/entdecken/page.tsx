@@ -272,7 +272,7 @@ export default function EntdeckenPage() {
               {filtered.map((s) => (
                 <div
                   key={s.id}
-                  className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-lg transition"
+                  className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-md hover:shadow-lg hover:-translate-y-[2px] transition"
                 >
                   <div className="relative h-44 w-full overflow-hidden bg-slate-100">
                     {s.course?.hero_image_url ? (

@@ -344,14 +344,6 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
               </Reveal>
             )}
 
-            <Reveal delay={140}>
-              <section className="rounded-3xl border border-slate-200 bg-slate-100 px-5 py-6 shadow-sm space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-slate-900">FAQs</h3>
-                </div>
-                <FaqAccordion faqs={course.faqs ?? []} />
-              </section>
-            </Reveal>
           </div>
 
           <aside className="space-y-6">
@@ -379,6 +371,13 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
         </div>
 
       </main>
+
+      <section className="bg-slate-100 py-10 sm:py-12">
+        <div className="mx-auto max-w-[1200px] px-4 sm:px-8 lg:px-20 space-y-4">
+          <h3 className="text-xl font-semibold text-slate-900">FAQs</h3>
+          <FaqAccordion faqs={course.faqs ?? []} />
+        </div>
+      </section>
 
       { (sloganMediaDesktop || sloganMediaMobile) && (
         <section className="relative h-[80vh] w-full overflow-hidden bg-black">

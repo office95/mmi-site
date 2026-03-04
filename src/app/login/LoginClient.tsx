@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, LogIn, UserPlus } from "lucide-react";
+import { Loader2, LogIn } from "lucide-react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 
 export default function LoginClient() {
@@ -13,11 +13,8 @@ export default function LoginClient() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [mode, setMode] = useState<"password" | "magic">("password");
-  const [otpSent, setOtpSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [info, setInfo] = useState<string | null>(null);
 
   useEffect(() => {
     const handleRedirect = async () => {
@@ -52,80 +49,15 @@ export default function LoginClient() {
     }
   };
 
-  const sendMagicLink = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== "undefined" ? window.location.origin : "");
-      const redirectHost = siteUrl || (typeof window !== "undefined" ? window.location.origin : "");
-      const { error: authError } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${redirectHost}/auth/callback?redirect=${encodeURIComponent(redirect)}`,
-        },
-      });
-      if (authError) throw authError;
-      setOtpSent(true);
-    } catch (err) {
-      if (err instanceof Error) setError(err.message);
-      else setError("Login fehlgeschlagen");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const register = async () => {
-    setIsLoading(true);
-    setError(null);
-    setInfo(null);
-    try {
-      const { error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { role: "employee", status: "pending" },
-        },
-      });
-      if (authError) throw authError;
-      setInfo("Registriert. Bitte E-Mail bestätigen und auf Freischaltung warten.");
-    } catch (err) {
-      if (err instanceof Error) setError(err.message);
-      else setError("Registrierung fehlgeschlagen");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6 py-16">
-      <div className="w-full max-w-md space-y-6 rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white flex items-center justify-center px-6 py-16">
+      <div className="w-full max-w-md space-y-6 rounded-3xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur">
         <div className="space-y-2">
-          <p className="tag">Admin Login</p>
-          <h1 className="text-2xl font-semibold">Anmelden</h1>
-          <div className="flex gap-2 text-xs font-semibold">
-            <button
-              onClick={() => {
-                setMode("password");
-                setError(null);
-              }}
-              className={`rounded-full px-3 py-1 ${
-                mode === "password" ? "bg-white text-slate-900" : "border border-white/30 text-white"
-              }`}
-            >
-              Passwort
-            </button>
-            <button
-              onClick={() => {
-                setMode("magic");
-                setError(null);
-              }}
-              className={`rounded-full px-3 py-1 ${
-                mode === "magic" ? "bg-white text-slate-900" : "border border-white/30 text-white"
-              }`}
-            >
-              Magic Link
-            </button>
-          </div>
+          <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-slate-200">
+            Admin Login
+          </p>
+          <h1 className="text-3xl font-semibold">Willkommen zurück</h1>
+          <p className="text-sm text-slate-200/80">Bitte mit E-Mail und Passwort anmelden.</p>
         </div>
 
         <div className="space-y-3">
@@ -134,56 +66,27 @@ export default function LoginClient() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none focus:border-cyan-300"
+            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none focus:border-[#ff1f8f]"
             placeholder="you@example.com"
           />
-          {mode === "password" && (
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none focus:border-cyan-300"
-              placeholder="••••••••"
-            />
-          )}
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none focus:border-[#ff1f8f]"
+            placeholder="••••••••"
+          />
 
           {error && <p className="text-sm text-red-300">{error}</p>}
-          {info && !error && <p className="text-sm text-emerald-200">{info}</p>}
-          {otpSent && !error && (
-            <p className="text-sm text-cyan-200">
-              Link gesendet. Prüfe dein Postfach und öffne den Link auf diesem Gerät.
-            </p>
-          )}
 
-          {mode === "password" ? (
-            <div className="space-y-2">
-              <button
-                onClick={loginWithPassword}
-                disabled={isLoading || !email || !password}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5 disabled:opacity-50"
-              >
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
-                Login
-              </button>
-              <button
-                onClick={register}
-                disabled={isLoading || !email || !password}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/5 px-4 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 disabled:opacity-50"
-              >
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
-                Registrieren
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={sendMagicLink}
-              disabled={isLoading || !email}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5 disabled:opacity-50"
-            >
-              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
-              Magic Link senden
-            </button>
-          )}
+          <button
+            onClick={loginWithPassword}
+            disabled={isLoading || !email || !password}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#ff1f8f] px-4 py-3 text-sm font-semibold text-slate-900 shadow-lg shadow-pink-500/40 transition hover:-translate-y-0.5 disabled:opacity-50"
+          >
+            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
+            Anmelden
+          </button>
         </div>
       </div>
     </div>

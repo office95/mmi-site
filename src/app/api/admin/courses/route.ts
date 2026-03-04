@@ -88,7 +88,7 @@ export async function POST(req: Request) {
     }
     return list;
   })();
-  const payload = {
+  const basePayload = {
     id: courseId,
     status: body.status ?? "active",
     title: body.title,
@@ -125,7 +125,23 @@ export async function POST(req: Request) {
     updated_at: new Date().toISOString(),
   };
 
-  const { data: courseData, error: courseError } = await supabase.from(TABLE).upsert(payload, { onConflict: "id" }).select().single();
+  // Upsert mit Retry bei Slug-Kollision (Race)
+  let courseData = null;
+  let courseError: any = null;
+  let attemptSlug = finalSlug;
+  for (let i = 0; i < 3; i++) {
+    const payload = { ...basePayload, slug: attemptSlug };
+    const { data, error } = await supabase.from(TABLE).upsert(payload, { onConflict: "id" }).select().single();
+    courseData = data;
+    courseError = error;
+    if (!error) break;
+    if (error.message && error.message.includes("courses_slug_key")) {
+      const suffix = `${regionNormalized ? regionNormalized.toLowerCase() : "x"}-${Date.now().toString().slice(-4)}-${i + 1}`;
+      attemptSlug = `${baseSlug || "kurs"}-${suffix}`;
+      continue;
+    }
+    break;
+  }
   if (courseError) return NextResponse.json({ error: courseError.message }, { status: 500 });
 
   // Tags

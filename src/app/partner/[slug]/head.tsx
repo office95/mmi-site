@@ -15,6 +15,9 @@ export default async function Head({ params }: Props) {
   let title = "Partner | Music Mission Institute";
   let description = "Standorte und Partner des Music Mission Institute.";
   let image: string | null = null;
+  let breadcrumb: any = null;
+
+  const site = process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at";
 
   if (slug) {
     try {
@@ -28,6 +31,15 @@ export default async function Head({ params }: Props) {
         const loc = [data.city, data.state].filter(Boolean).join(" • ");
         description = loc ? `${data.name} – Standort ${loc}` : `${data.name} – Partnerstandort des Music Mission Institute.`;
         image = data.hero1_path ? toUrl(data.hero1_path) : null;
+        breadcrumb = {
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Startseite", item: site },
+            { "@type": "ListItem", position: 2, name: "Partner", item: `${site}/kursstandorte` },
+            { "@type": "ListItem", position: 3, name: data.name, item: `${site}/partner/${data.slug}` },
+          ],
+        };
       }
     } catch {
       /* ignore */
@@ -41,10 +53,13 @@ export default async function Head({ params }: Props) {
       {image ? <meta property="og:image" content={image} /> : null}
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content={`${site}/partner/${slug}`} />
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       {image ? <meta name="twitter:image" content={image} /> : null}
+      {breadcrumb ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} /> : null}
     </>
   );
 }

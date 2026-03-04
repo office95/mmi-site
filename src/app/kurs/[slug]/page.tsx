@@ -12,6 +12,7 @@ import { headers } from "next/headers";
 import { getRegion } from "@/lib/region";
 import { CourseModulesAccordion } from "./CourseModulesAccordion";
 import { FaqAccordion } from "./FaqAccordion";
+import Script from "next/script";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -331,6 +332,31 @@ export default async function CoursePage({
   const sloganMediaMobile = course.slogan_image_mobile_url ?? course.slogan_image_url ?? "";
   const stateText = states.length ? states.join(" | ") : region === "DE" ? "Standort in Deutschland" : "Bundesland folgt";
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Startseite", item: process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at" },
+      { "@type": "ListItem", position: 2, name: "Kurse", item: `${process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at"}/entdecken` },
+      { "@type": "ListItem", position: 3, name: course.title, item: `${process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at"}/kurs/${course.slug}` },
+    ],
+  };
+
+  const faqLd = (course.faqs ?? []).length
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: (course.faqs ?? []).map((f: any) => ({
+          "@type": "Question",
+          name: f?.q || f?.question || "Frage",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: f?.a || f?.answer || "",
+          },
+        })),
+      }
+    : null;
+
   const footerLogo =
     toUrl(siteLogoSetting?.value ?? null) ??
     "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp";
@@ -486,6 +512,15 @@ export default async function CoursePage({
         </div>
 
       </main>
+
+      <Script
+        id="course-breadcrumb"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+      {faqLd && (
+        <Script id="course-faq" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      )}
 
       {(course.faqs ?? []).length > 0 && (
         <section className="bg-slate-100 py-10 sm:py-12">

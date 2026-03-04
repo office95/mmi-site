@@ -60,9 +60,16 @@ export default async function CoursePage({
   try {
     const safeTrim = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 
-    const slugParam = params?.slug;
-    if (!slugParam) return notFound();
-    const slug = slugParam.toString();
+    const pickSlug = () => {
+      let slugParam: string | string[] | undefined = params?.slug;
+      if (!slugParam && searchParams?.slug) slugParam = searchParams.slug;
+      if (Array.isArray(slugParam)) slugParam = slugParam[0];
+      return typeof slugParam === "string" ? slugParam : "";
+    };
+
+    const slugRaw = pickSlug();
+    if (!slugRaw) return notFound();
+    const slug = slugRaw.toString();
     slugClean = safeTrim(slug);
     const hdr = await headers();
     const rawHost = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
@@ -72,6 +79,7 @@ export default async function CoursePage({
     region = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
 
     supabase = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
+    console.warn("[Kursseite] incoming", { params, searchParams, slugClean, host });
     const normalize = (s: string) => safeTrim(s).toLowerCase().replace(/\s+/g, "-");
 
     const uuidMatch = slugClean.match(/^[0-9a-fA-F-]{36}$/);

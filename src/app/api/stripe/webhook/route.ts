@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getSupabaseServiceClient } from "@/lib/supabase";
+import { sendMail } from "@/lib/mail";
 
 export const dynamic = "force-dynamic";
 
@@ -103,6 +104,39 @@ export async function POST(req: Request) {
     if (sessionId) {
       await supabase.rpc("increment_seats", { p_session_id: sessionId, p_count: participants });
     }
+
+    // Benachrichtigung per E-Mail
+    const [courseRow, sessionRow] = await Promise.all([
+      courseId ? supabase.from("courses").select("title").eq("id", courseId).maybeSingle() : Promise.resolve({ data: null }),
+      sessionId
+        ? supabase
+            .from("sessions")
+            .select("start_date,start_time,partner_id,city,state,country")
+            .eq("id", sessionId)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+    ]);
+    const partnerRow =
+      sessionRow?.data?.partner_id &&
+      (await supabase.from("partners").select("name,city,state,country").eq("id", sessionRow.data.partner_id).maybeSingle());
+
+    const formatDate = (d?: string | null) => (d ? new Date(d + "T00:00:00").toLocaleDateString("de-AT") : "n/a");
+    const formatTime = (t?: string | null) => (t ? t.substring(0, 5) : "n/a");
+
+    const html = `
+      <h3>Du hast eine neue Buchung</h3>
+      <p><strong>Kurs:</strong> ${courseRow?.data?.title ?? "n/a"}</p>
+      <p><strong>Termin:</strong> ${formatDate(sessionRow?.data?.start_date)} ${formatTime(sessionRow?.data?.start_time)}</p>
+      <p><strong>Partner:</strong> ${partnerRow?.data?.name ?? "n/a"} (${partnerRow?.data?.city ?? sessionRow?.data?.city ?? ""})</p>
+      <p><strong>Teilnehmer:</strong> ${participants}</p>
+      <p><strong>Order:</strong> ${cs.metadata?.order_number ?? "—"}</p>
+      <p><strong>Kunde:</strong> ${cs.customer_details?.name ?? ""} (${cs.customer_details?.email ?? ""})</p>
+    `;
+    await sendMail({
+      to: "office@musicmission.at",
+      subject: "Neue Kursbuchung",
+      html,
+    });
   }
 
   return NextResponse.json({ received: true });

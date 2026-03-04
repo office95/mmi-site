@@ -137,7 +137,7 @@ export default async function CoursePage({ params }: { params: Promise<{ slug: s
     );
   }
 
-  const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()}`; // strikt pro Domain
+  const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.,region.eq.%20`; // strikt, aber erlaubt leere/null -> global
 
   let { data: sessions } = await supabase
     .from("sessions")

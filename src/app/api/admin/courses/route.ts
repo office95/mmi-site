@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   const region = getRegionFromRequest(req);
   const showAll = req.nextUrl.searchParams.get("all") === "1";
   const supabase = getSupabaseServiceClient();
-  const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%`;
+  const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.,region.eq.%20`;
   const { data, error } = await supabase
     .from(TABLE)
     .select("*, sessions(*), addons(*), course_tags(tag:tags(name))")

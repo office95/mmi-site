@@ -280,7 +280,9 @@ export default function EntdeckenPage() {
                         src={s.course.hero_image_url}
                         alt={s.course.title}
                         fill
+                        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                         className="object-cover transition duration-300 group-hover:scale-105"
+                        priority={false}
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center text-slate-400 text-sm">Kein Bild</div>

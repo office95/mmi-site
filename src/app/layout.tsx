@@ -97,7 +97,7 @@ export default function RootLayout({
 
   return (
     <html lang="de" data-region={region}>
-      <body className={`${display.variable} ${sans.variable} ${archivo.variable} ${anton.variable} antialiased`}>
+      <body className={`${display.variable} ${sans.variable} ${archivo.variable} ${anton.variable} antialiased pt-14 sm:pt-16`}>
         <script type="application/ld+json" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         {children}
         <SiteFooter />

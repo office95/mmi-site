@@ -23,6 +23,7 @@ export default function SettingsPage() {
   const [faviconUrl, setFaviconUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deletingKey, setDeletingKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [tab, setTab] = useState<"settings" | "faqs">("settings");
@@ -100,6 +101,22 @@ export default function SettingsPage() {
       setError(e instanceof Error ? e.message : "Upload fehlgeschlagen");
     } finally {
       setUploading(false);
+    }
+  };
+
+  const deleteSetting = async (key: string, setter: (v: string | null) => void) => {
+    setDeletingKey(key);
+    setError(null);
+    setInfo(null);
+    try {
+      const { error } = await supabase.from("settings").delete().eq("key", key);
+      if (error) throw new Error(error.message);
+      setter(null);
+      setInfo("Eintrag gelöscht.");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Löschen fehlgeschlagen");
+    } finally {
+      setDeletingKey(null);
     }
   };
 
@@ -239,6 +256,15 @@ export default function SettingsPage() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={logoUrl} alt="Header Logo" className="h-24 w-full object-contain" />
                   <p className="text-[11px] text-slate-500 px-2 py-1 break-all">{logoUrl}</p>
+                  <div className="flex justify-end px-2 pb-2">
+                    <button
+                      onClick={() => deleteSetting(LOGO_KEY, setLogoUrl)}
+                      className="text-xs text-red-600 hover:underline"
+                      disabled={deletingKey === LOGO_KEY}
+                    >
+                      {deletingKey === LOGO_KEY ? "Lösche…" : "Entfernen"}
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -264,6 +290,15 @@ export default function SettingsPage() {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={logoExtremUrl} alt="Extrem Logo" className="h-24 w-full object-contain" />
                       <p className="text-[11px] text-slate-500 px-2 py-1 break-all">{logoExtremUrl}</p>
+                      <div className="flex justify-end px-2 pb-2">
+                        <button
+                          onClick={() => deleteSetting(LOGO_EXTREM_KEY, setLogoExtremUrl)}
+                          className="text-xs text-red-600 hover:underline"
+                          disabled={deletingKey === LOGO_EXTREM_KEY}
+                        >
+                          {deletingKey === LOGO_EXTREM_KEY ? "Lösche…" : "Entfernen"}
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -284,6 +319,15 @@ export default function SettingsPage() {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={logoIntensivUrl} alt="Intensiv Logo" className="h-24 w-full object-contain" />
                       <p className="text-[11px] text-slate-500 px-2 py-1 break-all">{logoIntensivUrl}</p>
+                      <div className="flex justify-end px-2 pb-2">
+                        <button
+                          onClick={() => deleteSetting(LOGO_INTENSIV_KEY, setLogoIntensivUrl)}
+                          className="text-xs text-red-600 hover:underline"
+                          disabled={deletingKey === LOGO_INTENSIV_KEY}
+                        >
+                          {deletingKey === LOGO_INTENSIV_KEY ? "Lösche…" : "Entfernen"}
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>

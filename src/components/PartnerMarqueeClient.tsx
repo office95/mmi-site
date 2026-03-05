@@ -55,7 +55,6 @@ export function PartnerMarqueeClient({ partners, fallbackLogos }: Props) {
         <h2 className="font-anton text-4xl sm:text-5xl leading-[1.05] text-slate-900">
           {region === "DE" ? "Unsere Partner in Deutschland" : "Unsere Partner in Österreich"}
         </h2>
-        <p className="text-xs text-slate-500">Debug Region: {region} · host: {host}</p>
       </div>
       <div className="relative overflow-x-auto overflow-y-hidden py-4">
         <div className="marquee" style={{ maxWidth: "1600px", margin: "0 auto" }}>

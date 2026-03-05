@@ -192,7 +192,6 @@ export default function SessionsPage() {
     }
   };
 
-  const loadAllSessions = async () => {
     setAllLoading(true);
     try {
       const res = await fetch("/api/admin/sessions?all=1", { cache: "no-store" });

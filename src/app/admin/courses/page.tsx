@@ -228,6 +228,24 @@ export default function CoursesPage() {
     }
   };
 
+  const uploadHeroMobile = async (file: File) => {
+    if (!editing) return;
+    setUploading("heroMobile");
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      form.append("title", `course-hero-mobile-${editing.title}`);
+      const res = await fetch("/api/upload", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload fehlgeschlagen");
+      updateEdit({ hero_image_mobile_url: data.url });
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Upload fehlgeschlagen");
+    } finally {
+      setUploading(null);
+    }
+  };
+
   const uploadSlogan = async (file: File) => {
     if (!editing) return;
     setUploading("slogan");
@@ -474,16 +492,21 @@ export default function CoursesPage() {
                     {uploading === "hero" && <span className="text-xs text-slate-500">Upload…</span>}
                   </div>
                   {editing.hero_image_url && (
-                    <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                      <img src={editing.hero_image_url} className="h-48 w-full object-cover" alt="Hero" />
-                      <p className="text-[11px] text-slate-500 px-2 py-1 break-all">{editing.hero_image_url}</p>
-                    </div>
-                  )}
+                  <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                    <img src={editing.hero_image_url} className="h-48 w-full object-cover" alt="Hero" />
+                    <p className="text-[11px] text-slate-500 px-2 py-1 break-all">{editing.hero_image_url}</p>
+                  </div>
+                )}
+                  <label className="text-sm font-semibold text-slate-700">Kursbild mobil</label>
+                  <div className="flex items-center gap-3">
+                    <input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && uploadHeroMobile(e.target.files[0])} className="text-sm" />
+                    {uploading === "heroMobile" && <span className="text-xs text-slate-500">Upload…</span>}
+                  </div>
                   <Input
-                    label="Kursbild mobil (URL, 1080x1920 empfohlen)"
+                    label="oder URL (optional)"
                     value={editing.hero_image_mobile_url ?? ""}
                     onChange={(v) => updateEdit({ hero_image_mobile_url: v })}
-                    placeholder="Optional separate Mobile-Version"
+                    placeholder="Falls externes Bild genutzt wird"
                   />
                   {editing.hero_image_mobile_url && (
                     <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">

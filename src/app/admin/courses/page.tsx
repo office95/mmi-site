@@ -99,7 +99,7 @@ export default function CoursesPage() {
   const [categories, setCategories] = useState<{ id: string; name: string; parent_id: string | null }[]>([]);
   const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
   const [formats, setFormats] = useState<{ id: string; name: string }[]>([]);
-  const [uploading, setUploading] = useState<"hero" | "slogan" | null>(null);
+  const [uploading, setUploading] = useState<"hero" | "heroMobile" | "slogan" | null>(null);
   const regionOptions = [
     { value: "", label: "Global (AT+DE)" },
     { value: "AT", label: "Österreich" },

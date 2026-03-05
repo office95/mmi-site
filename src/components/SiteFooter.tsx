@@ -15,8 +15,8 @@ export default async function SiteFooter() {
   const agbRow = settings?.find((s: any) => s.key === "pdf_agb_url");
   const dsRow = settings?.find((s: any) => s.key === "pdf_datenschutz_url");
   if (logoRow?.value) logo = toUrl(logoRow.value) ?? logo;
-  const agbUrl = agbRow?.value || "";
-  const dsUrl = dsRow?.value || "";
+  const agbUrl = toUrl(agbRow?.value ?? null) || "";
+  const dsUrl = toUrl(dsRow?.value ?? null) || "";
 
   return (
     <footer className="relative bg-[#ff1f8f] text-white px-5 sm:px-10 lg:px-20 z-40 shadow-[0_-16px_48px_rgba(0,0,0,0.14)] pt-10 pb-10 sm:pt-12 sm:pb-12">

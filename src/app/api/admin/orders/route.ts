@@ -51,6 +51,7 @@ export async function GET() {
         ...o,
         course: o.course_id ? courseMap.get(o.course_id) || null : null,
         session: session ? { ...session, partner: partner || null } : null,
+        partner_name: partner?.name ?? null,
       };
     });
 

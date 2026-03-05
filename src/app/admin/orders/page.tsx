@@ -230,7 +230,7 @@ export default function OrdersPage() {
                 const total = o.course?.base_price_cents ? o.course.base_price_cents / 100 : (o.amount_cents ?? 0) / 100;
                 const statusColor =
                   o.status === "paid" ? "bg-emerald-100 text-emerald-700" : o.status === "pending" ? "bg-amber-100 text-amber-700" : "bg-slate-200 text-slate-700";
-                const partner = o.session?.partners;
+                const partner = o.partner_name || o.session?.partner?.name || o.session?.partners?.name;
                 return (
                   <tr key={o.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3 font-semibold text-slate-900">{o.order_number ?? "–"}</td>
@@ -251,7 +251,12 @@ export default function OrdersPage() {
                       ) : (
                         "–"
                       )}
-                      {partner?.name && <div className="text-xs text-slate-500">{partner.name}{partner.city ? ` · ${partner.city}` : ""}</div>}
+                      {partner && (
+                        <div className="text-xs text-slate-500">
+                          {partner}
+                          {o.session?.partner?.city ? ` · ${o.session.partner.city}` : ""}
+                        </div>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-slate-800">{o.participants ?? 1}</td>
                     <td className="px-4 py-3 text-slate-800 font-semibold align-top">{total ? `${total.toFixed(2)} €` : "–"}</td>

@@ -253,10 +253,6 @@ export default function EntdeckenPage() {
               </button>
             </div>
 
-            <p className="text-xs text-slate-500">
-              Debug Region: {debugRegion || "—"} · host: {debugHost || "—"} · x-region: {debugXRegion || "(client)"}
-            </p>
-
             <div className="flex items-center justify-between mt-6 sm:mt-8">
               <div>
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Kurstermine</p>

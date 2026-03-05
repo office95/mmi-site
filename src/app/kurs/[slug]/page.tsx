@@ -627,7 +627,7 @@ export default async function CoursePage({
                   </p>
                 )}
                 {slogan3 && (
-                  <p className="text-[clamp(28px,4.5vw,52px)] text-white/85 font-semibold drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+                  <p className="font-anton text-[clamp(28px,4.5vw,52px)] text-white/85 font-semibold drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
                     {slogan3}
                   </p>
                 )}

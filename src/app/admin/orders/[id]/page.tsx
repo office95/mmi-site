@@ -71,7 +71,10 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
               )}
               {partner && (
                 <div className="text-slate-700">
-                  Partner: {partner.name ?? "–"}{partner.city ? ` · ${partner.city}` : ""}{partner.state ? ` · ${partner.state}` : ""}{partner.country ? ` · ${partner.country}` : ""}
+                  Partner: {partner.name ?? "–"}
+                  {partner.city ? ` · ${partner.city}` : ""}
+                  {partner.state ? ` · ${partner.state}` : ""}
+                  {partner.country ? ` · ${partner.country}` : ""}
                 </div>
               )}
               <div className="space-y-0.5">

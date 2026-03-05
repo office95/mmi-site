@@ -89,6 +89,7 @@ export default function SessionsPage() {
   const [filterType, setFilterType] = useState("");
   const [filterFormat, setFilterFormat] = useState("");
   const [filterLanguage, setFilterLanguage] = useState("");
+  const [onlyOpen, setOnlyOpen] = useState(false);
 
   const [editing, setEditing] = useState<Session | null>(null);
   const [tab, setTab] = useState<"stammdaten" | "details" | "preis" | "tags">("stammdaten");
@@ -112,7 +113,7 @@ export default function SessionsPage() {
   useEffect(() => {
     const load = async () => {
       const [sRes, cRes, pRes, catRes, fRes, lRes, tRes] = await Promise.all([
-        fetch("/api/admin/sessions"),
+        fetch(`/api/admin/sessions${onlyOpen ? "?open=1" : ""}`),
         fetch("/api/admin/courses"),
         fetch("/api/admin/partners"),
         fetch("/api/admin/course-categories"),
@@ -129,7 +130,7 @@ export default function SessionsPage() {
       if (tRes.ok) setTypes(((await tRes.json()).data ?? []).map((t: any) => ({ value: t.id, label: t.name })));
     };
     load();
-  }, []);
+  }, [onlyOpen]);
 
   const openNew = () => {
     setEditing({ ...emptySession, id: uuid() });
@@ -206,7 +207,7 @@ export default function SessionsPage() {
             <h1 className="text-2xl font-semibold text-slate-900">Kurstermine</h1>
             <p className="text-sm text-slate-500">Aktive und geplante Termine verwalten.</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button onClick={openNew} className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-black shadow-md shadow-[#ff1f8f]/30 hover:bg-[#e40073]">
               + Neuen Kurstermin anlegen
             </button>
@@ -215,6 +216,14 @@ export default function SessionsPage() {
               className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:border-[#ff1f8f] hover:text-[#ff1f8f]"
             >
               Reload
+            </button>
+            <button
+              onClick={() => setOnlyOpen((v) => !v)}
+              className={`rounded-xl px-4 py-2 text-sm font-semibold border ${
+                onlyOpen ? "border-emerald-300 bg-emerald-50 text-emerald-700" : "border-slate-200 bg-white text-slate-700"
+              }`}
+            >
+              {onlyOpen ? "Alle Kurstermine" : "Offene Kurstermine"}
             </button>
           </div>
         </div>

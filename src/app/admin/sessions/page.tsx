@@ -90,6 +90,13 @@ export default function SessionsPage() {
   const [filterFormat, setFilterFormat] = useState("");
   const [filterLanguage, setFilterLanguage] = useState("");
   const [onlyOpen, setOnlyOpen] = useState(false);
+  const [showAllModal, setShowAllModal] = useState(false);
+  const [allSessions, setAllSessions] = useState<any[]>([]);
+  const [allLoading, setAllLoading] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [showAllModal, setShowAllModal] = useState(false);
+  const [allSessions, setAllSessions] = useState<any[]>([]);
+  const [allLoading, setAllLoading] = useState(false);
 
   const [editing, setEditing] = useState<Session | null>(null);
   const [tab, setTab] = useState<"stammdaten" | "details" | "preis" | "tags">("stammdaten");
@@ -177,6 +184,30 @@ export default function SessionsPage() {
     setSessions(list.data ?? []);
   };
 
+  const loadAllSessions = async () => {
+    setAllLoading(true);
+    try {
+      const res = await fetch("/api/admin/sessions?all=1", { cache: "no-store" });
+      const json = await res.json();
+      setAllSessions(json.data ?? []);
+      setShowAllModal(true);
+    } finally {
+      setAllLoading(false);
+    }
+  };
+
+  const loadAllSessions = async () => {
+    setAllLoading(true);
+    try {
+      const res = await fetch("/api/admin/sessions?all=1", { cache: "no-store" });
+      const json = await res.json();
+      setAllSessions(json.data ?? []);
+      setShowAllModal(true);
+    } finally {
+      setAllLoading(false);
+    }
+  };
+
   const selectedCourse = courses.find((c) => c.id === editing?.course_id);
   const priceOptions = useMemo(() => {
     if (!selectedCourse) return [];
@@ -224,6 +255,13 @@ export default function SessionsPage() {
               }`}
             >
               {onlyOpen ? "Alle Kurstermine" : "Offene Kurstermine"}
+            </button>
+            <button
+              onClick={loadAllSessions}
+              disabled={allLoading}
+              className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-[#ff1f8f] hover:text-[#ff1f8f] disabled:opacity-60"
+            >
+              {allLoading ? "Lade…" : "Alle Kurstermine (Liste)"}
             </button>
           </div>
         </div>

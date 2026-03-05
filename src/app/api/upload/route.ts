@@ -13,6 +13,7 @@ const MAX_FILE_BYTES = 200 * 1024 * 1024; // 200 MB
 
 const allowedImageTypes = ["image/jpeg", "image/png", "image/webp", "image/avif"];
 const allowedVideoTypes = ["video/mp4", "video/quicktime", "video/webm", "video/x-m4v"];
+const allowedDocTypes = ["application/pdf"];
 
 async function processImage(file: File): Promise<Buffer> {
   const arrayBuffer = await file.arrayBuffer();
@@ -57,8 +58,9 @@ export async function POST(req: Request) {
     const mime = file.type;
     const isImage = allowedImageTypes.includes(mime);
     const isVideo = allowedVideoTypes.includes(mime);
+    const isDoc = allowedDocTypes.includes(mime);
 
-    if (!isImage && !isVideo) {
+    if (!isImage && !isVideo && !isDoc) {
       return NextResponse.json({ error: "Unsupported file type" }, { status: 415 });
     }
 
@@ -66,7 +68,7 @@ export async function POST(req: Request) {
     await ensureBucket(supabase);
 
     const id = uuid();
-    // Extension bestimmen: bei Bildern webp, bei Videos aus Dateinamen ableiten, sonst Mime
+    // Extension bestimmen: bei Bildern webp, bei Videos/Docs aus Dateinamen ableiten
     let ext = "bin";
     if (isImage) {
       ext = "webp";
@@ -77,6 +79,8 @@ export async function POST(req: Request) {
       const candidates = [fromName, mimeExt, "mp4"].filter(Boolean) as string[];
       const picked = candidates.find((e) => ["mp4", "mov", "webm", "m4v"].includes(e)) ?? "mp4";
       ext = picked;
+    } else if (isDoc) {
+      ext = "pdf";
     }
     const path = `${id}.${ext}`;
 

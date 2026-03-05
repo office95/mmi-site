@@ -230,19 +230,6 @@ export default function SettingsPage() {
                   <p className="text-[11px] text-slate-500 px-2 py-1 break-all">{logoUrl}</p>
                 </div>
               )}
-
-              {error && <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}
-              {info && <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{info}</div>}
-
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={save}
-                  disabled={saving}
-                  className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-black shadow-md shadow-[#ff1f8f]/30 hover:bg-[#e40073] disabled:opacity-60"
-                >
-                  {saving ? "Speichern…" : "Speichern"}
-                </button>
-              </div>
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">

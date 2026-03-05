@@ -93,8 +93,6 @@ export default function SessionsPage() {
   const [showAllModal, setShowAllModal] = useState(false);
   const [allSessions, setAllSessions] = useState<any[]>([]);
   const [allLoading, setAllLoading] = useState(false);
-  const [allSessions, setAllSessions] = useState<any[]>([]);
-  const [allLoading, setAllLoading] = useState(false);
 
   const [editing, setEditing] = useState<Session | null>(null);
   const [tab, setTab] = useState<"stammdaten" | "details" | "preis" | "tags">("stammdaten");

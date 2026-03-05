@@ -429,6 +429,10 @@ export default async function CoursePage({
     toUrl(siteLogoSetting?.value ?? null) ??
     "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp";
 
+  const slogan1 = course.slogan_line1?.trim() || "";
+  const slogan2 = course.slogan_line2?.trim() || "";
+  const slogan3 = course.slogan_line3?.trim() || "";
+
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
@@ -612,15 +616,21 @@ export default async function CoursePage({
           <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
             <Reveal delay={80}>
               <div className="mx-auto max-w-5xl space-y-3">
-                <p className="font-anton text-[clamp(56px,8vw,96px)] leading-[0.95] text-white drop-shadow-[0_12px_30px_rgba(0,0,0,0.55)]">
-                  {course.slogan_line1 || "Music Mission."}
-                </p>
-                <p className="font-anton text-[clamp(42px,6vw,78px)] leading-[0.95] text-white drop-shadow-[0_12px_30px_rgba(0,0,0,0.55)]">
-                  {course.slogan_line2 || "Lerne von den besten."}
-                </p>
-                <p className="text-[clamp(28px,4.5vw,52px)] text-white/85 font-semibold drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
-                  {course.slogan_line3 || "Für Anfänger und Fortgeschrittene"}
-                </p>
+                {slogan1 && (
+                  <p className="font-anton text-[clamp(56px,8vw,96px)] leading-[0.95] text-white drop-shadow-[0_12px_30px_rgba(0,0,0,0.55)]">
+                    {slogan1}
+                  </p>
+                )}
+                {slogan2 && (
+                  <p className="font-anton text-[clamp(42px,6vw,78px)] leading-[0.95] text-white drop-shadow-[0_12px_30px_rgba(0,0,0,0.55)]">
+                    {slogan2}
+                  </p>
+                )}
+                {slogan3 && (
+                  <p className="text-[clamp(28px,4.5vw,52px)] text-white/85 font-semibold drop-shadow-[0_8px_24px_rgba(0,0,0,0.45)]">
+                    {slogan3}
+                  </p>
+                )}
               </div>
             </Reveal>
           </div>

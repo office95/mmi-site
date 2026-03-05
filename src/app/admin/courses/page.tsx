@@ -65,9 +65,9 @@ const emptyCourse: Course = {
   slogan_image_url: null,
   slogan_image_mobile_url: null,
   slogan_image_text: "",
-  slogan_line1: "Music Mission.",
-  slogan_line2: "Lerne von den besten.",
-  slogan_line3: "Für Anfänger und Fortgeschrittene",
+  slogan_line1: null,
+  slogan_line2: null,
+  slogan_line3: null,
   subtitle: "",
   summary: "",
   key_facts: [],
@@ -176,13 +176,19 @@ export default function CoursesPage() {
       setError("Titel ist erforderlich");
       return;
     }
+    const payload: Course = {
+      ...editing,
+      slogan_line1: editing.slogan_line1?.trim() || null,
+      slogan_line2: editing.slogan_line2?.trim() || null,
+      slogan_line3: editing.slogan_line3?.trim() || null,
+    };
     setSaving(true);
     setError(null);
     try {
       const res = await fetch("/api/admin/courses", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editing),
+        body: JSON.stringify(payload),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Speichern fehlgeschlagen");

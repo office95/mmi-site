@@ -192,17 +192,6 @@ export default function SessionsPage() {
     }
   };
 
-    setAllLoading(true);
-    try {
-      const res = await fetch("/api/admin/sessions?all=1", { cache: "no-store" });
-      const json = await res.json();
-      setAllSessions(json.data ?? []);
-      setShowAllModal(true);
-    } finally {
-      setAllLoading(false);
-    }
-  };
-
   const selectedCourse = courses.find((c) => c.id === editing?.course_id);
   const priceOptions = useMemo(() => {
     if (!selectedCourse) return [];

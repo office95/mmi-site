@@ -9,7 +9,16 @@ export async function GET() {
     const supabase = getSupabaseServiceClient();
     const { data: orders, error } = await supabase
       .from("orders")
-      .select("*, courses(title,slug,base_price_cents,deposit_cents), sessions(start_date,start_time,city,partner_id, partners(name,city,state,country))")
+      .select(
+        `
+        *,
+        course:courses(title,slug,base_price_cents,deposit_cents),
+        session:sessions(
+          start_date,start_time,city,partner_id,
+          partner:partners(name,city,state,country)
+        )
+        `
+      )
       .order("created_at", { ascending: false })
       .limit(200);
     if (error) throw error;

@@ -342,6 +342,21 @@ export default async function CoursePage({
   }
 
   const { data: siteLogoSetting } = await db.from("settings").select("value").eq("key", "site_logo_url").maybeSingle();
+  const { data: logoExtremSetting } = await db.from("settings").select("value").eq("key", "site_logo_extrem_url").maybeSingle();
+  const { data: logoIntensivSetting } = await db.from("settings").select("value").eq("key", "site_logo_intensiv_url").maybeSingle();
+
+  let courseTypeName: string | null = null;
+  if (course.type_id) {
+    const { data: typeRow } = await db.from("course_types").select("name").eq("id", course.type_id).maybeSingle();
+    courseTypeName = (typeRow as any)?.name ?? null;
+  }
+  const typeNameLc = (courseTypeName || "").toLowerCase();
+  const isExtrem = typeNameLc.includes("extrem");
+  const isIntensiv = typeNameLc.includes("intensiv");
+  const programLogo =
+    (isExtrem && toUrl(logoExtremSetting?.value ?? null)) ||
+    (isIntensiv && toUrl(logoIntensivSetting?.value ?? null)) ||
+    null;
 
   const heroDefault = "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=1600&q=80";
   const heroDesktop = toUrl(course.hero_image_url) ?? heroDefault;
@@ -450,8 +465,17 @@ export default async function CoursePage({
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/15 to-transparent" />
         <div className="absolute left-6 sm:left-12 right-6 sm:right-12 top-[20%] text-left space-y-3 drop-shadow-[0_18px_40px_rgba(0,0,0,0.45)]">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-white/80">
-            <span className="h-2 w-2 rounded-full bg-[#ff1f8f]" /> Kurs
+          <div className="flex items-center gap-4">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-white/80">
+              <span className="h-2 w-2 rounded-full bg-[#ff1f8f]" /> Kurs
+            </div>
+            {programLogo && (
+              <img
+                src={programLogo}
+                alt={isExtrem ? "Extrem Programm" : isIntensiv ? "Intensiv Programm" : "Programm Logo"}
+                className="h-10 w-auto max-w-[30vw] object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.35)]"
+              />
+            )}
           </div>
           <h1
             className="font-anton leading-[0.95] text-white"

@@ -7,6 +7,8 @@ type Setting = { key: string; value: string | null };
 type Faq = { id: number; question: string; answer: string; region: string | null; sort: number | null };
 
 const LOGO_KEY = "site_logo_url";
+const LOGO_EXTREM_KEY = "site_logo_extrem_url";
+const LOGO_INTENSIV_KEY = "site_logo_intensiv_url";
 const AGB_KEY = "pdf_agb_url";
 const DATENSCHUTZ_KEY = "pdf_datenschutz_url";
 const FAVICON_KEY = "site_favicon_url";
@@ -14,6 +16,8 @@ const FAVICON_KEY = "site_favicon_url";
 export default function SettingsPage() {
   const supabase = getSupabaseBrowserClient();
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [logoExtremUrl, setLogoExtremUrl] = useState<string | null>(null);
+  const [logoIntensivUrl, setLogoIntensivUrl] = useState<string | null>(null);
   const [agbUrl, setAgbUrl] = useState<string | null>(null);
   const [dsUrl, setDsUrl] = useState<string | null>(null);
   const [faviconUrl, setFaviconUrl] = useState<string | null>(null);
@@ -35,9 +39,14 @@ export default function SettingsPage() {
 
   useEffect(() => {
     const load = async () => {
-      const { data } = await supabase.from("settings").select("key,value").in("key", [LOGO_KEY, AGB_KEY, DATENSCHUTZ_KEY, FAVICON_KEY]);
+      const { data } = await supabase
+        .from("settings")
+        .select("key,value")
+        .in("key", [LOGO_KEY, LOGO_EXTREM_KEY, LOGO_INTENSIV_KEY, AGB_KEY, DATENSCHUTZ_KEY, FAVICON_KEY]);
       data?.forEach((row) => {
         if (row.key === LOGO_KEY) setLogoUrl(row.value as string);
+        if (row.key === LOGO_EXTREM_KEY) setLogoExtremUrl(row.value as string);
+        if (row.key === LOGO_INTENSIV_KEY) setLogoIntensivUrl(row.value as string);
         if (row.key === AGB_KEY) setAgbUrl(row.value as string);
         if (row.key === DATENSCHUTZ_KEY) setDsUrl(row.value as string);
         if (row.key === FAVICON_KEY) setFaviconUrl(row.value as string);
@@ -100,6 +109,8 @@ export default function SettingsPage() {
     setInfo(null);
     const rows = [
       logoUrl ? { key: LOGO_KEY, value: logoUrl } : null,
+      logoExtremUrl ? { key: LOGO_EXTREM_KEY, value: logoExtremUrl } : null,
+      logoIntensivUrl ? { key: LOGO_INTENSIV_KEY, value: logoIntensivUrl } : null,
       agbUrl ? { key: AGB_KEY, value: agbUrl } : null,
       dsUrl ? { key: DATENSCHUTZ_KEY, value: dsUrl } : null,
       faviconUrl ? { key: FAVICON_KEY, value: faviconUrl } : null,
@@ -230,6 +241,63 @@ export default function SettingsPage() {
                   <p className="text-[11px] text-slate-500 px-2 py-1 break-all">{logoUrl}</p>
                 </div>
               )}
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+              <h2 className="text-lg font-semibold text-slate-900">Logos: Extrem & Intensiv</h2>
+              <p className="text-sm text-slate-600">JPG oder PNG hochladen. Wird für die jeweiligen Programmvarianten verwendet.</p>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-slate-800">Extrem-Logo</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => e.target.files?.[0] && uploadFileToSetting(e.target.files[0], setLogoExtremUrl, LOGO_EXTREM_KEY)}
+                      className="text-sm"
+                    />
+                    {uploading && <span className="text-xs text-slate-500">Upload…</span>}
+                  </div>
+                  {logoExtremUrl && (
+                    <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={logoExtremUrl} alt="Extrem Logo" className="h-24 w-full object-contain" />
+                      <p className="text-[11px] text-slate-500 px-2 py-1 break-all">{logoExtremUrl}</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-slate-800">Intensiv-Logo</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => e.target.files?.[0] && uploadFileToSetting(e.target.files[0], setLogoIntensivUrl, LOGO_INTENSIV_KEY)}
+                      className="text-sm"
+                    />
+                    {uploading && <span className="text-xs text-slate-500">Upload…</span>}
+                  </div>
+                  {logoIntensivUrl && (
+                    <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={logoIntensivUrl} alt="Intensiv Logo" className="h-24 w-full object-contain" />
+                      <p className="text-[11px] text-slate-500 px-2 py-1 break-all">{logoIntensivUrl}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="pt-1">
+                <button
+                  onClick={save}
+                  disabled={saving}
+                  className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-black shadow-md shadow-[#ff1f8f]/30 hover:bg-[#e40073] disabled:opacity-60"
+                >
+                  {saving ? "Speichern…" : "Speichern"}
+                </button>
+              </div>
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">

@@ -93,7 +93,6 @@ export default function SessionsPage() {
   const [showAllModal, setShowAllModal] = useState(false);
   const [allSessions, setAllSessions] = useState<any[]>([]);
   const [allLoading, setAllLoading] = useState(false);
-  const [showAllModal, setShowAllModal] = useState(false);
   const [allSessions, setAllSessions] = useState<any[]>([]);
   const [allLoading, setAllLoading] = useState(false);
 

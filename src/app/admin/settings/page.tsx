@@ -99,11 +99,11 @@ export default function SettingsPage() {
     setError(null);
     setInfo(null);
     const rows = [
-      { key: LOGO_KEY, value: logoUrl ?? null },
-      { key: AGB_KEY, value: agbUrl ?? null },
-      { key: DATENSCHUTZ_KEY, value: dsUrl ?? null },
-      { key: FAVICON_KEY, value: faviconUrl ?? null },
-    ];
+      logoUrl ? { key: LOGO_KEY, value: logoUrl } : null,
+      agbUrl ? { key: AGB_KEY, value: agbUrl } : null,
+      dsUrl ? { key: DATENSCHUTZ_KEY, value: dsUrl } : null,
+      faviconUrl ? { key: FAVICON_KEY, value: faviconUrl } : null,
+    ].filter(Boolean);
 
     const { error } = await supabase.from("settings").upsert(rows as any[], { onConflict: "key" });
     if (error) setError(error.message);

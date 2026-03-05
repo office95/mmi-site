@@ -473,7 +473,7 @@ export default async function CoursePage({
               <img
                 src={programLogo}
                 alt={isExtrem ? "Extrem Programm" : isIntensiv ? "Intensiv Programm" : "Programm Logo"}
-                className="h-10 sm:h-12 md:h-16 lg:h-20 w-auto max-w-[40vw] sm:max-w-[32vw] md:max-w-[240px] object-contain drop-shadow-[0_6px_14px_rgba(0,0,0,0.28)] bg-transparent"
+                className="h-10 sm:h-12 md:h-18 lg:h-24 w-auto max-w-[42vw] sm:max-w-[34vw] md:max-w-[280px] lg:max-w-[320px] object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.32)] bg-transparent"
               />
             )}
           </div>

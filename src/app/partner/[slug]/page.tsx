@@ -255,7 +255,7 @@ export default function PartnerPage() {
           list.push(b);
         }
         if (rule === "type:extrem" && s.course?.type === "extrem" && !list.find((x) => x.slug === b.slug)) {
-          list.push(b);
+          list.push({ ...b, color: "#f97316" });
         }
         if (rule.startsWith("seats:<=")) {
           const max = s.max_participants ?? 0;

@@ -174,7 +174,7 @@ export default function EntdeckenClient() {
     })();
     if (isNew) badges.push({ name: "Neu", color: "#ff1f8f" });
     if (typeName?.includes("intensiv")) badges.push({ name: "Intensiv", color: "#7c3aed" });
-    if (typeName?.includes("extrem")) badges.push({ name: "Extrem", color: "#be123c" });
+    if (typeName?.includes("extrem")) badges.push({ name: "Extrem", color: "#f97316" });
     return badges;
   };
 

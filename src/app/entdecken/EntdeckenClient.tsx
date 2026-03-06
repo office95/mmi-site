@@ -214,7 +214,7 @@ export default function EntdeckenClient() {
               <input
                 value={qSearch}
                 onChange={(e) => setQSearch(e.target.value)}
-                placeholder="Kurs, Partner, Ort suchen…"
+                placeholder="Kurs, Partner, Bundesland, Tag"
                 className="w-full rounded-2xl border border-white/30 bg-white/90 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
               />
             </div>

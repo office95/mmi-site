@@ -1,9 +1,27 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getRegion } from "@/lib/region";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+  title: "Über uns | Music Mission Institute",
+  description: "Wer wir sind, wofür wir stehen und wie wir Menschen in Musikproduktion, Tontechnik und DJing voranbringen.",
+  alternates: { canonical: "/ueber-uns" },
+  openGraph: {
+    title: "Über uns | Music Mission Institute",
+    description: "Lerne das Team und die Mission hinter den Music Mission Kursen kennen.",
+    url: "/ueber-uns",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Über uns | Music Mission Institute",
+    description: "Die Mission hinter den Kursen für Musikproduktion, Tontechnik & DJing.",
+  },
+};
 
 export default function AboutPage() {
   const region = getRegion();

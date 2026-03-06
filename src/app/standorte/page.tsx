@@ -2,9 +2,27 @@ import Image from "next/image";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import { getRegion } from "@/lib/region";
+import type { Metadata } from "next";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Standorte | Music Mission Institute",
+  description: "Unsere Partner-Standorte für Kurse in Musikproduktion, Tontechnik, Live-Sound und DJing.",
+  alternates: { canonical: "/standorte" },
+  openGraph: {
+    title: "Standorte | Music Mission Institute",
+    description: "Partner-Studios und Locations in AT & DE für deine Music-Mission-Kurse.",
+    url: "/standorte",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Standorte | Music Mission Institute",
+    description: "Alle Partner-Standorte für Music Mission Kurse in DACH.",
+  },
+};
 
 export default async function StandortePage() {
   const region = getRegion();

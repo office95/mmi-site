@@ -154,9 +154,9 @@ export default async function Home() {
               </div>
               <div className="absolute inset-x-0 bottom-[5%] z-30 px-6 sm:px-10 lg:px-20">
                 <div className="mx-auto w-full max-w-[540px]">
-                  <p className="text-center text-white font-anton text-xl sm:text-2xl mb-2 leading-tight">
+                  <h1 className="text-center text-white font-anton text-xl sm:text-2xl mb-2 leading-tight">
                     Finde jetzt deinen passenden Kurs
-                  </p>
+                  </h1>
                   <CourseSearch />
                 </div>
               </div>

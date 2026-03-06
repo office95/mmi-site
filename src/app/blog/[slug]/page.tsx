@@ -9,6 +9,8 @@ import ImageExt from "@tiptap/extension-image";
 import YoutubeExt from "@tiptap/extension-youtube";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import BlockNoteViewerClient from "@/components/BlockNoteViewer.client";
+import Script from "next/script";
+import type { Metadata } from "next";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -23,6 +25,47 @@ const toUrl = (path: string | null) => {
   // strip leading slashes without escaping issues in turbopack
   return `${base}/storage/v1/object/public/${path.replace(/^[/]+/, "")}`;
 };
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const supabase = getSupabaseServiceClient();
+  const { data } = await supabase
+    .from("posts")
+    .select("title,excerpt,cover_image_url,published_at")
+    .eq("slug", params.slug)
+    .eq("status", "published")
+    .maybeSingle();
+
+  if (!data) {
+    return {
+      title: "Blog | Music Mission Institute",
+      description: "Artikel über Musikproduktion, Tontechnik und DJing.",
+      alternates: { canonical: `/blog/${params.slug}` },
+    };
+  }
+
+  const desc = (data.excerpt || "").slice(0, 155) || "Artikel über Musikproduktion, Tontechnik und DJing.";
+  const image = toUrl(data.cover_image_url) ?? undefined;
+  const canonical = `/blog/${params.slug}`;
+
+  return {
+    title: `${data.title} | Blog | Music Mission Institute`,
+    description: desc,
+    alternates: { canonical },
+    openGraph: {
+      title: `${data.title} | Blog | Music Mission Institute`,
+      description: desc,
+      url: canonical,
+      type: "article",
+      images: image ? [{ url: image }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${data.title} | Music Mission Institute`,
+      description: desc,
+      images: image ? [image] : undefined,
+    },
+  };
+}
 
 export default async function BlogDetailPage({ params }: Params) {
   const supabase = getSupabaseServiceClient();
@@ -117,6 +160,35 @@ export default async function BlogDetailPage({ params }: Params) {
           ) : null}
         </div>
       </article>
+      <Script
+        id="article-ld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: data.title,
+            description: data.excerpt || "",
+            datePublished: data.published_at || undefined,
+            dateModified: data.updated_at || data.published_at || undefined,
+            mainEntityOfPage: `${process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at"}/blog/${params.slug}`,
+            image: toUrl(data.cover_image_url) || undefined,
+            author: {
+              "@type": "Organization",
+              name: (meta as any)?.name || "Music Mission Institute",
+            },
+            publisher: {
+              "@type": "Organization",
+              name: "Music Mission Institute",
+              logo: {
+                "@type": "ImageObject",
+                url:
+                  "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp",
+              },
+            },
+          }),
+        }}
+      />
     </div>
   );
 }

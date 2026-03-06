@@ -1,6 +1,25 @@
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import Link from "next/link";
 import Image from "next/image";
+import Script from "next/script";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Blog | Music Mission Institute",
+  description: "Stories, Insights und Tipps rund um Musikproduktion, Tontechnik, Live-Sound und DJing.",
+  alternates: { canonical: "/blog" },
+  openGraph: {
+    title: "Blog | Music Mission Institute",
+    description: "Aktuelle Artikel zu Musikproduktion, Tontechnik, Live-Sound und DJing.",
+    url: "/blog",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blog | Music Mission Institute",
+    description: "Neuigkeiten und Know-how aus Musikproduktion, Tontechnik & DJing.",
+  },
+};
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -23,6 +42,13 @@ export default async function BlogListPage() {
     .limit(30);
 
   const posts = data ?? [];
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
+  const itemList = posts.map((p, idx) => ({
+    "@type": "ListItem",
+    position: idx + 1,
+    url: `${baseUrl}/blog/${p.slug}`,
+    name: p.title,
+  }));
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
@@ -67,6 +93,17 @@ export default async function BlogListPage() {
           </div>
         )}
       </div>
+      <Script
+        id="blog-itemlist-ld"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            itemListElement: itemList,
+          }),
+        }}
+      />
     </div>
   );
 }

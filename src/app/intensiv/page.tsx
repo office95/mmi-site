@@ -6,9 +6,37 @@ import { getRegion } from "@/lib/region";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
+import type { Metadata } from "next";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
+
+const SITE_AT = process.env.NEXT_PUBLIC_DOMAIN_AT || process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at";
+const SITE_DE = process.env.NEXT_PUBLIC_DOMAIN_DE || "https://musicmission.de";
+
+export const metadata: Metadata = {
+  title: "Intensiv-Ausbildungen | Music Mission Institute",
+  description: "Berufsbegleitende Intensiv-Ausbildungen in Musikproduktion, Tontechnik und Live-Sound in Österreich & Deutschland.",
+  alternates: {
+    canonical: "/intensiv",
+    languages: {
+      "de-AT": `${SITE_AT}/intensiv`,
+      "de-DE": `${SITE_DE}/intensiv`,
+      "x-default": `${SITE_AT}/intensiv`,
+    },
+  },
+  openGraph: {
+    title: "Intensiv-Ausbildungen | Music Mission Institute",
+    description: "Tiefgehende Intensiv-Ausbildungen in Musikproduktion & Tontechnik – berufsbegleitend in AT & DE.",
+    url: "/intensiv",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Intensiv-Ausbildungen | Music Mission Institute",
+    description: "Berufsbegleitende Intensivprogramme für Musikproduktion & Live-Sound in DACH.",
+  },
+};
 
 type Course = {
   id: string;

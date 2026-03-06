@@ -6,9 +6,37 @@ import { getRegion } from "@/lib/region";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
+import type { Metadata } from "next";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
+
+const SITE_AT = process.env.NEXT_PUBLIC_DOMAIN_AT || process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at";
+const SITE_DE = process.env.NEXT_PUBLIC_DOMAIN_DE || "https://musicmission.de";
+
+export const metadata: Metadata = {
+  title: "Extremkurse | Music Mission Institute",
+  description: "Kurz, hart, maximal praxisnah: Extremkurse in Musikproduktion und Tontechnik in AT & DE.",
+  alternates: {
+    canonical: "/extremkurs",
+    languages: {
+      "de-AT": `${SITE_AT}/extremkurs`,
+      "de-DE": `${SITE_DE}/extremkurs`,
+      "x-default": `${SITE_AT}/extremkurs`,
+    },
+  },
+  openGraph: {
+    title: "Extremkurse | Music Mission Institute",
+    description: "Intensive Kurzformate für Musikproduktion & Live-Sound – mit Top-Dozenten in DACH.",
+    url: "/extremkurs",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Extremkurse | Music Mission Institute",
+    description: "Extremkurse mit maximaler Praxis in Musikproduktion & Tontechnik.",
+  },
+};
 
 type Course = {
   id: string;

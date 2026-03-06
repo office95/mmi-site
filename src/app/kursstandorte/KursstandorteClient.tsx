@@ -166,12 +166,42 @@ export default function KursstandorteClient() {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <input
+            <select
               value={filterState}
               onChange={(e) => setFilterState(e.target.value)}
-              placeholder="Bundesland/Region"
               className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm"
-            />
+            >
+              <option value="">Bundesland/Region</option>
+              {[
+                "Wien",
+                "Niederösterreich",
+                "Oberösterreich",
+                "Steiermark",
+                "Salzburg",
+                "Tirol",
+                "Vorarlberg",
+                "Burgenland",
+                "Bayern",
+                "Berlin",
+                "Brandenburg",
+                "Bremen",
+                "Hamburg",
+                "Hessen",
+                "Mecklenburg-Vorpommern",
+                "Niedersachsen",
+                "Nordrhein-Westfalen",
+                "Rheinland-Pfalz",
+                "Saarland",
+                "Sachsen",
+                "Sachsen-Anhalt",
+                "Schleswig-Holstein",
+                "Thüringen",
+              ].map((opt) => (
+                <option key={opt} value={opt.toLowerCase()}>
+                  {opt}
+                </option>
+              ))}
+            </select>
             <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm">
               <option value="">Kategorie</option>
               {categories.map((c) => (

@@ -191,6 +191,26 @@ export default async function CoursePage({
   }
   if (!slugCleanInitial) {
     // Diagnose-Seite statt 404, damit wir sehen, was wirklich ankommt
+    const hdr = await headers();
+    const dbgHeaders: Record<string, string | null> = {
+      host: hdr.get("host"),
+      x_pathname: hdr.get("x-pathname"),
+      x_slug: hdr.get("x-slug"),
+      x_full_url: hdr.get("x-full-url"),
+      referer: hdr.get("referer"),
+      x_forwarded_uri: hdr.get("x-forwarded-uri"),
+      x_forwarded_path: hdr.get("x-forwarded-path"),
+      x_forwarded_host: hdr.get("x-forwarded-host"),
+      x_forwarded_proto: hdr.get("x-forwarded-proto"),
+      x_original_uri: hdr.get("x-original-uri"),
+      x_original_url: hdr.get("x-original-url"),
+      x_request_uri: hdr.get("x-request-uri"),
+      x_matched_path: hdr.get("x-matched-path"),
+      x_invoke_path: hdr.get("x-invoke-path"),
+      x_url: hdr.get("x-url"),
+      next_url: hdr.get("next-url"),
+      accept: hdr.get("accept"),
+    };
     return (
       <div className="min-h-screen bg-white text-slate-900">
         <SiteHeader />
@@ -204,13 +224,7 @@ export default async function CoursePage({
             </pre>
             <p className="font-semibold mt-3">Header-Fallbacks:</p>
             <pre className="whitespace-pre-wrap break-all text-xs">
-{JSON.stringify({
-  host: (await headers()).get("host"),
-  x_pathname: (await headers()).get("x-pathname"),
-  x_slug: (await headers()).get("x-slug"),
-  x_full_url: (await headers()).get("x-full-url"),
-  referer: (await headers()).get("referer"),
-}, null, 2)}
+{JSON.stringify(dbgHeaders, null, 2)}
             </pre>
           </div>
           <p className="text-sm text-slate-600">

@@ -83,7 +83,7 @@ export function CountdownBadge({ startDate, startTime, timezone = "Europe/Vienna
       ? `Buchung offen: ${days}T · ${hours}Std`
       : hours > 0
         ? `Buchung offen: ${hours}Std · ${minutes}Min`
-        : `Buchung offen: ${minutes}Min · ${seconds}Sek`;
+        : `Buchung offen: ${minutes}Min`;
 
   return (
     <div

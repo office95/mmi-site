@@ -100,13 +100,23 @@ export default async function CoursePage({
   params: { slug: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
+  const cleanSlugValue = (raw: string | null | undefined) => {
+    if (!raw) return "";
+    let s = raw.trim();
+    // Entferne typische App-Router Daten-Suffixe und Platzhalter
+    s = s.replace(/\.rsc$/i, "").replace(/\.json$/i, "").replace(/\.html?$/i, "");
+    if (s === "[slug]" || s === "[slug]/route") return "";
+    // Strip umschließende eckige Klammern
+    s = s.replace(/^\[(.+)\]$/, "$1");
+    return s;
+  };
   // Slug vor dem try/catch ermitteln – primär aus params, fallback auf searchParams.slug (zur Sicherheit bei fehlerhaften Links)
   const pickSlugEarly = async () => {
     const raw = params?.slug ?? searchParams?.slug;
     if (Array.isArray(raw)) return raw[0];
     return typeof raw === "string" ? raw : "";
   };
-  let slugCleanInitial = (await pickSlugEarly()).trim();
+  let slugCleanInitial = cleanSlugValue(await pickSlugEarly());
   const extractFromHeaders = async () => {
     try {
       const hdr = await headers();
@@ -139,7 +149,7 @@ export default async function CoursePage({
 
       for (const p of paths) {
         const cand = extractSlug(p);
-        if (cand) return cand;
+        if (cand) return cleanSlugValue(cand);
       }
 
       // Versuch, aus Host + referer eine URL zu bauen
@@ -150,7 +160,7 @@ export default async function CoursePage({
           const proto = grab("x-forwarded-proto") || "https";
           const u = new URL(referer.startsWith("http") ? referer : `${proto}://${host}${referer}`);
           const parts = u.pathname.split("/").filter(Boolean);
-          if (parts[0] === "kurs" && parts[1]) return parts[1].trim();
+          if (parts[0] === "kurs" && parts[1]) return cleanSlugValue(parts[1]);
         } catch {
           /* ignore */
         }
@@ -164,7 +174,7 @@ export default async function CoursePage({
   if (!slugCleanInitial) {
     // Letzter Fallback: Path aus Header lesen (wird in middleware gesetzt)
     try {
-      slugCleanInitial = await extractFromHeaders();
+      slugCleanInitial = cleanSlugValue(await extractFromHeaders());
     } catch {
       // headers() kann hier noch nicht genutzt werden, ignorieren
     }
@@ -174,7 +184,7 @@ export default async function CoursePage({
     try {
       const ck = await cookies();
       const cSlug = ck.get?.("slug_fallback")?.value;
-      if (cSlug) slugCleanInitial = cSlug;
+      if (cSlug) slugCleanInitial = cleanSlugValue(cSlug);
     } catch {
       // ignore
     }
@@ -215,7 +225,7 @@ export default async function CoursePage({
   let course: any = null;
   let region: "AT" | "DE" = getRegion(); // Default, wird im try ggf. überschrieben
   let supabase: ReturnType<typeof getSupabaseServerClient> | ReturnType<typeof getSupabaseServiceClient> | null = null;
-  let slugClean = slugCleanInitial;
+  let slugClean = cleanSlugValue(slugCleanInitial);
   let allowAllHosts = false;
   let lastError: any = null;
   let host = "";

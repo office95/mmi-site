@@ -377,6 +377,9 @@ export default function PartnerPage() {
                               ))}
                             </div>
                           )}
+                          <div className="absolute left-2 bottom-2">
+                            <CountdownBadge startDate={s.start_date} startTime={s.start_time} />
+                          </div>
                         </div>
                         <div className="p-4 space-y-2">
                           <p className="text-xs uppercase tracking-[0.12em] text-pink-600">
@@ -386,7 +389,6 @@ export default function PartnerPage() {
                                 }`
                               : "Start · Termin folgt"}
                           </p>
-                          <CountdownBadge startDate={s.start_date} startTime={s.start_time} />
                           <h3 className="font-anton text-xl text-slate-900">{s.course?.title || "Kurs"}</h3>
                           {typeof s.course?.duration_hours === "number" && (
                             <p className="text-sm text-slate-600">Dauer: {s.course.duration_hours} Stunden</p>

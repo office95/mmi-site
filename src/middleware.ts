@@ -32,8 +32,22 @@ export async function middleware(req: NextRequest) {
   };
   const slugSegment = pathSegments[0] === "kurs" && pathSegments[1] ? cleanSlug(pathSegments[1]) : null;
 
-  // DE-Domain: Coming Soon Seite
-  if (region === "DE" && !url.pathname.startsWith("/api") && !url.pathname.startsWith("/admin") && !url.pathname.startsWith("/de-coming-soon")) {
+  const isAssetPath =
+    url.pathname.startsWith("/_next") ||
+    url.pathname.startsWith("/static") ||
+    url.pathname.startsWith("/favicon") ||
+    url.pathname.startsWith("/robots.txt") ||
+    url.pathname.startsWith("/sitemap.xml") ||
+    url.pathname.startsWith("/fonts");
+
+  // DE-Domain: Coming Soon Seite (ohne Assets/API/Admin)
+  if (
+    region === "DE" &&
+    !isAssetPath &&
+    !url.pathname.startsWith("/api") &&
+    !url.pathname.startsWith("/admin") &&
+    !url.pathname.startsWith("/de-coming-soon")
+  ) {
     url.pathname = "/de-coming-soon";
     return NextResponse.redirect(url);
   }

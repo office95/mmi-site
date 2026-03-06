@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { getSupabaseServerClient, getSupabaseServiceClient } from "@/lib/supabase";

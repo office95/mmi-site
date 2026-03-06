@@ -321,7 +321,11 @@ export default function EntdeckenClient() {
                     </Link>
                   <div className="p-4 space-y-2">
                     <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
-                      {s.start_date ? new Date(s.start_date).toLocaleDateString("de-AT") : "Termin"}
+                      {s.start_date
+                        ? `Start · ${new Date(s.start_date + "T00:00:00").toLocaleDateString("de-AT")}${
+                            s.start_time?.slice(0, 5) ? ` · ${s.start_time.slice(0, 5)} Uhr` : ""
+                          }`
+                        : "Start · Termin folgt"}
                     </p>
                     <h2 className="font-anton text-xl leading-tight text-slate-900 line-clamp-2">{s.course?.title}</h2>
                     <p className="text-sm text-slate-600 line-clamp-2">

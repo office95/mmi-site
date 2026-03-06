@@ -15,11 +15,14 @@ type Course = {
   tags?: string[];
 };
 
+type CoursePartner = { partner?: string | null; state?: string | null; city?: string | null };
+
 export default function CourseSearch() {
   const [q, setQ] = useState("");
   const [allCourses, setAllCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(false);
   const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
+  const [coursePartners, setCoursePartners] = useState<Record<string, CoursePartner[]>>({});
 
   useEffect(() => {
     const load = async () => {
@@ -47,6 +50,32 @@ export default function CourseSearch() {
     load();
   }, []);
 
+  // Sessions laden, um Partner/Bundesland in die Suche einzubeziehen
+  useEffect(() => {
+    const loadSessions = async () => {
+      try {
+        const res = await fetch("/api/admin/sessions?open=1", { cache: "no-store" });
+        const json = await res.json();
+        const data: any[] = json?.data ?? [];
+        const map: Record<string, CoursePartner[]> = {};
+        data.forEach((s) => {
+          const cid = s.course_id || s.course?.id;
+          if (!cid) return;
+          const entry: CoursePartner = {
+            partner: s.partners?.name ?? null,
+            state: s.state ?? s.partners?.state ?? null,
+            city: s.city ?? s.partners?.city ?? null,
+          };
+          map[cid] = [...(map[cid] ?? []), entry];
+        });
+        setCoursePartners(map);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    loadSessions();
+  }, []);
+
   useEffect(() => {
     const loadTypes = async () => {
       try {
@@ -67,10 +96,14 @@ export default function CourseSearch() {
       .filter((c) => {
         const hay = c.title?.toLowerCase() ?? "";
         const tagHay = (c.tags ?? []).join(" ").toLowerCase();
-        return hay.includes(term) || tagHay.includes(term);
+        const partnerHay = (coursePartners[c.id] ?? [])
+          .map((p) => `${p.partner ?? ""} ${p.state ?? ""} ${p.city ?? ""}`)
+          .join(" ")
+          .toLowerCase();
+        return hay.includes(term) || tagHay.includes(term) || partnerHay.includes(term);
       })
       .slice(0, 8);
-  }, [q, allCourses]);
+  }, [q, allCourses, coursePartners]);
 
   return (
     <div className="relative">
@@ -110,8 +143,10 @@ export default function CourseSearch() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-slate-900 truncate">{c.title}</p>
-                    <p className="text-xs text-slate-600">
+                    <p className="text-[11px] text-slate-600 truncate">
                       {types.find((t) => t.id === c.type_id)?.name ?? "Kurs"}
+                      {coursePartners[c.id]?.[0]?.partner ? ` · ${coursePartners[c.id][0].partner}` : ""}
+                      {coursePartners[c.id]?.[0]?.state ? ` · ${coursePartners[c.id][0].state}` : ""}
                     </p>
                   </div>
                 </Link>

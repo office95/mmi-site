@@ -12,8 +12,11 @@ type Slot = { id: string; label: string; courses: SlotCourse[] };
 const SLOT_INTENSIV = "00000000-0000-0000-0000-000000000102";
 const SLOT_EXTREM = "00000000-0000-0000-0000-000000000103";
 
+const FALLBACK_LOGO =
+  process.env.NEXT_PUBLIC_SITE_LOGO_URL ||
+  "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp";
+
 export function SiteHeader() {
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [activeMenu, setActiveMenu] = useState<"discover" | "intensiv" | "extrem" | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -22,21 +25,6 @@ export function SiteHeader() {
   const [closeTimer, setCloseTimer] = useState<NodeJS.Timeout | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    let active = true;
-    fetch("/api/settings?key=site_logo_url")
-      .then((r) => r.json())
-      .then((json) => {
-        if (!active) return;
-        const url = json?.data?.[0]?.value as string | undefined;
-        if (url) setLogoUrl(url);
-      })
-      .catch(() => {});
-    return () => {
-      active = false;
-    };
-  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -114,7 +102,7 @@ export function SiteHeader() {
       <div className="flex h-14 w-full items-center pl-[2vh] pr-3 text-sm font-semibold tracking-tight sm:pr-6 lg:pr-20">
         <Link href="/" className="flex items-center gap-2 hover:opacity-90 transition">
           <Image
-            src={logoUrl || "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp"}
+            src={FALLBACK_LOGO}
             alt="Music Mission Institute Logo"
             width={48}
             height={48}

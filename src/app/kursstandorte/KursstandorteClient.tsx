@@ -145,12 +145,12 @@ export default function KursstandorteClient() {
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/40 to-black/15" />
-        <div className="absolute bottom-10 left-6 sm:left-12 text-left space-y-2">
+        <div className="absolute right-6 sm:right-12 top-[10%] text-right space-y-2 max-w-2xl ml-auto">
           <p className="text-sm uppercase tracking-[0.22em] text-white/70">Kursstandorte</p>
           <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl text-white leading-tight drop-shadow-lg">
             Musik-Standorte & Studios in {regionLabel}
           </h1>
-          <p className="text-white/85 text-base max-w-2xl">
+          <p className="text-white/85 text-base">
             Finde Studios und Partner in {regionLabel} für Musikproduktion, Tontechnik, Live-Sound, DJing und Vocalcoaching.
           </p>
         </div>

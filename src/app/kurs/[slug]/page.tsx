@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import Image from "next/image";
+import { unstable_cache } from "next/cache";
 import { getSupabaseServerClient, getSupabaseServiceClient } from "@/lib/supabase";
 import { SiteHeader } from "@/components/SiteHeader";
 import SessionCheckout from "@/components/SessionCheckout";
@@ -242,12 +243,25 @@ export default async function CoursePage({
     );
   }
 
-  let course: any = null;
-  let region: "AT" | "DE" = getRegion(); // Default, wird im try ggf. überschrieben
-  let supabase: ReturnType<typeof getSupabaseServerClient> | ReturnType<typeof getSupabaseServiceClient> | null = null;
-  let slugClean = cleanSlugValue(slugCleanInitial);
-  let lastError: any = null;
-  let host = "";
+let course: any = null;
+let region: "AT" | "DE" = getRegion(); // Default, wird im try ggf. überschrieben
+let supabase: ReturnType<typeof getSupabaseServerClient> | ReturnType<typeof getSupabaseServiceClient> | null = null;
+let slugClean = cleanSlugValue(slugCleanInitial);
+let lastError: any = null;
+let host = "";
+
+  const getCourseCached = unstable_cache(
+    async (slug: string) => {
+      const sb = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
+      return sb
+        .from("courses")
+        .select("*, sessions(*, partners(*))")
+        .eq("slug", slug)
+        .maybeSingle();
+    },
+    ["course-with-sessions"],
+    { revalidate: 30 }
+  );
 
   try {
     const safeTrim = (v: unknown) => (typeof v === "string" ? v.trim() : "");
@@ -257,20 +271,15 @@ export default async function CoursePage({
     host = rawHost.replace(/^www\./, "").split(":")[0]; // strip www + port
     region = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
 
-    supabase = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
-
-    // Ein einziges, reichhaltiges Query: Kurs + Sessions + Partner
-    const { data: courseRow, error } = await supabase
-      .from("courses")
-      .select("*, sessions(*, partners(*))")
-      .eq("slug", slugClean)
-      .maybeSingle();
+    // Ein einziges, reichhaltiges Query: Kurs + Sessions + Partner (30s Cache)
+    const { data: courseRow, error } = await getCourseCached(slugClean);
     if (error) lastError = error.message;
     if (courseRow) {
       course = courseRow;
     } else {
       // Minimaler Fallback: case-insensitive
-      const { data: courseIlike, error: ilikeErr } = await supabase
+      const sb = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
+      const { data: courseIlike, error: ilikeErr } = await sb
         .from("courses")
         .select("*, sessions(*, partners(*))")
         .ilike("slug", slugClean)

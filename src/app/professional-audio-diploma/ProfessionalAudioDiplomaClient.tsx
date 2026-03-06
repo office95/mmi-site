@@ -116,7 +116,6 @@ export default function ProfessionalAudioDiplomaClient() {
         </div>
       </section>
 
-      {/* Tabs */}
       <section className="px-6 pt-0 sm:px-10 lg:px-20">
         <div className="flex items-center gap-4 border-b border-slate-200 py-4">
           <button
@@ -135,119 +134,161 @@ export default function ProfessionalAudioDiplomaClient() {
       </section>
 
       {activeTab === "kurs" && (
-        <section className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-20 py-10 space-y-8">
-          <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] items-start">
-            <div className="space-y-4">
-              <p className="text-sm text-slate-700 leading-relaxed">
-                Das Professional Audio Diploma ist ein berufsbegleitender Studiengang über sechs Semester. Du lernst Recording,
-                Mixing, Mastering, Live-Tontechnik, DJing, Sounddesign und Business-Skills mit aktiven Profis aus der Branche.
-              </p>
-              <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-sm font-semibold text-slate-900">Aufbau (Module)</p>
-                <ul className="grid gap-3 sm:grid-cols-2">
-                  {semesters.map((s) => (
-                    <li key={s.title} className="rounded-xl bg-white border border-slate-200 p-3 shadow-sm">
-                      <p className="font-semibold text-slate-900 mb-2">{s.title}</p>
-                      <ul className="space-y-1 text-sm text-slate-700 list-disc list-inside">
-                        {s.points.map((p) => (
-                          <li key={p}>{p}</li>
-                        ))}
-                      </ul>
-                    </li>
+        <>
+          <section className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-20 py-10 space-y-8">
+            <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] items-start">
+              <div className="space-y-5">
+                <p className="text-sm text-slate-700 leading-relaxed">
+                  Das Professional Audio Diploma ist ein berufsbegleitender Studiengang über sechs Semester. Du lernst Recording,
+                  Mixing, Mastering, Live-Tontechnik, DJing, Sounddesign und Business-Skills mit aktiven Profis aus der Branche.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {[
+                    { label: "Dauer", value: "6 Semester" },
+                    { label: "ECTS", value: "180 ECTS" },
+                    { label: "Modus", value: "Berufsbegleitend" },
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-2xl border border-slate-200 bg-white shadow-sm px-4 py-3">
+                      <p className="text-xs uppercase tracking-[0.16em] text-slate-500">{item.label}</p>
+                      <p className="text-base font-semibold text-slate-900">{item.value}</p>
+                    </div>
                   ))}
+                </div>
+
+                <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-sm font-semibold text-slate-900">Aufbau (Module)</p>
+                  <ul className="grid gap-3 sm:grid-cols-2">
+                    {semesters.map((s) => (
+                      <li key={s.title} className="rounded-xl bg-white border border-slate-200 p-3 shadow-sm">
+                        <p className="font-semibold text-slate-900 mb-2">{s.title}</p>
+                        <ul className="space-y-1 text-sm text-slate-700 list-disc list-inside">
+                          {s.points.map((p) => (
+                            <li key={p}>{p}</li>
+                          ))}
+                        </ul>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-md space-y-4">
+                <p className="text-sm font-semibold text-slate-900">Darum Professional Audio Diploma</p>
+                <ul className="space-y-2 text-sm text-slate-700 list-disc list-inside">
+                  <li>Praxis mit echten Produktionen & Live-Shows</li>
+                  <li>Dozent:innen aus der Industrie</li>
+                  <li>6 Semester, 180 ECTS, berufsbegleitend</li>
+                  <li>Recording, Mixing, Mastering, Live-Sound, DJing</li>
+                  <li>Top-Up Bachelor im 5./6. Semester</li>
                 </ul>
+                <a
+                  href="#anmeldung"
+                  className="inline-flex items-center justify-center rounded-full bg-[#ff1f8f] px-4 py-3 text-sm font-semibold text-white shadow-md shadow-pink-500/30 hover:-translate-y-0.5 transition"
+                >
+                  Zum Formular
+                </a>
               </div>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-lg" id="anmeldung">
-              <p className="text-sm font-semibold text-slate-900 mb-3">Jetzt Interesse bekunden</p>
-              <form className="space-y-3" onSubmit={handleSubmit}>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <input
-                    required
-                    value={form.first_name}
-                    onChange={(e) => setForm({ ...form, first_name: e.target.value })}
-                    placeholder="Vorname"
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                  />
-                  <input
-                    required
-                    value={form.last_name}
-                    onChange={(e) => setForm({ ...form, last_name: e.target.value })}
-                    placeholder="Nachname"
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                  />
-                  <input
-                    value={form.birthdate}
-                    onChange={(e) => setForm({ ...form, birthdate: e.target.value })}
-                    placeholder="Geburtsdatum"
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                  />
-                  <input
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    placeholder="Telefon"
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                  />
-                  <input
-                    required
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder="E-Mail"
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                  />
-                  <input
-                    value={form.location_preference}
-                    onChange={(e) => setForm({ ...form, location_preference: e.target.value })}
-                    placeholder="Wunsch-Standort"
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                  />
-                  <input
-                    value={form.street}
-                    onChange={(e) => setForm({ ...form, street: e.target.value })}
-                    placeholder="Straße"
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                  />
-                  <div className="grid grid-cols-3 gap-2">
+          </section>
+
+          <section id="anmeldung" className="bg-slate-900 text-white py-12 px-6 sm:px-10 lg:px-20">
+            <div className="mx-auto max-w-4xl space-y-6">
+              <div className="space-y-2 text-center">
+                <p className="text-xs uppercase tracking-[0.22em] text-pink-200">Interesse</p>
+                <h2 className="font-anton text-3xl sm:text-4xl leading-tight">Jetzt für das Diploma vormerken</h2>
+                <p className="text-sm text-white/70 max-w-2xl mx-auto">
+                  Wir melden uns mit Startterminen, Standorten und nächsten Schritten.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/15 bg-white/5 backdrop-blur-md p-6 sm:p-8 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.8)]">
+                <form className="space-y-4" onSubmit={handleSubmit}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <input
-                      value={form.zip}
-                      onChange={(e) => setForm({ ...form, zip: e.target.value })}
-                      placeholder="PLZ"
-                      className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                      required
+                      value={form.first_name}
+                      onChange={(e) => setForm({ ...form, first_name: e.target.value })}
+                      placeholder="Vorname"
+                      className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
                     />
                     <input
-                      className="col-span-2 rounded-lg border border-slate-200 px-3 py-2 text-sm"
-                      value={form.city}
-                      onChange={(e) => setForm({ ...form, city: e.target.value })}
-                      placeholder="Ort"
+                      required
+                      value={form.last_name}
+                      onChange={(e) => setForm({ ...form, last_name: e.target.value })}
+                      placeholder="Nachname"
+                      className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
                     />
+                    <input
+                      value={form.birthdate}
+                      onChange={(e) => setForm({ ...form, birthdate: e.target.value })}
+                      placeholder="Geburtsdatum"
+                      className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                    />
+                    <input
+                      value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                      placeholder="Telefon"
+                      className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                    />
+                    <input
+                      required
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      placeholder="E-Mail"
+                      className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                    />
+                    <input
+                      value={form.location_preference}
+                      onChange={(e) => setForm({ ...form, location_preference: e.target.value })}
+                      placeholder="Wunsch-Standort"
+                      className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                    />
+                    <input
+                      value={form.street}
+                      onChange={(e) => setForm({ ...form, street: e.target.value })}
+                      placeholder="Straße"
+                      className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                    />
+                    <div className="grid grid-cols-3 gap-2">
+                      <input
+                        value={form.zip}
+                        onChange={(e) => setForm({ ...form, zip: e.target.value })}
+                        placeholder="PLZ"
+                        className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                      />
+                      <input
+                        className="col-span-2 rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                        value={form.city}
+                        onChange={(e) => setForm({ ...form, city: e.target.value })}
+                        placeholder="Ort"
+                      />
+                    </div>
                   </div>
-                </div>
-                <label className="flex items-start gap-2 text-xs text-slate-700">
-                  <input
-                    type="checkbox"
-                    checked={form.consent}
-                    onChange={(e) => setForm({ ...form, consent: e.target.checked })}
-                    className="mt-1"
-                    required
-                  />
-                  <span>
-                    Ich stimme zu, dass meine Daten zur Kontaktaufnahme für das Professional Audio Diploma verarbeitet werden.
-                  </span>
-                </label>
-                {error ? <p className="text-sm text-red-600">{error}</p> : null}
-                {success ? <p className="text-sm text-emerald-600">{success}</p> : null}
-                <button
-                  type="submit"
-                  disabled={sending}
-                  className="w-full rounded-full bg-[#ff1f8f] px-4 py-3 text-sm font-semibold text-white shadow-md shadow-pink-500/30 hover:-translate-y-0.5 transition disabled:opacity-60"
-                >
-                  {sending ? "Senden…" : "Anfrage senden"}
-                </button>
-              </form>
+                  <label className="flex items-start gap-2 text-xs text-white/80">
+                    <input
+                      type="checkbox"
+                      checked={form.consent}
+                      onChange={(e) => setForm({ ...form, consent: e.target.checked })}
+                      className="mt-1"
+                      required
+                    />
+                    <span>
+                      Ich stimme zu, dass meine Daten zur Kontaktaufnahme für das Professional Audio Diploma verarbeitet werden.
+                    </span>
+                  </label>
+                  {error ? <p className="text-sm text-red-200">{error}</p> : null}
+                  {success ? <p className="text-sm text-emerald-200">{success}</p> : null}
+                  <button
+                    type="submit"
+                    disabled={sending}
+                    className="w-full rounded-full bg-[#ff1f8f] px-4 py-3 text-sm font-semibold text-white shadow-md shadow-pink-500/30 hover:-translate-y-0.5 transition disabled:opacity-60"
+                  >
+                    {sending ? "Senden…" : "Anfrage senden"}
+                  </button>
+                </form>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </>
       )}
 
       {activeTab === "faq" && (

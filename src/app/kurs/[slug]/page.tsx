@@ -110,12 +110,18 @@ export default async function CoursePage({
     // Letzter Fallback: Path aus Header lesen (wird in middleware gesetzt)
     try {
       const hdr = await headers();
+      const candidates: string[] = [];
       const pathHeader = hdr.get("x-pathname") || "";
-      const parts = pathHeader.split("/").filter(Boolean);
-      const last = parts[parts.length - 1];
-      if (last && last !== "kurs") {
-        slugCleanInitial = last.trim();
-      }
+      const referer = hdr.get("referer") || "";
+      const forwardedPath = hdr.get("x-forwarded-path") || "";
+      const rawUrl = hdr.get("x-url") || hdr.get("next-url") || "";
+      [pathHeader, forwardedPath, rawUrl, referer].forEach((p) => {
+        if (!p) return;
+        const parts = p.split("/").filter(Boolean);
+        const last = parts[parts.length - 1];
+        if (last && last !== "kurs") candidates.push(last.trim());
+      });
+      slugCleanInitial = candidates.find(Boolean) || "";
     } catch {
       // headers() kann hier noch nicht genutzt werden, ignorieren
     }

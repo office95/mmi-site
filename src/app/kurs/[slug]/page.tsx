@@ -117,21 +117,23 @@ export default async function CoursePage({
       const forwardedPath = hdr.get("x-forwarded-path") || "";
       const rawUrl = hdr.get("x-url") || hdr.get("next-url") || "";
       const slugHeader = hdr.get("x-slug") || "";
-      [pathHeader, forwardedPath, rawUrl, referer, slugHeader].forEach((p) => {
-        if (!p) return;
-        const parts = p.split("/").filter(Boolean);
-        const last = parts[parts.length - 1];
-        if (last && last !== "kurs") candidates.push(last.trim());
+      const extractSlug = (p: string) => {
+        if (!p) return "";
+        const decoded = decodeURIComponent(p);
+        const match = decoded.match(/\\/kurs\\/([^/?#]+)/);
+        if (match?.[1]) return match[1].trim();
+        const parts = decoded.split("/").filter(Boolean);
+        return parts[0] === "kurs" && parts[1] ? parts[1].trim() : "";
+      };
+
+      [slugHeader, pathHeader, forwardedPath, rawUrl, referer].forEach((p) => {
+        const cand = extractSlug(p || "");
+        if (cand) candidates.push(cand);
       });
+
       const host = hdr.get("host")?.toLowerCase().replace(/^www\./, "") || "";
       slugCleanInitial =
-        candidates.find(
-          (c) =>
-            c &&
-            c !== host &&
-            !c.includes(".") && // filter domains
-            c !== "kurs"
-        ) ||
+        candidates.find((c) => c && c !== host && !c.includes(".") && c !== "kurs") ||
         candidates.find(Boolean) ||
         "";
     } catch {

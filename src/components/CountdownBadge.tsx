@@ -79,9 +79,9 @@ export function CountdownBadge({ startDate, startTime, timezone = "Europe/Vienna
       };
 
   const label = days > 0
-    ? `Buchung noch ${days}d ${hours}h möglich`
+    ? `Buchung noch ${days}T ${hours}Std möglich`
     : hours > 0
-      ? `Buchung noch ${hours}h ${minutes}m möglich`
+      ? `Buchung noch ${hours}Std ${minutes}m möglich`
       : `Buchung noch ${minutes}m ${seconds}s möglich`;
 
   return (

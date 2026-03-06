@@ -14,6 +14,7 @@ import { getRegion } from "@/lib/region";
 import { CourseModulesAccordion } from "./CourseModulesAccordion";
 import { FaqAccordion } from "./FaqAccordion";
 import Script from "next/script";
+import { SlugSelfHeal } from "./SlugSelfHeal";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -231,6 +232,10 @@ export default async function CoursePage({
             Bitte prüfe den Link, der auf diese Seite führt. Er muss die Form <code>/kurs/&lt;slug&gt;</code> haben, z.B.
             <code>/kurs/music-producer-station-r</code>.
           </p>
+          <div className="text-xs text-slate-500">
+            Automatischer Versuch, den Slug aus dem Pfad zu rekonstruieren …
+          </div>
+          <SlugSelfHeal />
         </div>
       </div>
     );

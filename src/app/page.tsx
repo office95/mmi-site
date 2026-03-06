@@ -153,10 +153,10 @@ export default async function Home() {
                 </div>
               </div>
               <div className="absolute inset-x-0 bottom-[5%] z-30 px-6 sm:px-10 lg:px-20">
-                <div className="mx-auto w-full max-w-[540px]">
-                  <h1 className="text-center text-white font-anton text-xl sm:text-2xl mb-2 leading-tight">
-                    Kurse in Musikproduktion, Tontechnik, DJ & Vocalcoaching
-                  </h1>
+                <div className="mx-auto w-full max-w-[620px]">
+                  <p className="text-center text-white text-sm sm:text-base font-semibold tracking-[0.08em] uppercase mb-3">
+                    Kurse in Musikproduktion · Tontechnik · DJ · Vocalcoaching
+                  </p>
                   <CourseSearch />
                 </div>
               </div>

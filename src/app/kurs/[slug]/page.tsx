@@ -120,7 +120,8 @@ export default async function CoursePage({
       const extractSlug = (p: string) => {
         if (!p) return "";
         const decoded = decodeURIComponent(p);
-        const match = decoded.match(/\\/kurs\\/([^/?#]+)/);
+        const regex = /\/kurs\/([^/?#]+)/;
+        const match = decoded.match(regex);
         if (match?.[1]) return match[1].trim();
         const parts = decoded.split("/").filter(Boolean);
         return parts[0] === "kurs" && parts[1] ? parts[1].trim() : "";

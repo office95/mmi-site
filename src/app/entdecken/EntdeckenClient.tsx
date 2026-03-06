@@ -321,8 +321,12 @@ export default function EntdeckenClient() {
                           {locationText(s)}
                         </span>
                       ) : null}
-                      {s.price_cents ? <span className="rounded-full bg-emerald-50 text-emerald-700 px-2.5 py-1">{(s.price_cents / 100).toFixed(2)} €</span> : null}
                     </div>
+                    {s.price_cents ? (
+                      <div className="pt-2 text-sm font-semibold text-emerald-700">
+                        {(s.price_cents / 100).toFixed(2)} €
+                      </div>
+                    ) : null}
                     {s.tags && s.tags.length ? (
                       <div className="flex flex-wrap gap-2 pt-2 text-[11px] text-slate-700">
                         {s.tags.slice(0, 3).map((t) => (

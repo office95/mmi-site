@@ -155,17 +155,28 @@ export default function KursstandorteClient() {
             Finde Studios und Partner in {regionLabel} für Musikproduktion, Tontechnik, Live-Sound, DJing und Vocalcoaching.
           </p>
         </div>
-      </section>
-
-      <main className="mx-auto max-w-6xl px-6 py-10 sm:py-14 space-y-8">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm space-y-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {/* Hero-Suchfeld */}
+        <div className="absolute left-1/2 -translate-x-1/2 bottom-[3vh] w-[92vw] max-w-xl">
+          <div className="rounded-2xl border border-white/30 bg-white/80 backdrop-blur-xl shadow-lg shadow-black/15 px-4 py-3 flex items-center gap-3">
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Ort, Partner oder Tag suchen…"
-              className="w-full sm:max-w-sm rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm"
+              className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm"
             />
+            <button
+              onClick={() => setSearch("")}
+              className="text-xs font-semibold text-pink-600 hover:text-pink-700 whitespace-nowrap"
+            >
+              Löschen
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <main className="mx-auto max-w-6xl px-6 py-10 sm:py-14 space-y-8">
+        <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm space-y-4">
+          <div className="flex justify-end">
             <button onClick={resetFilters} className="text-sm font-semibold text-pink-600 hover:text-pink-700">
               Filter zurücksetzen
             </button>

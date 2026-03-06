@@ -48,28 +48,21 @@ export default function KursstandorteClient() {
   const [categories, setCategories] = useState<Option[]>([]);
   const [types, setTypes] = useState<Option[]>([]);
   const [formats, setFormats] = useState<Option[]>([]);
-  const [languages, setLanguages] = useState<Option[]>([]);
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
-  const [filterCountry, setFilterCountry] = useState("");
   const [filterState, setFilterState] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
-  const [filterSubcategory, setFilterSubcategory] = useState("");
   const [filterType, setFilterType] = useState("");
   const [filterFormat, setFilterFormat] = useState("");
-  const [filterLanguage, setFilterLanguage] = useState("");
   const regionLabel = debugRegion === "DE" ? "Deutschland" : "Österreich";
 
   const resetFilters = () => {
     setSearch("");
-    setFilterCountry("");
     setFilterState("");
     setFilterCategory("");
-    setFilterSubcategory("");
     setFilterType("");
     setFilterFormat("");
-    setFilterLanguage("");
   };
 
   useEffect(() => {
@@ -80,22 +73,20 @@ export default function KursstandorteClient() {
     const load = async () => {
       setLoading(true);
       try {
-        const [pRes, sRes, cRes, catRes, tRes, fRes, lRes] = await Promise.all([
-          fetch("/api/admin/partners"),
-          fetch("/api/admin/sessions"),
-          fetch("/api/admin/courses"),
-          fetch("/api/admin/course-categories"),
-          fetch("/api/admin/course-types"),
-          fetch("/api/admin/course-formats"),
-          fetch("/api/admin/course-languages"),
-        ]);
-        if (pRes.ok) setPartners((await pRes.json()).data ?? []);
-        if (sRes.ok) setSessions((await sRes.json()).data ?? []);
-        if (cRes.ok) setCourses((await cRes.json()).data ?? []);
-        if (catRes.ok) setCategories(((await catRes.json()).data ?? []).map((c: any) => ({ value: c.id, label: c.name, parent: c.parent_id })));
-        if (tRes.ok) setTypes(((await tRes.json()).data ?? []).map((t: any) => ({ value: t.id, label: t.name })));
-        if (fRes.ok) setFormats(((await fRes.json()).data ?? []).map((f: any) => ({ value: f.id, label: f.name })));
-        if (lRes.ok) setLanguages(((await lRes.json()).data ?? []).map((l: any) => ({ value: l.id, label: l.name })));
+    const [pRes, sRes, cRes, catRes, tRes, fRes] = await Promise.all([
+      fetch("/api/admin/partners"),
+      fetch("/api/admin/sessions"),
+      fetch("/api/admin/courses"),
+      fetch("/api/admin/course-categories"),
+      fetch("/api/admin/course-types"),
+      fetch("/api/admin/course-formats"),
+    ]);
+    if (pRes.ok) setPartners((await pRes.json()).data ?? []);
+    if (sRes.ok) setSessions((await sRes.json()).data ?? []);
+    if (cRes.ok) setCourses((await cRes.json()).data ?? []);
+    if (catRes.ok) setCategories(((await catRes.json()).data ?? []).map((c: any) => ({ value: c.id, label: c.name, parent: c.parent_id })));
+    if (tRes.ok) setTypes(((await tRes.json()).data ?? []).map((t: any) => ({ value: t.id, label: t.name })));
+    if (fRes.ok) setFormats(((await fRes.json()).data ?? []).map((f: any) => ({ value: f.id, label: f.name })));
       } finally {
         setLoading(false);
       }
@@ -118,20 +109,17 @@ export default function KursstandorteClient() {
     return partners.filter((p) => {
       const text = [p.name, p.state, p.country, ...(p.tags ?? [])].join(" ").toLowerCase();
       if (search && !text.includes(search.toLowerCase())) return false;
-      if (filterCountry && (p.country ?? "") !== filterCountry) return false;
       if (filterState && (p.state ?? "").toLowerCase().indexOf(filterState.toLowerCase()) === -1) return false;
-      if (filterCategory || filterSubcategory || filterType || filterFormat || filterLanguage) {
+      if (filterCategory || filterSubcategory || filterType || filterFormat) {
         const courseIds = Array.from(partnerCourseIds.get(p.id) ?? []);
         const courseObjs = courses.filter((c) => courseIds.includes(c.id));
         if (filterCategory && !courseObjs.some((c) => c.category_id === filterCategory)) return false;
-        if (filterSubcategory && !courseObjs.some((c) => c.subcategory_id === filterSubcategory)) return false;
         if (filterType && !courseObjs.some((c) => c.type_id === filterType)) return false;
         if (filterFormat && !courseObjs.some((c) => c.format_id === filterFormat)) return false;
-        if (filterLanguage && !courseObjs.some((c) => c.language_id === filterLanguage)) return false;
       }
       return true;
     });
-  }, [partners, search, filterCountry, filterState, filterCategory, filterSubcategory, filterType, filterFormat, filterLanguage, partnerCourseIds, courses]);
+  }, [partners, search, filterState, filterCategory, filterType, filterFormat, partnerCourseIds, courses]);
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
@@ -220,14 +208,6 @@ export default function KursstandorteClient() {
               {formats.map((f) => (
                 <option key={f.value} value={f.value}>
                   {f.label}
-                </option>
-              ))}
-            </select>
-            <select value={filterLanguage} onChange={(e) => setFilterLanguage(e.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm">
-              <option value="">Sprache</option>
-              {languages.map((l) => (
-                <option key={l.value} value={l.value}>
-                  {l.label}
                 </option>
               ))}
             </select>

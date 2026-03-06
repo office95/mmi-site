@@ -87,7 +87,7 @@ export function SiteHeader() {
             {col.map((c) => (
               <Link
                 key={c.id}
-                href={`/kurs/${c.slug}`}
+                href={`/kurs/${c.slug || c.id}`}
                 className="block text-sm leading-5 whitespace-nowrap text-slate-900 transition hover:text-pink-600"
               >
                 {c.title}
@@ -253,7 +253,7 @@ export function SiteHeader() {
                     {(intensivSlot?.courses ?? []).map((c) => (
                       <Link
                         key={c.id}
-                        href={`/kurs/${c.slug}`}
+                        href={`/kurs/${c.slug || c.id}`}
                         className="block rounded-lg px-2 py-1 hover:bg-slate-100"
                         onClick={() => setMobileOpen(false)}
                       >
@@ -286,7 +286,7 @@ export function SiteHeader() {
                     {(extremSlot?.courses ?? []).map((c) => (
                       <Link
                         key={c.id}
-                        href={`/kurs/${c.slug}`}
+                        href={`/kurs/${c.slug || c.id}`}
                         className="block rounded-lg px-2 py-1 hover:bg-slate-100"
                         onClick={() => setMobileOpen(false)}
                       >

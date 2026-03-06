@@ -109,7 +109,7 @@ export default function ProfessionalAudioDiplomaClient() {
       </section>
 
       <section className="px-6 pt-0 sm:px-10 lg:px-20">
-        <div className="flex items-center gap-4 border-b border-slate-200 py-4">
+        <div className="flex items-center justify-center gap-4 border-b border-slate-200 py-4">
           <button
             onClick={() => setActiveTab("kurs")}
             className={`pb-2 text-sm font-semibold ${activeTab === "kurs" ? "text-pink-600 border-b-2 border-pink-600" : "text-slate-600"}`}

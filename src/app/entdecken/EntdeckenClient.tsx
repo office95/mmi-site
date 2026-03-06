@@ -338,13 +338,13 @@ export default function EntdeckenClient() {
                     ) : null}
                     <div className="pt-3 flex gap-2">
                       <Link
-                        href={`/kurs/${s.course?.slug ?? ""}?booking=${s.id}`}
+                        href={`/buchen/${s.id}${s.course?.slug ? `?kurs=${s.course.slug}` : ""}${s.course?.id ? `${s.course?.slug ? "&" : "?"}courseId=${s.course.id}` : ""}`}
                         className="flex-1 text-center rounded-full bg-pink-600 px-3 py-2 text-sm font-semibold text-white shadow hover:-translate-y-0.5 transition"
                       >
                         Buchen
                       </Link>
                       <Link
-                        href={`/kurs/${s.course?.slug ?? ""}`}
+                        href={s.course?.slug ? `/kurs/${s.course.slug}` : `/entdecken`}
                         className="flex-1 text-center rounded-full border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-800 hover:-translate-y-0.5 transition bg-white"
                       >
                         Mehr Infos

@@ -272,7 +272,13 @@ export default function PartnerPage() {
       });
 
       // Fallback: badge nach Kurstyp (wenn kein Auto-Badge greift)
-      const typeLc = ((s.course?.type as string) || (s.course?.type_id as string) || "").toLowerCase();
+      const typeLc = (
+        ((s.course?.type as string) || "").toLowerCase() +
+        " " +
+        ((s.course?.type_id as string) || "").toLowerCase() +
+        " " +
+        ((s.course?.title as string) || "").toLowerCase()
+      ).trim();
       if (typeLc.includes("intensiv") && !list.find((x) => x.slug === "type:intensiv-fallback")) {
         list.push({ name: "Intensiv", color: "#7c3aed", slug: "type:intensiv-fallback" });
       }

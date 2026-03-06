@@ -188,6 +188,64 @@ export default function ProfessionalAudioDiplomaClient() {
                 </a>
               </div>
             </div>
+
+            {/* Story + Bild */}
+            <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] items-start">
+              <div className="space-y-4 text-sm text-slate-800 leading-relaxed">
+                <p>
+                  <strong>Das Professional Diploma in Tontechnik</strong> eröffnet dir den direkten Einstieg in das einjährige Top-Up Bachelor Programm
+                  „Audioproduktion (B.Sc.)“ – auch ohne Matura oder Berufsreifeprüfung. So erreichst du einen international anerkannten Abschluss und baust
+                  deine Karriere in Tontechnik & Audioproduktion auf.
+                </p>
+                <p>
+                  Das <strong>Professional Audio Diploma</strong> ist deine Eintrittskarte in die professionelle Audio-Welt: moderne Technologien, kreative Methoden,
+                  praxisnahes Arbeiten mit Branchenprofis.
+                </p>
+                <h3 className="text-base font-semibold text-slate-900">Du lernst</h3>
+                <ul className="list-disc list-inside space-y-1 text-slate-700">
+                  <li><strong>Recording, Mixing, Mastering</strong></li>
+                  <li><strong>Live-Tontechnik</strong></li>
+                  <li><strong>Social Media Marketing & Kreativtechniken</strong></li>
+                </ul>
+                <h3 className="text-base font-semibold text-slate-900">Berufliche Perspektiven</h3>
+                <ul className="list-disc list-inside space-y-1 text-slate-700">
+                  <li>Tontechniker:in (Studio / Live)</li>
+                  <li>Produzent:in (Musik, Film, Medien)</li>
+                  <li>Sounddesigner:in (Games, Film, Werbung)</li>
+                  <li>Audiotechniker:in Event/Konzert</li>
+                  <li>Freelancer:in / Gründung im Audiobereich</li>
+                </ul>
+                <p><strong>Start deine Mission – starte deine Zukunft.</strong></p>
+              </div>
+              <div className="rounded-2xl overflow-hidden shadow-lg border border-slate-200 bg-white">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://static.wixstatic.com/media/c10044_6c4451e9b4c74e7e969b947acf3f46fe~mv2.jpg"
+                  alt="Professional Audio Diploma"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+
+            {/* Facts */}
+            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-5 space-y-3">
+              <h3 className="text-base font-semibold text-slate-900">Facts</h3>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {[
+                  { k: "Voraussetzungen", v: "Keine – Einstieg ohne Matura/BRP möglich" },
+                  { k: "Stunden/Studios", v: "Ca. 3000 Stunden inkl. Studiosessions & Selbststudium" },
+                  { k: "Zeitraum", v: "4 Semester" },
+                  { k: "Kosten", v: "€ 9.990,- (Teilzahlung möglich)" },
+                  { k: "Credits", v: "120 ECTS" },
+                  { k: "Abschluss", v: "Professional Audio Diploma" },
+                ].map((item) => (
+                  <div key={item.k} className="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2">
+                    <p className="text-xs uppercase tracking-[0.14em] text-slate-500">{item.k}</p>
+                    <p className="text-sm font-semibold text-slate-900">{item.v}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </section>
 
           <section id="anmeldung" className="bg-slate-900 text-white py-12 px-6 sm:px-10 lg:px-20">

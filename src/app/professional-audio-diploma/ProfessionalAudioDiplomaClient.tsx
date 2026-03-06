@@ -315,9 +315,30 @@ export default function ProfessionalAudioDiplomaClient() {
       {activeTab === "faq" && (
         <section className="mx-auto max-w-5xl px-6 sm:px-10 lg:px-20 py-10 space-y-4">
           {[
-            { q: "Wann startet der nächste Jahrgang?", a: "Wir planen aktuell den nächsten Start; nach Anfrage informieren wir dich mit Terminen." },
-            { q: "Ist das berufsbegleitend?", a: "Ja, die meisten Einheiten finden abends und an ausgewählten Wochenenden statt." },
-            { q: "Gibt es ECTS?", a: "Ja, pro Semester 30 ECTS; insgesamt 180 ECTS nach Abschluss." },
+            {
+              q: "Was ist das Professional Diploma in Tontechnik?",
+              a: "Das Professional Diploma in Tontechnik ist eine praxisnahe Ausbildung, die modernste Technologien, kreative Methoden und bewährte Branchenpraxis kombiniert. Es bereitet dich optimal auf eine erfolgreiche Karriere in der Audioindustrie vor. Zusätzlich ermöglicht es den direkten Einstieg in das einjährige Top-Up Bachelor-Programm „Audioproduktion (B.Sc.)“ – auch ohne Matura oder Berufsreifeprüfung.",
+            },
+            {
+              q: "Welche Voraussetzungen muss ich erfüllen?",
+              a: "Du kannst teilnehmen, auch wenn du keine Matura oder Berufsreifeprüfung hast. Die Ausbildung steht allen offen, die sich für Audioproduktion begeistern und beruflich vorankommen wollen.",
+            },
+            {
+              q: "Was lerne ich während der Ausbildung?",
+              a: "Der Lehrplan ist umfassend und deckt Recording, Mixing und Mastering, Live-Tontechnik sowie Social Media Marketing und Kreativtechniken ab.",
+            },
+            {
+              q: "Wer bringt mir die Inhalte bei?",
+              a: "Deine Dozent:innen sind Top-Profis aus der Branche und unterrichten dich direkt im Studio. Du profitierst von ihrer langjährigen Erfahrung und lernst durch echten Praxisbezug.",
+            },
+            {
+              q: "Wie unterstützt mich das Programm bei meinem Karrierestart?",
+              a: "Durch die praxisnahe Ausbildung und den Fokus auf aktuelle Branchenanforderungen bist du perfekt gerüstet – egal ob in Unternehmen oder als unabhängige:r Kreative:r. Du profitierst zudem vom Music Mission Netzwerk und der Community, die dir direkten Zugang zu wertvollen Kontakten bietet.",
+            },
+            {
+              q: "Wie lange dauert das Programm?",
+              a: "Das Professional Audio Diploma dauert 4 Semester und ist berufsbegleitend absolvierbar, sodass du Ausbildung und Job gut kombinieren kannst.",
+            },
           ].map((item, idx) => (
             <div key={item.q} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
               <button

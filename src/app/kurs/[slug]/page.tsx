@@ -122,7 +122,17 @@ export default async function CoursePage({
         const last = parts[parts.length - 1];
         if (last && last !== "kurs") candidates.push(last.trim());
       });
-      slugCleanInitial = candidates.find(Boolean) || "";
+      const host = hdr.get("host")?.toLowerCase().replace(/^www\./, "") || "";
+      slugCleanInitial =
+        candidates.find(
+          (c) =>
+            c &&
+            c !== host &&
+            !c.includes(".") && // filter domains
+            c !== "kurs"
+        ) ||
+        candidates.find(Boolean) ||
+        "";
     } catch {
       // headers() kann hier noch nicht genutzt werden, ignorieren
     }

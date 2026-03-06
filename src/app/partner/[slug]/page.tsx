@@ -188,9 +188,10 @@ export default function PartnerPage() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     return (sessions || []).filter((s) => {
-      if (!s.start_date) return true;
+      if (!s.start_date) return false;
       const d = new Date(s.start_date + "T00:00:00");
-      return d >= today;
+      // nur strikt zukünftige Termine anzeigen (Starttag ausgeblendet)
+      return d > today;
     });
   }, [sessions]);
 

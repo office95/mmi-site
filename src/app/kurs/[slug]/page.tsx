@@ -334,8 +334,15 @@ let host = "";
 
   const db = supabase ?? getSupabaseServerClient();
 
-  // Sessions sind bereits per Join geladen; filter nur nach Region
+  // Sessions sind bereits per Join geladen; filter nach Region und Zukunft
   const sessionsWithPartner = (course.sessions ?? []).filter((s: any) => {
+    // Nur zukünftige Termine (Startdatum > heute)
+    if (!s.start_date) return false;
+    const d = new Date(s.start_date + "T00:00:00");
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (d.getTime() <= today.getTime()) return false;
+
     if (!region) return true;
     const val = (s.region || "").toString().toLowerCase();
     if (!val) return true;

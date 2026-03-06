@@ -116,12 +116,6 @@ export default function ProfessionalAudioDiplomaClient() {
           >
             Kursinfo
           </button>
-          <button
-            onClick={() => setActiveTab("faq")}
-            className={`pb-2 text-sm font-semibold ${activeTab === "faq" ? "text-pink-600 border-b-2 border-pink-600" : "text-slate-600"}`}
-          >
-            FAQ
-          </button>
         </div>
       </section>
 

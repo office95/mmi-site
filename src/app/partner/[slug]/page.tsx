@@ -11,6 +11,9 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { getRegionFromCookie } from "@/lib/region-client";
 
+const SLOT_INTENSIV = "00000000-0000-0000-0000-000000000102";
+const SLOT_EXTREM = "00000000-0000-0000-0000-000000000103";
+
 const FALLBACK_PARTNERS = [
   {
     id: "1dda01f7-5404-4e00-800c-1ccc4a348f81",
@@ -275,6 +278,12 @@ export default function PartnerPage() {
       }
       if (typeLc.includes("extrem") && !list.find((x) => x.slug === "type:extrem-fallback")) {
         list.push({ name: "Extrem", color: "#f97316", slug: "type:extrem-fallback" });
+      }
+      if (s.course?.type_id === SLOT_INTENSIV && !list.find((x) => x.slug === "type:intensiv-id")) {
+        list.push({ name: "Intensiv", color: "#7c3aed", slug: "type:intensiv-id" });
+      }
+      if (s.course?.type_id === SLOT_EXTREM && !list.find((x) => x.slug === "type:extrem-id")) {
+        list.push({ name: "Extrem", color: "#f97316", slug: "type:extrem-id" });
       }
 
       result[cid] = list;

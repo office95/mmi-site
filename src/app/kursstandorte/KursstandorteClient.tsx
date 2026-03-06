@@ -10,6 +10,7 @@ type Partner = {
   id: string;
   name: string;
   slug: string | null;
+  created_at?: string | null;
   state: string | null;
   country: string | null;
   tags: string[] | null;
@@ -248,6 +249,11 @@ export default function KursstandorteClient() {
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
                 </div>
+                {p.created_at && (() => { const diff = (Date.now() - new Date(p.created_at).getTime()) / (1000*60*60*24); return diff <= 21; })() && (
+                  <span className="absolute right-3 top-3 rounded-full bg-[#ff1f8f] px-2.5 py-1 text-[11px] font-semibold text-white shadow">
+                    Neu
+                  </span>
+                )}
                 <div className="p-4 space-y-2">
                   <h2 className="font-anton text-xl leading-tight text-slate-900 line-clamp-2">{p.name}</h2>
                   <p className="text-sm text-slate-600 line-clamp-2">{[p.state, p.country].filter(Boolean).join(" · ")}</p>

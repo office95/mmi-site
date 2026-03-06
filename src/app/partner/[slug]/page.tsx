@@ -198,6 +198,13 @@ export default function PartnerPage() {
   const appliedPartnerBadges = useMemo(() => {
     const list = [...partnerBadges];
     const auto = (allBadges || []).filter((b) => (b.scope === "partner" || b.scope === "both") && b.auto_type);
+    // Fallback „Neu“ ohne DB-Badge: wenn innerhalb 21 Tage erstellt
+    if (partner?.created_at) {
+      const diff = (Date.now() - new Date(partner.created_at).getTime()) / (1000 * 60 * 60 * 24);
+      if (diff <= 21 && !list.find((x) => x.slug === "neu-auto")) {
+        list.push({ name: "Neu", color: "#ff1f8f", slug: "neu-auto" });
+      }
+    }
     auto.forEach((b) => {
       const rule = b.auto_type as string;
       if (rule.startsWith("age:")) {
@@ -224,6 +231,12 @@ export default function PartnerPage() {
       const cid = s.course?.id;
       if (!cid) return;
       const list = [...(result[cid] ?? [])];
+      if (s.course?.created_at) {
+        const diff = (Date.now() - new Date(s.course.created_at).getTime()) / (1000 * 60 * 60 * 24);
+        if (diff <= 21 && !list.find((x) => x.slug === "neu-auto")) {
+          list.push({ name: "Neu", color: "#ff1f8f", slug: "neu-auto" });
+        }
+      }
 
       auto.forEach((b) => {
         const rule = b.auto_type as string;

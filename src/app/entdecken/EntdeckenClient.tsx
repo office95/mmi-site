@@ -15,7 +15,7 @@ type SessionCard = {
   zip?: string;
   state?: string;
   price_cents?: number;
-  course?: { id: string; title: string; slug: string; hero_image_url?: string; type_id?: string | null; category_id?: string | null };
+  course?: { id: string; title: string; slug: string; hero_image_url?: string; type_id?: string | null; category_id?: string | null; created_at?: string | null };
   partners?: { name?: string; city?: string; state?: string; country?: string } | null;
   tags?: string[];
 };
@@ -163,6 +163,14 @@ export default function EntdeckenClient() {
   const sessionBadges = (s: SessionCard) => {
     const badges: { name: string; color: string }[] = [];
     const typeName = types.find((t) => t.id === s.course?.type_id)?.name?.toLowerCase();
+    const isNew = (() => {
+      if (!s.course?.created_at) return false;
+      const created = new Date(s.course.created_at);
+      const now = new Date();
+      const diff = (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
+      return diff <= 21;
+    })();
+    if (isNew) badges.push({ name: "Neu", color: "#ff1f8f" });
     if (typeName?.includes("intensiv")) badges.push({ name: "Intensiv", color: "#7c3aed" });
     if (typeName?.includes("extrem")) badges.push({ name: "Extrem", color: "#be123c" });
     return badges;

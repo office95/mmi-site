@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import ConsultBanner from "@/components/ConsultBanner";
+import { CountdownBadge } from "@/components/CountdownBadge";
 
 type SessionCard = {
   id: string;
@@ -321,6 +322,7 @@ export default function EntdeckenClient() {
                       {s.partners?.name || s.city || "Partner folgt"}
                       {locationText(s) ? ` · ${locationText(s)}` : ""}
                     </p>
+                    <CountdownBadge startDate={s.start_date} startTime={s.start_time} />
                     {s.price_cents ? (
                       <div className="pt-2 text-sm font-semibold text-pink-600">
                         {(s.price_cents / 100).toFixed(2)} €

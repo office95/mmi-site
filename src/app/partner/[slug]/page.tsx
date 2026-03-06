@@ -268,6 +268,15 @@ export default function PartnerPage() {
         }
       });
 
+      // Fallback: badge nach Kurstyp (wenn kein Auto-Badge greift)
+      const typeLc = ((s.course?.type as string) || (s.course?.type_id as string) || "").toLowerCase();
+      if (typeLc.includes("intensiv") && !list.find((x) => x.slug === "type:intensiv-fallback")) {
+        list.push({ name: "Intensiv", color: "#7c3aed", slug: "type:intensiv-fallback" });
+      }
+      if (typeLc.includes("extrem") && !list.find((x) => x.slug === "type:extrem-fallback")) {
+        list.push({ name: "Extrem", color: "#f97316", slug: "type:extrem-fallback" });
+      }
+
       result[cid] = list;
     });
 

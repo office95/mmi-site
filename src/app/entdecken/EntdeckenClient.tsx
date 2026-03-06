@@ -168,6 +168,18 @@ export default function EntdeckenClient() {
     return badges;
   };
 
+  const locationText = (s: SessionCard) => {
+    return (
+      s.state ||
+      s.partners?.state ||
+      s.partners?.city ||
+      s.city ||
+      s.partners?.country ||
+      s.address ||
+      ""
+    );
+  };
+
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
@@ -304,10 +316,22 @@ export default function EntdeckenClient() {
                       {s.partners?.name || s.city || "Partner folgt"}
                     </p>
                     <div className="flex flex-wrap gap-2 pt-1 text-xs text-slate-700">
-                      {s.city ? <span className="rounded-full bg-slate-100 px-2.5 py-1">{s.city}</span> : null}
-                      {s.state ? <span className="rounded-full bg-slate-100 px-2.5 py-1">{s.state}</span> : null}
+                      {locationText(s) ? (
+                        <span className="rounded-full bg-slate-100 px-2.5 py-1">
+                          {locationText(s)}
+                        </span>
+                      ) : null}
                       {s.price_cents ? <span className="rounded-full bg-emerald-50 text-emerald-700 px-2.5 py-1">{(s.price_cents / 100).toFixed(2)} €</span> : null}
                     </div>
+                    {s.tags && s.tags.length ? (
+                      <div className="flex flex-wrap gap-2 pt-2 text-[11px] text-slate-700">
+                        {s.tags.slice(0, 3).map((t) => (
+                          <span key={t} className="rounded-full bg-slate-100 px-2.5 py-1 font-medium">
+                            #{t}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
                   </div>
                 </Link>
               ))}

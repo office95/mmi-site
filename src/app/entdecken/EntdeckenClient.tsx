@@ -196,7 +196,7 @@ export default function EntdeckenClient() {
         <div className="absolute inset-0 flex items-center justify-center px-6 pb-6">
           <div className="text-center text-white space-y-3 max-w-4xl">
             <p className="text-sm uppercase tracking-[0.2em] text-white/70">Entdecken</p>
-            <h1 className="font-anton text-4xl sm:text-5xl leading-tight drop-shadow-[0_8px_30px_rgba(0,0,0,0.35)]">Alle Kurstermine in Österreich & Deutschland</h1>
+            <h1 className="font-anton text-4xl sm:text-5xl leading-tight drop-shadow-[0_8px_30px_rgba(0,0,0,0.35)]">Alle Kurstermine in {regionText}</h1>
             <p className="text-white/90 text-base sm:text-lg leading-relaxed">
               Finde deinen nächsten Termin – filtere nach Kurs, Partner oder Standort.
             </p>

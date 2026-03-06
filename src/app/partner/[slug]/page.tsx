@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import Script from "next/script";
 import ConsultBanner from "@/components/ConsultBanner";
+import { CountdownBadge } from "@/components/CountdownBadge";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
@@ -385,6 +386,7 @@ export default function PartnerPage() {
                                 }`
                               : "Start · Termin folgt"}
                           </p>
+                          <CountdownBadge startDate={s.start_date} startTime={s.start_time} />
                           <h3 className="font-anton text-xl text-slate-900">{s.course?.title || "Kurs"}</h3>
                           {typeof s.course?.duration_hours === "number" && (
                             <p className="text-sm text-slate-600">Dauer: {s.course.duration_hours} Stunden</p>

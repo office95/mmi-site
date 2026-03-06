@@ -134,50 +134,6 @@ export default function ProfessionalAudioDiplomaClient() {
                   Das Professional Audio Diploma ist ein berufsbegleitender Studiengang über sechs Semester. Du lernst Recording,
                   Mixing, Mastering, Live-Tontechnik, DJing, Sounddesign und Business-Skills mit aktiven Profis aus der Branche.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {[
-                    { label: "Dauer", value: "4 Semester" },
-                    { label: "ECTS", value: "120 ECTS" },
-                    { label: "Modus", value: "Berufsbegleitend" },
-                  ].map((item) => (
-                    <div key={item.label} className="rounded-2xl border border-slate-200 bg-white shadow-sm px-4 py-3">
-                      <p className="text-xs uppercase tracking-[0.16em] text-slate-500">{item.label}</p>
-                      <p className="text-base font-semibold text-slate-900">{item.value}</p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="text-sm font-semibold text-slate-900">Aufbau (Module)</p>
-                  <ul className="grid gap-3 sm:grid-cols-2">
-                    {semesters.map((s) => (
-                      <li key={s.title} className="rounded-xl bg-white border border-slate-200 p-3 shadow-sm">
-                        <p className="font-semibold text-slate-900 mb-2">{s.title}</p>
-                        <ul className="space-y-1 text-sm text-slate-700 list-disc list-inside">
-                          {s.points.map((p) => (
-                            <li key={p}>{p}</li>
-                          ))}
-                        </ul>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-md space-y-4">
-                <p className="text-sm font-semibold text-slate-900">Darum Professional Audio Diploma</p>
-                <ul className="space-y-2 text-sm text-slate-700 list-disc list-inside">
-                  <li>Praxis mit echten Produktionen & Live-Shows</li>
-                  <li>Dozent:innen aus der Industrie</li>
-                  <li>6 Semester, 180 ECTS, berufsbegleitend</li>
-                  <li>Recording, Mixing, Mastering, Live-Sound, DJing</li>
-                  <li>Top-Up Bachelor im 5./6. Semester</li>
-                </ul>
-                <a
-                  href="#anmeldung"
-                  className="inline-flex items-center justify-center rounded-full bg-[#ff1f8f] px-4 py-3 text-sm font-semibold text-white shadow-md shadow-pink-500/30 hover:-translate-y-0.5 transition"
-                >
-                  Zum Formular
-                </a>
               </div>
             </div>
 
@@ -237,6 +193,21 @@ export default function ProfessionalAudioDiplomaClient() {
                   </div>
                 ))}
               </div>
+            </div>
+            <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <p className="text-sm font-semibold text-slate-900">Aufbau (Module)</p>
+              <ul className="grid gap-3 sm:grid-cols-2">
+                {semesters.map((s) => (
+                  <li key={s.title} className="rounded-xl bg-white border border-slate-200 p-3 shadow-sm">
+                    <p className="font-semibold text-slate-900 mb-2">{s.title}</p>
+                    <ul className="space-y-1 text-sm text-slate-700 list-disc list-inside">
+                      {s.points.map((p) => (
+                        <li key={p}>{p}</li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
             </div>
           </section>
 

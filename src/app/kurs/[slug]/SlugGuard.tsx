@@ -11,7 +11,7 @@ type Props = {
 export function SlugGuard({ renderedSlug }: Props) {
   useEffect(() => {
     const path = typeof window !== "undefined" ? window.location.pathname : "";
-    const match = path.match(/\\/kurs\\/([^/?#]+)/);
+    const match = path.match(/\/kurs\/([^/?#]+)/);
     const pathSlug = match?.[1] || "";
 
     if (!pathSlug) return;

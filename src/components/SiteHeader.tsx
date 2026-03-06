@@ -12,9 +12,7 @@ type Slot = { id: string; label: string; courses: SlotCourse[] };
 const SLOT_INTENSIV = "00000000-0000-0000-0000-000000000102";
 const SLOT_EXTREM = "00000000-0000-0000-0000-000000000103";
 
-const FALLBACK_LOGO =
-  process.env.NEXT_PUBLIC_SITE_LOGO_URL ||
-  "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp";
+const FALLBACK_LOGO = process.env.NEXT_PUBLIC_SITE_LOGO_URL || "/logo.svg";
 
 export function SiteHeader() {
   const [slots, setSlots] = useState<Slot[]>([]);

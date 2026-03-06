@@ -60,6 +60,38 @@ export default function KursstandorteClient() {
     () => (debugRegion === "DE" ? ["deutschland", "germany"] : ["österreich", "austria"]),
     [debugRegion]
   );
+  const allowedStates = useMemo(
+    () =>
+      debugRegion === "DE"
+        ? [
+            "bayern",
+            "berlin",
+            "brandenburg",
+            "bremen",
+            "hamburg",
+            "hessen",
+            "mecklenburg-vorpommern",
+            "niedersachsen",
+            "nordrhein-westfalen",
+            "rheinland-pfalz",
+            "saarland",
+            "sachsen",
+            "sachsen-anhalt",
+            "schleswig-holstein",
+            "thüringen",
+          ]
+        : [
+            "wien",
+            "niederösterreich",
+            "oberösterreich",
+            "steiermark",
+            "salzburg",
+            "tirol",
+            "vorarlberg",
+            "burgenland",
+          ],
+    [debugRegion]
+  );
 
   const resetFilters = () => {
     setSearch("");
@@ -114,9 +146,12 @@ export default function KursstandorteClient() {
       // nur Partner mit verfügbaren Kursen/Sessions
       const hasSessions = (partnerCourseIds.get(p.id) ?? new Set()).size > 0;
       if (!hasSessions) return false;
-      // nach Domain gefiltert: .at -> nur AT, .de -> nur DE (sofern country befüllt)
+      // nach Domain filtern: bevorzugt Bundesland, sonst Land
+      const stateLc = (p.state || "").toLowerCase();
       const countryLc = (p.country || "").toLowerCase();
-      if (regionCountries.length && countryLc) {
+      if (allowedStates.length && stateLc) {
+        if (!allowedStates.some((st) => stateLc.includes(st))) return false;
+      } else if (regionCountries.length && countryLc) {
         if (!regionCountries.some((c) => countryLc.includes(c))) return false;
       }
 
@@ -185,31 +220,35 @@ export default function KursstandorteClient() {
               className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm"
             >
               <option value="">Bundesland/Region</option>
-              {[
-                "Wien",
-                "Niederösterreich",
-                "Oberösterreich",
-                "Steiermark",
-                "Salzburg",
-                "Tirol",
-                "Vorarlberg",
-                "Burgenland",
-                "Bayern",
-                "Berlin",
-                "Brandenburg",
-                "Bremen",
-                "Hamburg",
-                "Hessen",
-                "Mecklenburg-Vorpommern",
-                "Niedersachsen",
-                "Nordrhein-Westfalen",
-                "Rheinland-Pfalz",
-                "Saarland",
-                "Sachsen",
-                "Sachsen-Anhalt",
-                "Schleswig-Holstein",
-                "Thüringen",
-              ].map((opt) => (
+              {(debugRegion === "DE"
+                ? [
+                    "Bayern",
+                    "Berlin",
+                    "Brandenburg",
+                    "Bremen",
+                    "Hamburg",
+                    "Hessen",
+                    "Mecklenburg-Vorpommern",
+                    "Niedersachsen",
+                    "Nordrhein-Westfalen",
+                    "Rheinland-Pfalz",
+                    "Saarland",
+                    "Sachsen",
+                    "Sachsen-Anhalt",
+                    "Schleswig-Holstein",
+                    "Thüringen",
+                  ]
+                : [
+                    "Wien",
+                    "Niederösterreich",
+                    "Oberösterreich",
+                    "Steiermark",
+                    "Salzburg",
+                    "Tirol",
+                    "Vorarlberg",
+                    "Burgenland",
+                  ]
+              ).map((opt) => (
                 <option key={opt} value={opt.toLowerCase()}>
                   {opt}
                 </option>

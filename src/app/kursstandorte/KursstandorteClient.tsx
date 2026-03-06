@@ -110,7 +110,7 @@ export default function KursstandorteClient() {
       const text = [p.name, p.state, p.country, ...(p.tags ?? [])].join(" ").toLowerCase();
       if (search && !text.includes(search.toLowerCase())) return false;
       if (filterState && (p.state ?? "").toLowerCase().indexOf(filterState.toLowerCase()) === -1) return false;
-      if (filterCategory || filterSubcategory || filterType || filterFormat) {
+      if (filterCategory || filterType || filterFormat) {
         const courseIds = Array.from(partnerCourseIds.get(p.id) ?? []);
         const courseObjs = courses.filter((c) => courseIds.includes(c.id));
         if (filterCategory && !courseObjs.some((c) => c.category_id === filterCategory)) return false;

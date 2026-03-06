@@ -141,8 +141,8 @@ export default async function CoursePage({
 
   if (!slugCleanInitial) {
     try {
-      const ck = cookies();
-      const cSlug = ck.get("slug_fallback")?.value;
+      const ck = await cookies();
+      const cSlug = ck.get?.("slug_fallback")?.value;
       if (cSlug) slugCleanInitial = cSlug;
     } catch {
       // ignore

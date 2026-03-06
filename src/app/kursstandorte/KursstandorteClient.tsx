@@ -157,12 +157,12 @@ export default function KursstandorteClient() {
         </div>
         {/* Hero-Suchfeld */}
         <div className="absolute left-1/2 -translate-x-1/2 bottom-[3vh] w-[92vw] max-w-xl">
-          <div className="rounded-2xl border border-white/30 bg-white/80 backdrop-blur-xl shadow-lg shadow-black/15 px-4 py-3 flex items-center gap-3">
+          <div className="flex items-center gap-3">
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Ort, Partner oder Tag suchen…"
-              className="flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm"
+              placeholder="Bundesland, Partner, Kurs, Tag"
+              className="flex-1 rounded-xl border border-white/50 bg-white/85 backdrop-blur px-3 py-2 text-sm text-slate-900 shadow-sm"
             />
             <button
               onClick={() => setSearch("")}

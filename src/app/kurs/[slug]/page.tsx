@@ -215,6 +215,29 @@ export default async function CoursePage({
     return (
       <div className="min-h-screen bg-white text-slate-900">
         <SiteHeader />
+        {/* Inline-Fix: falls der Server keinen Slug bekam, versuche im Browser sofort nachzuladen */}
+        <Script
+          id="slug-inline-recover"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var url = new URL(window.location.href);
+                  if (url.searchParams.get("slug")) return;
+                  var m = window.location.pathname.match(/\\/kurs\\/([^/?#]+)/);
+                  if (!m || !m[1]) return;
+                  var slug = m[1];
+                  document.cookie = "slug_fallback=" + slug + "; path=/kurs; SameSite=Lax";
+                  url.searchParams.set("slug", slug);
+                  window.location.replace(url.toString());
+                } catch (e) {
+                  console.error("slug-inline-recover failed", e);
+                }
+              })();
+            `,
+          }}
+        />
         <div className="px-6 py-16 space-y-4 max-w-3xl mx-auto">
           <h1 className="text-2xl font-semibold text-red-600">Kurs-Slug fehlt</h1>
           <p className="text-slate-700">Die Route /kurs/[slug] wurde ohne Slug aufgerufen.</p>

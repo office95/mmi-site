@@ -284,17 +284,23 @@ export default function EntdeckenClient() {
             <p className="text-slate-600">Keine Termine gefunden. Bitte Filter anpassen.</p>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((s) => (
-                <div
-                  key={s.id}
-                  className="group rounded-2xl border border-slate-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-lg transition overflow-hidden"
-                >
-                  <Link href={`/kurs/${s.course?.slug ?? ""}?booking=${s.id}`} className="relative block h-44 w-full bg-slate-100">
-                    {s.course?.hero_image_url ? (
-                      <Image
-                        src={s.course.hero_image_url}
-                        alt={s.course.title}
-                        fill
+              {filtered.map((s) => {
+                const courseSlug = s.course?.slug || s.course?.id || s.id;
+                const bookingHref = `/buchen/${s.id}${
+                  s.course?.slug ? `?kurs=${s.course.slug}` : s.course?.id ? `?courseId=${s.course.id}` : ""
+                }`;
+                const infoHref = courseSlug ? `/kurs/${courseSlug}${s.id ? `?booking=${s.id}` : ""}` : `/entdecken`;
+                return (
+                  <div
+                    key={s.id}
+                    className="group rounded-2xl border border-slate-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-lg transition overflow-hidden"
+                  >
+                    <Link href={infoHref} className="relative block h-44 w-full bg-slate-100">
+                      {s.course?.hero_image_url ? (
+                        <Image
+                          src={s.course.hero_image_url}
+                          alt={s.course.title}
+                          fill
                         className="object-cover group-hover:scale-105 transition duration-300"
                         sizes="400px"
                       />
@@ -311,7 +317,7 @@ export default function EntdeckenClient() {
                         ))}
                       </div>
                     )}
-                  </Link>
+                    </Link>
                   <div className="p-4 space-y-2">
                     <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
                       {s.start_date ? new Date(s.start_date).toLocaleDateString("de-AT") : "Termin"}
@@ -338,13 +344,13 @@ export default function EntdeckenClient() {
                     ) : null}
                     <div className="pt-3 flex gap-2">
                       <Link
-                        href={`/buchen/${s.id}${s.course?.slug ? `?kurs=${s.course.slug}` : ""}${s.course?.id ? `${s.course?.slug ? "&" : "?"}courseId=${s.course.id}` : ""}`}
+                        href={bookingHref}
                         className="flex-1 text-center rounded-full bg-pink-600 px-3 py-2 text-sm font-semibold text-white shadow hover:-translate-y-0.5 transition"
                       >
                         Buchen
                       </Link>
                       <Link
-                        href={s.course?.slug ? `/kurs/${s.course.slug}` : `/entdecken`}
+                        href={infoHref}
                         className="flex-1 text-center rounded-full border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-800 hover:-translate-y-0.5 transition bg-white"
                       >
                         Mehr Infos
@@ -352,7 +358,8 @@ export default function EntdeckenClient() {
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

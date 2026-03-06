@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -164,6 +164,10 @@ export default async function CoursePage({
     }
   }
   if (!slugCleanInitial) {
+    // In Produktion lieber weiterleiten, damit Nutzer nicht auf der Diagnose-Seite landen
+    if (process.env.NODE_ENV !== "development") {
+      redirect("/entdecken");
+    }
     // Diagnose-Seite statt 404, damit wir sehen, was wirklich ankommt
     return (
       <div className="min-h-screen bg-white text-slate-900">

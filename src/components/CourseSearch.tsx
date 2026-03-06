@@ -118,7 +118,7 @@ export default function CourseSearch() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             type="text"
-            placeholder="Music Producer, Live-Tontechnik..."
+            placeholder="Kurs, Standort, Tag..."
             className="w-full border-none bg-transparent text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none"
           />
         </div>

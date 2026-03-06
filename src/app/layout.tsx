@@ -54,7 +54,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Music Mission Institute | Kurse in Musikproduktion & Live-Engineering",
     description:
-      "Music Mission Institute ist die Buchungsplattform für Kurse in Musikproduktion, Tontechnik, Livetechnik und DJing mit starken Partnern in ganz DACH.",
+      "Music Mission Institute ist Anbieter für Kurse in Musikproduktion, Tontechnik, Livetontechnik, DJing und Vocalcoaching. Praxisnahe Kurse mit Profis aus der Musikbranche.",
     metadataBase: new URL(siteUrl),
     alternates: {
       canonical: "/",
@@ -73,14 +73,14 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: "Music Mission Institute",
       title: "Music Mission Institute | Kurse in Musikproduktion & Live-Engineering",
       description:
-        "Buchungsplattform für Musikproduktion, Tontechnik, Livetechnik und DJ-Kurse mit starken Partnern in DACH.",
+        "Anbieter für Musikproduktion, Tontechnik, Livetontechnik, DJing und Vocalcoaching – praxisnah mit Profis aus der Musikbranche.",
       locale: "de_AT",
       images: [defaultImage],
     },
     twitter: {
       card: "summary_large_image",
       title: "Music Mission Institute",
-      description: "Kurse in Musikproduktion, Tontechnik & Live-Engineering in DACH.",
+      description: "Kurse in Musikproduktion, Tontechnik, Livetontechnik, DJing und Vocalcoaching in DACH.",
       images: [defaultImage],
     },
     robots: {

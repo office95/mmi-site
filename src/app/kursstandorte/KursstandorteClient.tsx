@@ -56,6 +56,10 @@ export default function KursstandorteClient() {
   const [filterType, setFilterType] = useState("");
   const [filterFormat, setFilterFormat] = useState("");
   const regionLabel = debugRegion === "DE" ? "Deutschland" : "Österreich";
+  const regionCountries = useMemo(
+    () => (debugRegion === "DE" ? ["deutschland", "germany"] : ["österreich", "austria"]),
+    [debugRegion]
+  );
 
   const resetFilters = () => {
     setSearch("");
@@ -107,6 +111,15 @@ export default function KursstandorteClient() {
 
   const filtered = useMemo(() => {
     return partners.filter((p) => {
+      // nur Partner mit verfügbaren Kursen/Sessions
+      const hasSessions = (partnerCourseIds.get(p.id) ?? new Set()).size > 0;
+      if (!hasSessions) return false;
+      // nach Domain gefiltert: .at -> nur AT, .de -> nur DE (sofern country befüllt)
+      const countryLc = (p.country || "").toLowerCase();
+      if (regionCountries.length && countryLc) {
+        if (!regionCountries.some((c) => countryLc.includes(c))) return false;
+      }
+
       const text = [p.name, p.state, p.country, ...(p.tags ?? [])].join(" ").toLowerCase();
       if (search && !text.includes(search.toLowerCase())) return false;
       if (filterState && (p.state ?? "").toLowerCase().indexOf(filterState.toLowerCase()) === -1) return false;
@@ -119,7 +132,7 @@ export default function KursstandorteClient() {
       }
       return true;
     });
-  }, [partners, search, filterState, filterCategory, filterType, filterFormat, partnerCourseIds, courses]);
+  }, [partners, search, filterState, filterCategory, filterType, filterFormat, partnerCourseIds, courses, regionCountries]);
 
   return (
     <div className="min-h-screen bg-white text-slate-900">

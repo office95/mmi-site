@@ -4,9 +4,7 @@ import { ComingSoonMarquee } from "./ComingSoonMarquee";
 
 export const dynamic = "force-dynamic";
 
-const LOGO =
-  process.env.NEXT_PUBLIC_SITE_LOGO_URL ||
-  "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/333eb4c4-56a9-4396-bc74-4448da17ce14.webp";
+const LOGO = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/333eb4c4-56a9-4396-bc74-4448da17ce14.webp";
 
 export default function DeComingSoonPage() {
   return (
@@ -15,7 +13,7 @@ export default function DeComingSoonPage() {
       <div className="relative z-10 flex flex-col min-h-screen">
         <header className="flex items-center justify-between px-6 sm:px-10 py-6">
           <Link href="/" className="flex items-center gap-3">
-            <Image src={LOGO} alt="Music Mission Logo" width={54} height={54} className="h-12 w-12 object-contain drop-shadow-lg" priority />
+            <Image src={LOGO} alt="Music Mission Logo" width={90} height={90} className="h-16 w-16 object-contain drop-shadow-lg" priority />
             <span className="font-semibold tracking-tight text-white/90 hidden sm:inline">Music Mission Institute</span>
           </Link>
           <Link href="/" className="text-sm font-semibold text-pink-300 hover:text-pink-200">

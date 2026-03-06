@@ -22,11 +22,14 @@ export async function middleware(req: NextRequest) {
 
   // Domain → Region Mapping
   const region = host.endsWith(".at") ? "AT" : host.endsWith(".de") ? "DE" : "AT";
+  const pathSegments = url.pathname.split("/").filter(Boolean);
+  const slugSegment = pathSegments[0] === "kurs" && pathSegments[1] ? pathSegments[1] : null;
 
   // Header nach vorne durchreichen, damit RSC getRegion() den Wert sieht
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-region", region);
   requestHeaders.set("x-pathname", url.pathname);
+  if (slugSegment) requestHeaders.set("x-slug", slugSegment);
 
   // Admin-Guard
   const isAdminRoute =
@@ -66,7 +69,9 @@ export async function middleware(req: NextRequest) {
   }
 
   res.headers.set("x-region", region);
+  if (slugSegment) res.headers.set("x-slug", slugSegment);
   res.cookies.set("region", region, { path: "/" });
+  if (slugSegment) res.cookies.set("slug_fallback", slugSegment, { path: "/kurs" });
   return res;
 }
 

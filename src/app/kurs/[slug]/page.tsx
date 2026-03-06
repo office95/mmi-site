@@ -115,7 +115,8 @@ export default async function CoursePage({
       const referer = hdr.get("referer") || "";
       const forwardedPath = hdr.get("x-forwarded-path") || "";
       const rawUrl = hdr.get("x-url") || hdr.get("next-url") || "";
-      [pathHeader, forwardedPath, rawUrl, referer].forEach((p) => {
+      const slugHeader = hdr.get("x-slug") || "";
+      [pathHeader, forwardedPath, rawUrl, referer, slugHeader].forEach((p) => {
         if (!p) return;
         const parts = p.split("/").filter(Boolean);
         const last = parts[parts.length - 1];
@@ -124,6 +125,16 @@ export default async function CoursePage({
       slugCleanInitial = candidates.find(Boolean) || "";
     } catch {
       // headers() kann hier noch nicht genutzt werden, ignorieren
+    }
+  }
+
+  if (!slugCleanInitial) {
+    try {
+      const ck = cookies();
+      const cSlug = ck.get("slug_fallback")?.value;
+      if (cSlug) slugCleanInitial = cSlug;
+    } catch {
+      // ignore
     }
   }
   if (!slugCleanInitial) {

@@ -391,15 +391,26 @@ export default function PartnerPage() {
                           <p className="text-base font-semibold text-slate-900">
                             {typeof s.price_cents === "number" ? `${(s.price_cents / 100).toFixed(2)} €` : "Preis folgt"}
                           </p>
-                          {s.course?.slug && (
-                            <Link
-                              href={`/buchen/${s.id}?course=${s.course.slug}`}
-                              className="inline-flex w-fit rounded-full bg-pink-600 px-4 py-2 text-sm font-semibold text-white hover:bg-pink-700 !text-white"
-                              aria-label={`Kurs ${s.course.title} buchen`}
-                            >
-                              Buchen
-                            </Link>
-                          )}
+                          <div className="flex flex-wrap gap-2">
+                            {s.course?.slug && (
+                              <>
+                                <Link
+                                  href={`/kurs/${s.course.slug}`}
+                                  className="inline-flex w-fit rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-50"
+                                  aria-label={`Mehr Infos zu ${s.course.title}`}
+                                >
+                                  Mehr Infos
+                                </Link>
+                                <Link
+                                  href={`/buchen/${s.id}?course=${s.course.slug}`}
+                                  className="inline-flex w-fit rounded-full bg-pink-600 px-4 py-2 text-sm font-semibold text-white hover:bg-pink-700 !text-white"
+                                  aria-label={`Kurs ${s.course.title} buchen`}
+                                >
+                                  Buchen
+                                </Link>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </ScrollReveal>

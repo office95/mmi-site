@@ -16,7 +16,7 @@ export default function DeComingSoonPage() {
             <Image src={LOGO} alt="Music Mission Logo" width={120} height={120} className="h-20 w-20 object-contain drop-shadow-lg" priority />
             <span className="font-semibold tracking-tight text-white/90 hidden sm:inline">Music Mission Institute</span>
           </Link>
-          <Link href="/" className="text-sm font-semibold text-pink-300 hover:text-pink-200">
+          <Link href="https://musicmission.at" className="text-sm font-semibold text-pink-300 hover:text-pink-200">
             Zur AT-Seite
           </Link>
         </header>

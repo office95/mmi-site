@@ -198,7 +198,7 @@ export function SiteHeader() {
         <div className="flex items-center justify-between mb-6">
           <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
             <Image
-              src={logoUrl || "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp"}
+              src={FALLBACK_LOGO}
               alt="Music Mission Institute Logo"
               width={40}
               height={40}

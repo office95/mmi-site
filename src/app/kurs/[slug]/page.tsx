@@ -246,7 +246,6 @@ export default async function CoursePage({
   let region: "AT" | "DE" = getRegion(); // Default, wird im try ggf. überschrieben
   let supabase: ReturnType<typeof getSupabaseServerClient> | ReturnType<typeof getSupabaseServiceClient> | null = null;
   let slugClean = cleanSlugValue(slugCleanInitial);
-  let allowAllHosts = false;
   let lastError: any = null;
   let host = "";
 
@@ -256,73 +255,28 @@ export default async function CoursePage({
     const hdr = await headers();
     const rawHost = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
     host = rawHost.replace(/^www\./, "").split(":")[0]; // strip www + port
-    const isPreview = host.includes("vercel.app") || host.includes("localhost");
-    allowAllHosts = isPreview;
     region = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
 
     supabase = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
-    console.warn("[Kursseite] incoming", { params, searchParams, slugClean, host });
-    const normalize = (s: string) => safeTrim(s).toLowerCase().replace(/\s+/g, "-");
 
-    const uuidMatch = slugClean.match(/^[0-9a-fA-F-]{36}$/);
-    if (uuidMatch) {
-      const { data, error } = await supabase.from("courses").select("*").eq("id", slugClean).maybeSingle();
-      if (error) lastError = error.message;
-      if (data) course = data;
-    }
-
-    if (!course && slugClean) {
-      const { data, error } = await supabase.from("courses").select("*").eq("slug", slugClean).maybeSingle();
-      if (error) lastError = error.message;
-      if (data) course = data;
-    }
-
-    if (!course) {
-      const candidates = Array.from(
-        new Set<string>([
-          slugClean,
-          slugClean.toLowerCase(),
-          slugClean.replace(/_/g, "-"),
-          slugClean.replace(/-/g, "_"),
-          normalize(slugClean),
-          normalize(slugClean).replace(/_/g, "-"),
-        ]).values()
-      ).filter(Boolean);
-
-      const orFilter = candidates.map((c) => `slug.eq.${c}`).join(",");
-      if (orFilter) {
-        const { data, error } = await supabase.from("courses").select("*").or(orFilter);
-        if (error) lastError = error.message;
-        if (data && data.length > 0) {
-          course =
-            data.find((c: any) => safeTrim(c.slug) === slugClean) ||
-            data.find((c: any) => normalize(c.slug ?? "") === normalize(slugClean)) ||
-            data[0];
-        }
-      }
-    }
-
-    if (!course) {
-      const { data: allCourses, error } = await supabase.from("courses").select("*");
-      if (error) lastError = error.message;
-      if (allCourses) {
-        const target = normalize(slugClean);
-        course =
-          allCourses.find((c: any) => normalize(c.slug ?? "") === target || normalize(c.title ?? "") === target) ||
-          allCourses.find((c: any) => normalize(c.slug ?? "").startsWith(target) || normalize(c.title ?? "").startsWith(target)) ||
-          null;
-      }
-    }
-
-    // Fallback: ilike-Search (case-insensitive) auf slug
-    if (!course) {
-      const { data: ilikeCourse, error } = await supabase
+    // Ein einziges, reichhaltiges Query: Kurs + Sessions + Partner
+    const { data: courseRow, error } = await supabase
+      .from("courses")
+      .select("*, sessions(*, partners(*))")
+      .eq("slug", slugClean)
+      .maybeSingle();
+    if (error) lastError = error.message;
+    if (courseRow) {
+      course = courseRow;
+    } else {
+      // Minimaler Fallback: case-insensitive
+      const { data: courseIlike, error: ilikeErr } = await supabase
         .from("courses")
-        .select("*")
-        .ilike("slug", `%${slugClean}%`)
+        .select("*, sessions(*, partners(*))")
+        .ilike("slug", slugClean)
         .maybeSingle();
-      if (error) lastError = error.message;
-      if (ilikeCourse) course = ilikeCourse;
+      if (ilikeErr) lastError = ilikeErr.message;
+      if (courseIlike) course = courseIlike;
     }
   } catch (err) {
     console.error("CoursePage fatal error", err);
@@ -371,22 +325,13 @@ export default async function CoursePage({
 
   const db = supabase ?? getSupabaseServerClient();
 
-  // Sessions inkl. Partner in einem Query, um einen Roundtrip zu sparen
-  let { data: sessions } = await db
-    .from("sessions")
-    .select("*, partners:partners(*)")
-    .eq("course_id", course.id)
-    .or(regionFilter);
-  if (!sessions || sessions.length === 0) {
-    const { data: altSessions } = await db
-      .from("sessions")
-      .select("*, partners:partners(*), courses!inner(slug)")
-      .eq("courses.slug", course.slug)
-      .or(regionFilter);
-    sessions = altSessions ?? [];
-  }
-
-  const sessionsWithPartner = sessions ?? [];
+  // Sessions sind bereits per Join geladen; filter nur nach Region
+  const sessionsWithPartner = (course.sessions ?? []).filter((s: any) => {
+    if (!region) return true;
+    const val = (s.region || "").toString().toLowerCase();
+    if (!val) return true;
+    return val === region.toLowerCase();
+  });
 
   const { data: addons } = await db.from("addons").select("*").eq("course_id", course.id);
   // Region-basierte Session-Filter: auf AT-Seite keine DE-Sessions anzeigen (und umgekehrt)

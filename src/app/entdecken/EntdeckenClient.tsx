@@ -16,7 +16,7 @@ type SessionCard = {
   state?: string;
   price_cents?: number;
   course?: { id: string; title: string; slug: string; hero_image_url?: string; type_id?: string | null; category_id?: string | null };
-  partners?: { name?: string; city?: string; state?: string } | null;
+  partners?: { name?: string; city?: string; state?: string; country?: string } | null;
   tags?: string[];
 };
 

@@ -29,21 +29,10 @@ export default function DeComingSoonPage() {
             <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight text-white drop-shadow-lg">
               Wir sind in Kürze auch in Deutschland für dich da.
             </h1>
-            <p className="text-base sm:text-lg text-white/80 max-w-2xl mx-auto">
-              Intensive Ausbildungen, Extremkurse und Top-Studios kommen nach Deutschland. Trag dich ein und erfahre als Erste:r, wenn dein Bundesland startet.
-            </p>
           </div>
 
           <ComingSoonMarquee />
 
-          <div className="mt-6">
-            <Link
-              href="https://musicmission.at/newsletter"
-              className="inline-flex items-center gap-2 rounded-full bg-pink-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-pink-600/30 hover:-translate-y-0.5 transition"
-            >
-              Notify me
-            </Link>
-          </div>
         </main>
 
         <footer className="py-6 text-center text-xs text-white/60">

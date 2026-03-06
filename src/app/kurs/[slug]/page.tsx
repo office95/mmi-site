@@ -132,6 +132,18 @@ export default async function CoursePage({
         if (cand) candidates.push(cand);
       });
 
+      const nextUrl = hdr.get("next-url") || hdr.get("x-url") || "";
+      if (nextUrl) {
+        try {
+          const baseHost = hdr.get("host") || "localhost";
+          const u = new URL(nextUrl, `https://${baseHost}`);
+          const parts = u.pathname.split("/").filter(Boolean);
+          if (parts[0] === "kurs" && parts[1]) candidates.unshift(parts[1]);
+        } catch {
+          // ignore
+        }
+      }
+
       const host = hdr.get("host")?.toLowerCase().replace(/^www\./, "") || "";
       slugCleanInitial =
         candidates.find((c) => c && c !== host && !c.includes(".") && c !== "kurs") ||

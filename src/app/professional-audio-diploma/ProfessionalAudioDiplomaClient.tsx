@@ -211,16 +211,16 @@ export default function ProfessionalAudioDiplomaClient() {
             </div>
           </section>
 
-          <section id="anmeldung" className="bg-slate-900 text-white py-12 px-6 sm:px-10 lg:px-20">
+          <section id="anmeldung" className="bg-[#f5f6f8] text-slate-900 py-12 px-6 sm:px-10 lg:px-20">
             <div className="mx-auto max-w-4xl space-y-6">
               <div className="space-y-2 text-center">
-                <p className="text-xs uppercase tracking-[0.22em] text-pink-200">Interesse</p>
-                <h2 className="font-anton text-3xl sm:text-4xl leading-tight">Jetzt für das Diploma vormerken</h2>
-                <p className="text-sm text-white/70 max-w-2xl mx-auto">
+                <p className="text-xs uppercase tracking-[0.22em] text-pink-600">Interesse</p>
+                <h2 className="font-anton text-3xl sm:text-4xl leading-tight text-slate-900">Jetzt für das Diploma vormerken</h2>
+                <p className="text-sm text-slate-600 max-w-2xl mx-auto">
                   Wir melden uns mit Startterminen, Standorten und nächsten Schritten.
                 </p>
               </div>
-              <div className="rounded-2xl border border-white/15 bg-white/5 backdrop-blur-md p-6 sm:p-8 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.8)]">
+              <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-[0_20px_50px_-30px_rgba(0,0,0,0.35)]">
                 <form className="space-y-4" onSubmit={handleSubmit}>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <input
@@ -228,26 +228,26 @@ export default function ProfessionalAudioDiplomaClient() {
                       value={form.first_name}
                       onChange={(e) => setForm({ ...form, first_name: e.target.value })}
                       placeholder="Vorname"
-                      className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500"
                     />
                     <input
                       required
                       value={form.last_name}
                       onChange={(e) => setForm({ ...form, last_name: e.target.value })}
                       placeholder="Nachname"
-                      className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500"
                     />
                     <input
                       value={form.birthdate}
                       onChange={(e) => setForm({ ...form, birthdate: e.target.value })}
                       placeholder="Geburtsdatum"
-                      className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500"
                     />
                     <input
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
                       placeholder="Telefon"
-                      className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500"
                     />
                     <input
                       required
@@ -255,36 +255,36 @@ export default function ProfessionalAudioDiplomaClient() {
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
                       placeholder="E-Mail"
-                      className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500"
                     />
                     <input
                       value={form.location_preference}
                       onChange={(e) => setForm({ ...form, location_preference: e.target.value })}
                       placeholder="Wunsch-Standort"
-                      className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500"
                     />
                     <input
                       value={form.street}
                       onChange={(e) => setForm({ ...form, street: e.target.value })}
                       placeholder="Straße"
-                      className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500"
                     />
                     <div className="grid grid-cols-3 gap-2">
                       <input
                         value={form.zip}
                         onChange={(e) => setForm({ ...form, zip: e.target.value })}
                         placeholder="PLZ"
-                        className="rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                        className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500"
                       />
                       <input
-                        className="col-span-2 rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/60"
+                        className="col-span-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500"
                         value={form.city}
                         onChange={(e) => setForm({ ...form, city: e.target.value })}
                         placeholder="Ort"
                       />
                     </div>
                   </div>
-                  <label className="flex items-start gap-2 text-xs text-white/80">
+                  <label className="flex items-start gap-2 text-xs text-slate-700">
                     <input
                       type="checkbox"
                       checked={form.consent}
@@ -296,8 +296,8 @@ export default function ProfessionalAudioDiplomaClient() {
                       Ich stimme zu, dass meine Daten zur Kontaktaufnahme für das Professional Audio Diploma verarbeitet werden.
                     </span>
                   </label>
-                  {error ? <p className="text-sm text-red-200">{error}</p> : null}
-                  {success ? <p className="text-sm text-emerald-200">{success}</p> : null}
+                  {error ? <p className="text-sm text-red-600">{error}</p> : null}
+                  {success ? <p className="text-sm text-emerald-600">{success}</p> : null}
                   <button
                     type="submit"
                     disabled={sending}

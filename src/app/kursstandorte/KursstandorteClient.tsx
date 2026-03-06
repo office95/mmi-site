@@ -156,7 +156,8 @@ export default function KursstandorteClient() {
           </p>
         </div>
         {/* Hero-Suchfeld */}
-        <div className="absolute left-1/2 -translate-x-1/2 bottom-[3vh] w-[92vw] max-w-xl">
+        <div className="absolute left-1/2 -translate-x-1/2 bottom-[3vh] w-[92vw] max-w-xl space-y-2 text-center text-white drop-shadow-sm">
+          <p className="text-sm font-semibold text-white/90">Suche nach Standort, Partner oder Kurs</p>
           <div className="flex items-center gap-3">
             <input
               value={search}

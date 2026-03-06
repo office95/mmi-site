@@ -211,7 +211,7 @@ export default function KursstandorteClient() {
             <select
               value={filterState}
               onChange={(e) => setFilterState(e.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm"
+              className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm"
             >
               <option value="">Bundesland/Region</option>
               {(debugRegion === "DE"
@@ -248,7 +248,7 @@ export default function KursstandorteClient() {
                 </option>
               ))}
             </select>
-            <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm">
+            <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm">
               <option value="">Kategorie</option>
               {categories.map((c) => (
                 <option key={c.value} value={c.value}>
@@ -256,7 +256,7 @@ export default function KursstandorteClient() {
                 </option>
               ))}
             </select>
-            <select value={filterType} onChange={(e) => setFilterType(e.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm">
+            <select value={filterType} onChange={(e) => setFilterType(e.target.value)} className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm">
               <option value="">Kurstyp</option>
               {types.map((t) => (
                 <option key={t.value} value={t.value}>
@@ -264,7 +264,7 @@ export default function KursstandorteClient() {
                 </option>
               ))}
             </select>
-            <select value={filterFormat} onChange={(e) => setFilterFormat(e.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm">
+            <select value={filterFormat} onChange={(e) => setFilterFormat(e.target.value)} className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm">
               <option value="">Format</option>
               {formats.map((f) => (
                 <option key={f.value} value={f.value}>

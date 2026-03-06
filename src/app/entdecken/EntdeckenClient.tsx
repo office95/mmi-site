@@ -267,9 +267,6 @@ export default function EntdeckenClient() {
               </button>
             </div>
 
-            <div className="text-xs text-slate-500">
-              Region: {regionText} · Host: {debugHost || "(n/a)"} · x-region: {debugXRegion || "(n/a)"}
-            </div>
           </div>
 
           {loading ? (

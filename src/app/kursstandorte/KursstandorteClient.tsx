@@ -226,9 +226,6 @@ export default function KursstandorteClient() {
             </select>
           </div>
 
-          <div className="text-xs text-slate-500">
-            Region: {regionLabel} · Host: {debugHost || "(n/a)"} · x-region: {debugXRegion}
-          </div>
         </div>
 
         {loading ? (

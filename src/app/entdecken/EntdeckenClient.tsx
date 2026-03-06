@@ -317,7 +317,7 @@ export default function EntdeckenClient() {
                       {locationText(s) ? ` · ${locationText(s)}` : ""}
                     </p>
                     {s.price_cents ? (
-                      <div className="pt-2 text-sm font-semibold text-emerald-700">
+                      <div className="pt-2 text-sm font-semibold text-pink-600">
                         {(s.price_cents / 100).toFixed(2)} €
                       </div>
                     ) : null}

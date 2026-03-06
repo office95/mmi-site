@@ -206,14 +206,8 @@ export default function KursstandorteClient() {
       </section>
 
       <main className="mx-auto max-w-6xl px-6 py-10 sm:py-14 space-y-8">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm space-y-4">
-          <div className="flex justify-end">
-            <button onClick={resetFilters} className="text-sm font-semibold text-pink-600 hover:text-pink-700">
-              Filter zurücksetzen
-            </button>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center gap-3">
             <select
               value={filterState}
               onChange={(e) => setFilterState(e.target.value)}
@@ -278,8 +272,10 @@ export default function KursstandorteClient() {
                 </option>
               ))}
             </select>
+            <button onClick={resetFilters} className="text-sm font-semibold text-pink-600 hover:text-pink-700">
+              Filter zurücksetzen
+            </button>
           </div>
-
         </div>
 
         {loading ? (

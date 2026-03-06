@@ -15,6 +15,7 @@ import { CourseModulesAccordion } from "./CourseModulesAccordion";
 import { FaqAccordion } from "./FaqAccordion";
 import Script from "next/script";
 import { SlugSelfHeal } from "./SlugSelfHeal";
+import { SlugGuard } from "./SlugGuard";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -389,6 +390,7 @@ export default async function CoursePage({
   }
 
   const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.,region.eq.%20`; // strikt, aber erlaubt leere/null -> global
+  const slugGuard = <SlugGuard renderedSlug={slugClean} />;
 
   const db = supabase ?? getSupabaseServerClient();
 
@@ -571,6 +573,7 @@ export default async function CoursePage({
 
   return (
     <div className="min-h-screen bg-white text-slate-900">
+      <SlugGuard renderedSlug={slugClean} />
       <SiteHeader />
 
       <section className="relative h-[75vh] w-full overflow-hidden bg-black">

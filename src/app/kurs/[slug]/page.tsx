@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -107,16 +107,26 @@ export default async function CoursePage({
     return typeof raw === "string" ? raw : "";
   };
   let slugCleanInitial = (await pickSlugEarly()).trim();
-  if (!slugCleanInitial) {
-    // Letzter Fallback: Path aus Header lesen (wird in middleware gesetzt)
+  const extractFromHeaders = async () => {
     try {
       const hdr = await headers();
-      const candidates: string[] = [];
-      const pathHeader = hdr.get("x-pathname") || "";
-      const referer = hdr.get("referer") || "";
-      const forwardedPath = hdr.get("x-forwarded-path") || "";
-      const rawUrl = hdr.get("x-url") || hdr.get("next-url") || "";
-      const slugHeader = hdr.get("x-slug") || "";
+      const grab = (name: string) => hdr.get(name) || "";
+      const paths = [
+        grab("x-slug"),
+        grab("x-pathname"),
+        grab("x-forwarded-path"),
+        grab("x-forwarded-uri"),
+        grab("x-original-uri"),
+        grab("x-original-url"),
+        grab("x-request-uri"),
+        grab("x-matched-path"),
+        grab("x-invoke-path"),
+        grab("x-url"),
+        grab("x-full-url"),
+        grab("next-url"),
+        grab("referer"),
+      ].filter(Boolean);
+
       const extractSlug = (p: string) => {
         if (!p) return "";
         const decoded = decodeURIComponent(p);
@@ -127,28 +137,34 @@ export default async function CoursePage({
         return parts[0] === "kurs" && parts[1] ? parts[1].trim() : "";
       };
 
-      [slugHeader, pathHeader, forwardedPath, rawUrl, referer].forEach((p) => {
-        const cand = extractSlug(p || "");
-        if (cand) candidates.push(cand);
-      });
-
-      const nextUrl = hdr.get("next-url") || hdr.get("x-url") || hdr.get("x-full-url") || "";
-      if (nextUrl) {
-        try {
-          const baseHost = hdr.get("host") || "localhost";
-          const u = new URL(nextUrl, `https://${baseHost}`);
-          const parts = u.pathname.split("/").filter(Boolean);
-          if (parts[0] === "kurs" && parts[1]) candidates.unshift(parts[1]);
-        } catch {
-          // ignore
-        }
+      for (const p of paths) {
+        const cand = extractSlug(p);
+        if (cand) return cand;
       }
 
-      const host = hdr.get("host")?.toLowerCase().replace(/^www\./, "") || "";
-      slugCleanInitial =
-        candidates.find((c) => c && c !== host && !c.includes(".") && c !== "kurs") ||
-        candidates.find(Boolean) ||
-        "";
+      // Versuch, aus Host + referer eine URL zu bauen
+      const host = grab("host") || grab("x-forwarded-host") || "";
+      const referer = grab("referer") || "";
+      if (host && referer) {
+        try {
+          const proto = grab("x-forwarded-proto") || "https";
+          const u = new URL(referer.startsWith("http") ? referer : `${proto}://${host}${referer}`);
+          const parts = u.pathname.split("/").filter(Boolean);
+          if (parts[0] === "kurs" && parts[1]) return parts[1].trim();
+        } catch {
+          /* ignore */
+        }
+      }
+    } catch {
+      // headers() kann hier noch nicht genutzt werden
+    }
+    return "";
+  };
+
+  if (!slugCleanInitial) {
+    // Letzter Fallback: Path aus Header lesen (wird in middleware gesetzt)
+    try {
+      slugCleanInitial = await extractFromHeaders();
     } catch {
       // headers() kann hier noch nicht genutzt werden, ignorieren
     }
@@ -164,10 +180,6 @@ export default async function CoursePage({
     }
   }
   if (!slugCleanInitial) {
-    // In Produktion lieber weiterleiten, damit Nutzer nicht auf der Diagnose-Seite landen
-    if (process.env.NODE_ENV !== "development") {
-      redirect("/entdecken");
-    }
     // Diagnose-Seite statt 404, damit wir sehen, was wirklich ankommt
     return (
       <div className="min-h-screen bg-white text-slate-900">

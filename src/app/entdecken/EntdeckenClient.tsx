@@ -318,7 +318,10 @@ export default function EntdeckenClient() {
                         ))}
                       </div>
                     )}
-                    </Link>
+                    <div className="absolute left-3 bottom-3">
+                      <CountdownBadge startDate={s.start_date} startTime={s.start_time} />
+                    </div>
+                  </Link>
                   <div className="p-4 space-y-2">
                     <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
                       {s.start_date
@@ -332,7 +335,6 @@ export default function EntdeckenClient() {
                       {s.partners?.name || s.city || "Partner folgt"}
                       {locationText(s) ? ` · ${locationText(s)}` : ""}
                     </p>
-                    <CountdownBadge startDate={s.start_date} startTime={s.start_time} />
                     {s.price_cents ? (
                       <div className="pt-2 text-sm font-semibold text-pink-600">
                         {(s.price_cents / 100).toFixed(2)} €

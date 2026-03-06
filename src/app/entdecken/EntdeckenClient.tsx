@@ -33,6 +33,30 @@ export default function EntdeckenClient() {
   const [debugHost, setDebugHost] = useState("");
   const [debugRegion, setDebugRegion] = useState("");
   const [debugXRegion, setDebugXRegion] = useState("");
+  const allowedStates = useMemo(
+    () =>
+      debugRegion === "DE"
+        ? [
+            "Baden-Württemberg",
+            "Bayern",
+            "Berlin",
+            "Brandenburg",
+            "Bremen",
+            "Hamburg",
+            "Hessen",
+            "Mecklenburg-Vorpommern",
+            "Niedersachsen",
+            "Nordrhein-Westfalen",
+            "Rheinland-Pfalz",
+            "Saarland",
+            "Sachsen",
+            "Sachsen-Anhalt",
+            "Schleswig-Holstein",
+            "Thüringen",
+          ]
+        : ["Wien", "Niederösterreich", "Oberösterreich", "Steiermark", "Salzburg", "Tirol", "Vorarlberg", "Burgenland", "Kärnten"],
+    [debugRegion]
+  );
 
   useEffect(() => {
     const loadSessions = async () => {
@@ -233,7 +257,7 @@ export default function EntdeckenClient() {
                   className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm"
                 >
                   <option value="">Bundesland/Region</option>
-                  {["Wien", "Niederösterreich", "Oberösterreich", "Steiermark", "Bayern", "Berlin", "NRW"].map((opt) => (
+                  {allowedStates.map((opt) => (
                     <option key={opt} value={opt.toLowerCase()}>
                       {opt}
                     </option>

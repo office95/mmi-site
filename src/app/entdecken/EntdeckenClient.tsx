@@ -314,14 +314,8 @@ export default function EntdeckenClient() {
                     <h2 className="font-anton text-xl leading-tight text-slate-900 line-clamp-2">{s.course?.title}</h2>
                     <p className="text-sm text-slate-600 line-clamp-2">
                       {s.partners?.name || s.city || "Partner folgt"}
+                      {locationText(s) ? ` · ${locationText(s)}` : ""}
                     </p>
-                    <div className="flex flex-wrap gap-2 pt-1 text-xs text-slate-700">
-                      {locationText(s) ? (
-                        <span className="rounded-full bg-slate-100 px-2.5 py-1">
-                          {locationText(s)}
-                        </span>
-                      ) : null}
-                    </div>
                     {s.price_cents ? (
                       <div className="pt-2 text-sm font-semibold text-emerald-700">
                         {(s.price_cents / 100).toFixed(2)} €

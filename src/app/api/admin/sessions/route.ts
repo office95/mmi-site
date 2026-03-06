@@ -36,11 +36,11 @@ export async function GET(req: NextRequest) {
   const courseIds = Array.from(
     new Set((filteredSessions as { course_id?: string | null }[]).map((s) => s.course_id).filter(Boolean))
   );
-  let coursesMap: Record<string, { id: string; slug: string; title: string; hero_image_url?: string | null }> = {};
+  let coursesMap: Record<string, { id: string; slug: string; title: string; hero_image_url?: string | null; type_id?: string | null; category_id?: string | null; region?: string | null; created_at?: string | null }> = {};
   if (courseIds.length) {
     const { data: courses, error: errC } = await supabase
       .from("courses")
-      .select("id,slug,title,hero_image_url,type_id,category_id,region")
+      .select("id,slug,title,hero_image_url,type_id,category_id,region,created_at")
       .or(showAll ? undefined! : `region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.,region.eq.%20`)
       .in("id", courseIds);
     if (errC) return NextResponse.json({ error: errC.message }, { status: 500 });

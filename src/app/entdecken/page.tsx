@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Kurstermine entdecken | Music Mission Institute",
-  description: "Alle kommenden Kurstermine in Musikproduktion, Tontechnik, Livetontechnik, DJing und Vocalcoaching auf einen Blick.",
+  description: "Alle kommenden Kurstermine in Musikproduktion, Tontechnik, Livetontechnik, DJing und Vocalcoaching in Österreich & Deutschland.",
   alternates: {
     canonical: "/entdecken",
     languages: {

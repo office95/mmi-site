@@ -108,7 +108,7 @@ export default async function ExtremkursPage() {
         <div className="absolute inset-0 flex items-center px-6 lg:px-16">
           <div className="max-w-4xl space-y-4 drop-shadow-[0_12px_40px_rgba(0,0,0,0.45)]">
             <p className="text-sm uppercase tracking-[0.24em] text-white/80">Kurstyp</p>
-            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">Extremkurse</h1>
+          <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">Extremkurse Musikproduktion & Live-Tontechnik</h1>
             <p className="max-w-2xl text-base sm:text-lg text-white/90">
               Maximales Wissen in kurzer Zeit. Unsere Extremkurse richten sich an alle, die in kürzester Zeit das Maximum aus sich und ihrer Musikproduktion herausholen wollen.
             </p>

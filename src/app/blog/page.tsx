@@ -55,7 +55,7 @@ export default async function BlogListPage() {
       <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-16 py-12 space-y-8">
         <div className="space-y-2">
           <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Blog</p>
-          <h1 className="font-anton text-4xl sm:text-5xl">Insights & Stories</h1>
+          <h1 className="font-anton text-4xl sm:text-5xl">Blog: Musikproduktion, Tontechnik, DJing & Live-Sound</h1>
         </div>
 
         {posts.length === 0 ? (

@@ -103,7 +103,7 @@ export default function ProfessionalAudioDiplomaClient() {
         <div className="absolute inset-0 flex items-start px-6 lg:px-20 pt-[10%]">
           <div className="max-w-4xl space-y-4 drop-shadow-[0_10px_40px_rgba(0,0,0,0.4)]">
             <p className="text-sm uppercase tracking-[0.28em] text-white/80">Studiengang</p>
-            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">Professional Audio Diploma – Tontechnik</h1>
+            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">Professional Audio Diploma – 180 ECTS Tontechnik & Produktion</h1>
             <div className="flex flex-wrap gap-3">
               <a
                 href="#anmeldung"

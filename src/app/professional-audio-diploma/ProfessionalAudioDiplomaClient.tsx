@@ -75,14 +75,6 @@ export default function ProfessionalAudioDiplomaClient() {
       title: "4. Semester – Advanced Mixing",
       points: ["Advanced Recording", "Mixing & Mastering Deep Dive", "Key Competences", "30 ECTS"],
     },
-    {
-      title: "5. Semester – Bachelor Top-Up",
-      points: ["Applied Research", "Projects & Portfolio", "30 ECTS"],
-    },
-    {
-      title: "6. Semester – Bachelor Top-Up",
-      points: ["Abschlussprojekt", "Praxis & Defense", "30 ECTS"],
-    },
   ];
 
   return (
@@ -144,8 +136,8 @@ export default function ProfessionalAudioDiplomaClient() {
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   {[
-                    { label: "Dauer", value: "6 Semester" },
-                    { label: "ECTS", value: "180 ECTS" },
+                    { label: "Dauer", value: "4 Semester" },
+                    { label: "ECTS", value: "120 ECTS" },
                     { label: "Modus", value: "Berufsbegleitend" },
                   ].map((item) => (
                     <div key={item.label} className="rounded-2xl border border-slate-200 bg-white shadow-sm px-4 py-3">

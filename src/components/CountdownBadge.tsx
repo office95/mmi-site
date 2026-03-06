@@ -78,11 +78,12 @@ export function CountdownBadge({ startDate, startTime, timezone = "Europe/Vienna
         dot: "bg-rose-500",
       };
 
-  const label = days > 0
-    ? `Buchung noch ${days}T ${hours}Std möglich`
-    : hours > 0
-      ? `Buchung noch ${hours}Std ${minutes}m möglich`
-      : `Buchung noch ${minutes}m ${seconds}s möglich`;
+  const label =
+    days > 0
+      ? `Buchung offen: ${days}T · ${hours}Std`
+      : hours > 0
+        ? `Buchung offen: ${hours}Std · ${minutes}Min`
+        : `Buchung offen: ${minutes}Min · ${seconds}Sek`;
 
   return (
     <div

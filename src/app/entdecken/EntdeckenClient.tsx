@@ -126,7 +126,8 @@ export default function EntdeckenClient() {
     return sessions.filter((s) => {
       if (!s.start_date) return false;
       const d = new Date(s.start_date + "T00:00:00");
-      return d >= today;
+      // Am Starttag ausblenden -> nur strikt zukünftige Termine anzeigen
+      return d > today;
     });
   }, [sessions, today]);
 

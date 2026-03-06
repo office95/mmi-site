@@ -30,6 +30,7 @@ export async function middleware(req: NextRequest) {
   requestHeaders.set("x-region", region);
   requestHeaders.set("x-pathname", url.pathname);
   if (slugSegment) requestHeaders.set("x-slug", slugSegment);
+  requestHeaders.set("x-full-url", req.url);
 
   // Admin-Guard
   const isAdminRoute =

@@ -132,7 +132,7 @@ export default async function CoursePage({
         if (cand) candidates.push(cand);
       });
 
-      const nextUrl = hdr.get("next-url") || hdr.get("x-url") || "";
+      const nextUrl = hdr.get("next-url") || hdr.get("x-url") || hdr.get("x-full-url") || "";
       if (nextUrl) {
         try {
           const baseHost = hdr.get("host") || "localhost";

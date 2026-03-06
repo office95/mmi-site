@@ -166,11 +166,6 @@ export default function KursstandorteClient() {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <select value={filterCountry} onChange={(e) => setFilterCountry(e.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm">
-              <option value="">Land</option>
-              <option value="Österreich">Österreich</option>
-              <option value="Deutschland">Deutschland</option>
-            </select>
             <input
               value={filterState}
               onChange={(e) => setFilterState(e.target.value)}
@@ -184,16 +179,6 @@ export default function KursstandorteClient() {
                   {c.label}
                 </option>
               ))}
-            </select>
-            <select value={filterSubcategory} onChange={(e) => setFilterSubcategory(e.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm">
-              <option value="">Subkategorie</option>
-              {categories
-                .filter((c) => c.parent)
-                .map((c) => (
-                  <option key={c.value} value={c.value}>
-                    {c.label}
-                  </option>
-                ))}
             </select>
             <select value={filterType} onChange={(e) => setFilterType(e.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm">
               <option value="">Kurstyp</option>

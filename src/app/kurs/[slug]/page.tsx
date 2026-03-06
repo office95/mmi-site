@@ -176,6 +176,16 @@ export default async function CoursePage({
             <pre className="whitespace-pre-wrap break-all text-xs">
 {JSON.stringify({ params, searchParams }, null, 2)}
             </pre>
+            <p className="font-semibold mt-3">Header-Fallbacks:</p>
+            <pre className="whitespace-pre-wrap break-all text-xs">
+{JSON.stringify({
+  host: (await headers()).get("host"),
+  x_pathname: (await headers()).get("x-pathname"),
+  x_slug: (await headers()).get("x-slug"),
+  x_full_url: (await headers()).get("x-full-url"),
+  referer: (await headers()).get("referer"),
+}, null, 2)}
+            </pre>
           </div>
           <p className="text-sm text-slate-600">
             Bitte prüfe den Link, der auf diese Seite führt. Er muss die Form <code>/kurs/&lt;slug&gt;</code> haben, z.B.

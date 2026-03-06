@@ -64,10 +64,19 @@ export function CountdownBadge({ startDate, startTime, timezone = "Europe/Vienna
   const isLastDay = !isLastHour && diffMs <= 24 * 60 * 60 * 1000;
 
   const tone = isLastHour
-    ? { bg: "bg-rose-600", text: "text-white", dot: "bg-white", border: "border-rose-700" }
+    ? {
+        container: "bg-gradient-to-r from-rose-600 to-rose-500 border-rose-700 text-white shadow-[0_8px_24px_-10px_rgba(244,63,94,0.7)]",
+        dot: "bg-white",
+      }
     : isLastDay
-    ? { bg: "bg-amber-100", text: "text-amber-900", dot: "bg-amber-500", border: "border-amber-200" }
-    : { bg: "bg-rose-50", text: "text-rose-700", dot: "bg-rose-500", border: "border-rose-100" };
+    ? {
+        container: "bg-gradient-to-r from-amber-200 via-amber-100 to-white border-amber-200 text-amber-900 shadow-[0_8px_24px_-12px_rgba(251,191,36,0.8)]",
+        dot: "bg-amber-600",
+      }
+    : {
+        container: "bg-gradient-to-r from-rose-50 via-white to-white border-rose-100 text-rose-700 shadow-[0_8px_24px_-12px_rgba(244,63,94,0.35)]",
+        dot: "bg-rose-500",
+      };
 
   const label = days > 0
     ? `Buchung noch ${days}d ${hours}h möglich`
@@ -77,7 +86,7 @@ export function CountdownBadge({ startDate, startTime, timezone = "Europe/Vienna
 
   return (
     <div
-      className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[12px] font-semibold border ${tone.bg} ${tone.text} ${tone.border}`}
+      className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[12px] font-semibold border ${tone.container}`}
       aria-label={label}
     >
       <span className={`inline-block h-2 w-2 rounded-full ${tone.dot} animate-pulse`} aria-hidden />

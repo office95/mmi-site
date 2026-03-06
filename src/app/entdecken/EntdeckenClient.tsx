@@ -285,12 +285,11 @@ export default function EntdeckenClient() {
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filtered.map((s) => (
-                <Link
+                <div
                   key={s.id}
-                  href={`/kurs/${s.course?.slug ?? ""}?booking=${s.id}`}
                   className="group rounded-2xl border border-slate-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-lg transition overflow-hidden"
                 >
-                  <div className="relative h-44 w-full bg-slate-100">
+                  <Link href={`/kurs/${s.course?.slug ?? ""}?booking=${s.id}`} className="relative block h-44 w-full bg-slate-100">
                     {s.course?.hero_image_url ? (
                       <Image
                         src={s.course.hero_image_url}
@@ -312,7 +311,7 @@ export default function EntdeckenClient() {
                         ))}
                       </div>
                     )}
-                  </div>
+                  </Link>
                   <div className="p-4 space-y-2">
                     <p className="text-xs uppercase tracking-[0.16em] text-slate-500">
                       {s.start_date ? new Date(s.start_date).toLocaleDateString("de-AT") : "Termin"}
@@ -337,8 +336,22 @@ export default function EntdeckenClient() {
                         ))}
                       </div>
                     ) : null}
+                    <div className="pt-3 flex gap-2">
+                      <Link
+                        href={`/kurs/${s.course?.slug ?? ""}?booking=${s.id}`}
+                        className="flex-1 text-center rounded-full bg-pink-600 px-3 py-2 text-sm font-semibold text-white shadow hover:-translate-y-0.5 transition"
+                      >
+                        Buchen
+                      </Link>
+                      <Link
+                        href={`/kurs/${s.course?.slug ?? ""}`}
+                        className="flex-1 text-center rounded-full border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-800 hover:-translate-y-0.5 transition bg-white"
+                      >
+                        Mehr Infos
+                      </Link>
+                    </div>
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           )}

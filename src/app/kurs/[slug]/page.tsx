@@ -253,14 +253,78 @@ let host = "";
   const getCourseCached = unstable_cache(
     async (slug: string) => {
       const sb = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
-      return sb
-        .from("courses")
-        .select("*, sessions(*, partners(*))")
-        .eq("slug", slug)
-        .maybeSingle();
+      // Minimaler Datensatz, um Payload klein zu halten
+      const courseFields = [
+        "id",
+        "title",
+        "slug",
+        "subtitle",
+        "summary",
+        "content",
+        "audience",
+        "hero_image_url",
+        "hero_image_mobile_url",
+        "slogan_image_url",
+        "slogan_image_mobile_url",
+        "slogan_line1",
+        "slogan_line2",
+        "slogan_line3",
+        "type_id",
+        "format_id",
+        "duration_hours",
+        "base_price_cents",
+        "deposit_cents",
+        "tax_rate",
+        "price_tiers",
+        "addons",
+        "tags",
+      ];
+      const sessionFields = [
+        "id",
+        "start_date",
+        "start_time",
+        "end_time",
+        "duration_hours",
+        "price_cents",
+        "deposit_cents",
+        "tax_rate",
+        "city",
+        "address",
+        "zip",
+        "state",
+        "country",
+        "region",
+        "seats_taken",
+        "max_participants",
+        "partner_id",
+      ];
+      const partnerFields = [
+        "id",
+        "name",
+        "city",
+        "state",
+        "country",
+        "address",
+        "zip",
+        "hero1_path",
+        "hero1_mobile_path",
+        "logo_path",
+        "promo_path",
+        "promo_mobile_path",
+        "website",
+        "phone",
+        "email",
+        "tags",
+      ];
+
+      const select = `${courseFields.join(",")}, sessions(${sessionFields.join(
+        ","
+      )}, partners:partners(${partnerFields.join(",")}))`;
+
+      return sb.from("courses").select(select).eq("slug", slug).maybeSingle();
     },
     ["course-with-sessions"],
-    { revalidate: 30 }
+    { revalidate: 120 }
   );
 
   try {
@@ -274,19 +338,7 @@ let host = "";
     // Ein einziges, reichhaltiges Query: Kurs + Sessions + Partner (30s Cache)
     const { data: courseRow, error } = await getCourseCached(slugClean);
     if (error) lastError = error.message;
-    if (courseRow) {
-      course = courseRow;
-    } else {
-      // Minimaler Fallback: case-insensitive
-      const sb = process.env.SUPABASE_SERVICE_ROLE_KEY ? getSupabaseServiceClient() : getSupabaseServerClient();
-      const { data: courseIlike, error: ilikeErr } = await sb
-        .from("courses")
-        .select("*, sessions(*, partners(*))")
-        .ilike("slug", slugClean)
-        .maybeSingle();
-      if (ilikeErr) lastError = ilikeErr.message;
-      if (courseIlike) course = courseIlike;
-    }
+    if (courseRow) course = courseRow;
   } catch (err) {
     console.error("CoursePage fatal error", err);
     lastError = err instanceof Error ? err.message : String(err);

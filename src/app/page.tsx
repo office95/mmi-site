@@ -36,7 +36,7 @@ const partnerLogos = [
 ];
 
 type HomeFaq = { q: string; a: string | string[] };
-type HomeCourse = { id: string; title: string; slug: string | null };
+type HomeCourse = { id: string; title: string; slug: string | null; hero: string | null; type: "Intensiv" | "Extrem" | "Kurs" };
 type HomeSession = {
   id: string;
   start_date: string | null;
@@ -103,7 +103,7 @@ export default async function Home() {
     .order("created_at", { ascending: true });
   const { data: courseRows } = await supabase
     .from("courses")
-    .select("id,title,slug,status")
+    .select("id,title,slug,status,hero_image_url,type_id")
     .eq("status", "active")
     .order("created_at", { ascending: true });
   const today = new Date().toISOString().slice(0, 10);
@@ -161,7 +161,17 @@ export default async function Home() {
 
   // gemischte Kursliste (random pro Request)
   const coursesMixed: HomeCourse[] = ((courseRows ?? []) as any[])
-    .map((c) => ({ id: c.id as string, title: c.title as string, slug: c.slug as string | null }))
+    .map((c) => ({
+      id: c.id as string,
+      title: c.title as string,
+      slug: c.slug as string | null,
+      hero: toUrl(c.hero_image_url ?? null),
+      type: c.type_id?.toString().endsWith("102")
+        ? "Intensiv"
+        : c.type_id?.toString().endsWith("103")
+        ? "Extrem"
+        : "Kurs",
+    }))
     .sort(() => Math.random() - 0.5);
 
   return (
@@ -267,11 +277,33 @@ export default async function Home() {
                     <Link
                       key={c.id + idx}
                       href={`/kurs/${c.slug || c.id}`}
-                      className="block min-w-[240px] max-w-[280px] rounded-2xl border border-slate-200 bg-white shadow-[0_12px_32px_-24px_rgba(0,0,0,0.25)] p-4 space-y-2 hover:-translate-y-0.5 transition"
+                      className="block min-w-[260px] max-w-[280px] rounded-2xl border border-slate-200 bg-white shadow-[0_12px_32px_-24px_rgba(0,0,0,0.25)] overflow-hidden hover:-translate-y-0.5 transition"
                     >
-                      <p className="text-xs uppercase tracking-[0.14em] text-pink-600">Kurs</p>
-                      <p className="text-base font-semibold text-slate-900 leading-tight line-clamp-2">{c.title}</p>
-                      <p className="text-xs text-slate-600">Mehr Infos</p>
+                      <div className="relative h-36 w-full overflow-hidden">
+                        <Image
+                          src={c.hero || "/placeholder-course.jpg"}
+                          alt={c.title}
+                          fill
+                          className="object-cover"
+                          sizes="260px"
+                          priority={idx < 2}
+                        />
+                        <span
+                          className={`absolute left-3 top-3 rounded-full px-3 py-1 text-[11px] font-semibold text-white ${
+                            c.type === "Extrem"
+                              ? "bg-[#ff1f8f]"
+                              : c.type === "Intensiv"
+                              ? "bg-slate-900"
+                              : "bg-slate-500"
+                          }`}
+                        >
+                          {c.type}
+                        </span>
+                      </div>
+                      <div className="p-4 space-y-2">
+                        <p className="text-base font-semibold text-slate-900 leading-tight line-clamp-2">{c.title}</p>
+                        <p className="text-xs text-slate-600">Mehr Infos</p>
+                      </div>
                     </Link>
                   ))}
                 </div>

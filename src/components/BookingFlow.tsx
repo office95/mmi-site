@@ -345,7 +345,7 @@ export default function BookingFlow({
           <h2 className="text-2xl font-anton text-slate-900">Bestellübersicht</h2>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 space-y-2">
+            <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 space-y-3">
               <div className="flex items-start justify-between gap-2">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Buchung</p>
                 {course.tax_rate !== 0 && course.tax_rate !== null && course.tax_rate !== undefined && (
@@ -353,32 +353,51 @@ export default function BookingFlow({
                 )}
               </div>
               <p className="font-semibold text-slate-900">{course.title}</p>
-              <p className="text-sm text-slate-700">Termin: {session.start_date ?? "Datum folgt"}{session.city ? ` · ${session.city}` : ""}</p>
-              <p className="text-sm text-slate-700">Teilnehmer: {participants}</p>
-              <div className="mt-2 space-y-1 text-sm text-slate-800">
-                <div className="flex items-center justify-between"><span>Preis</span><span className="font-semibold">{fmt.format(price/100)} €</span></div>
-                {deposit !== null && participants > 1 && (
-                  <div className="flex items-center justify-between"><span>Anzahlung</span><span>{fmt.format(deposit/100)} €</span></div>
+              <p className="text-sm text-slate-700">
+                Termin: {session.start_date ?? "Datum folgt"}
+                {session.city ? ` · ${session.city}` : ""}
+              </p>
+              <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3 space-y-2 text-sm text-slate-800">
+                <div className="flex items-center justify-between">
+                  <span>Preis</span>
+                  <span className="font-semibold">{fmt.format(price / 100)} €</span>
+                </div>
+                {deposit !== null && (
+                  <div className="flex items-center justify-between">
+                    <span>Anzahlung (jetzt)</span>
+                    <span className="font-semibold">{fmt.format(deposit / 100)} €</span>
+                  </div>
                 )}
-                <div className="flex items-center justify-between text-slate-900 font-semibold">
+                <div className="flex items-center justify-between text-slate-900 font-semibold border-t border-slate-100 pt-2">
                   <span>{deposit ? "Jetzt fällig (Anzahlung, brutto)" : "Jetzt fällig (Brutto)"}</span>
-                  <span>{fmt.format(grossNow/100)} €</span>
+                  <span>{fmt.format(grossNow / 100)} €</span>
                 </div>
                 {course.tax_rate === 0 ? (
-                  <p className="text-xs text-slate-600">Steuerfreie Bildungsmaßnahme gemäß § 6 Abs. 1 Z 11 UStG.</p>
+                  <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+                    Steuerfreie Bildungsmaßnahme gemäß § 6 Abs. 1 Z 11 UStG.
+                  </p>
                 ) : taxRate ? (
                   <div className="text-xs text-slate-600 space-y-0.5">
-                    <div className="flex justify-between"><span>Enthaltene USt ({(taxRate*100).toFixed(1)} %)</span><span>{fmt.format(vatNow/100)} €</span></div>
-                    <div className="flex justify-between"><span>Netto (fällig)</span><span>{fmt.format(netNow/100)} €</span></div>
+                    <div className="flex justify-between">
+                      <span>Enthaltene USt ({(taxRate * 100).toFixed(1)} %)</span>
+                      <span>{fmt.format(vatNow / 100)} €</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Netto (fällig)</span>
+                      <span>{fmt.format(netNow / 100)} €</span>
+                    </div>
                   </div>
                 ) : (
                   <p className="text-xs text-slate-600">Preise inkl. USt.</p>
                 )}
                 <div className="flex justify-between text-xs text-slate-600">
-                  <span>Gesamtpreis (alle TN, brutto)</span><span>{fmt.format(totalFull/100)} €</span>
+                  <span>Gesamtpreis (brutto)</span>
+                  <span>{fmt.format(totalFull / 100)} €</span>
                 </div>
                 {deposit && remainingGross > 0 && (
-                  <div className="text-xs text-slate-600">Restbetrag (brutto): {fmt.format(remainingGross/100)} € – fällig zum Kursstart.</div>
+                  <div className="text-xs text-slate-600">
+                    Restbetrag (brutto): {fmt.format(remainingGross / 100)} € – fällig zum Kursstart.
+                  </div>
                 )}
               </div>
             </div>

@@ -146,22 +146,39 @@ export default async function BookingPage({
                 <span className="text-[11px] font-semibold text-slate-600">Alle Preise inkl. MwSt.</span>
               )}
             </div>
-            <div className="mt-2 space-y-2 text-sm text-slate-800">
-              <div className="flex justify-between">
-                <span>Preis</span>
-                <span className="font-semibold">{((session.price_cents ?? course.base_price_cents ?? 0) / 100).toFixed(2)} €</span>
-              </div>
-              {session.deposit_cents ?? course.deposit_cents ? (
-                <div className="flex justify-between">
-                  <span>Anzahlung</span>
-                  <span>{(((session.deposit_cents ?? course.deposit_cents) || 0) / 100).toFixed(2)} €</span>
+            <div className="mt-3 space-y-3 text-sm text-slate-800">
+              <div className="rounded-2xl border border-white/70 bg-white/80 p-3 shadow-sm shadow-slate-200/40 space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-600">Preis</span>
+                  <span className="font-semibold text-slate-900">
+                    {((session.price_cents ?? course.base_price_cents ?? 0) / 100).toFixed(2)} €
+                  </span>
                 </div>
-              ) : null}
+                {session.deposit_cents ?? course.deposit_cents ? (
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-600">Anzahlung (jetzt)</span>
+                    <span className="font-semibold text-slate-900">
+                      {(((session.deposit_cents ?? course.deposit_cents) || 0) / 100).toFixed(2)} €
+                    </span>
+                  </div>
+                ) : null}
+                <div className="flex justify-between items-center border-t border-slate-100 pt-2">
+                  <span className="text-slate-600">Zu zahlen jetzt</span>
+                  <span className="font-bold text-[#ff1f8f]">
+                    {(((session.deposit_cents ?? course.deposit_cents) || (session.price_cents ?? course.base_price_cents ?? 0)) / 100).toFixed(2)} €
+                  </span>
+                </div>
+              </div>
+
               {course.tax_rate !== null && course.tax_rate !== undefined ? (
                 course.tax_rate === 0 ? (
-                  <p className="text-xs text-slate-600">Steuerfreie Bildungsmaßnahme gemäß § 6 Abs. 1 Z 11 UStG.</p>
+                  <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2">
+                    Steuerfreie Bildungsmaßnahme gemäß § 6 Abs. 1 Z 11 UStG.
+                  </p>
                 ) : (
-                  <p className="text-xs text-slate-600">Steuersatz: {((course.tax_rate > 1 ? course.tax_rate / 100 : course.tax_rate) * 100).toFixed(1)} %</p>
+                  <p className="text-xs text-slate-600">
+                    Steuersatz: {((course.tax_rate > 1 ? course.tax_rate / 100 : course.tax_rate) * 100).toFixed(1)} %
+                  </p>
                 )
               ) : null}
               <p className="text-xs text-slate-600">Details zur Zahlung im nächsten Schritt.</p>

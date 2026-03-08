@@ -265,7 +265,7 @@ export default async function Home() {
         </section>
 
         {/* Partner Abschnitt – Logo Marquee (Client) */}
-        <section className="relative z-30 bg-[#f3f4f6] text-slate-900 overflow-hidden py-14 sm:py-16">
+        <section className="relative z-30 bg-white text-slate-900 overflow-hidden py-14 sm:py-16">
           <div className="relative mx-auto max-w-6xl px-6 sm:px-10 lg:px-16 space-y-6">
             <PartnerMarqueeClient partners={partners} fallbackLogos={partnerLogos} />
           </div>

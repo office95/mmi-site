@@ -113,11 +113,8 @@ export default async function BookingPage({
       <main className="px-6 py-12 sm:px-10 lg:px-20">
         <div className="mx-auto max-w-4xl mb-8 grid gap-4 lg:grid-cols-5">
           <div className="lg:col-span-3 rounded-3xl border border-slate-200 bg-white shadow-lg shadow-slate-200/60 p-5 sm:p-6 space-y-4">
-            <div className="flex items-center justify-between gap-3">
-              <p className="inline-flex items-center rounded-full border border-slate-200 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600">
-                Buchung
-              </p>
-              <span className="text-xs text-slate-500">ID: {sessionId}</span>
+            <div className="inline-flex items-center rounded-full border border-slate-200 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600">
+              Buchung
             </div>
             <h1 className="font-anton text-4xl leading-tight text-slate-900 break-words">{course.title}</h1>
 

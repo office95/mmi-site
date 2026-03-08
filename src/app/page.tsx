@@ -231,7 +231,7 @@ export default async function Home() {
         </section>
 
         {/* Warum MMI */}
-        <section className="bg-white px-6 py-14 sm:px-10 lg:px-16">
+        <section className="bg-[#f5f6f8] px-6 py-14 sm:px-10 lg:px-16">
           <div className="mx-auto max-w-6xl space-y-10">
             <div className="space-y-3">
               <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Warum MMI?</p>

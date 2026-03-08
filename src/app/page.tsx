@@ -264,61 +264,6 @@ export default async function Home() {
           <FlyInCards />
         </section>
 
-        {/* Nächste Termine */}
-        <section className="relative bg-white px-6 py-10 sm:px-10 lg:px-16">
-          <div className="mx-auto max-w-6xl space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-pink-600">Nächste Termine</p>
-                <h2 className="font-anton text-3xl text-slate-900">Buche deinen Platz</h2>
-              </div>
-              <Link href="/entdecken" className="text-sm font-semibold text-pink-600 hover:text-pink-700 underline underline-offset-4">
-                Alle Termine ansehen
-              </Link>
-            </div>
-
-            {upcomingSessions.length === 0 ? (
-              <p className="text-sm text-slate-600">Aktuell sind keine Termine sichtbar. Schau bald wieder vorbei.</p>
-            ) : (
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {upcomingSessions.map((s) => (
-                  <div key={s.id} className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">{fmtDate(s.start_date)}</span>
-                      {s.start_time && <span className="text-xs text-slate-600">{fmtTime(s.start_time)}</span>}
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm uppercase tracking-[0.12em] text-slate-500">{s.courses?.slug ? s.courses.slug : "Kurs"}</p>
-                      <p className="text-lg font-semibold text-slate-900 leading-tight">{s.courses?.title ?? "Kurs"}</p>
-                      <p className="text-sm text-slate-700">
-                        {[s.city, s.state, s.country].filter(Boolean).join(", ")}
-                      </p>
-                    </div>
-                    <div className="space-y-1 text-sm text-slate-800">
-                      <div className="flex justify-between">
-                        <span>Preis</span>
-                        <span className="font-semibold">{((s.price_cents ?? 0) / 100).toFixed(2)} €</span>
-                      </div>
-                      {s.deposit_cents ? (
-                        <div className="flex justify-between text-pink-700 font-semibold">
-                          <span>Anzahlung</span>
-                          <span>{(s.deposit_cents / 100).toFixed(2)} €</span>
-                        </div>
-                      ) : null}
-                    </div>
-                    <Link
-                      href={`/buchen/${s.id}?courseId=${s.courses?.slug ?? ""}`}
-                      className="inline-flex items-center justify-center rounded-full bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-white shadow shadow-[#ff1f8f]/30 hover:bg-[#e40073]"
-                    >
-                      Platz sichern
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-
         {/* Partner Abschnitt – Logo Marquee (Client) */}
         <section className="relative z-30 bg-[#f3f4f6] text-slate-900 overflow-hidden py-14 sm:py-16">
           <div className="relative mx-auto max-w-6xl px-6 sm:px-10 lg:px-16 space-y-6">

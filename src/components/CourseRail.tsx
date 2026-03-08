@@ -47,17 +47,15 @@ export default function CourseRail({ courses }: { courses: Course[] }) {
                 sizes="260px"
                 priority={idx < 2}
               />
-              <span
-                className={`absolute left-3 top-3 rounded-full px-3 py-1 text-[11px] font-semibold text-white ${
-                  c.type === "Extrem"
-                    ? "bg-[#ff1f8f]"
-                    : c.type === "Intensiv"
-                    ? "bg-slate-900"
-                    : "bg-slate-500"
-                }`}
-              >
-                {c.type}
-              </span>
+              {c.type !== "Kurs" && (
+                <span
+                  className={`absolute left-3 top-3 rounded-full px-3 py-1 text-[11px] font-semibold text-white ${
+                    c.type === "Extrem" ? "bg-[#ff1f8f]" : "bg-slate-900"
+                  }`}
+                >
+                  {c.type}
+                </span>
+              )}
             </div>
             <div className="p-4 space-y-2">
               <p className="text-base font-semibold text-slate-900 leading-tight line-clamp-2">{c.title}</p>

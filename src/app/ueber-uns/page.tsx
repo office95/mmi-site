@@ -31,7 +31,7 @@ export default function AboutPage() {
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
 
-      <header className="relative overflow-hidden text-white h-[30vh] min-h-[30vh] bg-black">
+      <header className="relative overflow-hidden text-white h-[40vh] sm:h-[50vh] lg:h-[60vh] min-h-[40vh] bg-black">
         {/* Video-Hintergrund */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <iframe

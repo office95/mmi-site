@@ -62,8 +62,8 @@ export async function middleware(req: NextRequest) {
   // Admin-Guard
   const isAdminRoute =
     url.pathname.startsWith("/admin") ||
-    url.pathname.startsWith("/api/admin") ||
-    url.pathname.startsWith("/partner-blog/create");
+    url.pathname.startsWith("/api/admin");
+  const isPartnerBlogRoute = url.pathname.startsWith("/partner-blog/create");
 
   // Öffentliche GET-Endpunkte unter /api/admin (Lesezugriff für Kursstandorte etc.)
   const publicAdminGet =
@@ -80,6 +80,17 @@ export async function middleware(req: NextRequest) {
     ].some((p) => url.pathname.startsWith(p));
 
   let res = NextResponse.next({ request: { headers: requestHeaders } });
+
+  if (isPartnerBlogRoute) {
+    // Partner-Blog: erlaubt mit gültigem Token, kein Login nötig
+    const hasToken = url.searchParams.has("token");
+    if (!hasToken) {
+      const redirectTo = `/login?redirect=${encodeURIComponent(url.pathname + url.search)}`;
+      const redirect = NextResponse.redirect(new URL(redirectTo, req.url));
+      redirect.cookies.set("region", region, { path: "/" });
+      return redirect;
+    }
+  }
 
   if (isAdminRoute && !publicAdminGet) {
     const token = getAccessToken(req);

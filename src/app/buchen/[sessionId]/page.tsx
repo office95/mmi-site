@@ -112,28 +112,34 @@ export default async function BookingPage({
       <SiteHeader />
       <main className="px-6 py-12 sm:px-10 lg:px-20">
         <div className="mx-auto max-w-4xl mb-8 grid gap-4 lg:grid-cols-5">
-          <div className="lg:col-span-3 rounded-3xl border border-slate-200 bg-white shadow-lg shadow-slate-200/60 p-5 sm:p-6">
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Buchung</p>
-            <h1 className="mt-2 font-anton text-4xl leading-tight text-slate-900 break-words">{course.title}</h1>
-            <div className="mt-3 space-y-2 text-sm text-slate-800">
-              <div className="flex items-center gap-2">
-                <span className="text-xs uppercase tracking-[0.18em] text-slate-500">Termin</span>
-                <span className="font-semibold text-slate-900">
+          <div className="lg:col-span-3 rounded-3xl border border-slate-200 bg-white shadow-lg shadow-slate-200/60 p-5 sm:p-6 space-y-4">
+            <div className="flex items-center justify-between gap-3">
+              <p className="inline-flex items-center rounded-full border border-slate-200 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600">
+                Buchung
+              </p>
+              <span className="text-xs text-slate-500">ID: {sessionId}</span>
+            </div>
+            <h1 className="font-anton text-4xl leading-tight text-slate-900 break-words">{course.title}</h1>
+
+            <div className="grid gap-3 rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                <div className="text-xs uppercase tracking-[0.18em] text-slate-500">Termin</div>
+                <div className="text-sm font-semibold text-slate-900">
                   {session.start_date ?? "Datum folgt"}
-                  {session.start_time ? ` · ${String(session.start_time).slice(0,5)} Uhr` : ""}
-                </span>
+                  {session.start_time ? ` · ${String(session.start_time).slice(0, 5)} Uhr` : ""}
+                </div>
               </div>
-              {partner || session.city || session.address ? (
-                <div>
-                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Partner / Standort</p>
-                  <p className="font-semibold text-slate-900">{partner?.name ?? "Kursstandort"}</p>
-                  <p className="text-slate-700">
-                    {[session.address, partner?.zip, partner?.city ?? session.city, partner?.state, partner?.country]
+              {(partner || session.city || session.address) && (
+                <div className="grid gap-1">
+                  <div className="text-xs uppercase tracking-[0.18em] text-slate-500">Partner / Standort</div>
+                  <div className="text-sm font-semibold text-slate-900">{partner?.name ?? "Kursstandort"}</div>
+                  <div className="text-sm text-slate-700 leading-snug">
+                    {[session.address, session.zip, partner?.city ?? session.city, partner?.state ?? session.state, partner?.country ?? session.country]
                       .filter(Boolean)
                       .join(", ")}
-                  </p>
+                  </div>
                 </div>
-              ) : null}
+              )}
             </div>
           </div>
           <div className="lg:col-span-2 rounded-3xl border border-slate-200 bg-gradient-to-br from-[#0ea5e9]/5 via-white to-[#ff1f8f]/5 p-5 sm:p-6 shadow-lg shadow-slate-200/60">

@@ -145,27 +145,29 @@ export default function BookingFlow({ session, course }: { session: SessionInfo;
               />
             </label>
           </div>
-          <label className="text-sm space-y-1">
-            <span>E-Mail *</span>
-            <input
-              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </label>
-          <label className="text-sm space-y-1">
-            <span>Telefon *</span>
-            <input
-              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-            />
-          </label>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="text-sm space-y-1">
+              <span>E-Mail *</span>
+              <input
+                className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </label>
+            <label className="text-sm space-y-1">
+              <span>Telefon *</span>
+              <input
+                className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+              />
+            </label>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <label className="text-sm space-y-1 sm:col-span-2">
               <span>Straße / Nr. *</span>
               <input
                 className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
@@ -238,14 +240,18 @@ export default function BookingFlow({ session, course }: { session: SessionInfo;
             </div>
           )}
           <label className="text-sm space-y-1">
-            <span>Teilnehmer</span>
-            <input
+            <span>Teilnehmer *</span>
+            <select
               className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
-              type="number"
-              min={1}
               value={participants}
-              onChange={(e) => setParticipants(Math.max(1, Number(e.target.value) || 1))}
-            />
+              onChange={(e) => setParticipants(Math.max(1, Math.min(4, Number(e.target.value) || 1)))}
+            >
+              {[1, 2, 3, 4].map((n) => (
+                <option key={n} value={n}>
+                  {n} Teilnehmer{n > 1 ? "" : ""}
+                </option>
+              ))}
+            </select>
           </label>
           <label className="flex items-start gap-2 text-sm text-slate-700">
             <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />

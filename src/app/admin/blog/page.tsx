@@ -34,6 +34,7 @@ export default function AdminBlogPage() {
   const [tokenResult, setTokenResult] = useState<string | null>(null);
   const [tokenError, setTokenError] = useState<string | null>(null);
   const [partnerId, setPartnerId] = useState("");
+  const [email, setEmail] = useState("");
   const [partners, setPartners] = useState<Partner[]>([]);
   const [magicStatus, setMagicStatus] = useState<string | null>(null);
 
@@ -101,25 +102,32 @@ export default function AdminBlogPage() {
                 </option>
               ))}
             </select>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="E-Mail (optional, z.B. Gastautor)"
+              className="w-full sm:w-72 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-pink-500 focus:outline-none"
+            />
             <button
               onClick={async () => {
                 setTokenError(null);
                 setTokenResult(null);
                 setMagicStatus(null);
-                if (!partnerId) {
-                  setTokenError("Bitte Partner wählen");
+                if (!partnerId && !email.trim()) {
+                  setTokenError("Bitte Partner wählen oder E-Mail angeben");
                   return;
                 }
                 try {
                   const res = await fetch("/api/admin/magic-links", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ partner_id: partnerId || null }),
+                    body: JSON.stringify({ partner_id: partnerId || null, email: email.trim() || null }),
                   });
                   const json = await res.json();
                   if (!res.ok) throw new Error(json?.error ?? "Fehler");
                   setTokenResult(json.data.token);
-                  if (json.data.link) setMagicStatus(`Link gesendet an Partner. Magic-Link: ${json.data.link}`);
+                  if (json.data.link) setMagicStatus(`Link gesendet. Magic-Link: ${json.data.link}`);
                 } catch (e: any) {
                   setTokenError(e.message);
                 }

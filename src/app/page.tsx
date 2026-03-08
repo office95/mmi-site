@@ -36,6 +36,7 @@ const partnerLogos = [
 ];
 
 type HomeFaq = { q: string; a: string | string[] };
+type HomeCourse = { id: string; title: string; slug: string | null };
 type HomeSession = {
   id: string;
   start_date: string | null;
@@ -100,6 +101,11 @@ export default async function Home() {
     .or(`region.is.null,region.eq.${region}`)
     .order("sort", { ascending: true })
     .order("created_at", { ascending: true });
+  const { data: courseRows } = await supabase
+    .from("courses")
+    .select("id,title,slug,status")
+    .eq("status", "active")
+    .order("created_at", { ascending: true });
   const today = new Date().toISOString().slice(0, 10);
   const { data: sessionRows } = await supabase
     .from("sessions")
@@ -152,6 +158,11 @@ export default async function Home() {
   const fmtDate = (d?: string | null) =>
     d ? new Date(d + "T00:00:00").toLocaleDateString("de-AT", { weekday: "short", day: "2-digit", month: "short" }) : "Datum folgt";
   const fmtTime = (t?: string | null) => (t ? String(t).slice(0, 5) + " Uhr" : "");
+
+  // gemischte Kursliste (random pro Request)
+  const coursesMixed: HomeCourse[] = ((courseRows ?? []) as any[])
+    .map((c) => ({ id: c.id as string, title: c.title as string, slug: c.slug as string | null }))
+    .sort(() => Math.random() - 0.5);
 
   return (
     <div className="min-h-screen text-foreground bg-white">
@@ -232,6 +243,41 @@ export default async function Home() {
 
         <section className="relative bg-white min-h-screen">
           <FlyInCards />
+        </section>
+
+        {/* Kurs-Marquee */}
+        <section className="bg-white px-6 py-14 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-6xl space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Unser Kursangebot</p>
+                <h2 className="font-anton text-3xl text-slate-900">Intensiv & Extrem – gemischt</h2>
+              </div>
+              <Link href="/entdecken" className="text-sm font-semibold text-pink-600 hover:text-pink-700 underline underline-offset-4">
+                Alle Kurse
+              </Link>
+            </div>
+
+            {coursesMixed.length === 0 ? (
+              <p className="text-sm text-slate-600">Aktuell keine Kurse geladen.</p>
+            ) : (
+              <div className="marquee">
+                <div className="marquee-track animate-marquee gap-4">
+                  {[...coursesMixed, ...coursesMixed].map((c, idx) => (
+                    <Link
+                      key={c.id + idx}
+                      href={`/kurs/${c.slug || c.id}`}
+                      className="block min-w-[240px] max-w-[280px] rounded-2xl border border-slate-200 bg-white shadow-[0_12px_32px_-24px_rgba(0,0,0,0.25)] p-4 space-y-2 hover:-translate-y-0.5 transition"
+                    >
+                      <p className="text-xs uppercase tracking-[0.14em] text-pink-600">Kurs</p>
+                      <p className="text-base font-semibold text-slate-900 leading-tight line-clamp-2">{c.title}</p>
+                      <p className="text-xs text-slate-600">Mehr Infos</p>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </section>
 
         {/* Partner Abschnitt – Logo Marquee (Client) */}

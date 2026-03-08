@@ -174,7 +174,7 @@ export default function KursstandorteClient() {
       <SiteHeader />
       <section className="relative h-[50vh] w-full overflow-hidden bg-black text-white">
         <Image
-          src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/dc09c738-147b-44ad-8f10-0a7b19c2cc8a.webp"
+          src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/f5ca6ab3-c2a6-4fa2-8bea-474f1cbd445b.webp"
           alt="Kursstandorte"
           fill
           className="object-cover"

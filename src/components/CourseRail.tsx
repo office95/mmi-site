@@ -28,27 +28,9 @@ export default function CourseRail({ courses }: { courses: Course[] }) {
 
   return (
     <div className="relative">
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white to-transparent" />
-      <button
-        type="button"
-        aria-label="Scroll links"
-        className="absolute left-0 top-1/2 -translate-y-1/2 h-11 w-11 rounded-full border border-slate-200 bg-white text-pink-600 shadow-sm hover:bg-pink-50"
-        onClick={() => scrollBy(-320)}
-      >
-        ‹
-      </button>
-      <button
-        type="button"
-        aria-label="Scroll rechts"
-        className="absolute right-0 top-1/2 -translate-y-1/2 h-11 w-11 rounded-full border border-slate-200 bg-white text-pink-600 shadow-sm hover:bg-pink-50"
-        onClick={() => scrollBy(320)}
-      >
-        ›
-      </button>
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-pink-300 scrollbar-track-slate-200 py-1 pr-6 pl-14 pr-14"
+        className="flex gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-pink-300 scrollbar-track-slate-200 py-1 pr-4"
       >
         {list.map((c, idx) => (
           <Link

@@ -1,4 +1,5 @@
 import { getSupabaseServiceClient } from "@/lib/supabase";
+import Image from "next/image";
 
 const toUrl = (path: string | null) => {
   if (!path) return null;
@@ -25,8 +26,7 @@ export default async function SiteFooter() {
         {/* Mobile Layout */}
         <div className="flex flex-col gap-4 sm:hidden">
           <div className="flex items-center gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={logo} alt="Music Mission Institute Logo" className="h-12 w-auto" />
+            <Image src={logo} alt="Music Mission Institute Logo" className="h-12 w-auto" width={120} height={48} priority />
             <div className="text-left">
               <p className="font-semibold text-base leading-tight">Music Mission Institute</p>
               <p className="text-xs text-white/80">Kurse in Musikproduktion, Tontechnik & Live-Engineering</p>
@@ -54,8 +54,7 @@ export default async function SiteFooter() {
         <div className="hidden sm:flex flex-col gap-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
             <div className="flex items-center gap-4 sm:gap-5">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={logo} alt="Music Mission Institute Logo" className="h-16 w-auto sm:h-20" />
+              <Image src={logo} alt="Music Mission Institute Logo" className="h-16 w-auto sm:h-20" width={180} height={90} />
               <div className="text-left">
                 <p className="font-semibold text-lg sm:text-xl leading-tight">Music Mission Institute</p>
                 <p className="text-sm sm:text-base text-white/80">Kurse in Musikproduktion, Tontechnik & Live-Engineering</p>

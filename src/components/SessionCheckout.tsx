@@ -89,11 +89,13 @@ export default function SessionCheckout({
             >
               <div className="flex gap-3 p-3">
                 {courseHero && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
                     src={courseHero}
                     alt={courseTitle}
+                    width={96}
+                    height={80}
                     className="h-20 w-24 flex-none rounded-xl object-cover"
+                    sizes="120px"
                   />
                 )}
                 <div className="flex-1 text-left space-y-1">
@@ -129,3 +131,4 @@ export default function SessionCheckout({
     </div>
   );
 }
+import Image from "next/image";

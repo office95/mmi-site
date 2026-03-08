@@ -262,7 +262,7 @@ export default async function Home() {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Unser Kursangebot</p>
-                <h2 className="font-anton text-3xl text-slate-900">Intensiv & Extrem – gemischt</h2>
+                <h2 className="font-anton text-3xl text-slate-900">Top-Kurse – auch in deiner Nähe</h2>
               </div>
               <Link href="/entdecken" className="text-sm font-semibold text-pink-600 hover:text-pink-700 underline underline-offset-4">
                 Alle Kurse

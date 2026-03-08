@@ -46,10 +46,10 @@ export default function AboutPage() {
         {/* Overlays für Lesbarkeit */}
         <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/85 via-black/55 to-black/25" />
         <div className="absolute inset-0 z-10 bg-[radial-gradient(circle_at_18%_22%,rgba(255,31,143,0.14),transparent_30%),radial-gradient(circle_at_78%_18%,rgba(255,74,170,0.1),transparent_28%),radial-gradient(circle_at_65%_78%,rgba(255,31,143,0.08),transparent_28%)] mix-blend-screen opacity-70 pointer-events-none" />
-        <div className="relative z-20 mx-auto flex max-w-5xl flex-col gap-6 px-6 sm:px-10 lg:px-14 py-16 sm:py-20">
+        <div className="absolute z-20 left-6 sm:left-12 top-[10%] max-w-3xl space-y-4 pr-6 sm:pr-0">
           <p className="text-xs uppercase tracking-[0.22em] text-white/70">Music Mission Institute</p>
-          <h1 className="font-anton text-4xl sm:text-5xl leading-tight">Über uns</h1>
-          <p className="max-w-3xl text-base sm:text-lg text-white/85">
+          <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-[1.1] drop-shadow">Über uns</h1>
+          <p className="text-base sm:text-lg text-white/85">
             {isAT
               ? "Wir verbinden Praxis, Technologie und Kreativität. Unsere Mission: Menschen in Musikproduktion, Tontechnik und Performance auf das nächste Level zu heben – mit kompakten Extremkursen, tiefgehenden Intensivausbildungen und einem Netzwerk an starken Partner-Standorten in Österreich."
               : "Wir verbinden Praxis, Technologie und Kreativität. Unsere Mission: Menschen in Musikproduktion, Tontechnik und Performance auf das nächste Level zu heben – mit kompakten Extremkursen, tiefgehenden Intensivausbildungen und einem Netzwerk an starken Partner-Standorten in Deutschland."}

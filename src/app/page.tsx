@@ -244,20 +244,20 @@ export default async function Home() {
             </div>
             <div className="grid gap-5 sm:grid-cols-2">
               {[
-                { title: "Hands-on im Studio", desc: "Live-Sessions mit echtem Gear statt Folienmarathon.", icon: "🎚" },
-                { title: "Kleine Gruppen", desc: "Individuelles Feedback, keine überfüllten Klassen.", icon: "👥" },
-                { title: "Trainer aus der Branche", desc: "Tontechniker, Musikproduzenten, FOH-Engineers, Mixing-/Mastering-Engineers, DJs und Broadcast-Spezialisten – mit echten Credits.", icon: "🎛" },
-                { title: "Flexibles Bezahlen", desc: "Anzahlung jetzt, Rest zum Kursstart – transparent.", icon: "💳" },
+                { title: "Hands-on im Studio", desc: "Live-Sessions mit echtem Gear statt Folienmarathon." },
+                { title: "Kleine Gruppen", desc: "Individuelles Feedback, keine überfüllten Klassen." },
+                { title: "Trainer aus der Branche", desc: "Tontechniker, Musikproduzenten, FOH-Engineers, Mixing-/Mastering-Engineers, DJs und Broadcast-Spezialisten – mit echten Credits." },
+                { title: "Flexibles Bezahlen", desc: "Anzahlung jetzt, Rest zum Kursstart – transparent." },
               ].map((item) => (
                 <div
                   key={item.title}
                   className="group rounded-2xl border border-slate-200 bg-white shadow-[0_18px_46px_-28px_rgba(0,0,0,0.35)] p-5 sm:p-6 space-y-3 transition duration-200 hover:-translate-y-1 hover:shadow-[0_20px_56px_-26px_rgba(0,0,0,0.4)]"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-br from-[#ff4ba2] to-[#ff1f8f] text-white text-lg shadow-sm">
-                      {item.icon}
+                    <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-br from-[#ff4ba2] to-[#ff1f8f] text-white text-lg shadow-sm font-semibold">
+                      •
                     </div>
-                    <p className="text-base font-semibold text-slate-900">{item.title}</p>
+                    <p className="text-base font-semibold text-slate-900 leading-tight">{item.title}</p>
                   </div>
                   <div className="space-y-2">
                     <div className="h-[2px] w-14 rounded-full bg-gradient-to-r from-[#ff4ba2] to-transparent opacity-70 group-hover:opacity-100 transition" />

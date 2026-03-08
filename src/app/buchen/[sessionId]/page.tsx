@@ -181,6 +181,9 @@ export default async function BookingPage({
                   </p>
                 )
               ) : null}
+              {session.deposit_cents ?? course.deposit_cents ? (
+                <p className="text-xs text-slate-600">Restbetrag wird zum Kursstart fällig.</p>
+              ) : null}
               <p className="text-xs text-slate-600">Details zur Zahlung im nächsten Schritt.</p>
             </div>
           </div>

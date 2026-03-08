@@ -20,7 +20,17 @@ type CourseInfo = {
   tax_rate?: number | null;
 };
 
-export default function BookingFlow({ session, course }: { session: SessionInfo; course: CourseInfo }) {
+export default function BookingFlow({
+  session,
+  course,
+  agbUrl,
+  privacyUrl,
+}: {
+  session: SessionInfo;
+  course: CourseInfo;
+  agbUrl?: string | null;
+  privacyUrl?: string | null;
+}) {
   const [step, setStep] = useState<"form" | "summary" | "processing">("form");
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -283,7 +293,23 @@ export default function BookingFlow({ session, course }: { session: SessionInfo;
           <label className="flex items-start gap-2 text-sm text-slate-700">
             <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
             <span>
-              Ich akzeptiere AGB und Datenschutzerklärung und stimme der Verarbeitung meiner Daten gemäß DSGVO zu.
+              Ich akzeptiere die{" "}
+              {agbUrl ? (
+                <a href={agbUrl} target="_blank" rel="noreferrer" className="text-pink-600 hover:text-pink-700 underline">
+                  AGB
+                </a>
+              ) : (
+                "AGB"
+              )}{" "}
+              und die{" "}
+              {privacyUrl ? (
+                <a href={privacyUrl} target="_blank" rel="noreferrer" className="text-pink-600 hover:text-pink-700 underline">
+                  Datenschutzerklärung
+                </a>
+              ) : (
+                "Datenschutzerklärung"
+              )}{" "}
+              und stimme der Verarbeitung meiner Daten gemäß DSGVO zu.
             </span>
           </label>
           {error && <p className="text-sm text-red-600">{error}</p>}

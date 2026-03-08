@@ -24,6 +24,8 @@ export default async function BookingPage({
   const courseSlug = resolvedSearch?.kurs;
   const courseId = resolvedSearch?.courseId;
   let partner: any = null;
+  let agbUrl: string | null = null;
+  let privacyUrl: string | null = null;
 
   let session: any = null;
   let course: any = null;
@@ -76,6 +78,18 @@ export default async function BookingPage({
       .eq("id", session.partner_id)
       .maybeSingle();
     partner = partnerRow;
+  }
+
+  // AGB / Datenschutz aus Einstellungen laden
+  try {
+    const { data: settingsRows } = await supabase
+      .from("settings")
+      .select("key,value")
+      .in("key", ["pdf_agb_url", "pdf_datenschutz_url"]);
+    agbUrl = settingsRows?.find((r: any) => r.key === "pdf_agb_url")?.value ?? null;
+    privacyUrl = settingsRows?.find((r: any) => r.key === "pdf_datenschutz_url")?.value ?? null;
+  } catch {
+    /* fallback: null */
   }
 
   if (!session || !course) {
@@ -142,7 +156,7 @@ export default async function BookingPage({
             </div>
           </div>
         </div>
-        <BookingFlow session={session} course={course} />
+        <BookingFlow session={session} course={course} agbUrl={agbUrl} privacyUrl={privacyUrl} />
       </main>
     </div>
   );

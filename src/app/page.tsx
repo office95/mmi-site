@@ -10,6 +10,7 @@ import { getRegion } from "@/lib/region";
 import { headers } from "next/headers";
 import { PartnerMarqueeClient } from "@/components/PartnerMarqueeClient";
 import { URL } from "node:url";
+import Link from "next/link";
 
 const toUrl = (path: string | null) => {
   if (!path) return null;
@@ -35,6 +36,17 @@ const partnerLogos = [
 ];
 
 type HomeFaq = { q: string; a: string | string[] };
+type HomeSession = {
+  id: string;
+  start_date: string | null;
+  start_time: string | null;
+  city: string | null;
+  state: string | null;
+  country: string | null;
+  price_cents: number | null;
+  deposit_cents: number | null;
+  courses: { title: string; slug: string | null } | null;
+};
 
 export const revalidate = 0;
 
@@ -88,6 +100,13 @@ export default async function Home() {
     .or(`region.is.null,region.eq.${region}`)
     .order("sort", { ascending: true })
     .order("created_at", { ascending: true });
+  const today = new Date().toISOString().slice(0, 10);
+  const { data: sessionRows } = await supabase
+    .from("sessions")
+    .select("id,start_date,start_time,city,state,country,price_cents,deposit_cents,course_id,courses(title,slug)")
+    .gte("start_date", today)
+    .order("start_date", { ascending: true })
+    .limit(5);
 
   const heroSlides =
     (heroRows ?? [])
@@ -118,6 +137,21 @@ export default async function Home() {
       q: f.question,
       a: typeof f.answer === "string" ? f.answer : "",
     })) || [];
+  const upcomingSessions: HomeSession[] = (sessionRows ?? []).map((s: any) => ({
+    id: s.id,
+    start_date: s.start_date,
+    start_time: s.start_time,
+    city: s.city || s.courses?.city || null,
+    state: s.state || null,
+    country: s.country || null,
+    price_cents: s.price_cents,
+    deposit_cents: s.deposit_cents,
+    courses: s.courses ?? null,
+  }));
+
+  const fmtDate = (d?: string | null) =>
+    d ? new Date(d + "T00:00:00").toLocaleDateString("de-AT", { weekday: "short", day: "2-digit", month: "short" }) : "Datum folgt";
+  const fmtTime = (t?: string | null) => (t ? String(t).slice(0, 5) + " Uhr" : "");
 
   return (
     <div className="min-h-screen text-foreground bg-white">
@@ -196,11 +230,92 @@ export default async function Home() {
           </div>
         </section>
 
+        {/* Warum MMI */}
+        <section className="bg-white px-6 py-12 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-6xl space-y-8">
+            <div className="space-y-2">
+              <p className="text-xs uppercase tracking-[0.2em] text-pink-600">Warum MMI?</p>
+              <h2 className="font-anton text-3xl sm:text-4xl text-slate-900">Stark in Praxis, klar im Ergebnis.</h2>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                { title: "Hands-on im Studio", desc: "Echte Sessions, echtes Gear – keine trockene Theorie.", icon: "🎛️" },
+                { title: "Kleine Gruppen", desc: "Individuelles Feedback, max. Fokus auf dein Ergebnis.", icon: "👥" },
+                { title: "Trainer aus der Branche", desc: "Profis aus Live-Sound, Mixing, DJ, Broadcast.", icon: "🎚️" },
+                { title: "Flexibles Bezahlen", desc: "Anzahlung jetzt, Restbetrag zum Kursstart.", icon: "💳" },
+              ].map((item) => (
+                <div key={item.title} className="rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-200/60 p-4 flex gap-3 items-start">
+                  <span className="text-xl">{item.icon}</span>
+                  <div className="space-y-1">
+                    <p className="text-base font-semibold text-slate-900">{item.title}</p>
+                    <p className="text-sm text-slate-700">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="relative bg-white min-h-screen">
           <FlyInCards />
         </section>
 
-                {/* Partner Abschnitt – Logo Marquee (Client) */}
+        {/* Nächste Termine */}
+        <section className="relative bg-white px-6 py-10 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-6xl space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-pink-600">Nächste Termine</p>
+                <h2 className="font-anton text-3xl text-slate-900">Buche deinen Platz</h2>
+              </div>
+              <Link href="/entdecken" className="text-sm font-semibold text-pink-600 hover:text-pink-700 underline underline-offset-4">
+                Alle Termine ansehen
+              </Link>
+            </div>
+
+            {upcomingSessions.length === 0 ? (
+              <p className="text-sm text-slate-600">Aktuell sind keine Termine sichtbar. Schau bald wieder vorbei.</p>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {upcomingSessions.map((s) => (
+                  <div key={s.id} className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">{fmtDate(s.start_date)}</span>
+                      {s.start_time && <span className="text-xs text-slate-600">{fmtTime(s.start_time)}</span>}
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm uppercase tracking-[0.12em] text-slate-500">{s.courses?.slug ? s.courses.slug : "Kurs"}</p>
+                      <p className="text-lg font-semibold text-slate-900 leading-tight">{s.courses?.title ?? "Kurs"}</p>
+                      <p className="text-sm text-slate-700">
+                        {[s.city, s.state, s.country].filter(Boolean).join(", ")}
+                      </p>
+                    </div>
+                    <div className="space-y-1 text-sm text-slate-800">
+                      <div className="flex justify-between">
+                        <span>Preis</span>
+                        <span className="font-semibold">{((s.price_cents ?? 0) / 100).toFixed(2)} €</span>
+                      </div>
+                      {s.deposit_cents ? (
+                        <div className="flex justify-between text-pink-700 font-semibold">
+                          <span>Anzahlung</span>
+                          <span>{(s.deposit_cents / 100).toFixed(2)} €</span>
+                        </div>
+                      ) : null}
+                    </div>
+                    <Link
+                      href={`/buchen/${s.id}?courseId=${s.courses?.slug ?? ""}`}
+                      className="inline-flex items-center justify-center rounded-full bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-white shadow shadow-[#ff1f8f]/30 hover:bg-[#e40073]"
+                    >
+                      Platz sichern
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Partner Abschnitt – Logo Marquee (Client) */}
         <section className="relative z-30 bg-[#f3f4f6] text-slate-900 overflow-hidden py-14 sm:py-16">
           <div className="relative mx-auto max-w-6xl px-6 sm:px-10 lg:px-16 space-y-6">
             <PartnerMarqueeClient partners={partners} fallbackLogos={partnerLogos} />

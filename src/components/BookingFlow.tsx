@@ -267,20 +267,7 @@ export default function BookingFlow({
               </label>
             </div>
           )}
-          <label className="text-sm space-y-1">
-            <span>Teilnehmer *</span>
-            <select
-              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
-              value={participants}
-              onChange={(e) => setParticipants(Math.max(1, Math.min(4, Number(e.target.value) || 1)))}
-            >
-              {[1, 2, 3, 4].map((n) => (
-                <option key={n} value={n}>
-                  {n} Teilnehmer{n > 1 ? "" : ""}
-                </option>
-              ))}
-            </select>
-          </label>
+          {/* Teilnehmer-Dropdown oben, daher hier entfernt */}
           <label className="text-sm space-y-1">
             <span>Gutschein / Rabattcode (optional)</span>
             <input

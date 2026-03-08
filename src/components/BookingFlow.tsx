@@ -280,7 +280,7 @@ export default function BookingFlow({
           <div className="flex justify-end gap-3">
             <button
               onClick={() => setStep("summary")}
-              className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-black shadow shadow-[#ff1f8f]/30"
+              className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-white shadow shadow-[#ff1f8f]/30"
             >
               Weiter
             </button>

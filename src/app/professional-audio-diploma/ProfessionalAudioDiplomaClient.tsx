@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Image from "next/image";
 import { SiteHeader } from "@/components/SiteHeader";
 
 const heroImg =

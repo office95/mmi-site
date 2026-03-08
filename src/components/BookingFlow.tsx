@@ -277,6 +277,7 @@ export default function BookingFlow({
             </span>
           </label>
           {error && <p className="text-sm text-red-600">{error}</p>}
+          <p className="text-[11px] text-slate-500">* Pflichtfeld</p>
           <div className="flex justify-end gap-3">
             <button
               onClick={() => setStep("summary")}

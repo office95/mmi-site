@@ -16,7 +16,7 @@ const cards: FlyCardProps[] = [
   {
     title: "Extremkurse",
     subtitle: "",
-    text: "Ideal für Berufstätige, Schüler und Studenten",
+    text: "Maximales Wissen in kurzer Zeit – keine Prüfungen, Praxis pur.",
     image: "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/e1e70f08-f6ec-4d03-9553-13a0e8b465e1.webp",
     align: "left",
     href: "/extremkurs",

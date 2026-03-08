@@ -143,7 +143,10 @@ export default async function BookingPage({
             </div>
           </div>
           <div className="lg:col-span-2 rounded-3xl border border-slate-200 bg-gradient-to-br from-[#0ea5e9]/5 via-white to-[#ff1f8f]/5 p-5 sm:p-6 shadow-lg shadow-slate-200/60">
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Preisinfo</p>
+            <div className="flex items-start justify-between gap-2">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Preisinfo</p>
+              <span className="text-[11px] font-semibold text-slate-600">Alle Preise inkl. MwSt.</span>
+            </div>
             <div className="mt-2 space-y-2 text-sm text-slate-800">
               <div className="flex justify-between">
                 <span>Preis</span>

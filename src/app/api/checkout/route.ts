@@ -50,10 +50,35 @@ async function generateOrderNumber(supabase: ReturnType<typeof getSupabaseServic
   return `${prefix}${next}-${yearShort}`;
 }
 
+// Simple in-memory rate limit (per instance). For production, replace with Redis/Upstash.
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 8;
+const rateBucket = new Map<string, number[]>();
+
+function isRateLimited(ip: string) {
+  const now = Date.now();
+  const windowStart = now - RATE_LIMIT_WINDOW_MS;
+  const timestamps = (rateBucket.get(ip) || []).filter((t) => t >= windowStart);
+  if (timestamps.length >= RATE_LIMIT_MAX) {
+    rateBucket.set(ip, timestamps);
+    return true;
+  }
+  timestamps.push(now);
+  rateBucket.set(ip, timestamps);
+  return false;
+}
+
 // Use SDK default API version
 const stripe = stripeSecret ? new Stripe(stripeSecret) : null;
 
 export async function POST(request: Request) {
+  const ipHeader = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown";
+  const clientIp = ipHeader.split(",")[0].trim() || "unknown";
+
+  if (isRateLimited(clientIp)) {
+    return NextResponse.json({ error: "Zu viele Anfragen, bitte kurz warten." }, { status: 429 });
+  }
+
   let body: CheckoutBody;
   try {
     body = await request.json();

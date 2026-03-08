@@ -15,12 +15,18 @@ export async function POST(req: Request) {
 
   const buf = Buffer.from(await req.arrayBuffer());
   const sig = req.headers.get("stripe-signature");
-  if (!sig) return NextResponse.json({ error: "Keine Signatur" }, { status: 400 });
+  if (!sig) {
+    const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
+    console.warn(`[stripe-webhook] fehlende Signatur`, { ip });
+    return NextResponse.json({ error: "Keine Signatur" }, { status: 400 });
+  }
 
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
   } catch (err: any) {
+    const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
+    console.warn(`[stripe-webhook] ungültige Signatur`, { ip, message: err?.message });
     return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
   }
 

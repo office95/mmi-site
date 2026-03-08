@@ -15,7 +15,7 @@ const display = Space_Grotesk({
 const sans = Lato({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "700", "900"],
+  weight: ["400", "700"],
 });
 
 const archivo = Archivo_Black({

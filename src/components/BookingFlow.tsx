@@ -299,9 +299,9 @@ export default function BookingFlow({
               <p className="text-sm text-slate-700">Termin: {session.start_date ?? "Datum folgt"}{session.city ? ` · ${session.city}` : ""}</p>
               <p className="text-sm text-slate-700">Teilnehmer: {participants}</p>
               <div className="mt-2 space-y-1 text-sm text-slate-800">
-                <div className="flex items-center justify-between"><span>Preis je TN</span><span className="font-semibold">{fmt.format(price/100)} €</span></div>
+                <div className="flex items-center justify-between"><span>Preis</span><span className="font-semibold">{fmt.format(price/100)} €</span></div>
                 {deposit !== null && participants > 1 && (
-                  <div className="flex items-center justify-between"><span>Anzahlung je TN</span><span>{fmt.format(deposit/100)} €</span></div>
+                  <div className="flex items-center justify-between"><span>Anzahlung</span><span>{fmt.format(deposit/100)} €</span></div>
                 )}
                 <div className="flex items-center justify-between text-slate-900 font-semibold">
                   <span>{deposit ? "Jetzt fällig (Anzahlung, brutto)" : "Jetzt fällig (Brutto)"}</span>

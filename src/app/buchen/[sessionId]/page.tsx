@@ -140,12 +140,12 @@ export default async function BookingPage({
             <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Preisinfo</p>
             <div className="mt-2 space-y-2 text-sm text-slate-800">
               <div className="flex justify-between">
-                <span>Preis je Teilnehmer</span>
+                <span>Preis</span>
                 <span className="font-semibold">{((session.price_cents ?? course.base_price_cents ?? 0) / 100).toFixed(2)} €</span>
               </div>
               {session.deposit_cents ?? course.deposit_cents ? (
                 <div className="flex justify-between">
-                  <span>Anzahlung je Teilnehmer</span>
+                  <span>Anzahlung</span>
                   <span>{(((session.deposit_cents ?? course.deposit_cents) || 0) / 100).toFixed(2)} €</span>
                 </div>
               ) : null}

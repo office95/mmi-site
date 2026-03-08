@@ -231,24 +231,28 @@ export default async function Home() {
         </section>
 
         {/* Warum MMI */}
-        <section className="bg-white px-6 py-12 sm:px-10 lg:px-16">
-          <div className="mx-auto max-w-6xl space-y-8">
-            <div className="space-y-2">
-              <p className="text-xs uppercase tracking-[0.2em] text-pink-600">Warum MMI?</p>
+        <section className="bg-white px-6 py-14 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-6xl space-y-10">
+            <div className="space-y-3">
+              <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Warum MMI?</p>
               <h2 className="font-anton text-3xl sm:text-4xl text-slate-900">Stark in Praxis, klar im Ergebnis.</h2>
+              <p className="text-sm text-slate-600 max-w-2xl">Konzentration auf das Wesentliche: echtes Arbeiten im Studio, persönliche Betreuung, klare Zahlungslogik.</p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               {[
-                { title: "Hands-on im Studio", desc: "Echte Sessions, echtes Gear – keine trockene Theorie.", icon: "🎛️" },
-                { title: "Kleine Gruppen", desc: "Individuelles Feedback, max. Fokus auf dein Ergebnis.", icon: "👥" },
-                { title: "Trainer aus der Branche", desc: "Profis aus Live-Sound, Mixing, DJ, Broadcast.", icon: "🎚️" },
-                { title: "Flexibles Bezahlen", desc: "Anzahlung jetzt, Restbetrag zum Kursstart.", icon: "💳" },
+                { title: "Hands-on im Studio", desc: "Live-Sessions mit echtem Gear statt Folienmarathon.", icon: "🎛" },
+                { title: "Kleine Gruppen", desc: "Individuelles Feedback, keine überfüllten Klassen.", icon: "👥" },
+                { title: "Trainer aus der Branche", desc: "FOH, Mixing, DJ, Broadcast – mit echten Credits.", icon: "🎚" },
+                { title: "Flexibles Bezahlen", desc: "Anzahlung jetzt, Rest zum Kursstart – transparent.", icon: "💳" },
               ].map((item) => (
-                <div key={item.title} className="rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-200/60 p-4 flex gap-3 items-start">
-                  <span className="text-xl">{item.icon}</span>
+                <div
+                  key={item.title}
+                  className="rounded-[18px] border border-slate-200/70 bg-gradient-to-br from-white to-slate-50 shadow-[0_18px_45px_-30px_rgba(0,0,0,0.35)] p-5 flex gap-3 items-start"
+                >
+                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-slate-900 text-white text-lg">{item.icon}</div>
                   <div className="space-y-1">
                     <p className="text-base font-semibold text-slate-900">{item.title}</p>
-                    <p className="text-sm text-slate-700">{item.desc}</p>
+                    <p className="text-sm text-slate-600">{item.desc}</p>
                   </div>
                 </div>
               ))}

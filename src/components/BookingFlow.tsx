@@ -357,7 +357,7 @@ export default function BookingFlow({
                 Termin: {session.start_date ?? "Datum folgt"}
                 {session.city ? ` · ${session.city}` : ""}
               </p>
-              <div className="rounded-xl border border-slate-100 bg-slate-50/60 p-3 space-y-2 text-sm text-slate-800">
+              <div className="rounded-xl border border-slate-100 bg-slate-50/70 p-3 space-y-3 text-sm text-slate-800">
                 <div className="flex items-center justify-between">
                   <span>Preis</span>
                   <span className="font-semibold">{fmt.format(price / 100)} €</span>

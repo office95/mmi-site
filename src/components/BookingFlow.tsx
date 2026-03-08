@@ -267,34 +267,25 @@ export default function BookingFlow({
               </label>
             </div>
           )}
-          {/* Teilnehmer-Dropdown oben, daher hier entfernt */}
-          <label className="text-sm space-y-1">
-            <span>Gutschein / Rabattcode (optional)</span>
-            <input
-              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
-              value={coupon}
-              onChange={(e) => setCoupon(e.target.value)}
-              placeholder="z. B. MMI2026"
-            />
-          </label>
+          {/* Teilnehmer-Dropdown oben, Gutschein-Feld ausgeblendet */}
           <label className="flex items-start gap-2 text-sm text-slate-700">
             <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
             <span>
               Ich akzeptiere die{" "}
               {agbUrl ? (
-                <a href={agbUrl} target="_blank" rel="noreferrer" className="text-pink-600 hover:text-pink-700 underline">
+                <a href={agbUrl} target="_blank" rel="noreferrer" className="text-pink-600 hover:text-pink-700 underline underline-offset-2">
                   AGB
                 </a>
               ) : (
-                "AGB"
+                <span className="underline underline-offset-2">AGB</span>
               )}{" "}
               und die{" "}
               {privacyUrl ? (
-                <a href={privacyUrl} target="_blank" rel="noreferrer" className="text-pink-600 hover:text-pink-700 underline">
+                <a href={privacyUrl} target="_blank" rel="noreferrer" className="text-pink-600 hover:text-pink-700 underline underline-offset-2">
                   Datenschutzerklärung
                 </a>
               ) : (
-                "Datenschutzerklärung"
+                <span className="underline underline-offset-2">Datenschutzerklärung</span>
               )}{" "}
               und stimme der Verarbeitung meiner Daten gemäß DSGVO zu.
             </span>

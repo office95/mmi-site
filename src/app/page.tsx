@@ -238,7 +238,7 @@ export default async function Home() {
         <section className="bg-[#f5f6f8] px-6 py-16 sm:px-10 lg:px-16">
           <div className="mx-auto max-w-6xl space-y-12">
             <div className="space-y-3">
-              <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Warum MMI?</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-pink-600">Warum MMI?</p>
               <h2 className="font-anton text-[clamp(32px,5vw,44px)] leading-[1.05] text-slate-900">Stark in Praxis, klar im Ergebnis.</h2>
               <p className="text-[15px] text-slate-600 max-w-2xl">Echtes Arbeiten im Studio, persönliche Betreuung, transparente Zahlungslogik.</p>
             </div>
@@ -251,13 +251,16 @@ export default async function Home() {
               ].map((item) => (
                 <div
                   key={item.title}
-                  className="group rounded-2xl border border-slate-200 bg-white shadow-[0_16px_40px_-28px_rgba(0,0,0,0.35)] p-5 sm:p-6 flex gap-3 sm:gap-4 items-start transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_48px_-26px_rgba(0,0,0,0.38)]"
+                  className="group rounded-2xl border border-slate-200 bg-white shadow-[0_18px_46px_-28px_rgba(0,0,0,0.35)] p-5 sm:p-6 space-y-3 transition duration-200 hover:-translate-y-1 hover:shadow-[0_20px_56px_-26px_rgba(0,0,0,0.4)]"
                 >
-                  <div className="h-10 w-10 flex items-center justify-center rounded-full border border-slate-200 bg-slate-900 text-white text-lg shadow-sm">
-                    {item.icon}
-                  </div>
-                  <div className="space-y-1">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-br from-[#ff4ba2] to-[#ff1f8f] text-white text-lg shadow-sm">
+                      {item.icon}
+                    </div>
                     <p className="text-base font-semibold text-slate-900">{item.title}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="h-[2px] w-14 rounded-full bg-gradient-to-r from-[#ff4ba2] to-transparent opacity-70 group-hover:opacity-100 transition" />
                     <p className="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
                   </div>
                 </div>

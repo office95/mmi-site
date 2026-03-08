@@ -277,13 +277,6 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Partner Abschnitt – Logo Marquee (Client) */}
-        <section className="relative z-30 bg-white text-slate-900 overflow-hidden py-14 sm:py-16">
-          <div className="relative mx-auto max-w-6xl px-6 sm:px-10 lg:px-16 space-y-6">
-            <PartnerMarqueeClient partners={partners} fallbackLogos={partnerLogos} />
-          </div>
-        </section>
-
         {/* Video Abschnitt (lazy) */}
         <section className="relative h-[70vh] w-full overflow-hidden bg-black">
           <iframe
@@ -318,6 +311,13 @@ export default async function Home() {
                 </p>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* Partner Abschnitt – Logo Marquee (Client) */}
+        <section className="relative z-30 bg-white text-slate-900 overflow-hidden py-14 sm:py-16">
+          <div className="relative mx-auto max-w-6xl px-6 sm:px-10 lg:px-16 space-y-6">
+            <PartnerMarqueeClient partners={partners} fallbackLogos={partnerLogos} />
           </div>
         </section>
 

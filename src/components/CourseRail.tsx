@@ -30,15 +30,15 @@ export default function CourseRail({ courses }: { courses: Course[] }) {
     <div className="relative">
       <div
         ref={scrollRef}
-        className="flex gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-pink-300 scrollbar-track-slate-200 py-1 pr-4"
+        className="flex gap-3 sm:gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-pink-300 scrollbar-track-slate-200 py-1 pr-4"
       >
         {list.map((c, idx) => (
           <Link
             key={c.id + idx}
             href={`/kurs/${c.slug || c.id}`}
-            className="block min-w-[260px] max-w-[280px] rounded-2xl border border-slate-200 bg-white shadow-[0_12px_32px_-24px_rgba(0,0,0,0.25)] overflow-hidden hover:-translate-y-0.5 transition"
+            className="block min-w-[220px] max-w-[240px] sm:min-w-[240px] sm:max-w-[260px] md:min-w-[260px] md:max-w-[280px] rounded-2xl border border-slate-200 bg-white shadow-[0_12px_32px_-24px_rgba(0,0,0,0.25)] overflow-hidden hover:-translate-y-0.5 transition"
           >
-            <div className="relative h-36 w-full overflow-hidden">
+            <div className="relative h-32 sm:h-36 md:h-40 w-full overflow-hidden">
               <Image
                 src={c.hero || "/placeholder-course.jpg"}
                 alt={c.title}
@@ -57,8 +57,8 @@ export default function CourseRail({ courses }: { courses: Course[] }) {
                 </span>
               )}
             </div>
-            <div className="p-4 space-y-2">
-              <p className="text-base font-semibold text-slate-900 leading-tight line-clamp-2">{c.title}</p>
+            <div className="p-3 sm:p-4 space-y-2">
+              <p className="text-sm sm:text-base font-semibold text-slate-900 leading-tight line-clamp-2">{c.title}</p>
               <p className="text-xs text-slate-600">Mehr Infos</p>
             </div>
           </Link>

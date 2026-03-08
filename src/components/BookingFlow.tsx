@@ -145,7 +145,21 @@ export default function BookingFlow({ session, course }: { session: SessionInfo;
               />
             </label>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-3">
+            <label className="text-sm space-y-1">
+              <span>Teilnehmer *</span>
+              <select
+                className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
+                value={participants}
+                onChange={(e) => setParticipants(Math.max(1, Math.min(4, Number(e.target.value) || 1)))}
+              >
+                {[1, 2, 3, 4].map((n) => (
+                  <option key={n} value={n}>
+                    {n} Teilnehmer{n > 1 ? "" : ""}
+                  </option>
+                ))}
+              </select>
+            </label>
             <label className="text-sm space-y-1">
               <span>E-Mail *</span>
               <input
@@ -166,8 +180,8 @@ export default function BookingFlow({ session, course }: { session: SessionInfo;
               />
             </label>
           </div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <label className="text-sm space-y-1 sm:col-span-2">
+          <div className="grid gap-3">
+            <label className="text-sm space-y-1">
               <span>Straße / Nr. *</span>
               <input
                 className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
@@ -176,6 +190,8 @@ export default function BookingFlow({ session, course }: { session: SessionInfo;
                 required
               />
             </label>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-[1fr_1.2fr]">
             <label className="text-sm space-y-1">
               <span>PLZ *</span>
               <input
@@ -185,8 +201,6 @@ export default function BookingFlow({ session, course }: { session: SessionInfo;
                 required
               />
             </label>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
             <label className="text-sm space-y-1">
               <span>Ort *</span>
               <input
@@ -196,7 +210,9 @@ export default function BookingFlow({ session, course }: { session: SessionInfo;
                 required
               />
             </label>
-            <label className="text-sm space-y-1">
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="text-sm space-y-1 sm:col-span-2">
               <span>Land *</span>
               <input
                 className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
@@ -206,19 +222,21 @@ export default function BookingFlow({ session, course }: { session: SessionInfo;
               />
             </label>
           </div>
-          <label className="text-sm space-y-1">
-            <span>Geburtsdatum</span>
-            <input
-              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
-              type="date"
-              value={dob}
-              onChange={(e) => setDob(e.target.value)}
-            />
-          </label>
-          <label className="flex items-center gap-2 text-sm text-slate-700">
-            <input type="checkbox" checked={isCompany} onChange={(e) => setIsCompany(e.target.checked)} />
-            <span>Als Firma buchen</span>
-          </label>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="text-sm space-y-1">
+              <span>Geburtsdatum</span>
+              <input
+                className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
+                type="date"
+                value={dob}
+                onChange={(e) => setDob(e.target.value)}
+              />
+            </label>
+            <label className="flex items-center gap-2 text-sm text-slate-700 pt-6">
+              <input type="checkbox" checked={isCompany} onChange={(e) => setIsCompany(e.target.checked)} />
+              <span>Als Firma buchen</span>
+            </label>
+          </div>
           {isCompany && (
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="text-sm space-y-1">
@@ -253,12 +271,6 @@ export default function BookingFlow({ session, course }: { session: SessionInfo;
               ))}
             </select>
           </label>
-          <label className="flex items-start gap-2 text-sm text-slate-700">
-            <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-            <span>
-              Ich stimme der Verarbeitung meiner Daten gemäß DSGVO zu und akzeptiere die Datenschutzerklärung.
-            </span>
-          </label>
           <label className="text-sm space-y-1">
             <span>Gutschein / Rabattcode (optional)</span>
             <input
@@ -267,6 +279,12 @@ export default function BookingFlow({ session, course }: { session: SessionInfo;
               onChange={(e) => setCoupon(e.target.value)}
               placeholder="z. B. MMI2026"
             />
+          </label>
+          <label className="flex items-start gap-2 text-sm text-slate-700">
+            <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+            <span>
+              Ich akzeptiere AGB und Datenschutzerklärung und stimme der Verarbeitung meiner Daten gemäß DSGVO zu.
+            </span>
           </label>
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex justify-end gap-3">

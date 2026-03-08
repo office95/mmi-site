@@ -297,7 +297,9 @@ export default function BookingFlow({
             <div className="rounded-2xl border border-slate-200 bg-white shadow-sm p-4 space-y-2">
               <div className="flex items-start justify-between gap-2">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Buchung</p>
-                <span className="text-[11px] font-semibold text-slate-600">Preise inkl. MwSt.</span>
+                {course.tax_rate !== 0 && course.tax_rate !== null && course.tax_rate !== undefined && (
+                  <span className="text-[11px] font-semibold text-slate-600">Preise inkl. MwSt.</span>
+                )}
               </div>
               <p className="font-semibold text-slate-900">{course.title}</p>
               <p className="text-sm text-slate-700">Termin: {session.start_date ?? "Datum folgt"}{session.city ? ` · ${session.city}` : ""}</p>

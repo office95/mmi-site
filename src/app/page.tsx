@@ -277,6 +277,16 @@ export default async function Home() {
           </div>
         </section>
 
+        <section className="bg-white px-6 py-12 sm:px-10 lg:px-16">
+          <div className="mx-auto max-w-6xl grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-2">
+              <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Extremkurse</p>
+              <h3 className="text-lg font-semibold text-slate-900">Maximales Wissen in kurzer Zeit</h3>
+              <p className="text-sm text-slate-600">Keine Prüfungen, Praxis pur.</p>
+            </div>
+          </div>
+        </section>
+
         {/* Video Abschnitt (lazy) */}
         <section className="relative h-[70vh] w-full overflow-hidden bg-black">
           <iframe

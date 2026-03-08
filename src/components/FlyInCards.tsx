@@ -70,15 +70,15 @@ export function FlyInCards() {
   }, []);
 
   return (
-    <section className="relative bg-white h-full w-full px-6 py-14 sm:px-10 lg:px-20 flex items-center">
-      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-[1vh] md:grid-cols-2 h-full">
+    <section className="relative bg-white h-full w-full px-4 sm:px-8 lg:px-20 py-10 sm:py-14 flex items-center">
+      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 h-full">
         {cards.map((card, idx) => (
           <div
             key={card.title}
             ref={(el) => {
               refs.current[idx] = el;
             }}
-            className="group relative flex min-h-[40vh] rounded-3xl bg-black border border-black/30 overflow-hidden card-reveal shadow-lg shadow-black/30"
+            className="group relative flex min-h-[30vh] sm:min-h-[36vh] md:min-h-[40vh] rounded-3xl bg-black border border-black/30 overflow-hidden card-reveal shadow-lg shadow-black/30"
             data-direction={card.align}
           >
             {card.align === "left" ? (
@@ -103,7 +103,7 @@ function CardCopy({ card }: { card: FlyCardProps }) {
   return (
     <div className="relative z-20 flex h-full flex-col justify-center space-y-4 px-6 py-6 sm:px-8 lg:px-10 text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.35)] md:items-start md:text-left text-left">
       <div className="space-y-2">
-        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-anton font-bold leading-tight text-white">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-anton font-bold leading-tight text-white">
           <span className="text-[#ff1f8f]">{card.title?.[0] ?? "X"}</span>
           {card.title?.slice(1) ?? "tremkurse"}
         </h2>

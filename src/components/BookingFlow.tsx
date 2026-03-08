@@ -62,6 +62,14 @@ export default function BookingFlow({
   const vatNow = grossNow - netNow;
   const remainingGross = deposit ? Math.max(totalFull - totalCharge, 0) : 0;
 
+  const steps: { key: "form" | "summary" | "payment"; label: string }[] = [
+    { key: "form", label: "Daten" },
+    { key: "summary", label: "Übersicht" },
+    { key: "payment", label: "Zahlung" },
+  ];
+  const stepIndex = (s: typeof steps[number]["key"]) => steps.findIndex((it) => it.key === s);
+  const currentIdx = stepIndex(step === "processing" ? "payment" : step);
+
   const proceed = async () => {
     if (step === "form") {
       const requiredFields = [
@@ -132,6 +140,49 @@ export default function BookingFlow({
 
   return (
     <div className="mx-auto max-w-3xl rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-xl backdrop-blur">
+      {/* Progress */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between gap-2 text-xs text-slate-600">
+          {steps.map((s, idx) => {
+            const active = idx <= currentIdx;
+            return (
+              <div key={s.key} className="flex-1 flex flex-col items-center gap-2">
+                <div className="w-full flex items-center">
+                  {idx > 0 && (
+                    <div
+                      className="h-[2px] flex-1"
+                      style={{
+                        background: active ? "linear-gradient(90deg,#ff1f8f 0%, #0f172a 100%)" : "rgba(148,163,184,0.6)",
+                      }}
+                    />
+                  )}
+                  <div
+                    className={`flex h-6 w-6 items-center justify-center rounded-full border text-[11px] font-semibold ${
+                      active
+                        ? "border-[#ff1f8f] bg-[#ff1f8f]/10 text-[#0f172a]"
+                        : "border-slate-300 bg-white text-slate-400"
+                    }`}
+                  >
+                    {idx + 1}
+                  </div>
+                  {idx < steps.length - 1 && (
+                    <div
+                      className="h-[2px] flex-1"
+                      style={{
+                        background: idx < currentIdx ? "linear-gradient(90deg,#0f172a 0%, #ff1f8f 100%)" : "rgba(148,163,184,0.6)",
+                      }}
+                    />
+                  )}
+                </div>
+                <span className={`text-[11px] uppercase tracking-[0.16em] ${active ? "text-slate-700" : "text-slate-400"}`}>
+                  {s.label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       {step === "form" && (
         <div className="space-y-4">
           <h2 className="text-2xl font-anton text-slate-900">Deine Daten</h2>

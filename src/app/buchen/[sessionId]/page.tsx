@@ -159,7 +159,11 @@ export default async function BookingPage({
                 </div>
               ) : null}
               {course.tax_rate !== null && course.tax_rate !== undefined ? (
-                <p className="text-xs text-slate-600">Steuersatz: {((course.tax_rate > 1 ? course.tax_rate / 100 : course.tax_rate) * 100).toFixed(1)} %</p>
+                course.tax_rate === 0 ? (
+                  <p className="text-xs text-slate-600">Steuerfreie Bildungsmaßnahme gemäß § 6 Abs. 1 Z 11 UStG.</p>
+                ) : (
+                  <p className="text-xs text-slate-600">Steuersatz: {((course.tax_rate > 1 ? course.tax_rate / 100 : course.tax_rate) * 100).toFixed(1)} %</p>
+                )
               ) : null}
               <p className="text-xs text-slate-600">Details zur Zahlung im nächsten Schritt.</p>
             </div>

@@ -311,7 +311,9 @@ export default function BookingFlow({
                   <span>{deposit ? "Jetzt fällig (Anzahlung, brutto)" : "Jetzt fällig (Brutto)"}</span>
                   <span>{fmt.format(grossNow/100)} €</span>
                 </div>
-                {taxRate ? (
+                {course.tax_rate === 0 ? (
+                  <p className="text-xs text-slate-600">Steuerfreie Bildungsmaßnahme gemäß § 6 Abs. 1 Z 11 UStG.</p>
+                ) : taxRate ? (
                   <div className="text-xs text-slate-600 space-y-0.5">
                     <div className="flex justify-between"><span>Enthaltene USt ({(taxRate*100).toFixed(1)} %)</span><span>{fmt.format(vatNow/100)} €</span></div>
                     <div className="flex justify-between"><span>Netto (fällig)</span><span>{fmt.format(netNow/100)} €</span></div>

@@ -83,7 +83,7 @@ export default async function IntensivPage() {
       {/* Hero */}
       <section className="relative h-[65vh] w-full overflow-hidden text-white">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={heroFallback} alt="Intensivkurse" className="absolute inset-0 h-full w-full object-cover hero-float" />
+        <Image src={heroFallback} alt="Intensivkurse" fill className="object-cover hero-float" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/55 to-black/20 mix-blend-multiply" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,31,143,0.22),transparent_35%),radial-gradient(circle_at_80%_20%,rgba(30,144,255,0.18),transparent_32%),radial-gradient(circle_at_70%_75%,rgba(255,122,45,0.22),transparent_36%)] mix-blend-screen opacity-80" />
         <div className="absolute inset-0 backdrop-blur-[1px]" />

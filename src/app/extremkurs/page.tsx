@@ -102,7 +102,7 @@ export default async function ExtremkursPage() {
         {/* Fallback Image if video fails */}
         <div className="absolute inset-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={heroFallback} alt="Extremkurse" className="h-full w-full object-cover opacity-0" />
+          <Image src={heroFallback} alt="Extremkurse" fill className="object-cover opacity-0" priority sizes="100vw" />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/35 to-black/10" />
         <div className="absolute inset-0 flex items-center px-6 lg:px-16">

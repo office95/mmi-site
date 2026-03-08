@@ -90,7 +90,7 @@ export default function ProfessionalAudioDiplomaClient() {
       {/* Hero */}
       <section className="relative h-[60vh] w-full overflow-hidden text-white">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={heroImg} alt="Professional Audio Diploma" className="h-full w-full object-cover" />
+        <Image src={heroImg} alt="Professional Audio Diploma" fill className="object-cover" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/40 to-black/15" />
         <div className="absolute inset-0 flex items-start px-6 lg:px-20 pt-[10%]">
           <div className="max-w-4xl space-y-4 drop-shadow-[0_10px_40px_rgba(0,0,0,0.4)]">
@@ -159,12 +159,13 @@ export default function ProfessionalAudioDiplomaClient() {
                 </ul>
                 <p><strong>Start deine Mission – starte deine Zukunft.</strong></p>
               </div>
-              <div className="rounded-2xl overflow-hidden shadow-lg border border-slate-200 bg-white">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+              <div className="rounded-2xl overflow-hidden shadow-lg border border-slate-200 bg-white relative min-h-[260px]">
+                <Image
                   src="https://static.wixstatic.com/media/c10044_6c4451e9b4c74e7e969b947acf3f46fe~mv2.jpg"
                   alt="Professional Audio Diploma"
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1024px) 420px, 100vw"
                 />
               </div>
             </div>

@@ -167,10 +167,10 @@ export default async function Home() {
       slug: c.slug as string | null,
       hero: toUrl(c.hero_image_url ?? null),
       type: c.type_id?.toString().endsWith("102")
-        ? "Intensiv"
+        ? ("Intensiv" as const)
         : c.type_id?.toString().endsWith("103")
-        ? "Extrem"
-        : "Kurs",
+        ? ("Extrem" as const)
+        : ("Kurs" as const),
     }))
     .sort(() => Math.random() - 0.5);
 

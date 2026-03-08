@@ -82,7 +82,8 @@ export function PartnerMarqueeClient({ partners, fallbackLogos }: Props) {
                         src={logo}
                         alt={name ?? "Partner Logo"}
                         fill
-                        className="object-contain opacity-90 group-hover:opacity-100 transition duration-500"
+                        className="object-contain opacity-95 group-hover:opacity-100 transition duration-500"
+                        style={{ filter: "grayscale(100%) brightness(0.9)" }}
                         sizes="25vh"
                       />
                     ) : (
@@ -117,7 +118,8 @@ export function PartnerMarqueeClient({ partners, fallbackLogos }: Props) {
                         src={logo}
                         alt={name ?? "Partner Logo"}
                         fill
-                        className="object-contain opacity-90 group-hover:opacity-100 transition duration-500"
+                        className="object-contain opacity-95 group-hover:opacity-100 transition duration-500"
+                        style={{ filter: "grayscale(100%) brightness(0.9)" }}
                         sizes="25vh"
                       />
                     ) : (

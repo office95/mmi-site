@@ -41,7 +41,7 @@ export default function BookingFlow({
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("Österreich");
   const [dob, setDob] = useState("");
-  const [participants, setParticipants] = useState(1);
+  const [participants] = useState(1);
   const [isCompany, setIsCompany] = useState(false);
   const [companyName, setCompanyName] = useState("");
   const [companyUid, setCompanyUid] = useState("");
@@ -155,21 +155,7 @@ export default function BookingFlow({
               />
             </label>
           </div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <label className="text-sm space-y-1">
-              <span>Teilnehmer *</span>
-              <select
-                className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
-                value={participants}
-                onChange={(e) => setParticipants(Math.max(1, Math.min(4, Number(e.target.value) || 1)))}
-              >
-                {[1, 2, 3, 4].map((n) => (
-                  <option key={n} value={n}>
-                    {n} Teilnehmer{n > 1 ? "" : ""}
-                  </option>
-                ))}
-              </select>
-            </label>
+          <div className="grid gap-3 sm:grid-cols-2">
             <label className="text-sm space-y-1">
               <span>E-Mail *</span>
               <input

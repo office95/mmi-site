@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 
 type Setting = { key: string; value: string | null };
@@ -31,6 +31,8 @@ export default function SettingsPage() {
   const [faqs, setFaqs] = useState<Faq[]>([]);
   const [loadingFaqs, setLoadingFaqs] = useState(false);
   const [savingFaq, setSavingFaq] = useState(false);
+  const faqFormRef = useRef<HTMLDivElement | null>(null);
+  const faqQuestionRef = useRef<HTMLInputElement | null>(null);
   const [faqForm, setFaqForm] = useState<{ id?: number; question: string; answer: string; region: string; sort: string }>({
     question: "",
     answer: "",
@@ -183,6 +185,11 @@ export default function SettingsPage() {
       sort: f.sort?.toString() ?? "",
     });
     setTab("faqs");
+    // Nach oben scrollen und Fokus setzen, damit klar wird, dass die Felder bearbeitbar sind.
+    requestAnimationFrame(() => {
+      faqFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      setTimeout(() => faqQuestionRef.current?.focus(), 150);
+    });
   };
 
   const deleteFaq = async (id: number) => {
@@ -428,7 +435,7 @@ export default function SettingsPage() {
         )}
 
         {tab === "faqs" && (
-          <div className="space-y-5">
+          <div className="space-y-5" ref={faqFormRef}>
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-3">
               <h2 className="text-lg font-semibold text-slate-900">FAQ bearbeiten</h2>
               <div className="grid gap-3">
@@ -437,6 +444,7 @@ export default function SettingsPage() {
                   <input
                     className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
                     value={faqForm.question}
+                    ref={faqQuestionRef}
                     onChange={(e) => setFaqForm((f) => ({ ...f, question: e.target.value }))}
                     placeholder="Frage"
                   />

@@ -234,41 +234,6 @@ export default async function Home() {
           <FlyInCards />
         </section>
 
-        {/* Warum MMI */}
-        <section className="bg-[#f5f6f8] px-6 py-16 sm:px-10 lg:px-16">
-          <div className="mx-auto max-w-6xl space-y-12">
-            <div className="space-y-3">
-              <p className="text-xs uppercase tracking-[0.18em] text-pink-600">Warum MMI?</p>
-              <h2 className="font-anton text-[clamp(32px,5vw,44px)] leading-[1.05] text-slate-900">Stark in Praxis, klar im Ergebnis.</h2>
-              <p className="text-[15px] text-slate-600 max-w-2xl">Echtes Arbeiten im Studio, persönliche Betreuung, transparente Zahlungslogik.</p>
-            </div>
-            <div className="grid gap-5 sm:grid-cols-2">
-              {[
-                { title: "Hands-on im Studio", desc: "Live-Sessions mit echtem Gear statt Folienmarathon." },
-                { title: "Kleine Gruppen", desc: "Individuelles Feedback, keine überfüllten Klassen." },
-                { title: "Trainer aus der Branche", desc: "Tontechniker, Musikproduzenten, FOH-Engineers, Mixing-/Mastering-Engineers, DJs und Broadcast-Spezialisten – mit echten Credits." },
-                { title: "Flexibles Bezahlen", desc: "Anzahlung jetzt, Rest zum Kursstart – transparent." },
-              ].map((item) => (
-                <div
-                  key={item.title}
-                  className="group rounded-2xl border border-slate-200 bg-white shadow-[0_18px_46px_-28px_rgba(0,0,0,0.35)] p-5 sm:p-6 space-y-3 transition duration-200 hover:-translate-y-1 hover:shadow-[0_20px_56px_-26px_rgba(0,0,0,0.4)]"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-br from-[#ff4ba2] to-[#ff1f8f] text-white text-lg shadow-sm font-semibold">
-                      •
-                    </div>
-                    <p className="text-base font-semibold text-slate-900 leading-tight">{item.title}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="h-[2px] w-14 rounded-full bg-gradient-to-r from-[#ff4ba2] to-transparent opacity-70 group-hover:opacity-100 transition" />
-                    <p className="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* Partner Abschnitt – Logo Marquee (Client) */}
         <section className="relative z-30 bg-white text-slate-900 overflow-hidden py-14 sm:py-16">
           <div className="relative mx-auto max-w-6xl px-6 sm:px-10 lg:px-16 space-y-6">

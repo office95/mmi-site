@@ -242,7 +242,7 @@ export default async function Home() {
               {[
                 { title: "Hands-on im Studio", desc: "Live-Sessions mit echtem Gear statt Folienmarathon.", icon: "🎛" },
                 { title: "Kleine Gruppen", desc: "Individuelles Feedback, keine überfüllten Klassen.", icon: "👥" },
-                { title: "Trainer aus der Branche", desc: "FOH, Mixing, DJ, Broadcast – mit echten Credits.", icon: "🎚" },
+                { title: "Trainer aus der Branche", desc: "Tontechniker, Musikproduzenten, FOH-Engineers, Mixing-/Mastering-Engineers, DJs und Broadcast-Spezialisten – mit echten Credits.", icon: "🎚" },
                 { title: "Flexibles Bezahlen", desc: "Anzahlung jetzt, Rest zum Kursstart – transparent.", icon: "💳" },
               ].map((item) => (
                 <div

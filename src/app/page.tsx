@@ -230,6 +230,10 @@ export default async function Home() {
           </div>
         </section>
 
+        <section className="relative bg-white min-h-screen">
+          <FlyInCards />
+        </section>
+
         {/* Warum MMI */}
         <section className="bg-[#f5f6f8] px-6 py-14 sm:px-10 lg:px-16">
           <div className="mx-auto max-w-6xl space-y-10">
@@ -258,10 +262,6 @@ export default async function Home() {
               ))}
             </div>
           </div>
-        </section>
-
-        <section className="relative bg-white min-h-screen">
-          <FlyInCards />
         </section>
 
         {/* Partner Abschnitt – Logo Marquee (Client) */}

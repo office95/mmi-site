@@ -54,8 +54,19 @@ export default function BookingFlow({ session, course }: { session: SessionInfo;
 
   const proceed = async () => {
     if (step === "form") {
-      if (!email) {
-        setError("E-Mail ist erforderlich");
+      const requiredFields = [
+        { value: firstName, label: "Vorname" },
+        { value: lastName, label: "Nachname" },
+        { value: email, label: "E-Mail" },
+        { value: phone, label: "Telefon" },
+        { value: street, label: "Straße / Nr." },
+        { value: zip, label: "PLZ" },
+        { value: city, label: "Ort" },
+        { value: country, label: "Land" },
+      ];
+      const missing = requiredFields.find((f) => !String(f.value || "").trim());
+      if (missing) {
+        setError(`${missing.label} ist erforderlich`);
         return;
       }
       if (!consent) {
@@ -116,19 +127,21 @@ export default function BookingFlow({ session, course }: { session: SessionInfo;
           <h2 className="text-2xl font-anton text-slate-900">Deine Daten</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="text-sm space-y-1">
-              <span>Vorname</span>
+              <span>Vorname *</span>
               <input
                 className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
+                required
               />
             </label>
             <label className="text-sm space-y-1">
-              <span>Nachname</span>
+              <span>Nachname *</span>
               <input
                 className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
+                required
               />
             </label>
           </div>
@@ -143,46 +156,51 @@ export default function BookingFlow({ session, course }: { session: SessionInfo;
             />
           </label>
           <label className="text-sm space-y-1">
-            <span>Telefon</span>
+            <span>Telefon *</span>
             <input
               className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
+              required
             />
           </label>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="text-sm space-y-1">
-              <span>Straße / Nr.</span>
+              <span>Straße / Nr. *</span>
               <input
                 className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
                 value={street}
                 onChange={(e) => setStreet(e.target.value)}
+                required
               />
             </label>
             <label className="text-sm space-y-1">
-              <span>PLZ</span>
+              <span>PLZ *</span>
               <input
                 className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
                 value={zip}
                 onChange={(e) => setZip(e.target.value)}
+                required
               />
             </label>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="text-sm space-y-1">
-              <span>Ort</span>
+              <span>Ort *</span>
               <input
                 className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
+                required
               />
             </label>
             <label className="text-sm space-y-1">
-              <span>Land</span>
+              <span>Land *</span>
               <input
                 className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:outline-none"
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
+                required
               />
             </label>
           </div>

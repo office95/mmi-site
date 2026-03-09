@@ -310,6 +310,9 @@ export default async function Home() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-slate-900/40 to-slate-900/80" />
                   <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute inset-0 overflow-hidden">
+                      <div className="shine-sweep absolute left-[-80%] top-0 h-full w-[70%] rounded-full bg-gradient-to-r from-transparent via-white/60 to-transparent opacity-50" />
+                    </div>
                     <div className="absolute -left-12 top-4 h-32 w-32 rounded-full bg-pink-500/40 blur-3xl" />
                     <div className="absolute right-4 bottom-4 w-32 rounded-[30px] border border-white/40 bg-white/10 p-4 text-xs font-semibold tracking-[0.2em] text-white/80">
                       GOSH! Studio

@@ -263,20 +263,24 @@ export default async function Home() {
         </section>
 
         {/* Open House Banner */}
-        <section className="px-6 py-10 sm:px-10 lg:px-16 bg-white">
+        <section className="px-6 py-12 sm:px-10 lg:px-16 bg-white">
           <div className="mx-auto max-w-6xl">
-            <div className="relative overflow-hidden rounded-3xl bg-[#0f1118] text-white shadow-[0_24px_60px_-28px_rgba(0,0,0,0.5)]">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,31,143,0.14),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(255,31,143,0.1),transparent_32%),radial-gradient(circle_at_50%_80%,rgba(255,31,143,0.12),transparent_40%)]" />
-              <div className="relative grid gap-6 p-6 sm:p-8 lg:p-10 lg:grid-cols-[2fr_1fr] items-center">
+            <div className="relative overflow-hidden rounded-3xl bg-[#0a0a12] text-white shadow-[0_30px_80px_-36px_rgba(0,0,0,0.65)] border border-white/8">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(255,31,143,0.18),transparent_32%),radial-gradient(circle_at_80%_12%,rgba(255,80,170,0.12),transparent_34%),radial-gradient(circle_at_50%_82%,rgba(255,31,143,0.16),transparent_36%)]" />
+              <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#ff1f8f]/25 blur-3xl animate-pulse-slow" aria-hidden />
+              <div className="relative grid gap-8 p-6 sm:p-8 lg:p-10 lg:grid-cols-[1.6fr_1fr] items-center">
                 <div className="space-y-4">
                   <p className="text-xs uppercase tracking-[0.18em] text-white/70">Tag der offenen Tür</p>
-                  <h2 className="font-anton text-3xl sm:text-4xl leading-tight">GOSH! Studio Wien</h2>
+                  <div className="flex items-center gap-3">
+                    <h2 className="font-anton text-3xl sm:text-4xl leading-tight">GOSH! Studio Wien</h2>
+                    <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold border border-white/15">Live vor Ort</span>
+                  </div>
                   <div className="flex flex-wrap gap-2">
                     <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold border border-white/15">10. April 2026</span>
                     <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold border border-white/15">15:00 – 17:00 Uhr</span>
                     <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold border border-white/15">Anmeldung erforderlich</span>
                   </div>
-                  <p className="text-white/85 max-w-2xl">
+                  <p className="text-white/85 max-w-2xl text-sm sm:text-base">
                     Erfahre alles über unsere Kurse, stell deine Fragen, triff das Team vor Ort im GOSH! Studio. Wir freuen uns auf dich in Wien.
                   </p>
                   <div className="flex flex-wrap gap-3">
@@ -298,16 +302,16 @@ export default async function Home() {
                   </div>
                 </div>
                 <div className="flex flex-col items-center gap-4 lg:items-end">
-                  <div className="rounded-2xl bg-white/8 border border-white/15 px-4 py-3 text-sm text-white/85 text-center">
+                  <div className="rounded-2xl bg-white/8 border border-white/15 px-4 py-4 text-sm sm:text-base text-white/90 text-center backdrop-blur">
                     GOSH! Studio · Wien<br />10.04.2026 · 15:00–17:00 Uhr<br />Limitierte Plätze – Anmeldung nötig
                   </div>
-                  <div className="relative h-16 w-40">
+                  <div className="relative h-16 w-44 sm:w-48">
                     <Image
                       src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/9274b0b6-6c3b-40c0-91d5-e529523f9734.webp"
                       alt="GOSH! Studio Logo"
                       fill
                       className="object-contain"
-                      sizes="160px"
+                      sizes="200px"
                       priority
                     />
                   </div>

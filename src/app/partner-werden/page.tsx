@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
+
+const PartnerLeadForm = dynamic(() => import("@/components/PartnerLeadForm"), { ssr: false });
 
 export const revalidate = 3600;
 
@@ -168,20 +171,9 @@ export default function PartnerWerdenPage() {
             <p className="text-slate-700 max-w-3xl">
               Wir bauen eine moderne Ausbildungsplattform für Musikproduktion, Audio, DJing und kreative Medien – gemeinsam mit erfahrenen Branchenprofis. Wenn du dein Wissen teilen und dein Studio besser auslasten möchtest, freuen wir uns auf deine Anfrage.
             </p>
-            <div className="flex flex-wrap gap-3 pt-2">
-              <Link
-                href="mailto:office@musicmission.at?subject=Partner werden"
-                className="inline-flex items-center gap-2 rounded-full bg-[#ff1f8f] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff1f8f]/30 hover:bg-[#e0007a]"
-              >
-                E-Mail senden
-              </Link>
-              <Link
-                href="/beratung"
-                className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-900 hover:border-slate-400"
-              >
-                Beratung buchen
-              </Link>
-            </div>
+          </div>
+          <div className="mt-8">
+            <PartnerLeadForm />
           </div>
         </div>
       </section>

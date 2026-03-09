@@ -214,7 +214,7 @@ export default async function Home() {
                   </div>
                 </div>
                 <div className="rounded-[24px] bg-white/5 p-6 text-white border border-white/10 shadow-[0_18px_60px_-24px_rgba(0,0,0,0.5)]">
-                  <div id="offene-tuer" className="space-y-3">
+                  <div className="space-y-3">
                     <p className="text-xs uppercase tracking-[0.28em] text-white/60">Tag der offenen Tür</p>
                     <h3 className="text-2xl font-semibold text-white">Im GOSH! Studio Wien</h3>
                     <p className="text-sm text-white/70">
@@ -232,7 +232,7 @@ export default async function Home() {
                   </div>
                   <div className="mt-4 flex flex-wrap gap-3">
                     <Link
-                      href="#offene-tuer"
+                      href="/tag-der-offenen-tuer"
                       className="flex-1 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-center text-sm font-semibold text-white transition hover:border-white/60"
                     >
                       Mehr erfahren
@@ -336,13 +336,13 @@ export default async function Home() {
                     Erfahre alles über unsere Kurse, stell deine Fragen, triff das Team vor Ort im GOSH! Studio. Wir freuen uns auf dich in Wien.
                   </p>
                   <div className="flex flex-wrap gap-3">
-                    <a
-                      href="mailto:office@musicmission.at?subject=Anmeldung Tag der offenen T%C3%BCr Wien&body=Name%3A%0ATelefon%3A%0APersonenanzahl%3A"
+                    <Link
+                      href="/tag-der-offenen-tuer"
                       className="inline-flex items-center gap-2 rounded-full bg-[#ff1f8f] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff1f8f]/30 hover:bg-[#e0007a]"
                     >
                       Jetzt anmelden
                       <span aria-hidden>→</span>
-                    </a>
+                    </Link>
                     <a
                       href="https://maps.google.com/?q=GOSH%20Studio%20Wien"
                       target="_blank"

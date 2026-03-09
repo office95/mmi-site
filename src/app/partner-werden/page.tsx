@@ -37,8 +37,8 @@ const benefits = [
     text: "Wir füllen freie Studio-Slots mit klaren Formaten: Extremkurse (kurz & preiswert) und Intensivkurse (strukturiert & vertiefend).",
   },
   {
-    title: "Marketing-Power inklusive",
-    text: "Kampagnen, Social Media, Online-Präsenz, Teilnehmermanagement, Buchungs- & Zahlungsabwicklung laufen über MMI.",
+    title: "Marketing- und Sichtbarkeits-Power inklusive",
+    text: "Wir helfen dabei, die Online-Präsenz auszubauen, mit starkem Social-Media-Content Aufmerksamkeit zu schaffen und auf unserer Plattform gezielt sichtbar zu werden.",
   },
   {
     title: "Professionelle Kursinfrastruktur",

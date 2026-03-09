@@ -228,14 +228,11 @@ export default function EntdeckenClient() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-[#ff1f8f]/35 to-transparent" />
         <div className="absolute inset-0 flex items-center justify-center px-6 pb-0">
-          <div className="text-center text-white space-y-3 max-w-4xl">
+          <div className="text-center text-white space-y-4 max-w-4xl">
             <p className="text-sm uppercase tracking-[0.2em] text-white/70">Entdecken</p>
             <h1 className="font-anton text-4xl sm:text-5xl leading-tight drop-shadow-[0_8px_30px_rgba(0,0,0,0.35)]">Alle Kurstermine in {regionText}</h1>
             <h2 className="text-lg sm:text-xl font-semibold text-white/90">Entdecke unser Angebot an innovativen Kursangeboten</h2>
-            <p className="text-white/90 text-base sm:text-lg leading-relaxed">
-              Finde deinen nächsten Termin – filtere nach Kurs, Partner oder Standort.
-            </p>
-            <div className="w-full max-w-xl mx-auto mt-2">
+            <div className="w-full max-w-xl mx-auto mt-4">
               <input
                 value={qSearch}
                 onChange={(e) => setQSearch(e.target.value)}

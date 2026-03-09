@@ -213,40 +213,6 @@ export default async function Home() {
                       .join("")}
                   </div>
                 </div>
-                <div className="rounded-[24px] bg-white/5 p-6 text-white border border-white/10 shadow-[0_18px_60px_-24px_rgba(0,0,0,0.5)]">
-                  <div className="space-y-3">
-                    <p className="text-xs uppercase tracking-[0.28em] text-white/60">Tag der offenen Tür</p>
-                    <h3 className="text-2xl font-semibold text-white">Im GOSH! Studio Wien</h3>
-                    <p className="text-sm text-white/70">
-                      10. April 2026 · 15:00–17:00 Uhr · Erfahre mehr über unsere Intensiv- und Extremkurse.
-                    </p>
-                    <div className="flex items-center gap-3 text-[0.85rem] text-white/80">
-                      <div className="flex-1 rounded-2xl border border-white/20 bg-white/10 px-3 py-2">
-                        <p className="font-semibold">Studiospiegelnde Insights</p>
-                        <p className="text-xs">Limitierte Plätze, Anmeldung erforderlich</p>
-                      </div>
-                      <div className="rounded-2xl border border-white/20 bg-white/10 px-3 py-2 text-xs text-white/60">
-                        Tag der offenen Tür
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-4 flex flex-wrap gap-3">
-                    <Link
-                      href="/tag-der-offenen-tuer"
-                      className="flex-1 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-center text-sm font-semibold text-white transition hover:border-white/60"
-                    >
-                      Mehr erfahren
-                    </Link>
-                    <Link
-                      href="https://www.google.com/maps/search/?api=1&query=gosh+studio+wien"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex-1 rounded-full bg-[#ff1f8f] px-4 py-2 text-center text-sm font-semibold text-white shadow-lg shadow-[#ff1f8f]/30 transition hover:bg-[#e0007a]"
-                    >
-                      Adresse zeigen
-                    </Link>
-                  </div>
-                </div>
               </div>
               <div className="absolute inset-x-0 bottom-[5%] z-30 px-6 sm:px-10 lg:px-20">
                 <div className="mx-auto w-full max-w-[620px]">
@@ -294,72 +260,6 @@ export default async function Home() {
 
         <section className="relative bg-white min-h-screen">
           <FlyInCards />
-        </section>
-
-        <section className="px-6 py-12 sm:px-10 lg:px-16 bg-white">
-          <div className="mx-auto max-w-6xl">
-            <div className="relative overflow-hidden rounded-3xl bg-[#0a0a12] text-white shadow-[0_30px_90px_-36px_rgba(0,0,0,0.75)] border border-white/8">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_25%,rgba(255,31,143,0.25),transparent_40%),radial-gradient(circle_at_85%_15%,rgba(255,80,170,0.18),transparent_40%),radial-gradient(circle_at_50%_70%,rgba(0,0,0,0.45),transparent_40%)]" />
-              <div className="absolute inset-0 opacity-0 transition duration-700 ease-out hover:opacity-40 bg-[#ff1f8f]/20" />
-              <div className="absolute inset-0 overflow-hidden">
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 shine-sweep" />
-              </div>
-              <div className="relative grid gap-8 p-6 sm:p-8 lg:p-10 lg:grid-cols-[1.6fr_1fr] items-center">
-                <div className="space-y-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-white/70">Tag der offenen Tür</p>
-                  <div className="flex items-center gap-3">
-                    <h2 className="font-anton text-3xl sm:text-4xl leading-tight">GOSH! Studio Wien</h2>
-                    <div className="relative h-12 w-12 rounded-2xl border border-white/20 bg-white/5 p-1">
-                      <Image
-                        src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/9274b0b6-6c3b-40c0-91d5-e529523f9734.webp"
-                        alt="GOSH! Studio Logo"
-                        fill
-                        className="rounded-[14px] object-contain"
-                        sizes="48px"
-                        priority
-                      />
-                    </div>
-                    <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold border border-white/15">Live vor Ort</span>
-                  </div>
-                <div className="flex flex-wrap gap-3">
-                  <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold border border-white/15">
-                    10. April 2026
-                  </span>
-                  <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold border border-white/15">
-                    15:00 – 17:00 Uhr
-                  </span>
-                  <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold border border-white/15">
-                    Anmeldung erforderlich
-                  </span>
-                </div>
-                  <p className="text-white/85 max-w-2xl text-sm sm:text-base">
-                    Erfahre alles über unsere Kurse, stell deine Fragen, triff das Team vor Ort im GOSH! Studio. Wir freuen uns auf dich in Wien.
-                  </p>
-                  <div className="flex flex-wrap gap-3">
-                    <Link
-                      href="/tag-der-offenen-tuer"
-                      className="inline-flex items-center gap-2 rounded-full bg-[#ff1f8f] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff1f8f]/30 hover:bg-[#e0007a]"
-                    >
-                      Jetzt anmelden
-                      <span aria-hidden>→</span>
-                    </Link>
-                    <a
-                      href="https://maps.google.com/?q=GOSH%20Studio%20Wien"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-2 rounded-full border border-white/25 px-4 py-2.5 text-sm font-semibold text-white hover:border-white/60"
-                    >
-                      Adresse zeigen
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 4h4v4M7 17L20 4" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M20 4l-9.5 9.5M20 4H10" />
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </section>
 
         {/* Kurs-Marquee */}

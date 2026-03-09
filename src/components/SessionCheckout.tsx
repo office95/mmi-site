@@ -105,10 +105,10 @@ export default function SessionCheckout({
                   </div>
                 )}
                 <div className="flex-1 min-w-0 text-left space-y-2">
-                  <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-700">
-                    <span className="inline-flex items-center gap-2 rounded-full bg-slate-900 text-white px-3 py-1 text-[11px]">
+                  <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-700">
+                    <span className="inline-flex items-center gap-2 rounded-full bg-slate-900 text-white px-3 py-1 text-[12px] sm:text-[13px]">
                       {formatDate(s.start_date)}
-                      {startTime && <span className="text-white/80">• {startTime} Uhr</span>}
+                      {startTime && <span className="text-white/80 text-[12px] sm:text-[13px]">• {startTime} Uhr</span>}
                     </span>
                   </div>
                   <p className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">{courseTitle}</p>

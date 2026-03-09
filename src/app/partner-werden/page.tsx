@@ -77,13 +77,13 @@ export default function PartnerWerdenPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Link
+            <a
               href="#partner-form"
               className="inline-flex items-center gap-2 rounded-full bg-[#ff1f8f] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff1f8f]/30 hover:bg-[#e0007a]"
             >
               Jetzt anfragen
               <span aria-hidden>→</span>
-            </Link>
+            </a>
           </div>
         </div>
       </header>

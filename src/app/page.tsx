@@ -262,6 +262,69 @@ export default async function Home() {
           <FlyInCards />
         </section>
 
+        <section className="px-6 py-14 sm:px-10 lg:px-16 bg-[#f7f8fb]">
+          <div className="mx-auto max-w-6xl rounded-[40px] border border-slate-200/80 bg-gradient-to-b from-white via-white to-[#f0f1f5] p-[1px] shadow-[0_40px_90px_-70px_rgba(15,23,42,0.8)]">
+            <div className="grid gap-8 rounded-[39px] bg-white p-8 lg:grid-cols-[1.1fr_0.9fr] xl:p-10">
+              <div className="space-y-5">
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Tag der offenen Tür</p>
+                <h2 className="text-3xl font-semibold leading-tight text-slate-900 sm:text-4xl">
+                  Im GOSH! Studio Wien – live & direkt dabei
+                </h2>
+                <p className="text-base text-slate-600">
+                  Erfahre alles über unsere Intensiv- und Extremkurse, lerne das Studio und die Coaches kennen und spüre,
+                  wie Praxis wirklich funktioniert. Freitag, 10. April 2026, 15:00–17:00 Uhr. Anmeldung erforderlich.
+                </p>
+                <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
+                  <span className="rounded-full border border-pink-500/30 bg-pink-50 px-3 py-1 font-semibold text-pink-600">
+                    Limitierte Plätze
+                  </span>
+                  <span className="rounded-full border border-slate-200 px-3 py-1">Praxis & Coaches</span>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    href="/tag-der-offenen-tuer"
+                    className="inline-flex items-center gap-2 rounded-full bg-[#ff1f8f] px-5 py-3 text-sm font-semibold text-white shadow-xl shadow-[#ff1f8f]/40 transition hover:bg-[#e0007a]"
+                  >
+                    Jetzt Platz sichern
+                    <span aria-hidden="true">→</span>
+                  </Link>
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=gosh+studio+wien"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-500"
+                  >
+                    Adresse zeigen
+                    <span aria-hidden="true">↗</span>
+                  </a>
+                </div>
+              </div>
+              <div className="relative overflow-hidden rounded-[32px] border border-slate-200/80 bg-slate-900 text-white">
+                <Image
+                  src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/294c5a55-6a6e-449f-85a6-23e9ecc0db03.webp"
+                  alt="GOSH! Studio Wien"
+                  fill
+                  className="h-full w-full object-cover"
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-slate-900/40 to-slate-900/80" />
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="absolute -left-12 top-4 h-32 w-32 rounded-full bg-pink-500/40 blur-3xl" />
+                  <div className="absolute right-4 bottom-4 w-32 rounded-[30px] border border-white/40 bg-white/10 p-4 text-xs font-semibold tracking-[0.2em] text-white/80">
+                    GOSH! Studio
+                  </div>
+                </div>
+                <div className="absolute bottom-6 left-6 space-y-1">
+                  <p className="text-sm uppercase tracking-[0.3em] text-white/70">Live vor Ort</p>
+                  <p className="text-2xl font-semibold text-white">10. April · 15–17 Uhr</p>
+                  <p className="text-sm text-white/70">Praxis & Coaches</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Kurs-Marquee */}
         <section className="bg-[#f5f6f8] px-6 py-14 sm:px-10 lg:px-16">
           <div className="mx-auto max-w-6xl space-y-6">

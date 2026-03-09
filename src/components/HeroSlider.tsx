@@ -27,7 +27,7 @@ export function HeroSlider({ slides }: { slides?: Slide[] }) {
   useEffect(() => {
     const id = setInterval(() => {
       setIndex((i) => (i + 1) % validSlides.length);
-    }, 8000);
+    }, 3500);
     return () => clearInterval(id);
   }, [validSlides.length]);
 

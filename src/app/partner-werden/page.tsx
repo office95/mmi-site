@@ -74,10 +74,11 @@ export default function PartnerWerdenPage() {
             <img
               src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/294c5a55-6a6e-449f-85a6-23e9ecc0db03.webp"
               alt=""
-              className="h-full w-full object-cover opacity-90"
+              className="h-full w-full object-cover opacity-80"
               loading="eager"
             />
           </picture>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/45 to-black/60" />
         </div>
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 pb-14 pt-24 sm:px-10 sm:pb-16 sm:pt-28 lg:px-16 lg:pb-20 relative z-10">
           <p className="text-xs uppercase tracking-[0.2em] text-white/70">Music Mission Institute</p>

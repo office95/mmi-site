@@ -1,11 +1,7 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
-
-const PartnerCountryStateSelect = dynamic(() => import("@/components/PartnerCountryStateSelect").then((m) => m.PartnerCountryStateSelect), {
-  ssr: false,
-});
+import { PartnerCountryStateSelect } from "@/components/PartnerCountryStateSelect";
 
 export const revalidate = 3600;
 

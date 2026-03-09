@@ -267,6 +267,9 @@ export default async function Home() {
             <div className="relative overflow-hidden rounded-3xl bg-[#0a0a12] text-white shadow-[0_30px_90px_-36px_rgba(0,0,0,0.75)] border border-white/8">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_25%,rgba(255,31,143,0.25),transparent_40%),radial-gradient(circle_at_85%_15%,rgba(255,80,170,0.18),transparent_40%),radial-gradient(circle_at_50%_70%,rgba(0,0,0,0.45),transparent_40%)]" />
               <div className="absolute inset-0 opacity-0 transition duration-700 ease-out hover:opacity-40 bg-[#ff1f8f]/20" />
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 shine-sweep" />
+              </div>
               <div className="relative grid gap-8 p-6 sm:p-8 lg:p-10 lg:grid-cols-[1.6fr_1fr] items-center">
                 <div className="space-y-4">
                   <p className="text-xs uppercase tracking-[0.18em] text-white/70">Tag der offenen Tür</p>
@@ -274,11 +277,17 @@ export default async function Home() {
                     <h2 className="font-anton text-3xl sm:text-4xl leading-tight">GOSH! Studio Wien</h2>
                     <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold border border-white/15">Live vor Ort</span>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold border border-white/15">10. April 2026</span>
-                    <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold border border-white/15">15:00 – 17:00 Uhr</span>
-                    <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold border border-white/15">Anmeldung erforderlich</span>
-                  </div>
+                <div className="flex flex-wrap gap-3">
+                  <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold border border-white/15">
+                    10. April 2026
+                  </span>
+                  <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold border border-white/15">
+                    15:00 – 17:00 Uhr
+                  </span>
+                  <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-semibold border border-white/15">
+                    Anmeldung erforderlich
+                  </span>
+                </div>
                   <p className="text-white/85 max-w-2xl text-sm sm:text-base">
                     Erfahre alles über unsere Kurse, stell deine Fragen, triff das Team vor Ort im GOSH! Studio. Wir freuen uns auf dich in Wien.
                   </p>

@@ -142,6 +142,28 @@ a {
   transform: translateY(0) translateX(0);
 }
 
+.shine-sweep {
+  animation: shine-move 2.8s ease-in-out infinite;
+}
+
+@keyframes shine-move {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.35;
+  }
+  70% {
+    transform: translateX(120%);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(28px);

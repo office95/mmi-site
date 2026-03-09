@@ -77,7 +77,7 @@ export default function PartnerWerdenPage() {
           </div>
           <div className="flex flex-wrap gap-3">
             <Link
-              href="mailto:office@musicmission.at?subject=Partner werden"
+              href="#partner-form"
               className="inline-flex items-center gap-2 rounded-full bg-[#ff1f8f] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff1f8f]/30 hover:bg-[#e0007a]"
             >
               Jetzt anfragen
@@ -154,7 +154,7 @@ export default function PartnerWerdenPage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-[#f5f6f8] px-6 py-12 sm:py-16 sm:px-10 lg:px-16">
+      <section id="partner-form" className="bg-[#f5f6f8] px-6 py-12 sm:py-16 sm:px-10 lg:px-16">
         <div className="mx-auto max-w-5xl rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-[0_18px_60px_-36px_rgba(0,0,0,0.18)]">
           <div className="space-y-3">
             <p className="text-xs uppercase tracking-[0.18em] text-slate-600">Bereit?</p>

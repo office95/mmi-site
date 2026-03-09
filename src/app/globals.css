@@ -5,6 +5,10 @@
   --foreground: #0a0a0a;
   --accent: #ff1f8f;
   --accent-dark: #e40073;
+  --font-sans: "Lato", "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --font-archivo: "Archivo Black", "Arial Black", sans-serif;
+  --font-anton: "Anton", Impact, sans-serif;
 }
 
 @theme inline {

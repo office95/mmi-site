@@ -110,7 +110,7 @@ export default function PartnerLeadForm() {
   };
 
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 shadow-[0_18px_60px_-36px_rgba(0,0,0,0.25)]">
+    <div className="rounded-3xl border border-slate-200 bg-white p-5 sm:p-6 shadow-[0_18px_60px_-36px_rgba(0,0,0,0.25)] font-sans">
       <div className="space-y-1 mb-4">
         <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Anfrage senden</p>
         <h3 className="font-anton text-2xl text-slate-900">Jetzt Partner werden</h3>

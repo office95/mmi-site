@@ -83,12 +83,6 @@ export default function PartnerWerdenPage() {
               Jetzt anfragen
               <span aria-hidden>→</span>
             </Link>
-            <Link
-              href="tel:+43422624600"
-              className="inline-flex items-center gap-2 rounded-full border border-white/30 px-4 py-2.5 text-sm font-semibold text-white hover:border-white/60"
-            >
-              Direkt sprechen
-            </Link>
           </div>
         </div>
       </header>
@@ -255,12 +249,6 @@ export default function PartnerWerdenPage() {
               <button type="submit" className="inline-flex items-center gap-2 rounded-full bg-[#ff1f8f] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff1f8f]/30 hover:bg-[#e0007a]">
                 Anfrage senden
               </button>
-              <Link
-                href="/beratung"
-                className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-900 hover:border-slate-400"
-              >
-                Beratung buchen
-              </Link>
             </div>
           </form>
         </div>

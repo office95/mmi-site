@@ -28,17 +28,7 @@ export default function TagDerOffenenTuerPage() {
                 <span className="rounded-full border border-white/30 bg-white/5 px-4 py-2 font-semibold">Leystraße 43 · 1200 Wien</span>
               </div>
             </div>
-            <div className="rounded-[32px] border border-white/20 bg-white/10 p-6 shadow-[0_30px_60px_-24px_rgba(0,0,0,0.65)] backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.3em] text-white/70">Live vor Ort</p>
-              <h2 className="mt-2 text-2xl font-semibold leading-tight text-white">Studio · Coaches · Experience</h2>
-              <p className="mt-2 text-sm text-white/70">
-                Workflows auf echtem Gear, kuratiertes Coaching und klare Zahlungslogik mit Anzahlung plus Restzahlung zum Kursstart.
-              </p>
-              <div className="mt-6 space-y-3 text-xs uppercase tracking-[0.3em] text-white/60">
-                <p>Limitierte Plätze · Anmeldung erforderlich</p>
-                <p>Hands-on Sessions · Persönliche Betreuung</p>
-              </div>
-            </div>
+            <div className="rounded-[32px] border border-white/20 bg-white/10 p-6 shadow-[0_30px_60px_-24px_rgba(0,0,0,0.65)] backdrop-blur" />
           </div>
         </section>
 

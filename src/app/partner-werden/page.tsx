@@ -160,8 +160,8 @@ export default function PartnerWerdenPage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-white px-6 py-12 sm:py-16 sm:px-10 lg:px-16">
-        <div className="mx-auto max-w-5xl rounded-3xl border border-slate-200 bg-gradient-to-r from-[#ff1f8f]/12 via-white to-[#7c3aed]/10 p-6 sm:p-8 shadow-[0_18px_60px_-36px_rgba(0,0,0,0.28)]">
+      <section className="bg-[#f5f6f8] px-6 py-12 sm:py-16 sm:px-10 lg:px-16">
+        <div className="mx-auto max-w-5xl rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-[0_18px_60px_-36px_rgba(0,0,0,0.18)]">
           <div className="space-y-3">
             <p className="text-xs uppercase tracking-[0.18em] text-slate-600">Bereit?</p>
             <h3 className="font-anton text-3xl text-slate-900">Werde Teil des Music Mission Netzwerks</h3>
@@ -169,12 +169,7 @@ export default function PartnerWerdenPage() {
               Wir bauen eine moderne Ausbildungsplattform für Musikproduktion, Audio, DJing und kreative Medien – gemeinsam mit erfahrenen Branchenprofis. Wenn du dein Wissen teilen und dein Studio besser auslasten möchtest, freuen wir uns auf deine Anfrage.
             </p>
           </div>
-          <form
-            className="mt-8 grid gap-3 sm:grid-cols-2"
-            action="mailto:office@musicmission.at"
-            method="post"
-            encType="text/plain"
-          >
+          <form className="mt-8 grid gap-3 sm:grid-cols-2" action="mailto:office@musicmission.at" method="post" encType="text/plain">
             <label className="space-y-1 text-sm text-slate-700">
               Studio oder Firmenname *
               <input required name="studio" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" />

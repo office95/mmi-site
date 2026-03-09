@@ -34,7 +34,7 @@ const focusAreas = [
 const benefits = [
   {
     title: "Mehr Auslastung – planbar",
-    text: "Wir füllen freie Studio-Slots mit klaren Formaten: Extremkurse (kurz & intensiv) und Intensivkurse (strukturiert & vertiefend).",
+    text: "Wir füllen freie Studio-Slots mit klaren Formaten: Extremkurse (kurz & preiswert) und Intensivkurse (strukturiert & vertiefend).",
   },
   {
     title: "Marketing-Power inklusive",

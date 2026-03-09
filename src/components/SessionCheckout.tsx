@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -59,6 +60,9 @@ export default function SessionCheckout({
 
   if (!sessions.length) return null;
 
+  const formatDate = (value?: string | null) =>
+    value ? new Date(value + "T00:00:00Z").toLocaleDateString("de-AT", { weekday: "short", day: "2-digit", month: "short" }) : "Datum folgt";
+
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between px-1">
@@ -85,38 +89,42 @@ export default function SessionCheckout({
           return (
             <div
               key={s.id}
-              className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+              className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_14px_40px_-26px_rgba(0,0,0,0.45)] transition hover:-translate-y-1 hover:shadow-xl"
             >
-              <div className="flex gap-3 p-3">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-3 sm:p-4">
                 {courseHero && (
-                  <Image
-                    src={courseHero}
-                    alt={courseTitle}
-                    width={96}
-                    height={80}
-                    className="h-20 w-24 flex-none rounded-xl object-cover"
-                    sizes="120px"
-                  />
-                )}
-                <div className="flex-1 text-left space-y-1">
-                  <div className="flex items-center justify-between text-xs text-slate-600 font-semibold text-slate-700">
-                    <span className="text-sm text-slate-900">{s.start_date ?? "Datum folgt"}</span>
-                    {startTime && <span>Start: {startTime} Uhr</span>}
+                  <div className="relative w-full sm:w-32 h-40 sm:h-28 overflow-hidden rounded-xl bg-slate-100">
+                    <Image
+                      src={courseHero}
+                      alt={courseTitle}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 100vw, 160px"
+                      priority={false}
+                    />
                   </div>
-                  <p className="text-sm font-semibold text-slate-900">{courseTitle}</p>
-                  {partnerName && <p className="text-sm text-slate-800">{partnerName}</p>}
-                  {addr && <p className="text-xs text-slate-600">{addr}</p>}
-                  {plzOrt && <p className="text-xs text-slate-600">{plzOrt}</p>}
-                  {bundesland && <p className="text-xs text-slate-600">{bundesland}</p>}
-                  <div className="flex items-center justify-between pt-1">
-                    <div className="text-right text-xs text-slate-600">
-                      {deposit !== null && <p>Anzahlung: {deposit.toFixed(2)} €</p>}
-                      {price !== null && <p className="text-sm font-semibold text-slate-900">Preis: {price.toFixed(2)} €</p>}
+                )}
+                <div className="flex-1 text-left space-y-2">
+                  <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-700">
+                    <span className="inline-flex items-center gap-2 rounded-full bg-slate-900 text-white px-3 py-1 text-[11px]">
+                      {formatDate(s.start_date)}
+                      {startTime && <span className="text-white/80">• {startTime} Uhr</span>}
+                    </span>
+                    {partnerName && <span className="text-slate-600">{partnerName}</span>}
+                  </div>
+                  <p className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">{courseTitle}</p>
+                  {addr && <p className="text-sm text-slate-600">{addr}</p>}
+                  {plzOrt && <p className="text-sm text-slate-600">{plzOrt}</p>}
+                  {bundesland && <p className="text-sm text-slate-600">{bundesland}</p>}
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-1">
+                    <div className="text-sm text-slate-700 space-y-0.5">
+                      {deposit !== null && <p className="font-semibold">Anzahlung: {deposit.toFixed(2)} €</p>}
+                      {price !== null && <p className="text-sm text-slate-900 font-semibold">Preis: {price.toFixed(2)} €</p>}
                     </div>
                     <button
                       disabled={loading}
                       onClick={() => gotoBooking(s.id)}
-                      className="rounded-lg bg-[#ff1f8f] px-3 py-2 text-xs font-semibold text-black shadow shadow-[#ff1f8f]/30 hover:bg-[#e40073] disabled:opacity-60"
+                      className="w-full sm:w-auto rounded-lg bg-[#ff1f8f] px-4 py-2.5 text-sm font-semibold text-white shadow shadow-[#ff1f8f]/30 hover:bg-[#e40073] disabled:opacity-60"
                     >
                       {loading ? "Weiter..." : "Buchen"}
                     </button>
@@ -131,4 +139,3 @@ export default function SessionCheckout({
     </div>
   );
 }
-import Image from "next/image";

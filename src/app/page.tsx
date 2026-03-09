@@ -275,6 +275,16 @@ export default async function Home() {
                   <p className="text-xs uppercase tracking-[0.18em] text-white/70">Tag der offenen Tür</p>
                   <div className="flex items-center gap-3">
                     <h2 className="font-anton text-3xl sm:text-4xl leading-tight">GOSH! Studio Wien</h2>
+                    <div className="relative h-12 w-12 rounded-2xl border border-white/20 bg-white/5 p-1">
+                      <Image
+                        src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/9274b0b6-6c3b-40c0-91d5-e529523f9734.webp"
+                        alt="GOSH! Studio Logo"
+                        fill
+                        className="rounded-[14px] object-contain"
+                        sizes="48px"
+                        priority
+                      />
+                    </div>
                     <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold border border-white/15">Live vor Ort</span>
                   </div>
                 <div className="flex flex-wrap gap-3">
@@ -312,16 +322,6 @@ export default async function Home() {
                       </svg>
                     </a>
                   </div>
-                </div>
-                <div className="flex items-center justify-center">
-                  <Image
-                    src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/9274b0b6-6c3b-40c0-91d5-e529523f9734.webp"
-                    alt="GOSH! Studio Logo"
-                    fill
-                    className="object-contain rounded-[18px] bg-white/5 p-2"
-                    sizes="220px"
-                    priority
-                  />
                 </div>
               </div>
             </div>

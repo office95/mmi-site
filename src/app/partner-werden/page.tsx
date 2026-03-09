@@ -68,7 +68,12 @@ export default function PartnerWerdenPage() {
 
       {/* Hero */}
       <header className="relative overflow-hidden bg-gradient-to-br from-black via-slate-900 to-[#0b0b12] text-white">
-        <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_20%_20%,#ff1f8f,transparent_30%),radial-gradient(circle_at_80%_10%,#7c3aed,transparent_32%),radial-gradient(circle_at_60%_75%,#ff1f8f,transparent_30%)] pointer-events-none" />
+        <div className="absolute inset-0 pointer-events-none">
+          <picture>
+            <source srcSet="/images/partner-hero-europe.svg" />
+            <img src="/images/partner-hero-europe.svg" alt="" className="h-full w-full object-cover opacity-90" loading="eager" />
+          </picture>
+        </div>
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 pb-14 pt-24 sm:px-10 sm:pb-16 sm:pt-28 lg:px-16 lg:pb-20 relative z-10">
           <p className="text-xs uppercase tracking-[0.2em] text-white/70">Music Mission Institute</p>
           <div className="space-y-3">

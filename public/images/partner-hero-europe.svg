@@ -1,0 +1,37 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Abstract Europe map in pink and black">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0b12"/>
+      <stop offset="50%" stop-color="#1a1024"/>
+      <stop offset="100%" stop-color="#ff1f8f"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="35%" cy="28%" r="60%">
+      <stop offset="0%" stop-color="#ff70c5" stop-opacity="0.55"/>
+      <stop offset="40%" stop-color="#ff1f8f" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#0b0b12" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch" result="noise"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComposite in2="SourceGraphic" operator="atop"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#g)"/>
+  <rect width="1600" height="900" fill="url(#halo)" opacity="0.6"/>
+  <g opacity="0.75">
+    <path d="M865 180c-90 10-120 60-160 110-40 52-120 64-170 120-60 68-60 162-10 224 58 74 184 120 300 114 112-6 226-68 276-166 46-90 32-210-42-290-58-63-136-123-194-112z" fill="#ff1f8f" opacity="0.45"/>
+    <path d="M905 210c-70 12-88 54-126 102-34 44-104 60-150 98-56 48-78 130-34 190 50 68 152 98 244 94 90-4 182-48 224-126 38-70 30-164-26-226-48-54-122-144-132-132z" fill="#111018"/>
+  </g>
+  <g stroke="#ff5fb2" stroke-width="1.2" stroke-opacity="0.45" opacity="0.8">
+    <circle cx="480" cy="220" r="8" fill="#ff5fb2"/>
+    <circle cx="620" cy="140" r="6" fill="#ff5fb2"/>
+    <circle cx="1040" cy="210" r="7" fill="#ff5fb2"/>
+    <circle cx="1180" cy="320" r="6" fill="#ff5fb2"/>
+    <circle cx="920" cy="520" r="9" fill="#ff5fb2"/>
+    <circle cx="720" cy="480" r="7" fill="#ff5fb2"/>
+    <circle cx="580" cy="360" r="6" fill="#ff5fb2"/>
+    <path d="M480 220 L620 140 L900 200 L1040 210 L1180 320 L1040 450 L920 520 L720 480 L580 360 Z" fill="none"/>
+  </g>
+  <rect width="1600" height="900" fill="#0b0b12" opacity="0.18"/>
+  <rect width="1600" height="900" fill="url(#grain)" opacity="0.09"/>
+</svg>

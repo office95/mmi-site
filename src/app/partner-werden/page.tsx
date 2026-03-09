@@ -1,26 +1,11 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 
-const statesAT = ["Burgenland", "Kärnten", "Niederösterreich", "Oberösterreich", "Salzburg", "Steiermark", "Tirol", "Vorarlberg", "Wien"];
-const statesDE = [
-  "Baden-Württemberg",
-  "Bayern",
-  "Berlin",
-  "Brandenburg",
-  "Bremen",
-  "Hamburg",
-  "Hessen",
-  "Mecklenburg-Vorpommern",
-  "Niedersachsen",
-  "Nordrhein-Westfalen",
-  "Rheinland-Pfalz",
-  "Saarland",
-  "Sachsen",
-  "Sachsen-Anhalt",
-  "Schleswig-Holstein",
-  "Thüringen",
-];
+const PartnerCountryStateSelect = dynamic(() => import("@/components/PartnerCountryStateSelect").then((m) => m.PartnerCountryStateSelect), {
+  ssr: false,
+});
 
 export const revalidate = 3600;
 
@@ -212,45 +197,7 @@ export default function PartnerWerdenPage() {
               Ort *
               <input required name="ort" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" />
             </label>
-            <label className="space-y-1 text-sm text-slate-700">
-              Land *
-              <select
-                name="land"
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30"
-                required
-                onChange={(e) => {
-                  const target = document.getElementById("bundesland") as HTMLSelectElement | null;
-                  if (!target) return;
-                  const country = e.target.value;
-                  const options = country === "DE" ? statesDE : statesAT;
-                  target.innerHTML = `<option value=\"\">Bitte wählen</option>` + options.map((s) => `<option value=\"${s}\">${s}</option>`).join("");
-                }}
-                defaultValue="AT"
-              >
-                <option value="">Bitte wählen</option>
-                <option value="AT">Österreich</option>
-                <option value="DE">Deutschland</option>
-              </select>
-            </label>
-            <label className="space-y-1 text-sm text-slate-700">
-              Bundesland *
-              <select
-                id="bundesland"
-                name="bundesland"
-                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30"
-                required
-                defaultValue=""
-                onFocus={(e) => {
-                  if (e.currentTarget.options.length <= 1) {
-                    const land = (document.querySelector('select[name="land"]') as HTMLSelectElement | null)?.value || "AT";
-                    const options = land === "DE" ? statesDE : statesAT;
-                    e.currentTarget.innerHTML = `<option value=\"\">Bitte wählen</option>` + options.map((s) => `<option value=\"${s}\">${s}</option>`).join("");
-                  }
-                }}
-              >
-                <option value="">Bitte zuerst Land wählen</option>
-              </select>
-            </label>
+            <PartnerCountryStateSelect />
             <label className="space-y-1 text-sm text-slate-700 sm:col-span-2">
               Referenzen (optional)
               <textarea name="referenzen" rows={3} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" />

@@ -93,7 +93,7 @@ export default async function Home() {
   const { data: heroRows } = await supabase
     .from("hero_slides")
     .select("image_url,title,subtitle,is_active,position,created_at")
-    .order("position", { ascending: true, nullsLast: true })
+    .order("position", { ascending: true, nullsFirst: false })
     .order("created_at", { ascending: true });
   // Partner laden (Filter passiert im Client anhand Host)
   const { data: partnerRows } = await supabase

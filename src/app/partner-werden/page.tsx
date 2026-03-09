@@ -7,56 +7,56 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Partner werden | Music Mission Institute",
   description:
-    "Werde Standort-Partner des Music Mission Institute. Fülle freie Studio-Slots, erhalte Marketing-Support und biete zertifizierte Kurse bei dir vor Ort an.",
+    "Nutze dein Studio besser – wir bringen Teilnehmer, Marketing und Kursstruktur. Werde Partner im Music Mission Netzwerk.",
   alternates: { canonical: "/partner-werden" },
   openGraph: {
     title: "Partner werden | Music Mission Institute",
-    description: "Mit MMI als Partner: Studio-Auslastung erhöhen, Marketing nutzen, praxisnahe Kurse hosten.",
+    description: "Studio-Auslastung erhöhen, Marketing-Power nutzen, praxisnahe Kurse hosten – gemeinsam mit dem Music Mission Institute.",
     url: "/partner-werden",
     type: "website",
   },
 };
 
+const focusAreas = [
+  "Tontechnik / Audio Engineering",
+  "Musikproduktion",
+  "Vocal Coaching",
+  "Live-Tontechnik / Veranstaltungstechnik",
+  "DJing / DJ Performance",
+  "Songwriting",
+  "Music Business",
+  "Social Media für Musiker",
+  "Content Creation / Video",
+];
+
 const benefits = [
   {
-    title: "Mehr Auslastung, planbar",
-    text: "Wir füllen deine freien Studio-Slots mit kompakten Kurs-Formaten (Intensiv & Extrem).",
+    title: "Mehr Auslastung – planbar",
+    text: "Wir füllen freie Studio-Slots mit klaren Formaten: Extremkurse (kurz & intensiv) und Intensivkurse (strukturiert & vertiefend).",
   },
   {
     title: "Marketing-Power inklusive",
-    text: "MMI-Kampagnen, Ads, Newsletter & Trustpilot-Reputation bringen Anfragen zu dir.",
+    text: "Kampagnen, Social Media, Online-Präsenz, Teilnehmermanagement, Buchungs- & Zahlungsabwicklung laufen über MMI.",
   },
   {
-    title: "Trainer-Pool & Curriculum",
-    text: "Erprobte Kurskonzepte, Trainer aus der Praxis, klare Abläufe – fertig zum Start.",
+    title: "Professionelle Kursinfrastruktur",
+    text: "Lehrpläne, Skripte, Dozentenleitfäden, Plattform und unser Trainer:innen-Pool – ready to go.",
   },
   {
     title: "Transparente Abrechnung",
-    text: "Klare Revenue-Share, Reporting und automatisierte Buchungen via Stripe Checkout.",
+    text: "Alle Buchungen über die Plattform, klare Revenue-Share, monatliches Reporting via Stripe Checkout.",
+  },
+  {
+    title: "Starkes Netzwerk",
+    text: "Du profitierst von einer Community aus Studios, Dozent:innen und Kreativprofis – gegenseitige Sichtbarkeit inklusive.",
   },
 ];
 
 const steps = [
-  { title: "Anfrage", text: "Kurzformular ausfüllen, wir melden uns innerhalb von 2 Werktagen." },
-  { title: "Standort-Check", text: "Wir prüfen Raumgrößen, Akustik-Basics, Infrastruktur und Technik." },
-  { title: "Onboarding", text: "Branding, Kurskalender, Pricing, Trainer-Zuteilung und Sicherheitbriefing." },
-  { title: "Launch", text: "Kampagnen starten, Termine live schalten, erste Buchungen entgegennehmen." },
-  { title: "Laufender Betrieb", text: "Teilnehmer vor Ort empfangen, wir kümmern uns um Buchung, Payment, Support & Reporting." },
-];
-
-const requirements = [
-  "Regieraum + Aufnahmeraum oder großer Regieraum mit flexibler Bestuhlung",
-  "Mind. 8–12 Sitzplätze, gute Belüftung/Klima, saubere Stromversorgung",
-  "Grund-Setup: Audio-Interface, Abhöre, Mikrofone, Kopfhörer-Distribution",
-  "Stabile Internetverbindung, Parkmöglichkeiten oder gute ÖPNV-Anbindung",
-  "Terminslots an Wochenenden oder unter der Woche abends",
-];
-
-const faqs = [
-  { q: "Wie läuft die Abrechnung?", a: "Buchung & Zahlung laufen über Stripe Checkout. Du erhältst monatliche Abrechnung/Reporting gemäß vereinbartem Share." },
-  { q: "Wer stellt Trainer und Inhalte?", a: "Trainer kommen aus dem MMI-Pool. Curriculum, Ablauf und Teilnehmerunterlagen stellen wir bereit." },
-  { q: "Was braucht mein Studio technisch?", a: "Saubere Abhöre, Interfaces, Mics, Monitoring, Strom & Internet. Details in unserer technischen Checkliste nach der Anfrage." },
-  { q: "Wie schnell können wir starten?", a: "Nach Standort-Check und Onboarding typischerweise 3–6 Wochen bis zum ersten Termin." },
+  { title: "Anfrage senden", text: "Stell uns kurz dein Studio oder deinen Fachbereich vor." },
+  { title: "Kennenlernen", text: "Wir besprechen mögliche Kurse und die Zusammenarbeit." },
+  { title: "Plattform & Einschulung", text: "Onboarding in die Music Mission Plattform und Ablauf-Check." },
+  { title: "Kurse starten", text: "Termine live schalten, Marketing aktivieren, Teilnehmer empfangen." },
 ];
 
 export default function PartnerWerdenPage() {
@@ -72,7 +72,7 @@ export default function PartnerWerdenPage() {
           <div className="space-y-3">
             <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-[1.05]">Partner werden</h1>
             <p className="max-w-3xl text-base sm:text-lg text-white/85 leading-relaxed">
-              Werde Standort-Partner und hoste MMI-Kurse direkt in deinem Studio. Wir liefern Curriculum, Trainer, Marketing & Buchungen – du fokussierst dich auf großartigen Sound vor Ort.
+              Nutze dein Studio besser – wir bringen die Teilnehmer. Music Mission verwandelt freie Slots in planbare Kursformate mit Marketing, Plattform und Struktur. Du konzentrierst dich auf Praxis und Sound.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -93,17 +93,41 @@ export default function PartnerWerdenPage() {
         </div>
       </header>
 
-      {/* Benefits */}
+      {/* Intro + Wer wir suchen */}
       <section className="bg-white px-6 py-12 sm:py-16 sm:px-10 lg:px-16">
         <div className="mx-auto max-w-6xl space-y-8">
-          <div className="space-y-3">
-            <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Warum mit MMI</p>
-            <h2 className="font-anton text-3xl sm:text-4xl text-slate-900">Starkes Netzwerk, klare Prozesse</h2>
-            <p className="max-w-3xl text-slate-700">
-              Wir kombinieren deine Infrastruktur mit unseren Kurskonzepten, Trainer:innen und Marketing. So wird dein Studio zum regionalen Hub für Musikproduktion, Tontechnik und DJing.
+          <div className="space-y-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Partner werden</p>
+            <h2 className="font-anton text-3xl sm:text-4xl text-slate-900">Nutze dein Studio besser – wir bringen die Teilnehmer</h2>
+            <p className="max-w-4xl text-slate-700">
+              Viele Tonstudios und Branchenprofis haben freie Zeitfenster. Wir verwandeln diese Slots in kompakte Kursformate mit Teilnehmern, Marketing und klarer Struktur. Du wirst Teil eines wachsenden Netzwerks aus Produzenten, Toningenieuren, DJs und Kreativprofis, die ihr Wissen praxisnah weitergeben und ihre Kapazitäten besser auslasten.
+            </p>
+            <p className="max-w-4xl text-slate-700">
+              Wir kümmern uns um Plattform, Struktur, Marketing und Organisation – du bringst deine Praxis und Erfahrung ein.
             </p>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-3">
+            <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Wen wir suchen</p>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {focusAreas.map((item) => (
+                <div key={item} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_10px_28px_-22px_rgba(0,0,0,0.18)]">
+                  <p className="font-semibold text-slate-900">{item}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-sm text-slate-600">Wenn du in einem dieser Bereiche professionell tätig bist und dein Wissen weitergeben möchtest, passt du perfekt in unser Netzwerk.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits */}
+      <section className="bg-[#f5f6f8] px-6 py-14 sm:py-16 sm:px-10 lg:px-16">
+        <div className="mx-auto max-w-6xl space-y-8">
+          <div className="space-y-2">
+            <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Warum sich das lohnt</p>
+            <h2 className="font-anton text-3xl sm:text-4xl text-slate-900">Mehr Auslastung, weniger Aufwand</h2>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {benefits.map((b) => (
               <div key={b.title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_14px_40px_-26px_rgba(0,0,0,0.2)]">
                 <p className="text-sm font-semibold text-[#e0007a] uppercase tracking-[0.08em] mb-2">{b.title}</p>
@@ -115,15 +139,15 @@ export default function PartnerWerdenPage() {
       </section>
 
       {/* Steps */}
-      <section className="bg-[#f5f6f8] px-6 py-14 sm:py-16 sm:px-10 lg:px-16">
+      <section className="bg-white px-6 py-12 sm:py-16 sm:px-10 lg:px-16">
         <div className="mx-auto max-w-6xl space-y-8">
           <div className="space-y-2">
-            <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Ablauf</p>
-            <h2 className="font-anton text-3xl text-slate-900">In fünf Schritten live</h2>
+            <p className="text-xs uppercase tracking-[0.18em] text-slate-500">In 4 Schritten</p>
+            <h2 className="font-anton text-3xl sm:text-4xl text-slate-900">So wirst du Partner</h2>
           </div>
           <div className="grid gap-4">
             {steps.map((s, idx) => (
-              <div key={s.title} className="flex gap-3 rounded-2xl bg-white border border-slate-200 p-4 shadow-sm">
+              <div key={s.title} className="flex gap-3 rounded-2xl bg-[#f8f9fb] border border-slate-200 p-4 shadow-sm">
                 <div className="mt-0.5 flex h-10 w-10 items-center justify-center rounded-full bg-slate-900 text-white font-semibold">{idx + 1}</div>
                 <div className="space-y-1">
                   <p className="font-semibold text-slate-900">{s.title}</p>
@@ -135,52 +159,14 @@ export default function PartnerWerdenPage() {
         </div>
       </section>
 
-      {/* Requirements */}
-      <section className="bg-white px-6 py-12 sm:py-16 sm:px-10 lg:px-16">
-        <div className="mx-auto max-w-6xl space-y-6">
-          <div className="space-y-2">
-            <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Was wir brauchen</p>
-            <h2 className="font-anton text-3xl text-slate-900">Voraussetzungen für deinen Standort</h2>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {requirements.map((item) => (
-              <div key={item} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_10px_28px_-22px_rgba(0,0,0,0.2)]">
-                <p className="text-slate-800">{item}</p>
-              </div>
-            ))}
-          </div>
-          <p className="text-sm text-slate-600">
-            Ausführliche technische Checkliste senden wir nach deiner Anfrage zu.
-          </p>
-        </div>
-      </section>
-
-      {/* FAQs */}
-      <section className="bg-[#0f1116] text-white px-6 py-14 sm:py-16 sm:px-10 lg:px-16">
-        <div className="mx-auto max-w-6xl space-y-8">
-          <div className="space-y-2">
-            <p className="text-xs uppercase tracking-[0.18em] text-white/70">FAQ</p>
-            <h2 className="font-anton text-3xl sm:text-4xl">Häufige Fragen von Partnern</h2>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {faqs.map((f) => (
-              <div key={f.q} className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur">
-                <p className="font-semibold mb-2">{f.q}</p>
-                <p className="text-white/85 leading-relaxed">{f.a}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA */}
       <section className="bg-white px-6 py-12 sm:py-16 sm:px-10 lg:px-16">
         <div className="mx-auto max-w-5xl rounded-3xl border border-slate-200 bg-gradient-to-r from-[#ff1f8f]/12 via-white to-[#7c3aed]/10 p-6 sm:p-8 shadow-[0_18px_60px_-36px_rgba(0,0,0,0.28)]">
           <div className="space-y-3">
             <p className="text-xs uppercase tracking-[0.18em] text-slate-600">Bereit?</p>
-            <h3 className="font-anton text-3xl text-slate-900">Lass uns deinen Standort starten</h3>
+            <h3 className="font-anton text-3xl text-slate-900">Werde Teil des Music Mission Netzwerks</h3>
             <p className="text-slate-700 max-w-3xl">
-              Schreib uns kurz zu deinem Studio, Standort und verfügbaren Terminslots. Wir melden uns mit einem kurzen Call-Vorschlag und schicken dir die technische Checkliste.
+              Wir bauen eine moderne Ausbildungsplattform für Musikproduktion, Audio, DJing und kreative Medien – gemeinsam mit erfahrenen Branchenprofis. Wenn du dein Wissen teilen und dein Studio besser auslasten möchtest, freuen wir uns auf deine Anfrage.
             </p>
             <div className="flex flex-wrap gap-3 pt-2">
               <Link

@@ -1,5 +1,20 @@
 import { SiteHeader } from "@/components/SiteHeader";
+import { getSupabaseServiceClient } from "@/lib/supabase";
 import Link from "next/link";
+
+const toUrl = (path: string | null) => {
+  if (!path) return null;
+  if (path.startsWith("http")) return path;
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://naobgnbpvqgutxsaphci.supabase.co";
+  const clean = path.replace(/^\/+/, "");
+  if (clean.startsWith("storage/v1/object/public/") || clean.startsWith("/storage/v1/object/public/")) {
+    return `${base}/${clean.replace(/^\/+/, "")}`;
+  }
+  if (clean.startsWith("public/")) {
+    return `${base}/storage/v1/object/${clean}`;
+  }
+  return `${base}/storage/v1/object/public/${clean}`;
+};
 
 export const metadata = {
   title: "Tag der offenen Tür · GOSH! Studio Wien | Music Mission Institute",
@@ -7,7 +22,17 @@ export const metadata = {
     "10. April 2026: Tag der offenen Tür im GOSH! Studio Wien. Erlebe Intensivkurse, spreche mit Coaches und sichere dir deinen Platz beim Music Mission Institute.",
 };
 
-export default function TagDerOffenenTuerPage() {
+export default async function TagDerOffenenTuerPage() {
+  const supabase = getSupabaseServiceClient();
+  let privacyUrl: string | null = null;
+
+  try {
+    const { data: settingsRows } = await supabase.from("settings").select("key,value").in("key", ["pdf_datenschutz_url"]);
+    privacyUrl = toUrl(settingsRows?.find((r: any) => r.key === "pdf_datenschutz_url")?.value ?? null);
+  } catch {
+    privacyUrl = null;
+  }
+
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
@@ -117,9 +142,20 @@ export default function TagDerOffenenTuerPage() {
                 />
                 <span>
                   Ich stimme der Verarbeitung meiner Angaben zur Kontaktaufnahme für den Tag der offenen Tür zu. Mehr Infos in unserer{" "}
-                  <Link href="/datenschutz" className="font-semibold text-pink-600 hover:text-pink-700">
-                    Datenschutzerklärung
-                  </Link>
+                  {privacyUrl ? (
+                    <a
+                      href={privacyUrl}
+                      target={privacyUrl.startsWith("http") ? "_blank" : undefined}
+                      rel="noreferrer"
+                      className="font-semibold text-pink-600 hover:text-pink-700 underline underline-offset-2"
+                    >
+                      Datenschutzerklärung
+                    </a>
+                  ) : (
+                    <Link href="/datenschutz" className="font-semibold text-pink-600 hover:text-pink-700 underline underline-offset-2">
+                      Datenschutzerklärung
+                    </Link>
+                  )}
                   .
                 </span>
               </label>

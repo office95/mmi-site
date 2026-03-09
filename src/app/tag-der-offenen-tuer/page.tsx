@@ -70,24 +70,6 @@ export default function TagDerOffenenTuerPage() {
                   </a>
                 </div>
               </div>
-              <div className="rounded-[32px] border border-white/10 bg-white/5 p-6 backdrop-blur">
-                <p className="text-xs uppercase tracking-[0.3em] text-white/70">Live vor Ort</p>
-                <h2 className="mt-3 text-2xl font-semibold">GOSH! Studio</h2>
-                <p className="mt-2 text-sm text-white/80">
-                  Top ausgestattetes Studio, erfahrene Coaches aus Livetontechnik, Mixing und DJing und ein Team, das dich
-                  unkompliziert begleitet.
-                </p>
-                <div className="mt-6 space-y-4">
-                  <div className="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm">
-                    <p className="font-semibold">Eintritt nur mit Anmeldung</p>
-                    <p className="text-white/60 text-xs">Limitierte Plätze, persönliche Gespräche & direkte Kursberatung.</p>
-                  </div>
-                  <div className="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm">
-                    <p className="font-semibold">Praxis & Kursstruktur</p>
-                    <p className="text-white/60 text-xs">Erlebe echte Sessions, Checkpoints und Zahlungslogik mit Anzahlung + Rest zum Kursstart.</p>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </section>

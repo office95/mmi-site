@@ -110,11 +110,17 @@ export default function SessionCheckout({
                       {formatDate(s.start_date)}
                       {startTime && <span className="text-white/80">• {startTime} Uhr</span>}
                     </span>
-                    {partnerName && <span className="text-slate-600">{partnerName}</span>}
                   </div>
                   <p className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">{courseTitle}</p>
+
+                  {(partnerName || plzOrt) && (
+                    <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-900">
+                      {partnerName && <span className="px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200">{partnerName}</span>}
+                      {plzOrt && <span className="px-2 py-1 rounded-full bg-[#ff1f8f]/10 text-[#c10067] border border-[#ff1f8f]/30">{plzOrt}</span>}
+                    </div>
+                  )}
+
                   {addr && <p className="text-sm text-slate-600">{addr}</p>}
-                  {plzOrt && <p className="text-sm text-slate-600">{plzOrt}</p>}
                   {bundesland && <p className="text-sm text-slate-600">{bundesland}</p>}
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-1">
                     <div className="text-sm text-slate-700 space-y-0.5">

@@ -14,7 +14,7 @@ export default function TagDerOffenenTuerPage() {
         <section className="relative overflow-hidden bg-slate-950 text-white">
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-900/80" />
           <div className="pointer-events-none absolute right-[-6rem] top-0 h-80 w-80 rounded-full bg-pink-500/30 blur-[120px]" />
-          <div className="relative z-10 mx-auto max-w-6xl grid gap-10 px-6 py-16 lg:grid-cols-[1.35fr_0.95fr] lg:px-12">
+          <div className="relative z-10 mx-auto max-w-5xl space-y-10 px-6 py-16 lg:px-12">
             <div className="space-y-6">
               <p className="text-xs uppercase tracking-[0.32em] text-white/60">Tag der offenen Tür</p>
               <h1 className="text-4xl font-semibold leading-tight text-white sm:text-5xl">GOSH! Studio Wien · Live erleben</h1>
@@ -28,7 +28,6 @@ export default function TagDerOffenenTuerPage() {
                 <span className="rounded-full border border-white/30 bg-white/5 px-4 py-2 font-semibold">Leystraße 43 · 1200 Wien</span>
               </div>
             </div>
-            <div className="rounded-[32px] border border-white/20 bg-white/10 p-6 shadow-[0_30px_60px_-24px_rgba(0,0,0,0.65)] backdrop-blur" />
           </div>
         </section>
 

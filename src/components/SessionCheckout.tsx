@@ -113,19 +113,20 @@ export default function SessionCheckout({
                   </div>
                   <p className="text-base sm:text-lg font-semibold text-slate-900 leading-tight">{courseTitle}</p>
 
-                  {(partnerName || plzOrt) && (
+                  {partnerName && (
                     <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-900">
-                      {partnerName && <span className="px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200">{partnerName}</span>}
-                      {plzOrt && <span className="text-slate-800">{plzOrt}</span>}
+                      <span className="px-2.5 py-1 rounded-full bg-[#ff1f8f]/12 text-[#c10067] border border-[#ff1f8f]/30">
+                        {partnerName}
+                      </span>
                     </div>
                   )}
 
                   {addr && <p className="text-sm text-slate-600">{addr}</p>}
-                  {bundesland && <p className="text-sm text-slate-600">{bundesland}</p>}
+                  {plzOrt && <p className="text-sm text-slate-600">{plzOrt}</p>}
+                  {bundesland && <p className="text-sm text-slate-500">{bundesland}</p>}
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-1">
                     <div className="text-sm text-slate-700 space-y-0.5">
-                      {deposit !== null && <p className="font-semibold">Anzahlung: {deposit.toFixed(2)} €</p>}
-                      {price !== null && <p className="text-sm text-slate-900 font-semibold">Preis: {price.toFixed(2)} €</p>}
+                      {price !== null && <p className="text-sm font-semibold text-[#e0007a]">Preis: {price.toFixed(2)} €</p>}
                     </div>
                     <button
                       disabled={loading}

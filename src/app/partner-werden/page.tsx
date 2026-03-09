@@ -78,7 +78,7 @@ export default function PartnerWerdenPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <ScrollToFormButton targetId="partner-form" />
+            <ScrollToFormButton targetId="partner-form" label="Jetzt unverbindlich anfragen" />
           </div>
         </div>
       </header>

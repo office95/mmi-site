@@ -169,20 +169,105 @@ export default function PartnerWerdenPage() {
               Wir bauen eine moderne Ausbildungsplattform für Musikproduktion, Audio, DJing und kreative Medien – gemeinsam mit erfahrenen Branchenprofis. Wenn du dein Wissen teilen und dein Studio besser auslasten möchtest, freuen wir uns auf deine Anfrage.
             </p>
           </div>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href="mailto:office@musicmission.at?subject=Partner werden"
-              className="inline-flex items-center gap-2 rounded-full bg-[#ff1f8f] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff1f8f]/30 hover:bg-[#e0007a]"
-            >
-              Anfrage senden
-            </Link>
-            <Link
-              href="/beratung"
-              className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-900 hover:border-slate-400"
-            >
-              Beratung buchen
-            </Link>
-          </div>
+          <form
+            className="mt-8 grid gap-3 sm:grid-cols-2"
+            action="mailto:office@musicmission.at"
+            method="post"
+            encType="text/plain"
+          >
+            <label className="space-y-1 text-sm text-slate-700">
+              Studio oder Firmenname *
+              <input required name="studio" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" />
+            </label>
+            <label className="space-y-1 text-sm text-slate-700">
+              Ansprechpartner *
+              <input required name="ansprechpartner" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" />
+            </label>
+            <label className="space-y-1 text-sm text-slate-700">
+              Telefon *
+              <input required name="telefon" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" />
+            </label>
+            <label className="space-y-1 text-sm text-slate-700">
+              E-Mail *
+              <input required type="email" name="email" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" />
+            </label>
+            <label className="space-y-1 text-sm text-slate-700 sm:col-span-2">
+              Straße / Nr. *
+              <input required name="strasse" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" />
+            </label>
+            <label className="space-y-1 text-sm text-slate-700">
+              PLZ *
+              <input required name="plz" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" />
+            </label>
+            <label className="space-y-1 text-sm text-slate-700">
+              Ort *
+              <input required name="ort" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" />
+            </label>
+            <label className="space-y-1 text-sm text-slate-700">
+              Land *
+              <select name="land" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" required>
+                <option>Österreich</option>
+                <option>Deutschland</option>
+              </select>
+            </label>
+            <label className="space-y-1 text-sm text-slate-700">
+              Bundesland *
+              <select name="bundesland" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" required>
+                <optgroup label="Österreich">
+                  <option>Burgenland</option>
+                  <option>Kärnten</option>
+                  <option>Niederösterreich</option>
+                  <option>Oberösterreich</option>
+                  <option>Salzburg</option>
+                  <option>Steiermark</option>
+                  <option>Tirol</option>
+                  <option>Vorarlberg</option>
+                  <option>Wien</option>
+                </optgroup>
+                <optgroup label="Deutschland">
+                  <option>Baden-Württemberg</option>
+                  <option>Bayern</option>
+                  <option>Berlin</option>
+                  <option>Brandenburg</option>
+                  <option>Bremen</option>
+                  <option>Hamburg</option>
+                  <option>Hessen</option>
+                  <option>Mecklenburg-Vorpommern</option>
+                  <option>Niedersachsen</option>
+                  <option>Nordrhein-Westfalen</option>
+                  <option>Rheinland-Pfalz</option>
+                  <option>Saarland</option>
+                  <option>Sachsen</option>
+                  <option>Sachsen-Anhalt</option>
+                  <option>Schleswig-Holstein</option>
+                  <option>Thüringen</option>
+                </optgroup>
+              </select>
+            </label>
+            <label className="space-y-1 text-sm text-slate-700 sm:col-span-2">
+              Referenzen (optional)
+              <textarea name="referenzen" rows={3} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" />
+            </label>
+            <label className="space-y-1 text-sm text-slate-700 sm:col-span-2">
+              Welche Kurse könnte ich anbieten? (optional)
+              <textarea name="kurse" rows={3} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" />
+            </label>
+            <label className="sm:col-span-2 flex items-start gap-3 text-sm text-slate-700">
+              <input type="checkbox" required className="mt-1 h-4 w-4 rounded border-slate-300 text-[#ff1f8f] focus:ring-[#ff1f8f]" name="rechtliches" />
+              <span>Ich bestätige die rechtlichen Hinweise und die Verarbeitung meiner Daten zur Kontaktaufnahme. *</span>
+            </label>
+            <div className="sm:col-span-2 flex flex-wrap gap-3 pt-1">
+              <button type="submit" className="inline-flex items-center gap-2 rounded-full bg-[#ff1f8f] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff1f8f]/30 hover:bg-[#e0007a]">
+                Anfrage senden
+              </button>
+              <Link
+                href="/beratung"
+                className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-900 hover:border-slate-400"
+              >
+                Beratung buchen
+              </Link>
+            </div>
+          </form>
         </div>
       </section>
     </div>

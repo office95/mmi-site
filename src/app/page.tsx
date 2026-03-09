@@ -299,9 +299,9 @@ export default async function Home() {
                   </a>
                 </div>
               </div>
-              <div className="relative overflow-hidden rounded-[32px] border border-slate-200/80 bg-slate-900 text-white">
+                <div className="relative overflow-hidden rounded-[32px] border border-slate-200/80 bg-slate-900 text-white">
                 <Image
-                  src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/294c5a55-6a6e-449f-85a6-23e9ecc0db03.webp"
+                  src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/0f9b4fc0-f88a-454a-a260-503455c41e7c.webp"
                   alt="GOSH! Studio Wien"
                   fill
                   className="h-full w-full object-cover"

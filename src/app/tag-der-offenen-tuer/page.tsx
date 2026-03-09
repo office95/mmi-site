@@ -85,24 +85,24 @@ export default function TagDerOffenenTuerPage() {
 
         <section className="px-6 pb-24 pt-16 lg:px-12" id="anmeldung">
           <div className="mx-auto grid max-w-6xl gap-10 rounded-[40px] border border-slate-200/80 bg-slate-50 px-8 py-12 shadow-[0_30px_70px_-30px_rgba(15,23,42,0.8)] lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="space-y-6">
-              <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Bereit?</p>
-              <h2 className="text-3xl font-semibold text-slate-900">Sichere dir deinen Platz</h2>
-              <p className="text-base text-slate-600">
-                Sag uns, wer du bist, welche Kurse dich interessieren und wir melden uns mit einer persönlichen Bestätigung zurück – inklusive Ablauf, Anzahlung und Restzahlung.
-              </p>
-              <div className="space-y-4 text-sm text-slate-600">
-                {program.map((step) => (
-                  <div key={step.time} className="flex items-start gap-4 rounded-2xl border border-slate-200/80 bg-white/60 px-4 py-3">
-                    <span className="text-xs uppercase tracking-[0.3em] text-pink-600">{step.time}</span>
-                    <div>
-                      <p className="font-semibold text-slate-900">{step.title}</p>
-                      <p className="text-sm text-slate-600">{step.detail}</p>
+              <div className="space-y-6">
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Bereit?</p>
+                <h2 className="text-3xl font-semibold text-slate-900">Sichere dir deinen Platz</h2>
+                <p className="text-base text-slate-600">
+                  Sag uns, wer du bist und welche Kurse dich interessieren – wir melden uns mit allen Details zurück.
+                </p>
+                <div className="space-y-4 text-sm text-slate-600">
+                  {program.map((step) => (
+                    <div key={step.time} className="flex items-start gap-4 rounded-2xl border border-slate-200/80 bg-white/60 px-4 py-3">
+                      <span className="text-xs uppercase tracking-[0.3em] text-pink-600">{step.time}</span>
+                      <div>
+                        <p className="font-semibold text-slate-900">{step.title}</p>
+                        <p className="text-sm text-slate-600">{step.detail}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
             <form
               action="mailto:office@musicmission.at?subject=Anmeldung%20Tag%20der%20offenen%20T%C3%BCr%20Wien&body=Name%3A%0AZusatz%3A%0AE-Mail%3A%0ATelefon%3A%0AKurs%20Interesse%3A"
               method="post"
@@ -163,7 +163,7 @@ export default function TagDerOffenenTuerPage() {
                   className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 shadow-sm outline-none transition focus:border-pink-500 focus:ring-2 focus:ring-pink-200"
                 />
               </label>
-              <p className="text-xs text-slate-500">* Pflichtfelder. Wir melden uns innerhalb von 24 Stunden zurück.</p>
+              <p className="text-xs text-slate-500">* Pflichtfelder.</p>
               <button
                 type="submit"
                 className="w-full rounded-full bg-pink-600 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-pink-500"

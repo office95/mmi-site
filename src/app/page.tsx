@@ -327,10 +327,6 @@ export default async function Home() {
             </div>
           </div>
         </section>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* Kurs-Marquee */}
         <section className="bg-[#f5f6f8] px-6 py-14 sm:px-10 lg:px-16">

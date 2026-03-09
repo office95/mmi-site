@@ -91,9 +91,9 @@ export default function SessionCheckout({
               key={s.id}
               className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_14px_40px_-26px_rgba(0,0,0,0.45)] transition hover:-translate-y-1 hover:shadow-xl"
             >
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-3 sm:p-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 md:gap-6 p-3 sm:p-4 md:p-5">
                 {courseHero && (
-                  <div className="relative w-full sm:w-32 h-40 sm:h-28 overflow-hidden rounded-xl bg-slate-100">
+                  <div className="relative w-full sm:w-36 md:w-44 h-44 sm:h-28 md:h-32 overflow-hidden rounded-xl bg-slate-100">
                     <Image
                       src={courseHero}
                       alt={courseTitle}
@@ -104,7 +104,7 @@ export default function SessionCheckout({
                     />
                   </div>
                 )}
-                <div className="flex-1 text-left space-y-2">
+                <div className="flex-1 min-w-0 text-left space-y-2">
                   <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-700">
                     <span className="inline-flex items-center gap-2 rounded-full bg-slate-900 text-white px-3 py-1 text-[11px]">
                       {formatDate(s.start_date)}
@@ -124,8 +124,8 @@ export default function SessionCheckout({
                   {addr && <p className="text-sm text-slate-600">{addr}</p>}
                   {plzOrt && <p className="text-sm text-slate-600">{plzOrt}</p>}
                   {bundesland && <p className="text-sm text-slate-500">{bundesland}</p>}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-1">
-                    <div className="text-sm text-slate-700 space-y-0.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 sm:gap-3 pt-1 sm:pt-0 sm:pl-4">
+                    <div className="text-sm text-slate-700 space-y-0.5 text-right sm:text-left">
                       {price !== null && <p className="text-sm font-semibold text-[#e0007a]">Preis: {price.toFixed(2)} €</p>}
                     </div>
                     <button

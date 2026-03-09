@@ -213,6 +213,40 @@ export default async function Home() {
                       .join("")}
                   </div>
                 </div>
+                <div className="rounded-[24px] bg-white/5 p-6 text-white border border-white/10 shadow-[0_18px_60px_-24px_rgba(0,0,0,0.5)]">
+                  <div id="offene-tuer" className="space-y-3">
+                    <p className="text-xs uppercase tracking-[0.28em] text-white/60">Tag der offenen Tür</p>
+                    <h3 className="text-2xl font-semibold text-white">Im GOSH! Studio Wien</h3>
+                    <p className="text-sm text-white/70">
+                      10. April 2026 · 15:00–17:00 Uhr · Erfahre mehr über unsere Intensiv- und Extremkurse.
+                    </p>
+                    <div className="flex items-center gap-3 text-[0.85rem] text-white/80">
+                      <div className="flex-1 rounded-2xl border border-white/20 bg-white/10 px-3 py-2">
+                        <p className="font-semibold">Studiospiegelnde Insights</p>
+                        <p className="text-xs">Limitierte Plätze, Anmeldung erforderlich</p>
+                      </div>
+                      <div className="rounded-2xl border border-white/20 bg-white/10 px-3 py-2 text-xs text-white/60">
+                        Tag der offenen Tür
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    <Link
+                      href="#offene-tuer"
+                      className="flex-1 rounded-full border border-white/30 bg-white/10 px-4 py-2 text-center text-sm font-semibold text-white transition hover:border-white/60"
+                    >
+                      Mehr erfahren
+                    </Link>
+                    <Link
+                      href="https://www.google.com/maps/search/?api=1&query=gosh+studio+wien"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex-1 rounded-full bg-[#ff1f8f] px-4 py-2 text-center text-sm font-semibold text-white shadow-lg shadow-[#ff1f8f]/30 transition hover:bg-[#e0007a]"
+                    >
+                      Adresse zeigen
+                    </Link>
+                  </div>
+                </div>
               </div>
               <div className="absolute inset-x-0 bottom-[5%] z-30 px-6 sm:px-10 lg:px-20">
                 <div className="mx-auto w-full max-w-[620px]">

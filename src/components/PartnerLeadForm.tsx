@@ -114,7 +114,7 @@ export default function PartnerLeadForm() {
       <div className="space-y-1 mb-4">
         <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Anfrage senden</p>
         <h3 className="font-anton text-2xl text-slate-900">Jetzt Partner werden</h3>
-        <p className="text-sm text-slate-600">Pflichtfelder sind markiert *</n>
+        <p className="text-sm text-slate-600">Pflichtfelder sind markiert *</p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="space-y-1 text-sm text-slate-700">

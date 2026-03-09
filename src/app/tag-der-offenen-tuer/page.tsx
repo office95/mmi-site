@@ -18,10 +18,16 @@ export default function TagDerOffenenTuerPage() {
             <div className="space-y-6">
               <p className="text-xs uppercase tracking-[0.32em] text-white/60">Tag der offenen Tür</p>
               <h1 className="text-4xl font-semibold leading-tight text-white sm:text-5xl">GOSH! Studio Wien · Live erleben</h1>
-              <p className="max-w-3xl text-lg text-white/80">
-                Music Mission Institute &amp; Gosh! Audio laden zum Tag der offenen Tür: GOSH! Studio Wien · Live erleben.
-                Am 10. April öffnen wir die Türen für einen exklusiven Einblick in Intensiv- und Extremkurse. Präsentiere deine
-                Fragen, erlebe echte Studio-Sessions und sprich direkt mit den Coaches.
+              <p className="max-w-3xl text-lg text-white/80 space-y-3">
+                <span>Music Mission Institute &amp; Gosh! Audio laden zum Tag der offenen Tür ein.</span>
+                <span>GOSH! Studio Wien · Einblick in die Praxis.</span>
+                <span className="block mt-4">
+                  Am 10. April öffnen wir die Türen des GOSH! Studios Wien. Lerne unsere Dozenten kennen, besichtige das Studio und
+                  informiere dich umfassend über unsere Extrem- und Intensivkurse.
+                </span>
+                <span>
+                  Erhalte Einblicke in Inhalte, Ablauf und Möglichkeiten der Ausbildung – und finde heraus, welcher Kurs zu dir passt.
+                </span>
               </p>
               <div className="flex flex-wrap gap-3 text-sm">
                 <span className="rounded-full border border-white/30 bg-white/5 px-4 py-2 font-semibold">10. April 2026</span>

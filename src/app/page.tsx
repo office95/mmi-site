@@ -258,6 +258,61 @@ export default async function Home() {
           </div>
         </section>
 
+        {/* Open House Banner */}
+        <section className="px-6 py-10 sm:px-10 lg:px-16 bg-white">
+          <div className="mx-auto max-w-6xl">
+            <div className="relative overflow-hidden rounded-3xl bg-[#0f1118] text-white shadow-[0_24px_60px_-28px_rgba(0,0,0,0.5)]">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,31,143,0.14),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(255,31,143,0.1),transparent_32%),radial-gradient(circle_at_50%_80%,rgba(255,31,143,0.12),transparent_40%)]" />
+              <div className="relative grid gap-6 p-6 sm:p-8 lg:p-10 lg:grid-cols-[2fr_1fr] items-center">
+                <div className="space-y-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-white/70">Tag der offenen Tür</p>
+                  <h2 className="font-anton text-3xl sm:text-4xl leading-tight">GOSH! Studio Wien</h2>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold border border-white/15">10. April 2026</span>
+                    <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold border border-white/15">15:00 – 17:00 Uhr</span>
+                    <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold border border-white/15">Anmeldung erforderlich</span>
+                  </div>
+                  <p className="text-white/85 max-w-2xl">
+                    Erfahre alles über unsere Kurse, stell deine Fragen, triff das Team vor Ort im GOSH! Studio. Wir freuen uns auf dich in Wien.
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    <a
+                      href="mailto:office@musicmission.at?subject=Anmeldung Tag der offenen T%C3%BCr Wien&body=Name%3A%0ATelefon%3A%0APersonenanzahl%3A"
+                      className="inline-flex items-center gap-2 rounded-full bg-[#ff1f8f] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#ff1f8f]/30 hover:bg-[#e0007a]"
+                    >
+                      Jetzt anmelden
+                      <span aria-hidden>→</span>
+                    </a>
+                    <a
+                      href="https://maps.google.com/?q=GOSH%20Studio%20Wien"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 rounded-full border border-white/25 px-4 py-2.5 text-sm font-semibold text-white hover:border-white/60"
+                    >
+                      Adresse anzeigen
+                    </a>
+                  </div>
+                </div>
+                <div className="flex flex-col items-center gap-4 lg:items-end">
+                  <div className="rounded-2xl bg-white/8 border border-white/15 px-4 py-3 text-sm text-white/85 text-center">
+                    GOSH! Studio · Wien<br />10.04.2026 · 15:00–17:00 Uhr<br />Limitierte Plätze – Anmeldung nötig
+                  </div>
+                  <div className="relative h-16 w-40">
+                    <Image
+                      src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/9274b0b6-6c3b-40c0-91d5-e529523f9734.webp"
+                      alt="GOSH! Studio Logo"
+                      fill
+                      className="object-contain"
+                      sizes="160px"
+                      priority
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="relative bg-white min-h-screen">
           <FlyInCards />
         </section>

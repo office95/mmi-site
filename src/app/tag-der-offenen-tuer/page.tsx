@@ -52,22 +52,9 @@ export default function TagDerOffenenTuerPage() {
                   <span className="rounded-full border border-white/30 bg-white/5 px-4 py-2 font-semibold">15:00–17:00 Uhr</span>
                   <span className="rounded-full border border-white/30 bg-white/5 px-4 py-2 font-semibold">GOSH! Studio · Wien</span>
                 </div>
-                <div className="flex flex-wrap gap-4">
-                  <a
-                    href="#anmeldung"
-                    className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-[#f3f3f3]"
-                  >
-                    Jetzt Platz reservieren
-                  </a>
-                  <a
-                    href="https://www.google.com/maps/search/?api=1&query=gosh+studio+wien"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full border border-white/40 px-5 py-3 text-sm font-semibold text-white transition hover:border-white"
-                  >
-                    Studio anschauen
-                    <span aria-hidden>↗</span>
-                  </a>
+                <div className="flex flex-wrap gap-3 text-xs uppercase tracking-[0.32em] text-white/60">
+                  <span>Leystraße 43 · 1200 Wien</span>
+                  <span>10. April 2026 · 15:00–17:00 Uhr</span>
                 </div>
               </div>
             </div>

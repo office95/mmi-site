@@ -42,7 +42,7 @@ const benefits = [
   },
   {
     title: "Professionelle Kursinfrastruktur",
-    text: "Lehrpläne, Skripte, Dozentenleitfäden, Plattform und unser Trainer:innen-Pool – ready to go.",
+    text: "Lehrpläne, Skripte, Dozentenleitfäden, Buchungsplattform, Online-Lernportal, Social Media Content – ready to go.",
   },
   {
     title: "Transparente Abrechnung",

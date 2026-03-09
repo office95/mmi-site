@@ -268,7 +268,7 @@ export default async function Home() {
               <div className="space-y-5">
                 <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Tag der offenen Tür</p>
                 <h2 className="text-3xl font-semibold leading-tight text-slate-900 sm:text-4xl">
-                  Im GOSH! Studio Wien – live & direkt dabei
+                  Im GOSH! Studio Wien
                 </h2>
                 <p className="text-base text-slate-600">
                   Erfahre alles über unsere Intensiv- und Extremkurse, lerne das Studio und die Coaches kennen und spüre,

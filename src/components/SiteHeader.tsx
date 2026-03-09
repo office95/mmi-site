@@ -205,6 +205,9 @@ export function SiteHeader() {
           <Link href="/kursstandorte" className={`nav-link ${isActive("/kursstandorte") ? "underline underline-offset-4" : ""}`}>
             Kursstandorte
           </Link>
+          <Link href="/partner-werden" className={`nav-link ${isActive("/partner-werden") ? "underline underline-offset-4" : ""}`}>
+            Partner werden
+          </Link>
           <Link href="/ueber-uns" className={`nav-link ${isActive("/ueber-uns") ? "underline underline-offset-4" : ""}`}>
             Über uns
           </Link>
@@ -342,6 +345,13 @@ export function SiteHeader() {
                   onClick={() => setMobileOpen(false)}
                 >
                   Kursstandorte
+                </Link>
+                <Link
+                  href="/partner-werden"
+                  className={`block rounded-xl px-3 py-2 hover:bg-slate-100 ${isActive("/partner-werden") ? "underline underline-offset-4" : ""}`}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Partner werden
                 </Link>
                 <Link
                   href="/ueber-uns"

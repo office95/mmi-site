@@ -45,6 +45,8 @@ export default async function SiteFooter() {
                 <span className="text-white/60">•</span>
               </>
             )}
+            <a href="/partner-werden" className="underline underline-offset-4 hover:text-black">Partner werden</a>
+            <span className="text-white/60">•</span>
             <a href="/impressum" className="underline underline-offset-4 hover:text-black">Impressum</a>
           </div>
           <p className="text-white/80 text-xs text-center">© {new Date().getFullYear()} Music Mission Institute</p>
@@ -65,6 +67,8 @@ export default async function SiteFooter() {
                 {dsUrl && <a href={dsUrl} className="underline underline-offset-4 hover:text-black" target="_blank" rel="noreferrer">Datenschutz</a>}
                 {dsUrl && agbUrl && <span className="hidden sm:inline text-white/60">•</span>}
                 {agbUrl && <a href={agbUrl} className="underline underline-offset-4 hover:text-black" target="_blank" rel="noreferrer">AGB</a>}
+                {(dsUrl || agbUrl) && <span className="hidden sm:inline text-white/60">•</span>}
+                <a href="/partner-werden" className="underline underline-offset-4 hover:text-black">Partner werden</a>
                 <a href="/impressum" className="underline underline-offset-4 hover:text-black">Impressum</a>
               </div>
               <p className="text-white/80 text-xs sm:text-sm">© {new Date().getFullYear()} Music Mission Institute</p>

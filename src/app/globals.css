@@ -154,6 +154,14 @@ a {
   opacity: 0.8;
 }
 
+.glass-shimmer {
+  animation: glass-wave 6s ease-in-out infinite;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.06), rgba(255, 31, 143, 0.12), rgba(255, 255, 255, 0.08));
+  transform: translateX(-100%);
+  mix-blend-mode: screen;
+  opacity: 0.35;
+}
+
 @keyframes shine-move {
   0% {
     transform: translateX(-120%);
@@ -186,6 +194,25 @@ a {
   }
   100% {
     transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
+@keyframes glass-wave {
+  0% {
+    transform: translateX(-110%) skewX(-10deg);
+    opacity: 0.4;
+  }
+  40% {
+    transform: translateX(20%) skewX(-5deg);
+    opacity: 0.5;
+  }
+  70% {
+    transform: translateX(120%) skewX(-4deg);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateX(120%) skewX(-4deg);
     opacity: 0;
   }
 }

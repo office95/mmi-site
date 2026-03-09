@@ -262,12 +262,11 @@ export default async function Home() {
           <FlyInCards />
         </section>
 
-        {/* Open House Banner */}
         <section className="px-6 py-12 sm:px-10 lg:px-16 bg-white">
           <div className="mx-auto max-w-6xl">
-            <div className="relative overflow-hidden rounded-3xl bg-[#0a0a12] text-white shadow-[0_30px_80px_-36px_rgba(0,0,0,0.65)] border border-white/8">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(255,31,143,0.18),transparent_32%),radial-gradient(circle_at_80%_12%,rgba(255,80,170,0.12),transparent_34%),radial-gradient(circle_at_50%_82%,rgba(255,31,143,0.16),transparent_36%)]" />
-              <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#ff1f8f]/25 blur-3xl animate-pulse-slow" aria-hidden />
+            <div className="relative overflow-hidden rounded-3xl bg-[#0a0a12] text-white shadow-[0_30px_90px_-36px_rgba(0,0,0,0.75)] border border-white/8">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_25%,rgba(255,31,143,0.25),transparent_40%),radial-gradient(circle_at_85%_15%,rgba(255,80,170,0.18),transparent_40%),radial-gradient(circle_at_50%_70%,rgba(0,0,0,0.45),transparent_40%)]" />
+              <div className="absolute inset-0 opacity-0 transition duration-700 ease-out hover:opacity-40 bg-[#ff1f8f]/20" />
               <div className="relative grid gap-8 p-6 sm:p-8 lg:p-10 lg:grid-cols-[1.6fr_1fr] items-center">
                 <div className="space-y-4">
                   <p className="text-xs uppercase tracking-[0.18em] text-white/70">Tag der offenen Tür</p>
@@ -297,21 +296,27 @@ export default async function Home() {
                       rel="noreferrer"
                       className="inline-flex items-center gap-2 rounded-full border border-white/25 px-4 py-2.5 text-sm font-semibold text-white hover:border-white/60"
                     >
-                      Adresse anzeigen
+                      Adresse zeigen
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 4h4v4M7 17L20 4" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M20 4l-9.5 9.5M20 4H10" />
+                      </svg>
                     </a>
                   </div>
                 </div>
-                <div className="flex flex-col items-center gap-4 lg:items-end">
-                  <div className="rounded-2xl bg-white/8 border border-white/15 px-4 py-4 text-sm sm:text-base text-white/90 text-center backdrop-blur">
-                    GOSH! Studio · Wien<br />10.04.2026 · 15:00–17:00 Uhr<br />Limitierte Plätze – Anmeldung nötig
+                <div className="flex flex-col items-center gap-6 lg:items-end">
+                  <div className="rounded-3xl bg-white/10 border border-white/15 px-5 py-5 text-sm sm:text-base text-white/90 text-center backdrop-blur-lg shadow-[0_10px_30px_-20px_rgba(255,31,143,0.5)]">
+                    <p className="font-semibold text-white">GOSH! Studio · Wien</p>
+                    <p>10.04.2026 · 15:00–17:00 Uhr</p>
+                    <p className="text-[#ffb7d6]">Limitierte Plätze – Anmeldung nötig</p>
                   </div>
-                  <div className="relative h-16 w-44 sm:w-48">
+                  <div className="relative h-20 w-52 sm:w-56">
                     <Image
                       src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/9274b0b6-6c3b-40c0-91d5-e529523f9734.webp"
                       alt="GOSH! Studio Logo"
                       fill
-                      className="object-contain"
-                      sizes="200px"
+                      className="object-contain rounded-[18px] bg-white/5 p-2"
+                      sizes="220px"
                       priority
                     />
                   </div>

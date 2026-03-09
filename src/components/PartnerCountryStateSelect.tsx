@@ -26,6 +26,7 @@ type Props = { required?: boolean };
 
 export function PartnerCountryStateSelect({ required = true }: Props) {
   const [country, setCountry] = useState<"AT" | "DE" | "">("AT");
+  const [stateVal, setStateVal] = useState<string>("");
   const states = useMemo(() => (country === "DE" ? statesDE : statesAT), [country]);
 
   return (
@@ -37,7 +38,11 @@ export function PartnerCountryStateSelect({ required = true }: Props) {
           required={required}
           className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30"
           value={country}
-          onChange={(e) => setCountry((e.target.value as "AT" | "DE" | "") || "")}
+          onChange={(e) => {
+            const val = (e.target.value as "AT" | "DE" | "") || "";
+            setCountry(val);
+            setStateVal("");
+          }}
         >
           <option value="">Bitte wählen</option>
           <option value="AT">Österreich</option>
@@ -50,8 +55,8 @@ export function PartnerCountryStateSelect({ required = true }: Props) {
           name="bundesland"
           required={required}
           className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30"
-          value=""
-          onChange={() => {}}
+          value={stateVal}
+          onChange={(e) => setStateVal(e.target.value)}
         >
           <option value="">Bitte wählen</option>
           {states.map((s) => (

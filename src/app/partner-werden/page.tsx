@@ -42,7 +42,7 @@ const benefits = [
   },
   {
     title: "Professionelle Kursinfrastruktur",
-    text: "Lehrpläne, Skripte, Dozentenleitfäden, Buchungsplattform, Online-Lernportal, Social Media Content – ready to go.",
+    text: "Lehrpläne, Skripte, Dozentenleitfäden, Buchungsplattform, Online-Lernportal – ready to go.",
   },
   {
     title: "Transparente Abrechnung",

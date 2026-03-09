@@ -1,4 +1,5 @@
 import { SiteHeader } from "@/components/SiteHeader";
+import Link from "next/link";
 
 export const metadata = {
   title: "Tag der offenen Tür · GOSH! Studio Wien | Music Mission Institute",
@@ -107,7 +108,22 @@ export default function TagDerOffenenTuerPage() {
                   className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 shadow-sm outline-none transition focus:border-pink-500 focus:ring-2 focus:ring-pink-200"
                 />
               </label>
-              <p className="text-xs text-slate-500">* Pflichtfelder.</p>
+              <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                <input
+                  type="checkbox"
+                  name="Einwilligung"
+                  required
+                  className="mt-1 h-4 w-4 rounded border-slate-400 text-pink-600 focus:ring-pink-500"
+                />
+                <span>
+                  Ich stimme der Verarbeitung meiner Angaben zur Kontaktaufnahme für den Tag der offenen Tür zu. Mehr Infos in unserer{" "}
+                  <Link href="/datenschutz" className="font-semibold text-pink-600 hover:text-pink-700">
+                    Datenschutzerklärung
+                  </Link>
+                  .
+                </span>
+              </label>
+              <p className="text-xs text-slate-500">* Pflichtfelder. Zustimmung zur Datenverarbeitung erforderlich.</p>
               <button
                 type="submit"
                 className="w-full rounded-full bg-pink-600 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-pink-500"

@@ -281,7 +281,7 @@ export default async function Home() {
                     <span className="rounded-full border border-pink-500/30 bg-pink-50 px-3 py-1 font-semibold text-pink-600">
                       Limitierte Plätze
                     </span>
-                    <span className="rounded-full border border-slate-200 px-3 py-1">Praxis & Coaches</span>
+                    <span className="rounded-full border border-slate-200 px-3 py-1">Lerne uns kennen</span>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     <Link
@@ -317,9 +317,6 @@ export default async function Home() {
                       <div className="shine-sweep absolute left-[-80%] top-0 h-full w-[70%] rounded-full bg-gradient-to-r from-transparent via-white/60 to-transparent opacity-50" />
                     </div>
                     <div className="absolute -left-12 top-4 h-32 w-32 rounded-full bg-pink-500/40 blur-3xl" />
-                    <div className="absolute right-4 bottom-4 w-32 rounded-[30px] border border-white/40 bg-white/10 p-4 text-xs font-semibold tracking-[0.2em] text-white/80">
-                      GOSH! Studio
-                    </div>
                   </div>
                   <div className="absolute top-4 right-4">
                     <div className="relative h-12 w-12 overflow-hidden rounded-[18px] border border-white/50 bg-white/10">
@@ -335,7 +332,7 @@ export default async function Home() {
                   <div className="absolute bottom-6 left-6 space-y-1">
                     <p className="text-sm uppercase tracking-[0.3em] text-white/70">Live vor Ort</p>
                     <p className="text-2xl font-semibold text-white">10. April · 15–17 Uhr</p>
-                    <p className="text-sm text-white/70">Praxis & Coaches</p>
+                    <p className="text-sm text-white/70">Lerne uns kennen</p>
                   </div>
                 </div>
               </div>

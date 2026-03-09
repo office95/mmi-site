@@ -116,7 +116,7 @@ export default function SessionCheckout({
                   {(partnerName || plzOrt) && (
                     <div className="flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-900">
                       {partnerName && <span className="px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200">{partnerName}</span>}
-                      {plzOrt && <span className="px-2 py-1 rounded-full bg-[#ff1f8f]/10 text-[#c10067] border border-[#ff1f8f]/30">{plzOrt}</span>}
+                      {plzOrt && <span className="text-slate-800">{plzOrt}</span>}
                     </div>
                   )}
 

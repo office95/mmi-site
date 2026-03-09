@@ -70,8 +70,13 @@ export default function PartnerWerdenPage() {
       <header className="relative overflow-hidden bg-gradient-to-br from-black via-slate-900 to-[#0b0b12] text-white">
         <div className="absolute inset-0 pointer-events-none">
           <picture>
-            <source srcSet="/images/partner-hero-europe.svg" />
-            <img src="/images/partner-hero-europe.svg" alt="" className="h-full w-full object-cover opacity-90" loading="eager" />
+            <source srcSet="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/294c5a55-6a6e-449f-85a6-23e9ecc0db03.webp" />
+            <img
+              src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/294c5a55-6a6e-449f-85a6-23e9ecc0db03.webp"
+              alt=""
+              className="h-full w-full object-cover opacity-90"
+              loading="eager"
+            />
           </picture>
         </div>
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 pb-14 pt-24 sm:px-10 sm:pb-16 sm:pt-28 lg:px-16 lg:pb-20 relative z-10">

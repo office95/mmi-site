@@ -304,23 +304,20 @@ export default async function Home() {
                     </a>
                   </div>
                 </div>
-                <div className="flex flex-col items-center gap-6 lg:items-end">
-                  <div className="rounded-3xl bg-white/10 border border-white/15 px-5 py-5 text-sm sm:text-base text-white/90 text-center backdrop-blur-lg shadow-[0_10px_30px_-20px_rgba(255,31,143,0.5)]">
-                    <p className="font-semibold text-white">GOSH! Studio · Wien</p>
-                    <p>10.04.2026 · 15:00–17:00 Uhr</p>
-                    <p className="text-[#ffb7d6]">Limitierte Plätze – Anmeldung nötig</p>
-                  </div>
-                  <div className="relative h-20 w-52 sm:w-56">
-                    <Image
-                      src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/9274b0b6-6c3b-40c0-91d5-e529523f9734.webp"
-                      alt="GOSH! Studio Logo"
-                      fill
-                      className="object-contain rounded-[18px] bg-white/5 p-2"
-                      sizes="220px"
-                      priority
-                    />
-                  </div>
+                <div className="flex items-center justify-center">
+                  <Image
+                    src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/9274b0b6-6c3b-40c0-91d5-e529523f9734.webp"
+                    alt="GOSH! Studio Logo"
+                    fill
+                    className="object-contain rounded-[18px] bg-white/5 p-2"
+                    sizes="220px"
+                    priority
+                  />
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
               </div>
             </div>
           </div>

@@ -146,6 +146,14 @@ a {
   animation: shine-move 2.8s ease-in-out infinite;
 }
 
+.shine-sweep-banner {
+  animation: banner-shine 4.2s ease-in-out infinite;
+  background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.4) 35%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.4) 65%, transparent 100%);
+  transform: translateX(-120%);
+  mix-blend-mode: screen;
+  opacity: 0.8;
+}
+
 @keyframes shine-move {
   0% {
     transform: translateX(-120%);
@@ -157,6 +165,24 @@ a {
   70% {
     transform: translateX(120%);
     opacity: 0.2;
+  }
+  100% {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
+@keyframes banner-shine {
+  0% {
+    transform: translateX(-120%);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.6;
+  }
+  60% {
+    transform: translateX(120%);
+    opacity: 0.6;
   }
   100% {
     transform: translateX(120%);

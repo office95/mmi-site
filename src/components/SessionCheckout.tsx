@@ -64,11 +64,11 @@ export default function SessionCheckout({
     value ? new Date(value + "T00:00:00Z").toLocaleDateString("de-AT", { weekday: "short", day: "2-digit", month: "short" }) : "Datum folgt";
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between px-1">
-        <div>
-          <p className="text-sm font-semibold text-slate-900">Termin buchen</p>
-          <p className="text-xs text-slate-500">{courseTitle}</p>
+    <div className="space-y-4">
+      <div className="flex items-start justify-between px-1">
+        <div className="space-y-1">
+          <p className="text-xs uppercase tracking-[0.16em] text-slate-500">Termin buchen</p>
+          <p className="text-lg sm:text-xl font-semibold text-slate-900 leading-tight">{courseTitle}</p>
         </div>
       </div>
 

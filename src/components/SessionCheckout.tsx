@@ -91,15 +91,15 @@ export default function SessionCheckout({
               key={s.id}
               className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_14px_40px_-26px_rgba(0,0,0,0.45)] transition hover:-translate-y-1 hover:shadow-xl"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 md:gap-5 p-3 sm:p-4 md:p-5">
+              <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 p-3 sm:p-4 md:p-5">
                 {courseHero && (
-                  <div className="relative w-full sm:w-32 md:w-36 lg:w-40 h-44 sm:h-28 md:h-28 lg:h-28 overflow-hidden rounded-xl bg-slate-100">
+                  <div className="relative w-full h-48 sm:h-40 md:h-48 overflow-hidden rounded-xl bg-slate-100">
                     <Image
                       src={courseHero}
                       alt={courseTitle}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 640px) 100vw, 160px"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 600px"
                       priority={false}
                     />
                   </div>

@@ -2,6 +2,26 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import type { Metadata } from "next";
 
+const statesAT = ["Burgenland", "Kärnten", "Niederösterreich", "Oberösterreich", "Salzburg", "Steiermark", "Tirol", "Vorarlberg", "Wien"];
+const statesDE = [
+  "Baden-Württemberg",
+  "Bayern",
+  "Berlin",
+  "Brandenburg",
+  "Bremen",
+  "Hamburg",
+  "Hessen",
+  "Mecklenburg-Vorpommern",
+  "Niedersachsen",
+  "Nordrhein-Westfalen",
+  "Rheinland-Pfalz",
+  "Saarland",
+  "Sachsen",
+  "Sachsen-Anhalt",
+  "Schleswig-Holstein",
+  "Thüringen",
+];
+
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
@@ -194,43 +214,41 @@ export default function PartnerWerdenPage() {
             </label>
             <label className="space-y-1 text-sm text-slate-700">
               Land *
-              <select name="land" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" required>
-                <option>Österreich</option>
-                <option>Deutschland</option>
+              <select
+                name="land"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30"
+                required
+                onChange={(e) => {
+                  const target = document.getElementById("bundesland") as HTMLSelectElement | null;
+                  if (!target) return;
+                  const country = e.target.value;
+                  const options = country === "DE" ? statesDE : statesAT;
+                  target.innerHTML = `<option value=\"\">Bitte wählen</option>` + options.map((s) => `<option value=\"${s}\">${s}</option>`).join("");
+                }}
+                defaultValue="AT"
+              >
+                <option value="">Bitte wählen</option>
+                <option value="AT">Österreich</option>
+                <option value="DE">Deutschland</option>
               </select>
             </label>
             <label className="space-y-1 text-sm text-slate-700">
               Bundesland *
-              <select name="bundesland" className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30" required>
-                <optgroup label="Österreich">
-                  <option>Burgenland</option>
-                  <option>Kärnten</option>
-                  <option>Niederösterreich</option>
-                  <option>Oberösterreich</option>
-                  <option>Salzburg</option>
-                  <option>Steiermark</option>
-                  <option>Tirol</option>
-                  <option>Vorarlberg</option>
-                  <option>Wien</option>
-                </optgroup>
-                <optgroup label="Deutschland">
-                  <option>Baden-Württemberg</option>
-                  <option>Bayern</option>
-                  <option>Berlin</option>
-                  <option>Brandenburg</option>
-                  <option>Bremen</option>
-                  <option>Hamburg</option>
-                  <option>Hessen</option>
-                  <option>Mecklenburg-Vorpommern</option>
-                  <option>Niedersachsen</option>
-                  <option>Nordrhein-Westfalen</option>
-                  <option>Rheinland-Pfalz</option>
-                  <option>Saarland</option>
-                  <option>Sachsen</option>
-                  <option>Sachsen-Anhalt</option>
-                  <option>Schleswig-Holstein</option>
-                  <option>Thüringen</option>
-                </optgroup>
+              <select
+                id="bundesland"
+                name="bundesland"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-[#ff1f8f] focus:ring-[#ff1f8f]/30"
+                required
+                defaultValue=""
+                onFocus={(e) => {
+                  if (e.currentTarget.options.length <= 1) {
+                    const land = (document.querySelector('select[name="land"]') as HTMLSelectElement | null)?.value || "AT";
+                    const options = land === "DE" ? statesDE : statesAT;
+                    e.currentTarget.innerHTML = `<option value=\"\">Bitte wählen</option>` + options.map((s) => `<option value=\"${s}\">${s}</option>`).join("");
+                  }
+                }}
+              >
+                <option value="">Bitte zuerst Land wählen</option>
               </select>
             </label>
             <label className="space-y-1 text-sm text-slate-700 sm:col-span-2">

@@ -25,13 +25,17 @@ export function AdminHeroManager({ initialSlides }: Props) {
 
   const refreshOrder = async (next: Slide[]) => {
     setSlides(next);
-    await fetch("/api/admin/hero/reorder", {
+    const res = await fetch("/api/admin/hero/reorder", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         order: next.map((s, idx) => ({ id: s.id, position: idx })),
       }),
     });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setError(data?.error || "Reihenfolge konnte nicht gespeichert werden.");
+    }
   };
 
   const move = (id: string, dir: -1 | 1) => {

@@ -11,8 +11,12 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: "invalid payload" }, { status: 400 });
   }
 
-  const updates = order.map((o) => ({ id: o.id, position: o.position }));
-  const { error } = await supabase.from("hero_slides").upsert(updates, { onConflict: "id" });
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ ok: true, count: updates.length });
+  for (const item of order) {
+    const { error } = await supabase.from("hero_slides").update({ position: item.position }).eq("id", item.id);
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+  }
+
+  return NextResponse.json({ ok: true, count: order.length });
 }

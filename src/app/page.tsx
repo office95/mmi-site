@@ -269,40 +269,38 @@ export default async function Home() {
                 <div className="shine-sweep-banner absolute inset-0" />
               </div>
               <div className="grid gap-8 rounded-[39px] bg-white p-8 lg:grid-cols-[1.1fr_0.9fr] xl:p-10">
-              <div className="space-y-5">
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Tag der offenen Tür</p>
-                <h2 className="text-3xl font-semibold leading-tight text-slate-900 sm:text-4xl">
-                  Im GOSH! Studio Wien
-                </h2>
-                <p className="text-base text-slate-600">
-                  Erfahre alles über unsere Intensiv- und Extremkurse, lerne das Studio und die Coaches kennen und spüre,
-                  wie Praxis wirklich funktioniert. Freitag, 10. April 2026, 15:00–17:00 Uhr. Anmeldung erforderlich.
-                </p>
-                <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
-                  <span className="rounded-full border border-pink-500/30 bg-pink-50 px-3 py-1 font-semibold text-pink-600">
-                    Limitierte Plätze
-                  </span>
-                  <span className="rounded-full border border-slate-200 px-3 py-1">Praxis & Coaches</span>
+                <div className="space-y-5">
+                  <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Tag der offenen Tür</p>
+                  <h2 className="text-3xl font-semibold leading-tight text-slate-900 sm:text-4xl">Im GOSH! Studio Wien</h2>
+                  <p className="text-base text-slate-600">
+                    Erfahre alles über unsere Intensiv- und Extremkurse, lerne das Studio und die Coaches kennen und spüre,
+                    wie Praxis wirklich funktioniert. Freitag, 10. April 2026, 15:00–17:00 Uhr. Anmeldung erforderlich.
+                  </p>
+                  <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
+                    <span className="rounded-full border border-pink-500/30 bg-pink-50 px-3 py-1 font-semibold text-pink-600">
+                      Limitierte Plätze
+                    </span>
+                    <span className="rounded-full border border-slate-200 px-3 py-1">Praxis & Coaches</span>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    <Link
+                      href="/tag-der-offenen-tuer"
+                      className="inline-flex items-center gap-2 rounded-full bg-[#ff1f8f] px-5 py-3 text-sm font-semibold text-white shadow-xl shadow-[#ff1f8f]/40 transition hover:bg-[#e0007a]"
+                    >
+                      Jetzt Platz sichern
+                      <span aria-hidden="true">→</span>
+                    </Link>
+                    <a
+                      href="https://www.google.com/maps/search/?api=1&query=gosh+studio+wien"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-500"
+                    >
+                      Adresse zeigen
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-3">
-                  <Link
-                    href="/tag-der-offenen-tuer"
-                    className="inline-flex items-center gap-2 rounded-full bg-[#ff1f8f] px-5 py-3 text-sm font-semibold text-white shadow-xl shadow-[#ff1f8f]/40 transition hover:bg-[#e0007a]"
-                  >
-                    Jetzt Platz sichern
-                    <span aria-hidden="true">→</span>
-                  </Link>
-                  <a
-                    href="https://www.google.com/maps/search/?api=1&query=gosh+studio+wien"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-500"
-                  >
-                    Adresse zeigen
-                    <span aria-hidden="true">↗</span>
-                  </a>
-                </div>
-              </div>
                 <div className="relative overflow-hidden rounded-[30px] border border-slate-200 bg-slate-900 text-white">
                   <Image
                     src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/0f9b4fc0-f88a-454a-a260-503455c41e7c.webp"
@@ -339,6 +337,7 @@ export default async function Home() {
                     <p className="text-sm text-white/70">Praxis & Coaches</p>
                   </div>
                 </div>
+              </div>
             </div>
           </div>
         </section>

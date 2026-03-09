@@ -34,13 +34,13 @@ export default function TagDerOffenenTuerPage() {
 
         <section className="px-6 pb-24 pt-16 lg:px-12" id="anmeldung">
           <div className="mx-auto max-w-3xl space-y-8 rounded-[40px] border border-slate-200/80 bg-white px-8 py-12 shadow-[0_30px_70px_-30px_rgba(15,23,42,0.8)]">
-            <div className="space-y-3 text-center">
-              <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Bereit?</p>
-              <h2 className="text-3xl font-semibold text-slate-900">Jetzt anmelden</h2>
-              <p className="text-base text-slate-600">
-                Sag uns, wer du bist und welche Kurse dich interessieren. Wir schicken dir alle Infos zu Ablauf, Anzahlung und Restzahlung.
-              </p>
-            </div>
+              <div className="space-y-3 text-center">
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Bereit?</p>
+                <h2 className="text-3xl font-semibold text-slate-900">Jetzt anmelden</h2>
+                <p className="text-base text-slate-600">
+                  Melde dich jetzt kostenlos zum Tag der offenen Tür des Music Mission Instituts im GOSH! Studio Wien an.
+                </p>
+              </div>
             <form
               action="mailto:office@musicmission.at?subject=Anmeldung%20Tag%20der%20offenen%20T%C3%BCr%20Wien&body=Name%3A%0AZusatz%3A%0AE-Mail%3A%0ATelefon%3A%0AKurs%20Interesse%3A"
               method="post"

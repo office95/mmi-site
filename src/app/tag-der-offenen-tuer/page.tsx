@@ -92,40 +92,6 @@ export default function TagDerOffenenTuerPage() {
           </div>
         </section>
 
-        <section className="px-6 lg:px-12">
-          <div className="mx-auto flex max-w-6xl flex-col gap-10 lg:flex-row lg:items-start">
-            <div className="space-y-6 lg:w-2/3">
-              <h2 className="text-3xl font-semibold text-slate-900">Live & direkt im Studio</h2>
-              <p className="text-lg text-slate-600">
-                Wir zeigen dir, warum ein Kurs vor Ort mehr bringt als unzählige Tutorials – echte Coaches, echtes Gear und
-                Feedback, das dich weiterbringt.
-              </p>
-              <div className="grid gap-5 sm:grid-cols-2">
-                {highlights.map((item) => (
-                  <div key={item.title} className="rounded-3xl border border-slate-200/80 bg-white/80 p-5 shadow-[0_25px_60px_-40px_rgba(0,0,0,0.7)]">
-                    <h3 className="text-lg font-semibold text-slate-900">{item.title}</h3>
-                    <p className="mt-2 text-sm text-slate-600">{item.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="lg:w-1/3">
-              <div className="rounded-[32px] border border-pink-400/30 bg-gradient-to-b from-white to-white/70 p-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-pink-600">Programm</p>
-                <div className="mt-4 space-y-4">
-                  {program.map((item) => (
-                    <div key={item.time} className="rounded-2xl border border-slate-200/80 bg-white/60 p-4 shadow-[0_15px_35px_-30px_rgba(0,0,0,0.6)]">
-                      <p className="text-[0.7rem] uppercase tracking-[0.25em] text-slate-500">{item.time}</p>
-                      <p className="mt-1 text-base font-semibold text-slate-900">{item.title}</p>
-                      <p className="text-sm text-slate-600">{item.detail}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section id="anmeldung" className="px-6 pb-24 pt-16 lg:px-12">
           <div className="mx-auto max-w-3xl space-y-10 rounded-[40px] border border-slate-200/80 bg-slate-50 px-8 py-12 shadow-[0_25px_50px_-30px_rgba(15,23,42,0.8)]">
             <div className="space-y-2 text-center">

@@ -5,8 +5,8 @@ export const dynamic = "force-dynamic";
 
 const ALLOWED: string[] = ["scheduled", "paused", "published", "needs_approval", "generated", "eligible"];
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const supabase = getSupabaseServiceClient();
   const body = await req.json();
   const status = body?.status as string | undefined;

@@ -5,6 +5,7 @@ import useSWR from "swr";
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { CampaignPlanItem, GeneratedContent, MarketingStatus, Platform } from "@/lib/marketing/types";
+import Image from "next/image";
 
 const fetcher = async (url: string) => {
   const res = await fetch(url, { cache: "no-store" });
@@ -38,6 +39,7 @@ type Row = {
   courseId: string;
   courseTitle: string;
   courseSlug: string;
+  image?: string | null;
   status: MarketingStatus;
   persistedStatus?: MarketingStatus | null;
   eligibility: { eligible: boolean; missing: string[] };
@@ -216,10 +218,24 @@ export default function MarketingPage() {
           <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4" onClick={() => setSelected(null)}>
             <div className="max-w-4xl w-full rounded-2xl bg-white shadow-2xl p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Kampagne</p>
-                  <h3 className="text-xl font-semibold text-slate-900">{selected.courseTitle}</h3>
-                  {selected.session?.start_date && <p className="text-sm text-slate-600">Start: {selected.session.start_date}</p>}
+                <div className="flex gap-4">
+                  {selected.image && (
+                    <div className="relative h-20 w-32 overflow-hidden rounded-lg border border-slate-200 bg-slate-100">
+                      <Image src={selected.image} alt={selected.courseTitle} fill className="object-cover" sizes="200px" />
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Kampagne</p>
+                    <h3 className="text-xl font-semibold text-slate-900">{selected.courseTitle}</h3>
+                    {selected.session?.start_date && (
+                      <p className="text-sm text-slate-600">
+                        Start: {selected.session.start_date}
+                        {selected.session.start_time ? ` · ${selected.session.start_time.slice(0, 5)} Uhr` : ""}
+                        {selected.session.city ? ` · ${selected.session.city}` : selected.session.state ? ` · ${selected.session.state}` : ""}
+                      </p>
+                    )}
+                    {selected.partner?.name && <p className="text-xs text-slate-500">Partner: {selected.partner.name}</p>}
+                  </div>
                 </div>
                 <button className="text-slate-400 hover:text-slate-600" onClick={() => setSelected(null)}>
                   ×

@@ -155,6 +155,7 @@ export async function GET(req: NextRequest) {
       courseId: course.id,
       courseTitle: course.title,
       courseSlug: course.slug,
+      image: course.hero_image_url ?? null,
       status,
       persistedStatus: persistedStatus ?? null,
       eligibility,

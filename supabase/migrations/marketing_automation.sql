@@ -18,6 +18,10 @@ create table if not exists public.marketing_campaigns (
   updated_at timestamptz not null default now()
 );
 
+-- Helpful indexes
+create index if not exists marketing_campaigns_course_idx on public.marketing_campaigns (course_id);
+create index if not exists marketing_campaigns_status_sched_idx on public.marketing_campaigns (status, scheduled_at);
+
 create table if not exists public.marketing_runs (
   id uuid primary key default gen_random_uuid(),
   ran_at timestamptz not null default now(),
@@ -34,4 +38,3 @@ create policy marketing_campaigns_service_role on public.marketing_campaigns
 
 create policy marketing_runs_service_role on public.marketing_runs
   for all using (true) with check (true);
-

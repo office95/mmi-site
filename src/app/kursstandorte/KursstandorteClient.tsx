@@ -111,20 +111,21 @@ export default function KursstandorteClient() {
     const load = async () => {
       setLoading(true);
       try {
-    const [pRes, sRes, cRes, catRes, tRes, fRes] = await Promise.all([
-      fetch("/api/admin/partners"),
-      fetch("/api/admin/sessions"),
-      fetch("/api/admin/courses"),
-      fetch("/api/admin/course-categories"),
-      fetch("/api/admin/course-types"),
-      fetch("/api/admin/course-formats"),
-    ]);
-    if (pRes.ok) setPartners((await pRes.json()).data ?? []);
-    if (sRes.ok) setSessions((await sRes.json()).data ?? []);
-    if (cRes.ok) setCourses((await cRes.json()).data ?? []);
-    if (catRes.ok) setCategories(((await catRes.json()).data ?? []).map((c: any) => ({ value: c.id, label: c.name, parent: c.parent_id })));
-    if (tRes.ok) setTypes(((await tRes.json()).data ?? []).map((t: any) => ({ value: t.id, label: t.name })));
-    if (fRes.ok) setFormats(((await fRes.json()).data ?? []).map((f: any) => ({ value: f.id, label: f.name })));
+        const [pRes, sRes, cRes, catRes, tRes, fRes] = await Promise.all([
+          fetch("/api/admin/partners"),
+          fetch("/api/admin/sessions"),
+          fetch("/api/admin/courses"),
+          fetch("/api/admin/course-categories"),
+          fetch("/api/admin/course-types"),
+          fetch("/api/admin/course-formats"),
+        ]);
+        if (pRes.ok) setPartners((await pRes.json()).data ?? []);
+        if (sRes.ok) setSessions((await sRes.json()).data ?? []);
+        if (cRes.ok) setCourses((await cRes.json()).data ?? []);
+        if (catRes.ok)
+          setCategories(((await catRes.json()).data ?? []).map((c: any) => ({ value: c.id, label: c.name, parent: c.parent_id })));
+        if (tRes.ok) setTypes(((await tRes.json()).data ?? []).map((t: any) => ({ value: t.id, label: t.name })));
+        if (fRes.ok) setFormats(((await fRes.json()).data ?? []).map((f: any) => ({ value: f.id, label: f.name })));
       } finally {
         setLoading(false);
       }
@@ -145,10 +146,9 @@ export default function KursstandorteClient() {
 
   const filtered = useMemo(() => {
     return partners.filter((p) => {
-      // nur Partner mit verfügbaren Kursen/Sessions
       const hasSessions = (partnerCourseIds.get(p.id) ?? new Set()).size > 0;
       if (!hasSessions) return false;
-      // nach Domain filtern: bevorzugt Bundesland, sonst Land
+
       const stateLc = (p.state || "").toLowerCase();
       const countryLc = (p.country || "").toLowerCase();
       if (allowedStates.length && stateLc) {
@@ -182,13 +182,16 @@ export default function KursstandorteClient() {
           subtitle={`Finde Studios und Partner in ${regionLabel} für Musikproduktion, Tontechnik, Live-Sound, DJing und Vocalcoaching.`}
           image="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/f5ca6ab3-c2a6-4fa2-8bea-474f1cbd445b.webp"
           overlayStrength="strong"
-          heightClass="h-[55vh] min-h-[55vh] sm:h-[55vh] sm:min-h-[55vh] md:h-[55vh] lg:h-[55vh] -mt-[5.5rem] sm:-mt-[5.5rem]"
+          heightClass="h-[60vh] sm:h-[60vh] lg:h-[60vh] min-h-[55vh] -mt-[5.5rem] sm:-mt-[5.5rem]"
           align="center"
         />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent via-black/10 to-[#f4f5f7]" />
-        <div className="absolute inset-x-0 bottom-[-6vh] sm:bottom-[-7vh] md:bottom-[-8vh] lg:bottom-[-9vh] flex justify-center px-6">
-          <div className="w-full max-w-6xl">
-            <div className="rounded-3xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 px-4 py-5 sm:px-6 sm:py-7">
+      </div>
+
+      <section className="w-full bg-[#f4f5f7] -mt-10 sm:-mt-12 pb-6">
+        <div className="mx-auto max-w-6xl px-6 pb-12 sm:pb-14 space-y-6 pt-4 sm:pt-6">
+          <div className="-mt-6 sm:-mt-8">
+            <div className="rounded-3xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 px-4 py-5 sm:px-6 sm:py-7 -translate-y-4 sm:-translate-y-6">
               <div className="grid w-full max-w-5xl gap-3 sm:grid-cols-3 mx-auto">
                 <div className="sm:col-span-3">
                   <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
@@ -293,11 +296,7 @@ export default function KursstandorteClient() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <section className="bg-[#f4f5f7] pt-[10vh] sm:pt-[11vh] md:pt-[12vh] pb-12">
-        <main className="mx-auto max-w-6xl px-6 space-y-8">
           {loading ? (
             <p className="text-slate-500">Lade Standorte…</p>
           ) : filtered.length === 0 ? (
@@ -340,7 +339,7 @@ export default function KursstandorteClient() {
               ))}
             </div>
           )}
-        </main>
+        </div>
       </section>
 
       <ConsultBanner />

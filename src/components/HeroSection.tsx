@@ -25,7 +25,7 @@ export default function HeroSection({
   subtitle,
   image,
   overlayStrength = "strong",
-  align = "left",
+  align = "center",
   heightClass = "h-[50vh] sm:h-[55vh] lg:h-[60vh] min-h-[420px]",
   children,
 }: HeroSectionProps) {

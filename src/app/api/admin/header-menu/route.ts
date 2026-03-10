@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 const SLOT_INTENSIV = "00000000-0000-0000-0000-000000000102";
 const SLOT_EXTREM = "00000000-0000-0000-0000-000000000103";
 const SLOT_LABELS: Record<string, string> = {
-  [SLOT_INTENSIV]: "Intensiv-Ausbildungen",
+  [SLOT_INTENSIV]: "Intensivausbildungen",
   [SLOT_EXTREM]: "Extremkurse",
 };
 

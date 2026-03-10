@@ -15,8 +15,8 @@ const SITE_AT = process.env.NEXT_PUBLIC_DOMAIN_AT || process.env.NEXT_PUBLIC_SIT
 const SITE_DE = process.env.NEXT_PUBLIC_DOMAIN_DE || "https://musicmission.de";
 
 export const metadata: Metadata = {
-  title: "Intensiv-Ausbildungen | Music Mission Institute",
-  description: "Berufsbegleitende Intensiv-Ausbildungen in Musikproduktion, Tontechnik und Live-Sound in Österreich & Deutschland.",
+  title: "Intensivausbildungen | Music Mission Institute",
+  description: "Berufsbegleitende Intensivausbildungen in Musikproduktion, Tontechnik und Live-Sound in Österreich & Deutschland.",
   alternates: {
     canonical: "/intensiv",
     languages: {
@@ -26,14 +26,14 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Intensiv-Ausbildungen | Music Mission Institute",
-    description: "Tiefgehende Intensiv-Ausbildungen in Musikproduktion & Tontechnik – berufsbegleitend in AT & DE.",
+    title: "Intensivausbildungen | Music Mission Institute",
+    description: "Tiefgehende Intensivausbildungen in Musikproduktion & Tontechnik – berufsbegleitend in AT & DE.",
     url: "/intensiv",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Intensiv-Ausbildungen | Music Mission Institute",
+    title: "Intensivausbildungen | Music Mission Institute",
     description: "Berufsbegleitende Intensivprogramme für Musikproduktion & Live-Sound in DACH.",
   },
 };
@@ -90,7 +90,7 @@ export default async function IntensivPage() {
         <div className="absolute inset-0 flex items-center justify-center px-6 lg:px-16 text-center">
           <div className="max-w-4xl space-y-4 drop-shadow-[0_12px_40px_rgba(0,0,0,0.45)]">
             <p className="text-sm uppercase tracking-[0.24em] text-white/80">Kurstyp</p>
-            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">Intensiv-Ausbildungen Musikproduktion & Tontechnik</h1>
+            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">Intensivausbildungen Musikproduktion & Tontechnik</h1>
             <p className="max-w-2xl mx-auto text-base sm:text-lg text-white/90">
               Für alle, die mehr wollen. Ohne Kompromisse.
             </p>
@@ -112,10 +112,10 @@ export default async function IntensivPage() {
           <div className="grid gap-8 lg:gap-12 lg:grid-cols-[1.1fr_0.9fr] items-start">
             <Reveal>
               <div className="space-y-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-pink-600">Intensiv-Ausbildungen</p>
+                <p className="text-xs uppercase tracking-[0.18em] text-pink-600">Intensivausbildungen</p>
                 <h2 className="font-anton text-3xl sm:text-4xl text-slate-900 leading-tight">Tiefgehend. Strukturiert. Professionell.</h2>
                 <p className="text-slate-600 text-base leading-relaxed">
-                  Unsere Intensiv-Ausbildungen sind umfassende Lernformate mit einer Gesamtdauer von bis zu einem Semester. Sie finden berufsbegleitend statt – in der Regel abends, in kompakten Einheiten von jeweils vier Stunden.
+                  Unsere Intensivausbildungen sind umfassende Lernformate mit einer Gesamtdauer von bis zu einem Semester. Sie finden berufsbegleitend statt – in der Regel abends, in kompakten Einheiten von jeweils vier Stunden.
                 </p>
                 <p className="text-slate-600 text-base leading-relaxed">
                   Dieses Ausbildungsformat ermöglicht dir eine strukturierte und nachhaltige Vertiefung deines Fachwissens. Du erhältst maximales Know-how, kombiniert mit praxisnahen Übungen und realen Projekten. So lernst du effizient, zielgerichtet und mit direktem Anwendungsbezug.

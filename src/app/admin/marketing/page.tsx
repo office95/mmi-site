@@ -41,7 +41,7 @@ type Row = {
   status: MarketingStatus;
   persistedStatus?: MarketingStatus | null;
   eligibility: { eligible: boolean; missing: string[] };
-  session?: { start_date?: string | null; start_time?: string | null; city?: string | null; state?: string | null } | null;
+  session?: { id?: string | null; start_date?: string | null; start_time?: string | null; city?: string | null; state?: string | null } | null;
   partner?: { name?: string | null; city?: string | null; state?: string | null } | null;
   plan: CampaignPlanItem[];
   template?: string | null;
@@ -186,7 +186,7 @@ export default function MarketingPage() {
                       Vorschau
                     </button>
                     <Link
-                      href={`/kurs/${row.courseSlug}${row.session ? `?booking=${row.session.id}` : ""}`}
+                      href={`/kurs/${row.courseSlug}${row.session?.id ? `?booking=${row.session.id}` : ""}`}
                       className="rounded-full bg-slate-900 px-3 py-1 font-semibold text-white hover:-translate-y-0.5 transition"
                     >
                       Anmeldeseite

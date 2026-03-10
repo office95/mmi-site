@@ -22,7 +22,7 @@ const cards: FlyCardProps[] = [
     href: "/extremkurs",
   },
   {
-    title: "Intensivkurse",
+    title: "Intensivausbildungen",
     subtitle: "",
     text: "Ideal, wenn du ein Diploma oder ein Studium anstreben willst.",
     image: "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/3e6eb2cb-ad29-4c6f-a4b5-973b9d56f70e.webp",

@@ -14,9 +14,10 @@ export type SessionBadgeContext = {
   seatsTaken?: number | null;
 };
 
+type SeatOp = "<=" | "<" | ">=" | ">";
 type ParsedRule =
   | { kind: "type"; value: string }
-  | { kind: "seats"; op: "<=" | "<" | ">=" | ">"; value: number }
+  | { kind: "seats"; op: SeatOp; value: number }
   | { kind: "age"; days: number };
 
 const normalize = (val?: string | null) => (val ? val.trim().toLowerCase() : "");
@@ -35,7 +36,7 @@ export function parseAutoRule(autoType?: string | null): ParsedRule | null {
   if (raw.startsWith("seats:")) {
     const match = raw.match(/^seats:\s*(<=|>=|<|>)?\s*(\d+)/);
     if (!match) return null;
-    const op = (match[1] as ParsedRule["op"]) || "<=";
+    const op: SeatOp = (match[1] as SeatOp) || "<=";
     const value = Number(match[2]);
     if (Number.isNaN(value)) return null;
     return { kind: "seats", op, value };

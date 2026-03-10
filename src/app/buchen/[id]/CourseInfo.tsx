@@ -6,11 +6,11 @@ export async function CourseInfo({ id, kurs }: { id: string; kurs?: string | nul
 
   const { data: session } = await supabase
     .from("sessions")
-    .select("id,start_date,start_time,city,state,price_cents,partner:partners(name,city,state),course:courses(id,title,slug,hero_image_url)")
+    .select("id,start_date,start_time,city,state,price_cents,partner:partners(name,city,state),course:courses!inner(id,title,slug,hero_image_url)")
     .eq("id", id)
     .maybeSingle();
 
-  const courseSlug = kurs || session?.course?.slug || session?.course?.id || "";
+  const courseSlug = kurs || (session as any)?.course?.slug || (session as any)?.course?.id || "";
 
   if (!session) return null;
 

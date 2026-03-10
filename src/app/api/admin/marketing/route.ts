@@ -93,8 +93,8 @@ export async function GET(req: NextRequest) {
             max_participants: chosenSession.max_participants,
           }
         : null,
-      bookingUrl: course.slug
-        ? `${process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at"}/kurs/${course.slug}${chosenSession ? `?booking=${chosenSession.id}` : ""}`
+      bookingUrl: chosenSession
+        ? `${process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at"}/buchen/${chosenSession.id}${course.slug ? `?kurs=${course.slug}` : ""}`
         : undefined,
       organizerBranding: partner
         ? {

@@ -203,7 +203,7 @@ export default function MarketingPage() {
                       Vorschau
                     </button>
                     <Link
-                      href={`/kurs/${row.courseSlug}${row.session?.id ? `?booking=${row.session.id}` : ""}`}
+                      href={row.session?.id ? `/buchen/${row.session.id}${row.courseSlug ? `?kurs=${row.courseSlug}` : ""}` : `/kurs/${row.courseSlug}`}
                       className="rounded-full bg-slate-900 px-3 py-1 font-semibold text-white hover:-translate-y-0.5 transition"
                     >
                       Anmeldeseite

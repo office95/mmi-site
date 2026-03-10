@@ -1,6 +1,8 @@
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import { SiteHeader } from "@/components/SiteHeader";
 import BookingFlow from "@/components/BookingFlow";
+import { Suspense } from "react";
+import { CourseInfo, CourseInfoFallback } from "../[id]/CourseInfo";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -111,6 +113,10 @@ export default async function BookingPage({
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white text-slate-900">
       <SiteHeader />
       <main className="px-6 py-12 sm:px-10 lg:px-20">
+        <Suspense fallback={<CourseInfoFallback />}>
+          {/* @ts-expect-error Server Component */}
+          <CourseInfo id={session.id} kurs={course.slug} />
+        </Suspense>
         <div className="mx-auto max-w-4xl mb-8 grid gap-4 lg:grid-cols-5">
           <div className="lg:col-span-3 rounded-3xl border border-slate-200 bg-white shadow-lg shadow-slate-200/60 p-5 sm:p-6 space-y-4">
             <div className="inline-flex items-center rounded-full border border-slate-200 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600">

@@ -279,12 +279,6 @@ export default async function Home() {
                     Meet-the-Coaches und Live-Praxis-Setup. Freitag, 10. April 2026, 15:00–17:00 Uhr. Teilnahme nur mit
                     Anmeldung – die Plätze sind limitiert.
                   </p>
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
-                    <span className="rounded-full border border-pink-500/30 bg-pink-50 px-3 py-1 font-semibold text-pink-600">
-                      Limitierte Plätze
-                    </span>
-                    <span className="rounded-full border border-slate-200 px-3 py-1">Lerne uns kennen</span>
-                  </div>
                   <div className="flex flex-wrap gap-3">
                     <Link
                       href="/tag-der-offenen-tuer"

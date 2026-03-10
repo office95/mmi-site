@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import ConsultBanner from "@/components/ConsultBanner";
+import HeroSection from "@/components/HeroSection";
 
 type Partner = {
   id: string;
@@ -173,38 +173,25 @@ export default function KursstandorteClient() {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
-      <section className="relative h-[50vh] w-full overflow-hidden bg-black text-white">
-        <Image
-          src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/f5ca6ab3-c2a6-4fa2-8bea-474f1cbd445b.webp"
-          alt="Kursstandorte"
-          fill
-          className="object-cover"
-          priority
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/40 to-black/15" />
-        <div className="absolute left-6 sm:left-12 top-[10%] text-left space-y-2 max-w-2xl">
-          <p className="text-sm uppercase tracking-[0.22em] text-white/70">Kursstandorte</p>
-          <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl text-white leading-[1.2] drop-shadow-lg">
-            Unsere Kursstandorte in {regionLabel}
-          </h1>
-          <p className="text-white/85 text-base">
-            Finde Studios und Partner in {regionLabel} für Musikproduktion, Tontechnik, Live-Sound, DJing und Vocalcoaching.
-          </p>
-        </div>
-        {/* Hero-Suchfeld */}
-        <div className="absolute left-1/2 -translate-x-1/2 bottom-[3vh] w-[92vw] max-w-xl space-y-2 text-center text-white drop-shadow-sm">
-          <p className="text-sm font-semibold text-white/90">Suche nach Standort, Partner oder Kurs</p>
-          <div className="flex items-center gap-3">
+      <HeroSection
+        eyebrow="Kursstandorte"
+        title={`Unsere Kursstandorte in ${regionLabel}`}
+        subtitle={`Finde Studios und Partner in ${regionLabel} für Musikproduktion, Tontechnik, Live-Sound, DJing und Vocalcoaching.`}
+        image="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/f5ca6ab3-c2a6-4fa2-8bea-474f1cbd445b.webp"
+        overlayStrength="strong"
+      >
+        <div className="w-full max-w-xl">
+          <p className="text-sm font-semibold text-white/90 text-left sm:text-center">Suche nach Standort, Partner oder Kurs</p>
+          <div className="flex items-center gap-3 mt-2">
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Bundesland, Partner, Kurs, Tag"
-              className="flex-1 rounded-xl border border-white/50 bg-white/85 backdrop-blur px-3 py-2 text-sm text-slate-900 shadow-sm"
+              className="flex-1 rounded-xl border border-white/50 bg-white/90 backdrop-blur px-3 py-2 text-sm text-slate-900 shadow-sm"
             />
           </div>
         </div>
-      </section>
+      </HeroSection>
 
       <main className="mx-auto max-w-6xl px-6 py-10 sm:py-14 space-y-8">
         <div className="space-y-3">

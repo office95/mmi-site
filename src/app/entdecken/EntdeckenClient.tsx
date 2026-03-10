@@ -6,6 +6,7 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import ConsultBanner from "@/components/ConsultBanner";
 import { CountdownBadge } from "@/components/CountdownBadge";
+import HeroSection from "@/components/HeroSection";
 
 type SessionCard = {
   id: string;
@@ -221,32 +222,23 @@ export default function EntdeckenClient() {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
-      <section className="relative h-[40vh] sm:h-[50vh] lg:h-[60vh] w-full overflow-hidden text-white">
-        <Image
-          src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/b4f50227-9cbd-44d9-8947-2afdf30e801d.webp"
-          alt="Entdecken"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-[#ff1f8f]/35 to-transparent" />
-        <div className="absolute inset-0 flex items-center justify-center px-6 pb-0">
-          <div className="text-center text-white space-y-4 max-w-4xl">
-            <p className="text-sm uppercase tracking-[0.2em] text-white/70">Entdecken</p>
-            <h1 className="font-anton text-4xl sm:text-5xl leading-tight drop-shadow-[0_8px_30px_rgba(0,0,0,0.35)]">Alle Kurstermine in {regionText}</h1>
-            <h2 className="text-lg sm:text-xl font-semibold text-white/90">Entdecke unser Angebot an innovativen Kursangeboten</h2>
-            <div className="w-full max-w-xl mx-auto mt-4">
-              <input
-                value={qSearch}
-                onChange={(e) => setQSearch(e.target.value)}
-                placeholder="Kurs, Partner, Bundesland, Tag"
-                className="w-full rounded-2xl border border-white/30 bg-white/90 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
-              />
-            </div>
-          </div>
+      <HeroSection
+        eyebrow="Entdecken"
+        title={`Alle Kurstermine in ${regionText}`}
+        subtitle="Entdecke unser Angebot an innovativen Kursen."
+        image="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/b4f50227-9cbd-44d9-8947-2afdf30e801d.webp"
+        align="center"
+        overlayStrength="strong"
+      >
+        <div className="w-full max-w-xl">
+          <input
+            value={qSearch}
+            onChange={(e) => setQSearch(e.target.value)}
+            placeholder="Kurs, Partner, Bundesland, Tag"
+            className="w-full rounded-2xl border border-white/30 bg-white/90 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
+          />
         </div>
-      </section>
+      </HeroSection>
 
       <section className="w-full bg-neutral-100">
         <div className="mx-auto max-w-6xl px-6 pb-16 space-y-6 pt-6 sm:pt-8">

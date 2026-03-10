@@ -168,13 +168,13 @@ export default function MarketingPage() {
                   </div>
                   <div className="text-sm text-slate-700 space-y-1">
                     {(row.sessions && row.sessions.length > 0 ? row.sessions : row.session ? [row.session] : []).slice(0, 3).map((s, idx) => (
-                      <div key={`${row.courseId}-${s?.id ?? idx}`} className="border border-slate-100 rounded-lg px-2 py-1 bg-white">
+                      <div key={`${row.courseId}-${(s as any)?.id ?? idx}`} className="border border-slate-100 rounded-lg px-2 py-1 bg-white">
                         <div className="font-semibold">
                           {s?.start_date ?? "Termin folgt"}{s?.start_time ? ` · ${s.start_time.slice(0, 5)} Uhr` : ""}
                         </div>
                         <div className="text-xs text-slate-500">
-                          {s?.city || s?.state || s?.partner?.city || s?.partner?.state || "Ort folgt"}
-                          {s?.partner?.name ? ` · ${s.partner.name}` : ""}
+                          {(s as any)?.city || (s as any)?.state || (s as any)?.partner?.city || (s as any)?.partner?.state || "Ort folgt"}
+                          {(s as any)?.partner?.name ? ` · ${(s as any).partner.name}` : ""}
                         </div>
                       </div>
                     ))}

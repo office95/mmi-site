@@ -185,7 +185,7 @@ export function SiteHeader() {
                 isActive("/intensiv") ? "underline underline-offset-4" : ""
               }`}
             >
-              Intensiv-Ausbildungen <ChevronDown size={14} />
+              Intensivausbildungen <ChevronDown size={14} />
             </button>
             {activeMenu === "intensiv" && (
               <div
@@ -290,7 +290,7 @@ export function SiteHeader() {
                     className="flex w-full items-center justify-between px-3 py-2 text-left font-semibold"
                     onClick={() => setMobileIntensivOpen((v) => !v)}
                   >
-                    <span>Intensiv-Ausbildungen</span>
+                    <span>Intensivausbildungen</span>
                     <ChevronDown size={16} className={`transition ${mobileIntensivOpen ? "rotate-180" : ""}`} />
                   </button>
                   {mobileIntensivOpen && (
@@ -311,7 +311,7 @@ export function SiteHeader() {
                           className="block rounded-lg px-2 py-2 font-semibold text-pink-600 hover:bg-pink-50"
                           onClick={() => setMobileOpen(false)}
                         >
-                          Alle Intensiv-Ausbildungen
+                          Alle Intensivausbildungen
                         </Link>
                       </div>
                     </div>

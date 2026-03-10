@@ -65,9 +65,11 @@ export async function GET(req: NextRequest) {
 
   const payload = await Promise.all(
     (courses ?? []).map(async (course: any) => {
-    const firstSession = (course.sessions ?? []).find((s: any) => s.start_date) as any;
-    const partner = firstSession?.partner_id ? partnerMap.get(firstSession.partner_id) || null : null;
-    const seatsLeft = firstSession?.max_participants ? (firstSession.max_participants ?? 0) - (firstSession.seats_taken ?? 0) : null;
+      const sessions = (course.sessions ?? []).filter((s: any) => s.start_date) as any[];
+      const sortedSessions = sessions.sort((a, b) => (a.start_date > b.start_date ? 1 : -1));
+      const chosenSession = sortedSessions[0] ?? null;
+      const partner = chosenSession?.partner_id ? partnerMap.get(chosenSession.partner_id) || null : null;
+      const seatsLeft = chosenSession?.max_participants ? (chosenSession.max_participants ?? 0) - (chosenSession.seats_taken ?? 0) : null;
     const input: CourseMarketingInput = {
       courseId: course.id,
       courseSlug: course.slug,
@@ -79,19 +81,21 @@ export async function GET(req: NextRequest) {
       createdAt: course.created_at,
       typeName: course.type_id ? typeMap.get(course.type_id) : null,
       partner: partner ? { id: partner.id, name: partner.name, city: partner.city, state: partner.state } : null,
-      session: firstSession
+      session: chosenSession
         ? {
-            id: firstSession.id,
-            start_date: firstSession.start_date,
-            start_time: firstSession.start_time,
-            city: firstSession.city,
-            state: firstSession.state,
-            price_cents: firstSession.price_cents,
-            seats_taken: firstSession.seats_taken,
-            max_participants: firstSession.max_participants,
+            id: chosenSession.id,
+            start_date: chosenSession.start_date,
+            start_time: chosenSession.start_time,
+            city: chosenSession.city,
+            state: chosenSession.state,
+            price_cents: chosenSession.price_cents,
+            seats_taken: chosenSession.seats_taken,
+            max_participants: chosenSession.max_participants,
           }
         : null,
-      bookingUrl: course.slug ? `${process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at"}/kurs/${course.slug}${firstSession ? `?booking=${firstSession.id}` : ""}` : undefined,
+      bookingUrl: course.slug
+        ? `${process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at"}/kurs/${course.slug}${chosenSession ? `?booking=${chosenSession.id}` : ""}`
+        : undefined,
       organizerBranding: partner
         ? {
             logo: partner.logo_path,
@@ -131,7 +135,7 @@ export async function GET(req: NextRequest) {
         {
           id: campaignId ?? undefined,
           course_id: course.id,
-          session_id: firstSession?.id ?? null,
+          session_id: chosenSession?.id ?? null,
           partner_id: partner?.id ?? null,
           status,
           template,
@@ -155,6 +159,14 @@ export async function GET(req: NextRequest) {
       persistedStatus: persistedStatus ?? null,
       eligibility,
       session: input.session,
+      sessions: sortedSessions.map((s) => ({
+        id: s.id,
+        start_date: s.start_date,
+        start_time: s.start_time,
+        city: s.city,
+        state: s.state,
+        partner: s.partner_id ? partnerMap.get(s.partner_id) || null : null,
+      })),
       partner,
       branding: input.organizerBranding,
       plan,

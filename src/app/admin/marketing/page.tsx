@@ -42,6 +42,14 @@ type Row = {
   persistedStatus?: MarketingStatus | null;
   eligibility: { eligible: boolean; missing: string[] };
   session?: { id?: string | null; start_date?: string | null; start_time?: string | null; city?: string | null; state?: string | null } | null;
+  sessions?: {
+    id?: string | null;
+    start_date?: string | null;
+    start_time?: string | null;
+    city?: string | null;
+    state?: string | null;
+    partner?: { name?: string | null; city?: string | null; state?: string | null } | null;
+  }[];
   partner?: { name?: string | null; city?: string | null; state?: string | null } | null;
   plan: CampaignPlanItem[];
   template?: string | null;
@@ -133,9 +141,9 @@ export default function MarketingPage() {
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-          <div className="grid grid-cols-[2fr_1fr_1fr_1fr_120px] items-center bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+          <div className="grid grid-cols-[2fr_1.4fr_1fr_1fr_120px] items-center bg-slate-50 px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
             <div>Kurs</div>
-            <div>Termin</div>
+            <div>Termine</div>
             <div>Partner</div>
             <div>Status</div>
             <div className="text-right">Aktionen</div>
@@ -148,7 +156,7 @@ export default function MarketingPage() {
               const missing = row.eligibility.missing;
               const upcoming = row.plan[0];
               return (
-                <div key={row.courseId} className="px-4 py-3 grid grid-cols-[2fr_1fr_1fr_1fr_120px] items-start gap-3 hover:bg-slate-50">
+                <div key={row.courseId} className="px-4 py-3 grid grid-cols-[2fr_1.4fr_1fr_1fr_120px] items-start gap-3 hover:bg-slate-50">
                   <div className="space-y-1">
                     <div className="font-semibold text-slate-900">{row.courseTitle}</div>
                     <div className="text-xs text-slate-500">/kurs/{row.courseSlug}</div>
@@ -158,14 +166,20 @@ export default function MarketingPage() {
                       </div>
                     )}
                   </div>
-                  <div className="text-sm text-slate-700 space-y-0.5">
-                    {row.session?.start_date ? (
-                      <>
-                        <div>{row.session.start_date}{row.session.start_time ? ` · ${row.session.start_time.slice(0, 5)} Uhr` : ""}</div>
-                        <div className="text-xs text-slate-500">{row.session.city || row.session.state || "Ort folgt"}</div>
-                      </>
-                    ) : (
-                      <div className="text-xs text-slate-500">Kein Termin</div>
+                  <div className="text-sm text-slate-700 space-y-1">
+                    {(row.sessions && row.sessions.length > 0 ? row.sessions : row.session ? [row.session] : []).slice(0, 3).map((s, idx) => (
+                      <div key={`${row.courseId}-${s?.id ?? idx}`} className="border border-slate-100 rounded-lg px-2 py-1 bg-white">
+                        <div className="font-semibold">
+                          {s?.start_date ?? "Termin folgt"}{s?.start_time ? ` · ${s.start_time.slice(0, 5)} Uhr` : ""}
+                        </div>
+                        <div className="text-xs text-slate-500">
+                          {s?.city || s?.state || s?.partner?.city || s?.partner?.state || "Ort folgt"}
+                          {s?.partner?.name ? ` · ${s.partner.name}` : ""}
+                        </div>
+                      </div>
+                    ))}
+                    {row.sessions && row.sessions.length > 3 && (
+                      <div className="text-[11px] text-slate-500">… {row.sessions.length - 3} weitere Termine</div>
                     )}
                     {upcoming && <div className="text-[11px] text-indigo-700 bg-indigo-50 border border-indigo-100 rounded px-2 py-1 inline-flex">Nächster Slot: {upcoming.label}</div>}
                   </div>

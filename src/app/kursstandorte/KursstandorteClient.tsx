@@ -182,11 +182,11 @@ export default function KursstandorteClient() {
           subtitle={`Finde Studios und Partner in ${regionLabel} für Musikproduktion, Tontechnik, Live-Sound, DJing und Vocalcoaching.`}
           image="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/f5ca6ab3-c2a6-4fa2-8bea-474f1cbd445b.webp"
           overlayStrength="strong"
-          heightClass="h-[50vh] min-h-[50vh] -mt-[5.5rem] sm:-mt-[5.5rem]"
+          heightClass="h-[55vh] min-h-[55vh] sm:h-[55vh] sm:min-h-[55vh] md:h-[55vh] lg:h-[55vh] -mt-[5.5rem] sm:-mt-[5.5rem]"
           align="center"
         />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent via-black/10 to-[#f4f5f7]" />
-        <div className="absolute inset-x-0 bottom-[-10vh] flex justify-center px-6">
+        <div className="absolute inset-x-0 bottom-[-6vh] sm:bottom-[-7vh] md:bottom-[-8vh] lg:bottom-[-9vh] flex justify-center px-6">
           <div className="w-full max-w-6xl">
             <div className="rounded-3xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 px-4 py-5 sm:px-6 sm:py-7">
               <div className="grid w-full max-w-5xl gap-3 sm:grid-cols-3 mx-auto">
@@ -296,7 +296,7 @@ export default function KursstandorteClient() {
         </div>
       </div>
 
-      <section className="bg-[#f4f5f7] pt-[12vh] sm:pt-[13vh] pb-12">
+      <section className="bg-[#f4f5f7] pt-[10vh] sm:pt-[11vh] md:pt-[12vh] pb-12">
         <main className="mx-auto max-w-6xl px-6 space-y-8">
           {loading ? (
             <p className="text-slate-500">Lade Standorte…</p>

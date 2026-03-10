@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { SiteHeader } from "@/components/SiteHeader";
 import ConsultBanner from "@/components/ConsultBanner";
 import HeroSection from "@/components/HeroSection";

@@ -63,12 +63,28 @@ export default async function SiteFooter() {
                 </div>
               </div>
               <div className="flex flex-col sm:items-end text-sm text-white space-y-2">
-                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 sm:justify-end sm:items-center text-center sm:text-right">
-                  <a href="/partner-werden" className="underline underline-offset-4 hover:text-black">Partner werden</a>
-                  <a href="/ueber-uns" className="underline underline-offset-4 hover:text-black">Über uns</a>
-                  {agbUrl && <a href={agbUrl} className="underline underline-offset-4 hover:text-black" target="_blank" rel="noreferrer">AGB</a>}
-                  {dsUrl && <a href={dsUrl} className="underline underline-offset-4 hover:text-black" target="_blank" rel="noreferrer">Datenschutz</a>}
-                  <a href="/impressum" className="underline underline-offset-4 hover:text-black">Impressum</a>
+                <div className="flex flex-col sm:flex-row sm:justify-end sm:items-center text-center sm:text-right">
+                  {[
+                    { label: "Partner werden", href: "/partner-werden" },
+                    { label: "Über uns", href: "/ueber-uns" },
+                    agbUrl ? { label: "AGB", href: agbUrl, external: true } : null,
+                    dsUrl ? { label: "Datenschutz", href: dsUrl, external: true } : null,
+                    { label: "Impressum", href: "/impressum" },
+                  ]
+                    .filter(Boolean)
+                    .map((item: any, idx, arr) => (
+                      <span key={item.label} className="flex items-center sm:ml-4 sm:first:ml-0">
+                        <a
+                          href={item.href}
+                          target={item.external ? "_blank" : undefined}
+                          rel={item.external ? "noreferrer" : undefined}
+                          className="underline underline-offset-4 transition text-white/90 hover:text-black"
+                        >
+                          {item.label}
+                        </a>
+                        {idx < arr.length - 1 && <span className="mx-2 text-white/60 hidden sm:inline">•</span>}
+                      </span>
+                    ))}
                 </div>
                 <p className="text-white/80 text-xs sm:text-sm">© {new Date().getFullYear()} Music Mission Institute</p>
               </div>

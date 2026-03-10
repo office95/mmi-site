@@ -9,6 +9,11 @@ const formatDate = (iso?: string | null) => {
   }
 };
 
+const formatTime = (t?: string | null) => {
+  if (!t) return "";
+  return t.substring(0, 5) + " Uhr";
+};
+
 const formatLocation = (input: CourseMarketingInput) => {
   const loc = input.session?.city || input.session?.state || input.partner?.city || input.partner?.state;
   return loc || "On Campus";
@@ -58,10 +63,12 @@ const headline = (input: CourseMarketingInput, tpl: CampaignTemplateKind) => {
 
 function buildCaption(platform: Platform, tpl: CampaignTemplateKind, input: CourseMarketingInput, branding?: Branding | null) {
   const date = formatDate(input.session?.start_date);
+  const time = formatTime(input.session?.start_time);
   const loc = formatLocation(input);
   const price = formatPrice(input.session?.price_cents);
   const cta = defaultCta(branding);
   const partner = input.partner?.name ? `bei ${input.partner.name}` : "";
+  const whenWhere = [date, time, loc].filter(Boolean).join(" · ");
 
   const base = {
     instagram: (body: string) => `${body}\n${cta} → ${input.bookingUrl}`,
@@ -72,15 +79,15 @@ function buildCaption(platform: Platform, tpl: CampaignTemplateKind, input: Cour
   const body = (() => {
     switch (tpl) {
       case "new_course":
-        return `${input.courseTitle} – ${input.summary || "Neu am Start"}. ${loc}${price ? " · " + price : ""}${partner ? " · " + partner : ""}`.trim();
+        return `${input.courseTitle}: ${whenWhere}${price ? " · " + price : ""}${partner ? " · " + partner : ""}`.trim();
       case "starts_soon":
-        return `${input.courseTitle} am ${date}${input.session?.start_time ? " · " + input.session.start_time.slice(0, 5) + " Uhr" : ""}${loc ? " · " + loc : ""}${price ? " · " + price : ""}${partner ? " · " + partner : ""}`.trim();
+        return `${input.courseTitle}: ${whenWhere}${price ? " · " + price : ""}${partner ? " · " + partner : ""}`.trim();
       case "last_seats":
-        return `Letzte Plätze: ${input.courseTitle} am ${date}${input.session?.start_time ? " · " + input.session.start_time.slice(0, 5) + " Uhr" : ""}${loc ? " · " + loc : ""}${price ? " · " + price : ""}`.trim();
+        return `Letzte Plätze: ${input.courseTitle} – ${whenWhere}${price ? " · " + price : ""}`.trim();
       case "new_date":
-        return `Neuer Termin: ${input.courseTitle} am ${date} in ${loc}.`;
+        return `Neuer Termin: ${input.courseTitle} – ${whenWhere}.`;
       case "enroll_today":
-        return `Heute anmelden: ${input.courseTitle}${loc ? " · " + loc : ""}${price ? " · " + price : ""}.`;
+        return `Heute anmelden: ${input.courseTitle} – ${whenWhere}${price ? " · " + price : ""}.`;
       case "partner_spotlight":
         return `${input.partner?.name ?? "Partner"} hostet ${input.courseTitle} in ${loc}. ${input.summary || ""}`.trim();
       default:
@@ -93,6 +100,7 @@ function buildCaption(platform: Platform, tpl: CampaignTemplateKind, input: Cour
 
 function buildTiktokScript(tpl: CampaignTemplateKind, input: CourseMarketingInput): GeneratedContent["tiktokScript"] {
   const date = formatDate(input.session?.start_date);
+  const time = formatTime(input.session?.start_time);
   const loc = formatLocation(input);
   const cta = defaultCta(input.organizerBranding);
   return {
@@ -101,7 +109,7 @@ function buildTiktokScript(tpl: CampaignTemplateKind, input: CourseMarketingInpu
         ? `Letzte Plätze für ${input.courseTitle}`
         : `${input.courseTitle} in ${loc}`,
     scenes: [
-      `${date}${input.session?.start_time ? " · " + input.session.start_time.slice(0, 5) + " Uhr" : ""} · ${loc}`,
+      `${date}${time ? " · " + time : ""} · ${loc}`,
       `Für: ${input.audience || "Einsteiger bis Fortgeschrittene"}`,
       input.summary ? input.summary.slice(0, 90) : "Kompakt & praxisnah.",
     ],

@@ -8,7 +8,7 @@
     }
     text {
       font-family: 'Anton', 'Anton Regular', 'Arial Black', sans-serif;
-      font-size: 44px;
+      font-size: 52px;
       font-weight: 700;
       fill: #000;
       dominant-baseline: middle;

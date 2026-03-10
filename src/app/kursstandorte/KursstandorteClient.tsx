@@ -174,160 +174,174 @@ export default function KursstandorteClient() {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
-      <HeroSection
-        eyebrow="Kursstandorte"
-        title={`Unsere Kursstandorte in ${regionLabel}`}
-        subtitle={`Finde Studios und Partner in ${regionLabel} für Musikproduktion, Tontechnik, Live-Sound, DJing und Vocalcoaching.`}
-        image="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/f5ca6ab3-c2a6-4fa2-8bea-474f1cbd445b.webp"
-        overlayStrength="strong"
-        heightClass="h-[50vh] sm:h-[55vh] lg:h-[60vh] min-h-[45vh] -mt-[5.5rem] sm:-mt-[5.5rem]"
-        align="center"
-      />
 
-      <main className="mx-auto max-w-6xl px-6 py-10 sm:py-14 space-y-8">
-        <div className="space-y-3">
-          <div className="grid w-full max-w-5xl gap-3 sm:grid-cols-3">
-            <div className="sm:col-span-3">
-              <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-                <div className="h-9 w-9 flex items-center justify-center rounded-full bg-[#ff1f8f]/12 text-[#ff1f8f]">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
-                  </svg>
+      <div className="relative">
+        <HeroSection
+          eyebrow="Kursstandorte"
+          title={`Unsere Kursstandorte in ${regionLabel}`}
+          subtitle={`Finde Studios und Partner in ${regionLabel} für Musikproduktion, Tontechnik, Live-Sound, DJing und Vocalcoaching.`}
+          image="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/f5ca6ab3-c2a6-4fa2-8bea-474f1cbd445b.webp"
+          overlayStrength="strong"
+          heightClass="h-[50vh] sm:h-[55vh] lg:h-[60vh] min-h-[45vh] -mt-[5.5rem] sm:-mt-[5.5rem]"
+          align="center"
+        />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent via-black/10 to-[#f4f5f7]" />
+        <div className="absolute inset-x-0 bottom-[-80px] flex justify-center px-6">
+          <div className="w-full max-w-6xl">
+            <div className="rounded-3xl bg-white border border-slate-200 shadow-xl shadow-slate-200/60 px-4 py-5 sm:px-6 sm:py-7">
+              <div className="grid w-full max-w-5xl gap-3 sm:grid-cols-3 mx-auto">
+                <div className="sm:col-span-3">
+                  <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+                    <div className="h-9 w-9 flex items-center justify-center rounded-full bg-[#ff1f8f]/12 text-[#ff1f8f]">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+                      </svg>
+                    </div>
+                    <input
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      placeholder="Bundesland, Partner, Kurs, Tag"
+                      className="w-full border-none bg-transparent text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none"
+                    />
+                  </div>
                 </div>
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Bundesland, Partner, Kurs, Tag"
-                  className="w-full border-none bg-transparent text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none"
-                />
+                <select
+                  value={filterState}
+                  onChange={(e) => setFilterState(e.target.value)}
+                  className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm [appearance:none] pr-9"
+                  style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ff1f8f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "calc(100% - 12px) center" }}
+                >
+                  <option value="">Bundesland/Region</option>
+                  {(debugRegion === "DE"
+                    ? [
+                        "Baden-Württemberg",
+                        "Bayern",
+                        "Berlin",
+                        "Brandenburg",
+                        "Bremen",
+                        "Hamburg",
+                        "Hessen",
+                        "Mecklenburg-Vorpommern",
+                        "Niedersachsen",
+                        "Nordrhein-Westfalen",
+                        "Rheinland-Pfalz",
+                        "Saarland",
+                        "Sachsen",
+                        "Sachsen-Anhalt",
+                        "Schleswig-Holstein",
+                        "Thüringen",
+                      ]
+                    : [
+                        "Burgenland",
+                        "Kärnten",
+                        "Niederösterreich",
+                        "Oberösterreich",
+                        "Salzburg",
+                        "Steiermark",
+                        "Tirol",
+                        "Vorarlberg",
+                        "Wien",
+                      ]
+                  ).map((opt) => (
+                    <option key={opt} value={opt.toLowerCase()}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={filterCategory}
+                  onChange={(e) => setFilterCategory(e.target.value)}
+                  className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm [appearance:none] pr-9"
+                  style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ff1f8f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "calc(100% - 12px) center" }}
+                >
+                  <option value="">Kategorie</option>
+                  {categories.map((c) => (
+                    <option key={c.value} value={c.value}>
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm [appearance:none] pr-9"
+                  style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ff1f8f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "calc(100% - 12px) center" }}
+                >
+                  <option value="">Kurstyp</option>
+                  {types.map((t) => (
+                    <option key={t.value} value={t.value}>
+                      {t.label}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  value={filterFormat}
+                  onChange={(e) => setFilterFormat(e.target.value)}
+                  className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm [appearance:none] pr-9"
+                  style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ff1f8f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "calc(100% - 12px) center" }}
+                >
+                  <option value="">Format</option>
+                  {formats.map((f) => (
+                    <option key={f.value} value={f.value}>
+                      {f.label}
+                    </option>
+                  ))}
+                </select>
+                <button onClick={resetFilters} className="text-sm font-semibold text-pink-600 hover:text-pink-700">
+                  Filter zurücksetzen
+                </button>
               </div>
             </div>
-            <select
-              value={filterState}
-              onChange={(e) => setFilterState(e.target.value)}
-              className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm [appearance:none] pr-9"
-              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ff1f8f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "calc(100% - 12px) center" }}
-            >
-              <option value="">Bundesland/Region</option>
-              {(debugRegion === "DE"
-                ? [
-                    "Bayern",
-                    "Berlin",
-                    "Brandenburg",
-                    "Bremen",
-                    "Hamburg",
-                    "Hessen",
-                    "Mecklenburg-Vorpommern",
-                    "Niedersachsen",
-                    "Nordrhein-Westfalen",
-                    "Rheinland-Pfalz",
-                    "Saarland",
-                    "Sachsen",
-                    "Sachsen-Anhalt",
-                    "Schleswig-Holstein",
-                    "Thüringen",
-                  ]
-                : [
-                    "Wien",
-                    "Niederösterreich",
-                    "Oberösterreich",
-                    "Steiermark",
-                    "Salzburg",
-                    "Kärnten",
-                    "Tirol",
-                    "Vorarlberg",
-                    "Burgenland",
-                  ]
-              ).map((opt) => (
-                <option key={opt} value={opt.toLowerCase()}>
-                  {opt}
-                </option>
-              ))}
-            </select>
-            <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
-              className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm [appearance:none] pr-9"
-              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ff1f8f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "calc(100% - 12px) center" }}
-            >
-              <option value="">Kategorie</option>
-              {categories.map((c) => (
-                <option key={c.value} value={c.value}>
-                  {c.label}
-                </option>
-              ))}
-            </select>
-            <select value={filterType} onChange={(e) => setFilterType(e.target.value)} className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm [appearance:none] pr-9"
-              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ff1f8f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "calc(100% - 12px) center" }}>
-              <option value="">Kurstyp</option>
-              {types.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
-            <select
-              value={filterFormat}
-              onChange={(e) => setFilterFormat(e.target.value)}
-              className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm [appearance:none] pr-9"
-              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ff1f8f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "calc(100% - 12px) center" }}
-            >
-              <option value="">Format</option>
-              {formats.map((f) => (
-                <option key={f.value} value={f.value}>
-                  {f.label}
-                </option>
-              ))}
-            </select>
-            <button onClick={resetFilters} className="text-sm font-semibold text-pink-600 hover:text-pink-700">
-              Filter zurücksetzen
-            </button>
           </div>
         </div>
+      </div>
 
-        {loading ? (
-          <p className="text-slate-500">Lade Standorte…</p>
-        ) : filtered.length === 0 ? (
-          <p className="text-slate-600">Keine Standorte gefunden. Bitte Filter anpassen.</p>
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((p) => (
-              <Link
-                key={p.id}
-                href={p.slug ? `/partner/${p.slug}` : "#"}
-                className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-lg transition"
-              >
-                <div className="relative h-44 w-full bg-slate-100">
-                  {p.hero1_path ? (
-                    <Image src={toUrl(p.hero1_path) ?? p.hero1_path} alt={p.name} fill className="object-cover group-hover:scale-105 transition duration-300" sizes="400px" />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-slate-400 text-sm">Kein Bild</div>
+      <section className="bg-[#f4f5f7] pt-28 sm:pt-32 pb-12">
+        <main className="mx-auto max-w-6xl px-6 space-y-8">
+          {loading ? (
+            <p className="text-slate-500">Lade Standorte…</p>
+          ) : filtered.length === 0 ? (
+            <p className="text-slate-600">Keine Standorte gefunden. Bitte Filter anpassen.</p>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((p) => (
+                <Link
+                  key={p.id}
+                  href={p.slug ? `/partner/${p.slug}` : "#"}
+                  className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-lg transition"
+                >
+                  <div className="relative h-44 w-full bg-slate-100">
+                    {p.hero1_path ? (
+                      <Image src={toUrl(p.hero1_path) ?? p.hero1_path} alt={p.name} fill className="object-cover group-hover:scale-105 transition duration-300" sizes="400px" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-slate-400 text-sm">Kein Bild</div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+                  </div>
+                  {p.created_at && (() => { const diff = (Date.now() - new Date(p.created_at).getTime()) / (1000*60*60*24); return diff <= 21; })() && (
+                    <span className="absolute right-3 top-3 rounded-full bg-[#ff1f8f] px-2.5 py-1 text-[11px] font-semibold text-white shadow">
+                      Neu
+                    </span>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
-                </div>
-                {p.created_at && (() => { const diff = (Date.now() - new Date(p.created_at).getTime()) / (1000*60*60*24); return diff <= 21; })() && (
-                  <span className="absolute right-3 top-3 rounded-full bg-[#ff1f8f] px-2.5 py-1 text-[11px] font-semibold text-white shadow">
-                    Neu
-                  </span>
-                )}
-                <div className="p-4 space-y-2">
-                  <h2 className="font-anton text-xl leading-tight text-slate-900 line-clamp-2">{p.name}</h2>
-                  <p className="text-sm text-slate-600 line-clamp-2">{[p.state, p.country].filter(Boolean).join(" · ")}</p>
-                  {p.tags && p.tags.length ? (
-                    <div className="flex flex-wrap gap-2 pt-1 text-xs text-slate-700">
-                      {p.tags.slice(0, 3).map((t) => (
-                        <span key={t} className="rounded-full bg-slate-100 px-2.5 py-1">
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </main>
+                  <div className="p-4 space-y-2">
+                    <h2 className="font-anton text-xl leading-tight text-slate-900 line-clamp-2">{p.name}</h2>
+                    <p className="text-sm text-slate-600 line-clamp-2">{[p.state, p.country].filter(Boolean).join(" · ")}</p>
+                    {p.tags && p.tags.length ? (
+                      <div className="flex flex-wrap gap-2 pt-1 text-xs text-slate-700">
+                        {p.tags.slice(0, 3).map((t) => (
+                          <span key={t} className="rounded-full bg-slate-100 px-2.5 py-1">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </main>
+      </section>
 
       <ConsultBanner />
     </div>

@@ -54,28 +54,27 @@ export default async function SiteFooter() {
 
         {/* Desktop Layout */}
         <div className="hidden sm:flex flex-col gap-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-            <div className="flex items-center gap-4 sm:gap-5">
-              <Image src={logo} alt="Music Mission Institute Logo" className="h-16 w-auto sm:h-20" width={180} height={90} />
-              <div className="text-left">
-                <p className="font-semibold text-lg sm:text-xl leading-tight">Music Mission Institute</p>
-                <p className="text-sm sm:text-base text-white/80">Kurse in Musikproduktion, Tontechnik & Live-Engineering</p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+              <div className="flex items-center gap-4 sm:gap-5">
+                <Image src={logo} alt="Music Mission Institute Logo" className="h-16 w-auto sm:h-20" width={180} height={90} />
+                <div className="text-left">
+                  <p className="font-semibold text-lg sm:text-xl leading-tight">Music Mission Institute</p>
+                  <p className="text-sm sm:text-base text-white/80">Kurse in Musikproduktion, Tontechnik & Live-Engineering</p>
+                </div>
               </div>
-            </div>
-            <div className="flex flex-col sm:items-end text-sm text-white space-y-2">
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 sm:justify-end sm:items-center text-center sm:text-right">
-                {dsUrl && <a href={dsUrl} className="underline underline-offset-4 hover:text-black" target="_blank" rel="noreferrer">Datenschutz</a>}
-                {dsUrl && agbUrl && <span className="hidden sm:inline text-white/60">•</span>}
-                {agbUrl && <a href={agbUrl} className="underline underline-offset-4 hover:text-black" target="_blank" rel="noreferrer">AGB</a>}
-                {(dsUrl || agbUrl) && <span className="hidden sm:inline text-white/60">•</span>}
-                <a href="/partner-werden" className="underline underline-offset-4 hover:text-black">Partner werden</a>
-                <a href="/impressum" className="underline underline-offset-4 hover:text-black">Impressum</a>
+              <div className="flex flex-col sm:items-end text-sm text-white space-y-2">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 sm:justify-end sm:items-center text-center sm:text-right">
+                  <a href="/partner-werden" className="underline underline-offset-4 hover:text-black">Partner werden</a>
+                  <a href="/ueber-uns" className="underline underline-offset-4 hover:text-black">Über uns</a>
+                  {agbUrl && <a href={agbUrl} className="underline underline-offset-4 hover:text-black" target="_blank" rel="noreferrer">AGB</a>}
+                  {dsUrl && <a href={dsUrl} className="underline underline-offset-4 hover:text-black" target="_blank" rel="noreferrer">Datenschutz</a>}
+                  <a href="/impressum" className="underline underline-offset-4 hover:text-black">Impressum</a>
+                </div>
+                <p className="text-white/80 text-xs sm:text-sm">© {new Date().getFullYear()} Music Mission Institute</p>
               </div>
-              <p className="text-white/80 text-xs sm:text-sm">© {new Date().getFullYear()} Music Mission Institute</p>
             </div>
           </div>
         </div>
-      </div>
     </footer>
   );
 }

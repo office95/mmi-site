@@ -26,6 +26,7 @@ export async function CourseInfo({ id, kurs }: { id: string; kurs?: string | nul
   const time = session.start_time ? session.start_time.slice(0, 5) + " Uhr" : "";
 
   const course: any = (session as any)?.course || null;
+  const partner: any = (session as any)?.partner || null;
 
   return (
     <div className="mb-6 rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
@@ -36,10 +37,10 @@ export async function CourseInfo({ id, kurs }: { id: string; kurs?: string | nul
           <p className="text-sm text-slate-600">
             {date} {time && `· ${time}`} {session.city || session.state ? `· ${session.city ?? session.state}` : ""}
           </p>
-          {session.partner?.name && (
+          {partner?.name && (
             <p className="text-xs text-slate-500">
-              Partner: {session.partner.name}
-              {session.partner.city ? ` · ${session.partner.city}` : ""}
+              Partner: {partner.name}
+              {partner.city ? ` · ${partner.city}` : ""}
             </p>
           )}
         </div>

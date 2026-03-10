@@ -216,7 +216,10 @@ export default function MarketingPage() {
 
         {selected && (
           <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4" onClick={() => setSelected(null)}>
-            <div className="max-w-4xl w-full rounded-2xl bg-white shadow-2xl p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="max-w-4xl w-full max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl p-6 space-y-4"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex gap-4">
                   {selected.image && (

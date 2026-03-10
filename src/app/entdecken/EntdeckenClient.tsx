@@ -6,7 +6,6 @@ import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import ConsultBanner from "@/components/ConsultBanner";
 import { CountdownBadge } from "@/components/CountdownBadge";
-import { AutoBadgeRule, collectSessionBadges } from "@/lib/autoBadges";
 
 type SessionCard = {
   id: string;
@@ -33,7 +32,6 @@ export default function EntdeckenClient() {
   const [filterCategory, setFilterCategory] = useState("");
   const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
-  const [autoBadges, setAutoBadges] = useState<AutoBadgeRule[]>([]);
   const [debugHost, setDebugHost] = useState("");
   const [debugRegion, setDebugRegion] = useState("");
   const [debugXRegion, setDebugXRegion] = useState("");
@@ -131,17 +129,14 @@ export default function EntdeckenClient() {
   useEffect(() => {
     const loadMeta = async () => {
       try {
-        const [tRes, cRes, bRes] = await Promise.all([
+        const [tRes, cRes] = await Promise.all([
           fetch("/api/admin/course-types", { cache: "no-store" }),
           fetch("/api/admin/course-categories", { cache: "no-store" }),
-          fetch("/api/badges?scope=course&auto=1", { cache: "no-store" }),
         ]);
         const tJson = await tRes.json();
         const cJson = await cRes.json();
-        const bJson = await bRes.json();
         setTypes(tJson?.data ?? []);
         setCategories(cJson?.data ?? []);
-        setAutoBadges(bJson?.data ?? []);
       } catch (e) {
         console.error(e);
       }
@@ -196,18 +191,8 @@ export default function EntdeckenClient() {
   const regionText = debugRegion === "DE" ? "Deutschland" : "Österreich";
 
   const sessionBadges = (s: SessionCard) => {
+    const badges: { name: string; color: string }[] = [];
     const typeName = types.find((t) => t.id === s.course?.type_id)?.name?.toLowerCase();
-
-    // 1) Admin-konfigurierte Auto-Badges
-    const auto = collectSessionBadges(autoBadges, {
-      courseTypeName: typeName,
-      courseCreatedAt: s.course?.created_at ?? null,
-      maxParticipants: s.max_participants ?? null,
-      seatsTaken: s.seats_taken ?? null,
-    });
-
-    // 2) Bestehende statische Badges (Fallback, falls nicht im Admin gepflegt)
-    const staticBadges: { name: string; color: string; slug?: string }[] = [];
     const isNew = (() => {
       if (!s.course?.created_at) return false;
       const created = new Date(s.course.created_at);
@@ -215,18 +200,10 @@ export default function EntdeckenClient() {
       const diff = (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
       return diff <= 21;
     })();
-    if (isNew) staticBadges.push({ name: "Neu", color: "#ff1f8f", slug: "neu" });
-    if (typeName?.includes("intensiv")) staticBadges.push({ name: "Intensiv", color: "#7c3aed", slug: "intensiv" });
-    if (typeName?.includes("extrem")) staticBadges.push({ name: "Extrem", color: "#f97316", slug: "extrem" });
-
-    // 3) Deduplizieren (Slug oder Name)
-    const merged: Record<string, { name: string; color: string }> = {};
-    [...auto, ...staticBadges].forEach((b) => {
-      const key = ("slug" in b && b.slug) || b.name.toLowerCase();
-      if (!merged[key]) merged[key] = { name: b.name, color: b.color };
-    });
-
-    return Object.values(merged);
+    if (isNew) badges.push({ name: "Neu", color: "#ff1f8f" });
+    if (typeName?.includes("intensiv")) badges.push({ name: "Intensiv", color: "#7c3aed" });
+    if (typeName?.includes("extrem")) badges.push({ name: "Extrem", color: "#f97316" });
+    return badges;
   };
 
   const locationText = (s: SessionCard) => {

@@ -275,8 +275,9 @@ export default async function Home() {
                   <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Tag der offenen Tür</p>
                   <h2 className="text-3xl font-semibold leading-tight text-slate-900 sm:text-4xl">Im GOSH! Studio Wien</h2>
                   <p className="text-base text-slate-600">
-                    Erfahre alles über unsere Intensiv- und Extremkurse, lerne das Studio und die Coaches kennen und spüre,
-                    wie Praxis wirklich funktioniert. Freitag, 10. April 2026, 15:00–17:00 Uhr. Anmeldung erforderlich.
+                    Hol dir einen klaren Eindruck von unseren Intensivausbildungen und Extremkursen: Studio-Rundgang,
+                    Meet-the-Coaches und Live-Praxis-Setup. Freitag, 10. April 2026, 15:00–17:00 Uhr. Teilnahme nur mit
+                    Anmeldung – die Plätze sind limitiert.
                   </p>
                   <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
                     <span className="rounded-full border border-pink-500/30 bg-pink-50 px-3 py-1 font-semibold text-pink-600">

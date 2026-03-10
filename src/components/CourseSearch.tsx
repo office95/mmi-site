@@ -17,7 +17,9 @@ type Course = {
 
 type CoursePartner = { partner?: string | null; state?: string | null; city?: string | null };
 
-export default function CourseSearch() {
+type Variant = "default" | "compact";
+
+export default function CourseSearch({ variant = "default" }: { variant?: Variant }) {
   const [q, setQ] = useState("");
   const [allCourses, setAllCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(false);
@@ -105,11 +107,19 @@ export default function CourseSearch() {
       .slice(0, 8);
   }, [q, allCourses, coursePartners]);
 
+  const compact = variant === "compact";
+
   return (
     <div className="relative">
-      <div className="flex items-center gap-3 rounded-[20px] border border-slate-200/80 bg-white/95 px-4 py-3 shadow-lg shadow-slate-300/40 backdrop-blur-sm">
-        <div className="flex items-center justify-center h-9 w-9 rounded-full bg-[#ff1f8f]/10 text-[#ff1f8f]">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div
+        className={
+          compact
+            ? "flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 shadow-sm max-w-full"
+            : "flex items-center gap-3 rounded-[20px] border border-slate-200/80 bg-white/95 px-4 py-3 shadow-lg shadow-slate-300/40 backdrop-blur-sm"
+        }
+      >
+        <div className={compact ? "flex h-6 w-6 items-center justify-center rounded-full bg-[#ff1f8f]/10 text-[#ff1f8f]" : "flex items-center justify-center h-9 w-9 rounded-full bg-[#ff1f8f]/10 text-[#ff1f8f]"}>
+          <svg xmlns="http://www.w3.org/2000/svg" className={compact ? "h-[14px] w-[14px]" : "h-5 w-5"} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
           </svg>
         </div>
@@ -118,11 +128,11 @@ export default function CourseSearch() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             type="text"
-            placeholder="Kurs, Standort, Tag..."
-            className="w-full border-none bg-transparent text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none"
+            placeholder="Kurs, Bundesland, Tag..."
+            className={compact ? "w-full border-none bg-transparent text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none" : "w-full border-none bg-transparent text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none"}
           />
         </div>
-        <div className="flex items-center gap-2 text-xs text-slate-500">
+        <div className="flex items-center gap-2 text-[11px] text-slate-500">
           {loading && <span>lädt…</span>}
           {!loading && q && results.length === 0 && <span>Kein Treffer</span>}
         </div>

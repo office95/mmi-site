@@ -90,7 +90,7 @@ export default async function ExtremkursPage() {
       <SiteHeader />
 
       {/* Hero */}
-      <section className="relative h-[65vh] w-full overflow-hidden text-white">
+      <section className="relative h-[65vh] w-full overflow-hidden text-white -mt-[5.5rem] sm:-mt-[5.5rem]">
         <video
           src={heroVideo}
           autoPlay
@@ -105,14 +105,14 @@ export default async function ExtremkursPage() {
           <Image src={heroFallback} alt="Extremkurse" fill className="object-cover opacity-0" priority sizes="100vw" />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/35 to-black/10" />
-        <div className="absolute inset-0 flex items-center px-6 lg:px-16">
-          <div className="max-w-4xl space-y-4 drop-shadow-[0_12px_40px_rgba(0,0,0,0.45)]">
+        <div className="absolute inset-0 flex items-center justify-center px-6 lg:px-16 text-center">
+          <div className="mx-auto max-w-4xl space-y-4 drop-shadow-[0_12px_40px_rgba(0,0,0,0.45)]">
             <p className="text-sm uppercase tracking-[0.24em] text-white/80">Kurstyp</p>
-          <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">Extremkurse Musikproduktion & Live-Tontechnik</h1>
-            <p className="max-w-2xl text-base sm:text-lg text-white/90">
+            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">Extremkurse Musikproduktion &amp; Live-Tontechnik</h1>
+            <p className="max-w-2xl mx-auto text-base sm:text-lg text-white/90">
               Maximales Wissen in kurzer Zeit. Unsere Extremkurse richten sich an alle, die in kürzester Zeit das Maximum aus sich und ihrer Musikproduktion herausholen wollen.
             </p>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap justify-center gap-3">
               <a
                 href="#kurse"
                 className="rounded-full bg-[#ff1f8f] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-pink-500/40 hover:-translate-y-0.5 transition"

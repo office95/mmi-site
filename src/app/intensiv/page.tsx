@@ -81,20 +81,20 @@ export default async function IntensivPage() {
       <SiteHeader />
 
       {/* Hero */}
-      <section className="relative h-[65vh] w-full overflow-hidden text-white">
+      <section className="relative h-[65vh] w-full overflow-hidden text-white -mt-[5.5rem] sm:-mt-[5.5rem]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <Image src={heroFallback} alt="Intensivkurse" fill className="object-cover hero-float" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/55 to-black/20 mix-blend-multiply" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,31,143,0.22),transparent_35%),radial-gradient(circle_at_80%_20%,rgba(30,144,255,0.18),transparent_32%),radial-gradient(circle_at_70%_75%,rgba(255,122,45,0.22),transparent_36%)] mix-blend-screen opacity-80" />
         <div className="absolute inset-0 backdrop-blur-[1px]" />
-        <div className="absolute inset-0 flex items-center px-6 lg:px-16">
+        <div className="absolute inset-0 flex items-center justify-center px-6 lg:px-16 text-center">
           <div className="max-w-4xl space-y-4 drop-shadow-[0_12px_40px_rgba(0,0,0,0.45)]">
             <p className="text-sm uppercase tracking-[0.24em] text-white/80">Kurstyp</p>
             <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">Intensiv-Ausbildungen Musikproduktion & Tontechnik</h1>
-            <p className="max-w-2xl text-base sm:text-lg text-white/90">
+            <p className="max-w-2xl mx-auto text-base sm:text-lg text-white/90">
               Für alle, die mehr wollen. Ohne Kompromisse.
             </p>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap justify-center gap-3">
               <a
                 href="#kurse"
                 className="rounded-full bg-[#ff1f8f] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-pink-500/40 hover:-translate-y-0.5 transition"

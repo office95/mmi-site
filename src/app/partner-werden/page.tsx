@@ -67,7 +67,7 @@ export default function PartnerWerdenPage() {
       <SiteHeader />
 
       {/* Hero */}
-      <header className="relative overflow-hidden bg-black text-white h-[55vh] sm:h-[60vh] min-h-[45vh]">
+      <header className="relative overflow-hidden bg-black text-white h-[55vh] sm:h-[60vh] min-h-[45vh] -mt-[5.5rem] sm:-mt-[5.5rem]">
         <div className="absolute inset-0 pointer-events-none">
           <picture>
             <source srcSet="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/294c5a55-6a6e-449f-85a6-23e9ecc0db03.webp" />
@@ -87,9 +87,7 @@ export default function PartnerWerdenPage() {
             <p className="text-base sm:text-lg text-white/85 leading-relaxed">
               Nutze dein Studio besser – wir bringen die Teilnehmer. Music Mission verwandelt freie Slots in planbare Kursformate mit Marketing, Plattform und Struktur. Du konzentrierst dich auf Praxis und Sound.
             </p>
-            <div className="flex flex-wrap justify-center gap-3 pt-2">
-              <ScrollToFormButton targetId="partner-form" label="Jetzt unverbindlich anfragen" />
-            </div>
+            {/* CTA im Hero entfernt auf Wunsch */}
           </div>
         </div>
       </header>

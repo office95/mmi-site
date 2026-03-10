@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Menu, X } from "lucide-react";
+import CourseSearch from "@/components/CourseSearch";
 
 type SlotCourse = { id: string; slug: string; title: string };
 type Slot = { id: string; label: string; courses: SlotCourse[] };
@@ -125,26 +126,52 @@ export function SiteHeader() {
   };
 
   return (
-    <header
-      className={`site-header fixed top-0 left-0 right-0 z-40 w-full text-slate-900 shadow-sm transition-colors transition-backdrop duration-200 ${
-        scrolled ? "bg-white/88 backdrop-blur-xl" : "bg-white"
-      }`}
-      style={{ pointerEvents: "auto" }}
-    >
-      <div className="flex h-14 w-full items-center pl-[2vh] pr-3 text-sm font-semibold tracking-tight sm:pr-6 lg:pr-20">
-        <Link href="/" className="flex items-center gap-2 hover:opacity-90 transition">
+    <header className="site-header fixed top-0 left-0 right-0 z-40 w-full" style={{ pointerEvents: "auto" }}>
+      <div className="h-8 bg-black text-white flex items-center justify-center px-3">
+        <h1 className="text-[11px] tracking-[0.14em] uppercase font-semibold">
+          Kurse in Musikproduktion · Tontechnik · DJ · Vocalcoaching
+        </h1>
+      </div>
+      <div
+        className={`flex h-14 w-full items-center pl-[2vh] pr-3 text-sm font-semibold tracking-tight sm:pr-6 lg:pr-20 shadow-sm transition-colors transition-backdrop duration-200 flex-nowrap ${
+          scrolled ? "bg-white/88 backdrop-blur-xl" : "bg-white"
+        }`}
+      >
+        <Link href="/" className="flex items-center gap-2 hover:opacity-90 transition flex-shrink-0 z-10 mr-[2vh]">
           <Image
             src={FALLBACK_LOGO}
             alt="Music Mission Institute Logo"
             width={48}
             height={48}
-            className="h-12 w-12 object-contain"
+            className="h-12 w-12 object-contain flex-shrink-0"
             priority
           />
-          <span className="hidden sm:inline text-base">Music Mission Institute</span>
+          <span className="hidden 2xl:inline text-base whitespace-nowrap flex-shrink-0">
+            Music Mission Institute
+          </span>
         </Link>
 
-        <nav className="relative hidden flex-1 justify-center items-center gap-8 lg:gap-10 xl:gap-12 text-[13px] sm:text-sm xl:flex">
+        {/* Mobile/Tablet Suche (verschwindet ab lg, dort übernimmt Desktop-Suche) */}
+        <div className="flex-1 pr-2 lg:pr-4 lg:hidden min-w-[200px] flex justify-center">
+          <div className="w-[80%] min-w-[200px]">
+            <CourseSearch variant="compact" />
+          </div>
+        </div>
+
+        {/* Entdecken-Link bleibt sichtbar, bis kaum Platz bleibt; versteckt nur auf sehr kleinen Screens bzw. wenn Desktop-Navigation aktiv */}
+        <Link
+          href="/entdecken"
+          className={`nav-link hidden sm:inline-flex items-center px-3 py-2 font-semibold text-[13px] text-slate-900 lg:hidden ${
+            isActive("/entdecken") ? "underline underline-offset-4" : ""
+          }`}
+        >
+          Entdecken
+        </Link>
+
+        <nav className="relative hidden lg:flex flex-1 flex-nowrap whitespace-nowrap items-center justify-center gap-4 lg:gap-5 xl:gap-6 text-[13px] sm:text-sm pl-[1.5vh]">
+          <div className="w-full max-w-[14rem] lg:max-w-[16rem] xl:max-w-[18rem] min-w-[14rem] flex-shrink-0">
+            <CourseSearch variant="compact" />
+          </div>
           <Link href="/entdecken" className={`nav-link ${isActive("/entdecken") ? "underline underline-offset-4" : ""}`}>
             Entdecken
           </Link>
@@ -205,17 +232,11 @@ export function SiteHeader() {
           <Link href="/kursstandorte" className={`nav-link ${isActive("/kursstandorte") ? "underline underline-offset-4" : ""}`}>
             Kursstandorte
           </Link>
-          <Link href="/partner-werden" className={`nav-link ${isActive("/partner-werden") ? "underline underline-offset-4" : ""}`}>
-            Partner werden
-          </Link>
-          <Link href="/ueber-uns" className={`nav-link ${isActive("/ueber-uns") ? "underline underline-offset-4" : ""}`}>
-            Über uns
-          </Link>
         </nav>
 
         {/* Mobile Burger */}
         <button
-          className="header-btn xl:hidden ml-auto mr-[2vh] inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-slate-800 hover:bg-slate-100"
+          className="header-btn lg:hidden inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-slate-800 hover:bg-slate-100 mr-5 sm:mr-6 lg:mr-8"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Menü"
         >
@@ -345,20 +366,6 @@ export function SiteHeader() {
                   onClick={() => setMobileOpen(false)}
                 >
                   Kursstandorte
-                </Link>
-                <Link
-                  href="/partner-werden"
-                  className={`block rounded-xl px-3 py-2 hover:bg-slate-100 ${isActive("/partner-werden") ? "underline underline-offset-4" : ""}`}
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Partner werden
-                </Link>
-                <Link
-                  href="/ueber-uns"
-                  className={`block rounded-xl px-3 py-2 hover:bg-slate-100 ${isActive("/ueber-uns") ? "underline underline-offset-4" : ""}`}
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Über uns
                 </Link>
               </div>
 

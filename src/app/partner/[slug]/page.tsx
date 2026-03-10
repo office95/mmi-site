@@ -52,6 +52,7 @@ export default function PartnerPage() {
   const [courseBadges, setCourseBadges] = useState<Record<string, any[]>>({});
   const [allBadges, setAllBadges] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [heroLoaded, setHeroLoaded] = useState(false);
   const heroProgress = 1;
   const cardsProgress = 1;
 
@@ -319,10 +320,17 @@ export default function PartnerPage() {
         />
       )}
       <main className="flex-1">
-        <section className="relative h-[75vh] w-full overflow-hidden bg-black">
+      <section className="relative h-[75vh] w-full overflow-hidden bg-black -mt-[5.5rem] sm:-mt-[5.5rem]">
           <picture>
             <source media="(max-width: 768px)" srcSet={heroMobile as string} />
-            <Image src={heroDesktop} alt={partner?.name || slug || "Partner"} fill className="object-cover" priority />
+            <Image
+              src={heroDesktop}
+              alt={partner?.name || slug || "Partner"}
+              fill
+              priority
+              onLoadingComplete={() => setHeroLoaded(true)}
+              className={`object-cover transition-opacity duration-500 ${heroLoaded ? "opacity-100" : "opacity-0"}`}
+            />
           </picture>
           <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/40 to-black/20" />
           <div className="absolute inset-0 flex items-center justify-center px-6 text-center">

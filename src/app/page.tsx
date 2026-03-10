@@ -185,7 +185,7 @@ export default async function Home() {
     <div className="min-h-screen text-foreground bg-white">
       <SiteHeader />
       <main className="relative">
-        <section className="relative min-h-screen">
+        <section className="relative min-h-screen -mt-[5.5rem] sm:-mt-[5.5rem]">
           <div className="flex h-full flex-col">
             <div className="h-[80vh] overflow-visible bg-black relative">
               <HeroSlider slides={heroSlides} />
@@ -212,14 +212,6 @@ export default async function Home() {
                       .fill("Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing   ")
                       .join("")}
                   </div>
-                </div>
-              </div>
-              <div className="absolute inset-x-0 bottom-[5%] z-30 px-6 sm:px-10 lg:px-20">
-                <div className="mx-auto w-full max-w-[620px]">
-                  <p className="text-center text-white text-sm sm:text-base font-semibold tracking-[0.08em] uppercase mb-3">
-                    Kurse in Musikproduktion · Tontechnik · DJ · Vocalcoaching
-                  </p>
-                  <CourseSearch />
                 </div>
               </div>
             </div>
@@ -259,6 +251,15 @@ export default async function Home() {
         </section>
 
         <section className="relative bg-white min-h-screen">
+          <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-16 pt-12 pb-6 text-center space-y-3">
+            <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Unsere Kursformate</p>
+            <h2 className="font-anton text-3xl sm:text-4xl lg:text-5xl text-slate-900 leading-tight">
+              Unsere Kursformate – kurz, knackig oder intensiv
+            </h2>
+            <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto">
+              Von kompakten Kurzformaten wie unseren Extremkursen bis zu intensiven Ausbildungen.
+            </p>
+          </div>
           <FlyInCards />
         </section>
 
@@ -343,14 +344,22 @@ export default async function Home() {
         {/* Kurs-Marquee */}
         <section className="bg-white px-6 py-14 sm:px-10 lg:px-16">
           <div className="mx-auto max-w-6xl space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4">
+              <div className="flex-1 text-center lg:text-center space-y-1">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Unser Kursangebot</p>
-                <h2 className="font-anton text-3xl text-slate-900">Top-Kurse – auch in deiner Nähe</h2>
+                <h2 className="font-anton text-3xl sm:text-4xl lg:text-5xl text-slate-900 leading-tight">
+                  Entdecke Top aktuelle Kurse
+                </h2>
               </div>
-              <Link href="/entdecken" className="text-sm font-semibold text-pink-600 hover:text-pink-700 underline underline-offset-4">
-                Alle Kurse
-              </Link>
+              <div className="mt-2 lg:mt-0 flex justify-center lg:justify-end">
+                <Link
+                  href="/entdecken"
+                  className="inline-flex items-center gap-2 rounded-full border border-pink-500 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-pink-50 hover:text-slate-900 whitespace-nowrap !text-slate-900"
+                >
+                  <span className="text-slate-900 !text-slate-900">Alle Kurse</span>
+                  <span aria-hidden className="text-slate-900 !text-slate-900">→</span>
+                </Link>
+              </div>
             </div>
 
             {coursesMixed.length === 0 ? (

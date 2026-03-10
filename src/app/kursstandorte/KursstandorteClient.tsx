@@ -180,30 +180,33 @@ export default function KursstandorteClient() {
         subtitle={`Finde Studios und Partner in ${regionLabel} für Musikproduktion, Tontechnik, Live-Sound, DJing und Vocalcoaching.`}
         image="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/f5ca6ab3-c2a6-4fa2-8bea-474f1cbd445b.webp"
         overlayStrength="strong"
+        heightClass="h-[50vh] sm:h-[55vh] lg:h-[60vh] min-h-[45vh] -mt-[5.5rem] sm:-mt-[5.5rem]"
         align="center"
-      >
-        <div className="w-full flex justify-center mt-[3vh]">
-          <div className="w-full max-w-lg text-center">
-          <p className="text-sm font-semibold text-white/90">Suche nach Standort, Partner oder Kurs</p>
-          <div className="mt-2 flex items-center justify-center">
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Bundesland, Partner, Kurs, Tag"
-              className="w-full rounded-2xl border border-white/50 bg-white/90 backdrop-blur px-4 py-3 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
-            />
-          </div>
-        </div>
-        </div>
-      </HeroSection>
+      />
 
       <main className="mx-auto max-w-6xl px-6 py-10 sm:py-14 space-y-8">
         <div className="space-y-3">
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="grid w-full max-w-5xl gap-3 sm:grid-cols-3">
+            <div className="sm:col-span-3">
+              <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+                <div className="h-9 w-9 flex items-center justify-center rounded-full bg-[#ff1f8f]/12 text-[#ff1f8f]">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+                  </svg>
+                </div>
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Bundesland, Partner, Kurs, Tag"
+                  className="w-full border-none bg-transparent text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none"
+                />
+              </div>
+            </div>
             <select
               value={filterState}
               onChange={(e) => setFilterState(e.target.value)}
-              className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm"
+              className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm [appearance:none] pr-9"
+              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ff1f8f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "calc(100% - 12px) center" }}
             >
               <option value="">Bundesland/Region</option>
               {(debugRegion === "DE"
@@ -241,7 +244,12 @@ export default function KursstandorteClient() {
                 </option>
               ))}
             </select>
-            <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm">
+            <select
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm [appearance:none] pr-9"
+              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ff1f8f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "calc(100% - 12px) center" }}
+            >
               <option value="">Kategorie</option>
               {categories.map((c) => (
                 <option key={c.value} value={c.value}>
@@ -249,7 +257,8 @@ export default function KursstandorteClient() {
                 </option>
               ))}
             </select>
-            <select value={filterType} onChange={(e) => setFilterType(e.target.value)} className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm">
+            <select value={filterType} onChange={(e) => setFilterType(e.target.value)} className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm [appearance:none] pr-9"
+              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ff1f8f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "calc(100% - 12px) center" }}>
               <option value="">Kurstyp</option>
               {types.map((t) => (
                 <option key={t.value} value={t.value}>
@@ -257,7 +266,12 @@ export default function KursstandorteClient() {
                 </option>
               ))}
             </select>
-            <select value={filterFormat} onChange={(e) => setFilterFormat(e.target.value)} className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm">
+            <select
+              value={filterFormat}
+              onChange={(e) => setFilterFormat(e.target.value)}
+              className="min-w-[170px] flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 shadow-sm [appearance:none] pr-9"
+              style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ff1f8f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "calc(100% - 12px) center" }}
+            >
               <option value="">Format</option>
               {formats.map((f) => (
                 <option key={f.value} value={f.value}>

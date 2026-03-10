@@ -508,7 +508,7 @@ let host = "";
       <SlugGuard renderedSlug={slugClean} />
       <SiteHeader />
 
-      <section className="relative h-[75vh] w-full overflow-hidden bg-black">
+      <section className="relative h-[75vh] w-full overflow-hidden bg-black -mt-[5.5rem] sm:-mt-[5.5rem]">
         <div className="absolute inset-0">
           <picture>
             <source media="(max-width: 768px)" srcSet={heroMobile as string} />

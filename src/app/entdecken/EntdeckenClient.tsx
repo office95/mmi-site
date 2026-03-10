@@ -232,8 +232,8 @@ export default function EntdeckenClient() {
         heightClass="h-[40vh] sm:h-[45vh] lg:h-[50vh] min-h-[35vh] -mt-[5.5rem] sm:-mt-[5.5rem]"
       />
 
-      <section className="w-full bg-neutral-100 -mt-px">
-        <div className="mx-auto max-w-6xl px-6 pb-16 space-y-6 pt-4 sm:pt-6">
+      <section className="w-full bg-neutral-100 -mt-4 sm:-mt-6">
+        <div className="mx-auto max-w-6xl px-6 pb-16 space-y-6 pt-6 sm:pt-8">
           <div className="flex flex-col gap-4">
             <div className="space-y-3">
               <div className="grid w-full max-w-4xl gap-3 sm:grid-cols-3">

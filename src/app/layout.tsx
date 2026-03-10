@@ -40,7 +40,10 @@ export async function generateMetadata(): Promise<Metadata> {
           { rel: "icon", url: faviconUrl },
           { rel: "shortcut icon", url: faviconUrl },
         ]
-      : undefined,
+      : [
+          { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" },
+          { rel: "shortcut icon", url: "/favicon.svg", type: "image/svg+xml" },
+        ],
     keywords: ["Musikproduktion", "Tontechnik", "Live-Sound", "DJing", "Kurse", "Workshops", "Music Mission Institute"],
     openGraph: {
       type: "website",

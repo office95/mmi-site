@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="MMI Favicon">
+  <style>
+    @font-face {
+      font-family: 'Anton';
+      src: url('fonts/Anton-Regular.ttf') format('truetype');
+      font-weight: 700;
+      font-display: block;
+    }
+    text {
+      font-family: 'Anton', 'Anton Regular', 'Arial Black', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      fill: #000;
+      dominant-baseline: middle;
+      text-anchor: middle;
+    }
+  </style>
+  <text x="32" y="34">MMI</text>
+</svg>

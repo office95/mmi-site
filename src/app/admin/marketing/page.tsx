@@ -66,6 +66,7 @@ export default function MarketingPage() {
   const [selected, setSelected] = useState<Row | null>(null);
 
   const rows = data?.data ?? [];
+  const [editedCaptions, setEditedCaptions] = useState<Record<string, string>>({});
 
   const filtered = useMemo(() => {
     return rows.filter((r) => {
@@ -245,6 +246,12 @@ export default function MarketingPage() {
                 </button>
               </div>
 
+              {selected.image && (
+                <div className="relative w-full aspect-[16/9] overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
+                  <Image src={selected.image} alt={selected.courseTitle} fill className="object-cover" sizes="800px" />
+                </div>
+              )}
+
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-2">
                   <h4 className="text-sm font-semibold text-slate-900">Kampagnenplan</h4>
@@ -276,7 +283,17 @@ export default function MarketingPage() {
                         <span className="text-[11px] text-slate-500">Template: {c.template}</span>
                       </div>
                       <p className="font-semibold text-slate-900">{c.headline}</p>
-                      <p className="text-slate-700 whitespace-pre-wrap leading-relaxed">{c.caption}</p>
+                      <textarea
+                        className="w-full rounded-lg border border-slate-200 bg-slate-50 px-2 py-2 text-sm text-slate-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-pink-500"
+                        rows={5}
+                        value={editedCaptions[`${c.platform}`] ?? c.caption}
+                        onChange={(e) =>
+                          setEditedCaptions((prev) => ({
+                            ...prev,
+                            [`${c.platform}`]: e.target.value,
+                          }))
+                        }
+                      />
                       {c.tiktokScript && (
                         <div className="rounded-md bg-slate-50 border border-slate-200 p-2 text-xs text-slate-700 space-y-1">
                           <div className="font-semibold">TikTok Skript</div>
@@ -301,7 +318,11 @@ export default function MarketingPage() {
                       <div className="flex gap-2 pt-1 text-[11px]">
                         <button
                           className="rounded-full border border-slate-200 px-3 py-1 font-semibold text-slate-700 hover:bg-slate-100"
-                          onClick={() => navigator.clipboard.writeText([c.headline, c.caption, c.hashtags.join(" ")].filter(Boolean).join("\n\n"))}
+                          onClick={() =>
+                            navigator.clipboard.writeText(
+                              [c.headline, editedCaptions[`${c.platform}`] ?? c.caption, c.hashtags.join(" ")].filter(Boolean).join("\n\n")
+                            )
+                          }
                         >
                           Text kopieren
                         </button>

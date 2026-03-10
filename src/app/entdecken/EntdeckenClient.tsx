@@ -229,7 +229,7 @@ export default function EntdeckenClient() {
         image="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/b4f50227-9cbd-44d9-8947-2afdf30e801d.webp"
         align="center"
         overlayStrength="strong"
-        heightClass="h-[40vh] sm:h-[40vh] lg:h-[45vh] min-h-[35vh] -mt-[5.5rem] sm:-mt-[5.5rem]"
+        heightClass="h-[50vh] sm:h-[50vh] lg:h-[50vh] min-h-[35vh] -mt-[5.5rem] sm:-mt-[5.5rem]"
       />
 
       <section className="w-full bg-neutral-100 -mt-4 sm:-mt-6">

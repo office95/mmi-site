@@ -324,37 +324,39 @@ export default function PartnerPage() {
             <source media="(max-width: 768px)" srcSet={heroMobile as string} />
             <Image src={heroDesktop} alt={partner?.name || slug || "Partner"} fill className="object-cover" priority />
           </picture>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/20 to-black/35" />
-          <div className="absolute left-6 sm:left-12 top-[20%] text-left space-y-3">
-            <p className="text-sm uppercase tracking-[0.22em] text-white/70">Partner</p>
-            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl text-white leading-tight drop-shadow-lg">
-              {loading ? "Lade..." : partner?.name || `Kein Treffer für "${slug || "(leer)"}`}
-            </h1>
-            {!loading && tags.length > 0 && (
-              <div className="flex flex-wrap gap-2 pt-2">
-                {tags.map((t: string, idx: number) => (
-                  <span key={idx} className="rounded-full bg-pink-500 px-3 py-1 text-xs font-semibold text-white">
-                    {t}
-                  </span>
-                ))}
-              </div>
-            )}
-            <p className="text-white/85 text-lg font-semibold pt-1">
-              {loading ? "" : partner?.state || partner?.city || "Bundesland folgt"}
-            </p>
-            {appliedPartnerBadges.length > 0 && (
-              <div className="flex flex-wrap gap-2 pt-2">
-                {appliedPartnerBadges.map((b, i) => (
-                  <span
-                    key={i}
-                    className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold text-white shadow"
-                    style={{ backgroundColor: b.color ?? "#0f172a" }}
-                  >
-                    {b.name}
-                  </span>
-                ))}
-              </div>
-            )}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/40 to-black/20" />
+          <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
+            <div className="mx-auto max-w-4xl space-y-3 drop-shadow-[0_18px_40px_rgba(0,0,0,0.45)]">
+              <p className="text-sm uppercase tracking-[0.22em] text-white/70">Partner</p>
+              <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl text-white leading-tight">
+                {loading ? "Lade..." : partner?.name || `Kein Treffer für "${slug || "(leer)"}`}
+              </h1>
+              {!loading && tags.length > 0 && (
+                <div className="flex flex-wrap justify-center gap-2 pt-2">
+                  {tags.map((t: string, idx: number) => (
+                    <span key={idx} className="rounded-full bg-pink-500 px-3 py-1 text-xs font-semibold text-white">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <p className="text-white/85 text-lg font-semibold pt-1">
+                {loading ? "" : partner?.state || partner?.city || "Bundesland folgt"}
+              </p>
+              {appliedPartnerBadges.length > 0 && (
+                <div className="flex flex-wrap justify-center gap-2 pt-2">
+                  {appliedPartnerBadges.map((b, i) => (
+                    <span
+                      key={i}
+                      className="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold text-white shadow"
+                      style={{ backgroundColor: b.color ?? "#0f172a" }}
+                    >
+                      {b.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </section>
         <section className="mx-auto max-w-6xl px-6 py-12">

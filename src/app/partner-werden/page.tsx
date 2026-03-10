@@ -67,7 +67,7 @@ export default function PartnerWerdenPage() {
       <SiteHeader />
 
       {/* Hero */}
-      <header className="relative overflow-hidden bg-gradient-to-br from-black via-slate-900 to-[#0b0b12] text-white">
+      <header className="relative overflow-hidden bg-black text-white h-[55vh] sm:h-[60vh] min-h-[45vh]">
         <div className="absolute inset-0 pointer-events-none">
           <picture>
             <source srcSet="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/294c5a55-6a6e-449f-85a6-23e9ecc0db03.webp" />
@@ -78,18 +78,18 @@ export default function PartnerWerdenPage() {
               loading="eager"
             />
           </picture>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/45 to-black/60" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/45 to-black/20" />
         </div>
-        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 pb-14 pt-24 sm:px-10 sm:pb-16 sm:pt-28 lg:px-16 lg:pb-20 relative z-10">
-          <p className="text-xs uppercase tracking-[0.2em] text-white/70">Music Mission Institute</p>
-          <div className="space-y-3">
+        <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
+          <div className="relative z-10 mx-auto max-w-4xl space-y-5 drop-shadow-[0_16px_40px_rgba(0,0,0,0.45)]">
+            <p className="text-xs uppercase tracking-[0.2em] text-white/70">Music Mission Institute</p>
             <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-[1.05]">Partner werden</h1>
-            <p className="max-w-3xl text-base sm:text-lg text-white/85 leading-relaxed">
+            <p className="text-base sm:text-lg text-white/85 leading-relaxed">
               Nutze dein Studio besser – wir bringen die Teilnehmer. Music Mission verwandelt freie Slots in planbare Kursformate mit Marketing, Plattform und Struktur. Du konzentrierst dich auf Praxis und Sound.
             </p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <ScrollToFormButton targetId="partner-form" label="Jetzt unverbindlich anfragen" />
+            <div className="flex flex-wrap justify-center gap-3 pt-2">
+              <ScrollToFormButton targetId="partner-form" label="Jetzt unverbindlich anfragen" />
+            </div>
           </div>
         </div>
       </header>

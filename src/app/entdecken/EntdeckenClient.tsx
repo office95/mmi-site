@@ -230,13 +230,17 @@ export default function EntdeckenClient() {
         align="center"
         overlayStrength="strong"
       >
-        <div className="w-full max-w-xl">
-          <input
-            value={qSearch}
-            onChange={(e) => setQSearch(e.target.value)}
-            placeholder="Kurs, Partner, Bundesland, Tag"
-            className="w-full rounded-2xl border border-white/30 bg-white/90 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
-          />
+        <div className="w-full flex justify-center mt-[3vh]">
+          <div className="w-full max-w-lg text-center">
+            <div className="mt-2 flex items-center justify-center">
+              <input
+                value={qSearch}
+                onChange={(e) => setQSearch(e.target.value)}
+                placeholder="Kurs, Partner, Bundesland, Tag"
+                className="w-full rounded-2xl border border-white/30 bg-white/90 px-4 py-3 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              />
+            </div>
+          </div>
         </div>
       </HeroSection>
 

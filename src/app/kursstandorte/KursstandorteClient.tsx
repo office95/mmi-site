@@ -180,17 +180,20 @@ export default function KursstandorteClient() {
         subtitle={`Finde Studios und Partner in ${regionLabel} für Musikproduktion, Tontechnik, Live-Sound, DJing und Vocalcoaching.`}
         image="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/f5ca6ab3-c2a6-4fa2-8bea-474f1cbd445b.webp"
         overlayStrength="strong"
+        align="center"
       >
-        <div className="w-full max-w-xl">
-          <p className="text-sm font-semibold text-white/90 text-left sm:text-center">Suche nach Standort, Partner oder Kurs</p>
-          <div className="flex items-center gap-3 mt-2">
+        <div className="w-full flex justify-center mt-[3vh]">
+          <div className="w-full max-w-lg text-center">
+          <p className="text-sm font-semibold text-white/90">Suche nach Standort, Partner oder Kurs</p>
+          <div className="mt-2 flex items-center justify-center">
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Bundesland, Partner, Kurs, Tag"
-              className="flex-1 rounded-xl border border-white/50 bg-white/90 backdrop-blur px-3 py-2 text-sm text-slate-900 shadow-sm"
+              className="w-full rounded-2xl border border-white/50 bg-white/90 backdrop-blur px-4 py-3 text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
           </div>
+        </div>
         </div>
       </HeroSection>
 

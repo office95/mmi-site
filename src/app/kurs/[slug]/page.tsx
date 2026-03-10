@@ -519,38 +519,42 @@ let host = "";
             />
           </picture>
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/15 to-transparent" />
-        <div className="absolute left-6 sm:left-12 right-6 sm:right-12 top-[20%] text-left space-y-3 drop-shadow-[0_18px_40px_rgba(0,0,0,0.45)]">
-          <div className="flex items-center gap-4">
-            {programLogo && (
-              <img
-                src={programLogo}
-                alt={isExtrem ? "Extrem Programm" : isIntensiv ? "Intensiv Programm" : "Programm Logo"}
-                className="h-11 sm:h-12 md:h-16 lg:h-20 w-auto max-w-[40vw] sm:max-w-[32vw] md:max-w-[240px] lg:max-w-[300px] object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.3)] bg-transparent"
-              />
-            )}
-          </div>
-          <h1
-            className="font-anton leading-[0.95] text-white"
-            style={{ fontSize: "clamp(56px, 8vw, 90px)" }}
-          >
-            {course.title}
-          </h1>
-          {Array.isArray(course.tags) && course.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 pt-2">
-              {course.tags.map((t: string, idx: number) => (
-                <span key={idx} className="rounded-full bg-[#ff1f8f] px-3 py-1 text-[11px] font-semibold text-white shadow-sm shadow-black/20">
-                  {t}
-                </span>
-              ))}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/35 to-black/15" />
+        <div className="absolute inset-0 flex items-center justify-center px-6 text-center drop-shadow-[0_18px_40px_rgba(0,0,0,0.45)]">
+          <div className="mx-auto max-w-4xl space-y-4">
+            <div className="flex flex-col items-center gap-3">
+              <div className="flex items-center gap-3">
+                <h1
+                  className="font-anton leading-[0.95] text-white text-center"
+                  style={{ fontSize: "clamp(56px, 8vw, 90px)" }}
+                >
+                  {course.title}
+                </h1>
+                {programLogo && (
+                  <img
+                    src={programLogo}
+                    alt={isExtrem ? "Extrem Programm" : isIntensiv ? "Intensiv Programm" : "Programm Logo"}
+                    className="h-12 sm:h-14 md:h-16 lg:h-18 w-auto max-w-[200px] object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.3)] bg-transparent"
+                  />
+                )}
+              </div>
+              {Array.isArray(course.tags) && course.tags.length > 0 && (
+                <div className="flex flex-wrap justify-center gap-2">
+                  {course.tags.map((t: string, idx: number) => (
+                    <span key={idx} className="rounded-full bg-[#ff1f8f] px-3 py-1 text-[11px] font-semibold text-white shadow-sm shadow-black/20">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <p
+                className="font-semibold leading-tight text-white/90"
+                style={{ fontSize: "clamp(22px, 3.2vw, 40px)" }}
+              >
+                {stateText}
+              </p>
             </div>
-          )}
-          <p
-            className="font-semibold leading-tight text-white/90"
-            style={{ fontSize: "clamp(22px, 3.2vw, 40px)" }}
-          >
-            {stateText}
-          </p>
+          </div>
         </div>
       </section>
 

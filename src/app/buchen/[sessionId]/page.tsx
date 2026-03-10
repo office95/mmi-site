@@ -114,7 +114,6 @@ export default async function BookingPage({
       <SiteHeader />
       <main className="px-6 py-12 sm:px-10 lg:px-20">
         <Suspense fallback={<CourseInfoFallback />}>
-          {/* @ts-expect-error Server Component */}
           <CourseInfo id={session.id} kurs={course.slug} />
         </Suspense>
         <div className="mx-auto max-w-4xl mb-8 grid gap-4 lg:grid-cols-5">

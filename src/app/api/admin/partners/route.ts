@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   const { data, error } = await supabase
     .from(TABLE)
     .select("*")
-    .or(`region.eq.${region},region.is.null`)
+    .or(`region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.,region.eq.%20`)
     .order("updated_at", { ascending: false });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ data });

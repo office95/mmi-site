@@ -19,7 +19,7 @@ const formatPrice = (cents?: number | null) => {
   return `${(cents / 100).toFixed(2)} €`;
 };
 
-const defaultCta = (branding?: Branding | null) => branding?.defaultCta || "Jetzt Platz sichern";
+const defaultCta = (branding?: Branding | null) => branding?.defaultCta || "Platz sichern";
 
 const pickHashtags = (input: CourseMarketingInput, branding?: Branding | null) => {
   const base: string[] = [];
@@ -42,13 +42,13 @@ const headline = (input: CourseMarketingInput, tpl: CampaignTemplateKind) => {
     case "new_course":
       return `${title}: neu in ${loc}`;
     case "starts_soon":
-      return `${title} startet am ${date}`;
+      return `${title} am ${date}`;
     case "last_seats":
       return `Letzte Plätze: ${title}`;
     case "new_date":
       return `Neuer Termin in ${loc}`;
     case "enroll_today":
-      return `${title}: heute anmelden`;
+      return `${title}: jetzt anmelden`;
     case "partner_spotlight":
       return `${input.partner?.name ?? "Partner"} x ${title}`;
     default:
@@ -64,25 +64,25 @@ function buildCaption(platform: Platform, tpl: CampaignTemplateKind, input: Cour
   const partner = input.partner?.name ? `bei ${input.partner.name}` : "";
 
   const base = {
-    instagram: (body: string) => `${body}\n\n${cta} → ${input.bookingUrl}`,
-    facebook: (body: string) => `${body}\n\n${cta}: ${input.bookingUrl}`,
+    instagram: (body: string) => `${body}\n${cta} → ${input.bookingUrl}`,
+    facebook: (body: string) => `${body}\n${cta}: ${input.bookingUrl}`,
     tiktok: (body: string) => `${body} · ${cta} (${input.bookingUrl})`,
   }[platform];
 
   const body = (() => {
     switch (tpl) {
       case "new_course":
-        return `${input.courseTitle}: ${input.summary || "Jetzt entdecken"}. ${partner ? partner + " · " : ""}${loc}. ${price}`.trim();
+        return `${input.courseTitle} – ${input.summary || "Neu am Start"}. ${loc}${price ? " · " + price : ""}${partner ? " · " + partner : ""}`.trim();
       case "starts_soon":
-        return `${input.courseTitle} startet am ${date} ${partner ? "· " + partner : ""}. ${loc}${price ? " · " + price : ""}`.trim();
+        return `${input.courseTitle} am ${date}${input.session?.start_time ? " · " + input.session.start_time.slice(0, 5) + " Uhr" : ""}${loc ? " · " + loc : ""}${price ? " · " + price : ""}${partner ? " · " + partner : ""}`.trim();
       case "last_seats":
-        return `Wenige Plätze für ${input.courseTitle} am ${date}. ${loc}${price ? " · " + price : ""}`.trim();
+        return `Letzte Plätze: ${input.courseTitle} am ${date}${input.session?.start_time ? " · " + input.session.start_time.slice(0, 5) + " Uhr" : ""}${loc ? " · " + loc : ""}${price ? " · " + price : ""}`.trim();
       case "new_date":
-        return `Neuer Termin für ${input.courseTitle}: ${date} in ${loc}.`;
+        return `Neuer Termin: ${input.courseTitle} am ${date} in ${loc}.`;
       case "enroll_today":
-        return `Melde dich heute für ${input.courseTitle} an – ${loc}${price ? " · " + price : ""}.`;
+        return `Heute anmelden: ${input.courseTitle}${loc ? " · " + loc : ""}${price ? " · " + price : ""}.`;
       case "partner_spotlight":
-        return `${input.partner?.name ?? "Unser Partner"} hostet ${input.courseTitle} in ${loc}. ${input.summary || "Kursdetails im Link"}`.trim();
+        return `${input.partner?.name ?? "Partner"} hostet ${input.courseTitle} in ${loc}. ${input.summary || ""}`.trim();
       default:
         return input.courseTitle;
     }
@@ -96,11 +96,14 @@ function buildTiktokScript(tpl: CampaignTemplateKind, input: CourseMarketingInpu
   const loc = formatLocation(input);
   const cta = defaultCta(input.organizerBranding);
   return {
-    hook: tpl === "last_seats" ? `Noch ${Math.max(1, (input.session?.max_participants ?? 0) - (input.session?.seats_taken ?? 0) || 1)} Plätze?` : `${input.courseTitle} in ${loc}`,
+    hook:
+      tpl === "last_seats"
+        ? `Letzte Plätze für ${input.courseTitle}`
+        : `${input.courseTitle} in ${loc}`,
     scenes: [
-      `Was erwartet dich: ${input.summary || "Praxisnaher Kurs"}`,
-      `Wann/wo: ${date} · ${loc}${input.partner?.name ? " · " + input.partner.name : ""}`,
-      `Für wen: ${input.audience || "ambitionierte Musiker:innen"}`,
+      `${date}${input.session?.start_time ? " · " + input.session.start_time.slice(0, 5) + " Uhr" : ""} · ${loc}`,
+      `Für: ${input.audience || "Einsteiger bis Fortgeschrittene"}`,
+      input.summary ? input.summary.slice(0, 90) : "Kompakt & praxisnah.",
     ],
     closing: `${cta}. Link im Profil (${input.bookingUrl}).`,
   };
@@ -126,4 +129,3 @@ export function generateContent(
     };
   });
 }
-

@@ -222,7 +222,7 @@ export async function POST(req: Request) {
           state: "",
           zip: orderRow?.zip || undefined,
           country: orderRow?.country || "Austria",
-          country_code: (((orderRow?.country or "").lower().startswith("österreich")) or ((orderRow?.country or "").lower().startswith("austria"))) and "AUT" or undefined,
+          country_code: (orderRow?.country || "").toLowerCase().startsWith("österreich") || (orderRow?.country || "").toLowerCase().startsWith("austria") ? "AUT" : undefined,
         },
         shipping_address: {
           attention: customerName || undefined,
@@ -231,7 +231,7 @@ export async function POST(req: Request) {
           state: "",
           zip: orderRow?.zip || undefined,
           country: orderRow?.country || "Austria",
-          country_code: (((orderRow?.country or "").lower().startswith("österreich")) or ((orderRow?.country or "").lower().startswith("austria"))) and "AUT" or undefined,
+          country_code: (orderRow?.country || "").toLowerCase().startsWith("österreich") || (orderRow?.country || "").toLowerCase().startsWith("austria") ? "AUT" : undefined,
         },
         notes: orderRow?.dob ? `Geburtsdatum: ${orderRow.dob}` : undefined,
       };
@@ -261,21 +261,40 @@ export async function POST(req: Request) {
           contact_name: customerName,
           email: customerEmail,
           phone: orderRow?.phone || undefined,
+          contact_persons: [
+            {
+              first_name: (orderRow?.first_name || "").trim() || undefined,
+              last_name: (orderRow?.last_name || "").trim() || undefined,
+              email: customerEmail || undefined,
+              phone: orderRow?.phone || undefined,
+              is_primary_contact: true,
+            },
+          ],
           billing_address: {
             attention: customerName || undefined,
             address: orderRow?.street || undefined,
             city: orderRow?.city || undefined,
-            state: undefined,
+            state: "",
             zip: orderRow?.zip || undefined,
-            country: orderRow?.country || undefined,
+            country: orderRow?.country || "Austria",
+            country_code:
+              (orderRow?.country || "").toLowerCase().startsWith("österreich") ||
+              (orderRow?.country || "").toLowerCase().startsWith("austria")
+                ? "AUT"
+                : undefined,
           },
           shipping_address: {
             attention: customerName || undefined,
             address: orderRow?.street || undefined,
             city: orderRow?.city || undefined,
-            state: undefined,
+            state: "",
             zip: orderRow?.zip || undefined,
-            country: orderRow?.country || undefined,
+            country: orderRow?.country || "Austria",
+            country_code:
+              (orderRow?.country || "").toLowerCase().startsWith("österreich") ||
+              (orderRow?.country || "").toLowerCase().startsWith("austria")
+                ? "AUT"
+                : undefined,
           },
         };
         try {
@@ -315,7 +334,7 @@ export async function POST(req: Request) {
           state: "",
           zip: orderRow?.zip || undefined,
           country: orderRow?.country || "Austria",
-          country_code: (((orderRow?.country or "").lower().startswith("österreich")) or ((orderRow?.country or "").lower().startswith("austria"))) and "AUT" or undefined,
+          country_code: (orderRow?.country || "").toLowerCase().startsWith("österreich") || (orderRow?.country || "").toLowerCase().startsWith("austria") ? "AUT" : undefined,
         },
         shipping_address: {
           attention: customerName || undefined,
@@ -324,7 +343,7 @@ export async function POST(req: Request) {
           state: "",
           zip: orderRow?.zip || undefined,
           country: orderRow?.country || "Austria",
-          country_code: (((orderRow?.country or "").lower().startswith("österreich")) or ((orderRow?.country or "").lower().startswith("austria"))) and "AUT" or undefined,
+          country_code: (orderRow?.country || "").toLowerCase().startsWith("österreich") || (orderRow?.country || "").toLowerCase().startsWith("austria") ? "AUT" : undefined,
         },
         notes: orderRow?.dob ? `Geburtsdatum: ${orderRow.dob}` : undefined,
       };

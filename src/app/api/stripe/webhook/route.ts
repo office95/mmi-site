@@ -159,8 +159,37 @@ export async function POST(req: Request) {
 
     // Zoho Books: Rechnung erstellen (failsafe, blockiert Webhook nicht)
     try {
+      // Order-Daten für Adresse/DOB laden (falls vorhanden)
+      let orderRow:
+        | {
+            customer_name?: string | null;
+            first_name?: string | null;
+            last_name?: string | null;
+            street?: string | null;
+            zip?: string | null;
+            city?: string | null;
+            country?: string | null;
+            phone?: string | null;
+            dob?: string | null;
+          }
+        | null
+        | undefined = null;
+      if (cs.metadata?.order_id) {
+        const { data } = await supabase
+          .from("orders")
+          .select("customer_name,first_name,last_name,street,zip,city,country,phone,dob")
+          .eq("id", cs.metadata.order_id)
+          .maybeSingle();
+        orderRow = data;
+      }
+
       const customerEmail = cs.customer_details?.email ?? "";
-      const customerName = cs.customer_details?.name || customerEmail || "Unbekannter Kunde";
+      const customerName =
+        orderRow?.customer_name ||
+        [orderRow?.first_name, orderRow?.last_name].filter(Boolean).join(" ").trim() ||
+        cs.customer_details?.name ||
+        customerEmail ||
+        "Unbekannter Kunde";
       const amountCents = cs.amount_total ?? 0;
       const taxCandidates = [
         courseRow?.data?.tax_rate,
@@ -171,21 +200,38 @@ export async function POST(req: Request) {
       const taxPercentage = taxCandidates.find((v) => Number.isFinite(v)) ?? 0;
       // Kontakt anlegen (minimal)
       const contactPayload = {
-        organization_id: ZOHO_ORG_ID,
+        organization_id: orgId,
         contact_name: customerName,
         customer_sub_type: "individual",
         contact_type: "customer",
         email: customerEmail,
+        phone: orderRow?.phone || undefined,
+        billing_address: {
+          attention: customerName || undefined,
+          street_address1: orderRow?.street || undefined,
+          city: orderRow?.city || undefined,
+          state: undefined,
+          zip: orderRow?.zip || undefined,
+          country: orderRow?.country || undefined,
+        },
+        shipping_address: {
+          attention: customerName || undefined,
+          street_address1: orderRow?.street || undefined,
+          city: orderRow?.city || undefined,
+          state: undefined,
+          zip: orderRow?.zip || undefined,
+          country: orderRow?.country || undefined,
+        },
       };
       const contactResp = (await zohoRequest<Record<string, unknown>>("/contacts", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": orgId },
         body: JSON.stringify(contactPayload),
       }).catch(async (err: unknown) => {
         // Falls Kontakt schon existiert, versuche ihn per List mit Email zu finden
         try {
           const list = await zohoRequest<{ contacts?: Array<Record<string, unknown>> }>(
-            `/contacts?organization_id=${ZOHO_ORG_ID}&email=${encodeURIComponent(customerEmail)}`
+            `/contacts?organization_id=${orgId}&email=${encodeURIComponent(customerEmail)}`
           );
           const existing = list?.contacts?.[0] as { contact_id?: string } | undefined;
           if (existing?.contact_id) return { contact: existing };
@@ -205,7 +251,7 @@ export async function POST(req: Request) {
 
       const invoicePayload = {
         customer_id: contactId,
-        organization_id: ZOHO_ORG_ID,
+        organization_id: orgId,
         line_items: [
           {
             item_name: `Anzahlung – ${cs.metadata?.course_title || "Kursbuchung"}`,
@@ -216,6 +262,21 @@ export async function POST(req: Request) {
           },
         ],
         custom_fields: [],
+        billing_address: {
+          attention: customerName || undefined,
+          address: orderRow?.street || undefined,
+          city: orderRow?.city || undefined,
+          zip: orderRow?.zip || undefined,
+          country: orderRow?.country || undefined,
+        },
+        shipping_address: {
+          attention: customerName || undefined,
+          address: orderRow?.street || undefined,
+          city: orderRow?.city || undefined,
+          zip: orderRow?.zip || undefined,
+          country: orderRow?.country || undefined,
+        },
+        notes: orderRow?.dob ? `Geburtsdatum: ${orderRow.dob}` : undefined,
       };
 
       await zohoRequest("/invoices", {

@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import { sendMail } from "@/lib/mail";
 import { syncOrderToZoho } from "@/lib/zohoSyncOrder";
+import { renderBookingConfirmationHtml } from "@/lib/bookingConfirmation";
 
 export const dynamic = "force-dynamic";
 
@@ -85,11 +86,13 @@ export async function POST(req: Request) {
     const supabase = getSupabaseServiceClient();
 
     const [courseRow, sessionRow] = await Promise.all([
-      courseId ? supabase.from("courses").select("title,tax_rate,zoho_item_id").eq("id", courseId).maybeSingle() : Promise.resolve({ data: null }),
+      courseId
+        ? supabase.from("courses").select("title,tax_rate,zoho_item_id,base_price_cents").eq("id", courseId).maybeSingle()
+        : Promise.resolve({ data: null }),
       sessionId
         ? supabase
             .from("sessions")
-            .select("id,title,start_date,start_time,partner_id,city,state,country,address,zip,tax_rate,zoho_item_id")
+            .select("id,title,start_date,start_time,partner_id,city,state,country,address,zip,tax_rate,price_cents,deposit_cents,zoho_item_id")
             .eq("id", sessionId)
             .maybeSingle()
         : Promise.resolve({ data: null }),
@@ -150,8 +153,22 @@ export async function POST(req: Request) {
         .eq("id", sessionRow.data.partner_id)
         .maybeSingle());
 
+    const orderRow = cs.metadata?.order_id
+      ? await supabase
+          .from("orders")
+          .select(
+            "order_number,status,amount_cents,deposit_cents,currency,participants,customer_name,first_name,last_name,email,phone,street,zip,city,country"
+          )
+          .eq("id", cs.metadata.order_id)
+          .maybeSingle()
+      : { data: null };
+
     const formatDate = (d?: string | null) => (d ? new Date(d + "T00:00:00").toLocaleDateString("de-AT") : "n/a");
     const formatTime = (t?: string | null) => (t ? t.substring(0, 5) : "n/a");
+    const formatMoney = (cents?: number | null) =>
+      typeof cents === "number"
+        ? new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(cents / 100)
+        : "—";
 
     const adminBase = process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at";
     const orderLink =
@@ -199,30 +216,60 @@ export async function POST(req: Request) {
     }
   }
 
-  // Kundenbestätigung
+  // Kundenbestätigung (automatisierte Buchungsbestätigung)
   try {
     const customerEmail =
       event.type === "checkout.session.completed"
         ? (event.data.object as Stripe.Checkout.Session).customer_details?.email ?? null
         : null;
+
     if (customerEmail) {
       const cs = event.data.object as Stripe.Checkout.Session;
-      const courseTitle = cs.metadata?.course_title || "";
-      const startDate = cs.metadata?.start_date || "";
-      const partnerName = cs.metadata?.partner_name || "";
-      const partnerAddress = cs.metadata?.partner_address || "";
+      const orderData = orderRow?.data;
 
-      const htmlCustomer = `
-        <p>Hallo,</p>
-        <p>vielen Dank für deine Buchung beim Music Mission Institute.<br/>Dein Platz im Kurs ist fix reserviert.</p>
-        <p>${courseTitle ? `<strong>Kurs:</strong> ${courseTitle}<br/>` : ""}${startDate ? `<strong>Termin:</strong> ${startDate}<br/>` : ""}${partnerName ? `<strong>Ort:</strong> ${partnerName}${partnerAddress ? ", " + partnerAddress : ""}<br/>` : ""}</p>
-        <p>Weitere Infos erhältst du rechtzeitig vor Kursbeginn.</p>
-        <p>Wir freuen uns auf dich!</p>
-        <p>Beste Grüße<br/>Music Mission Institute<br/>www.musicmission.at</p>
-      `;
+      const totalCents = (() => {
+        const base = sessionRow?.data?.price_cents ?? courseRow?.data?.base_price_cents ?? orderData?.amount_cents ?? 0;
+        return base * (orderData?.participants ?? participants ?? 1);
+      })();
+      const paidCents = orderData?.amount_cents ?? cs.amount_total ?? 0;
+      const openCents = Math.max(totalCents - paidCents, 0);
+
+      const agbLink = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/2843bdf5-f579-4964-8465-e3d9d6798b42.pdf";
+      const kursort = partnerRow?.data
+        ? `${partnerRow.data.street || partnerRow.data.address || ""}, ${partnerRow.data.zip || ""} ${partnerRow.data.city || ""}, ${partnerRow.data.state || ""}`
+        : sessionRow?.data
+        ? `${sessionRow.data.address || ""}, ${sessionRow.data.zip || ""} ${sessionRow.data.city || ""}, ${sessionRow.data.state || ""}`
+        : "Online";
+
+      const htmlCustomer = renderBookingConfirmationHtml({
+        anredeNachname: orderData?.last_name || orderData?.customer_name || "Teilnehmer/in",
+        kursname: courseRow?.data?.title || "Kurs",
+        terminDatum: formatDate(sessionRow?.data?.start_date),
+        terminStartzeit: formatTime(sessionRow?.data?.start_time),
+        terminEndzeit: null,
+        terminZeitraumBeschreibung: null,
+        ortZeile: kursort,
+        teilnehmerName: orderData?.customer_name || `${orderData?.first_name || ""} ${orderData?.last_name || ""}`.trim() || "Teilnehmer/in",
+        buchungsnummer: orderData?.order_number || cs.metadata?.order_number || "—",
+        gesamtpreisEur: formatMoney(totalCents),
+        bereitsBezahltEur: formatMoney(paidCents),
+        offenerBetragEur: formatMoney(openCents),
+        zahlungsart: cs.payment_method_types?.[0] || "Kreditkarte/PayPal",
+        zahlungsdatum: new Date(cs.created * 1000).toLocaleDateString("de-AT"),
+        linkAgb: agbLink,
+        firmenname: "Music Mission Institute",
+        strasseNr: partnerRow?.data?.street || partnerRow?.data?.address || "",
+        plzOrt: `${partnerRow?.data?.zip ?? sessionRow?.data?.zip ?? ""} ${partnerRow?.data?.city ?? sessionRow?.data?.city ?? ""}`.trim(),
+        land: "Österreich",
+        telefon: "",
+        email: customerEmail,
+        uidNr: "",
+        absenderName: "Music Mission Institute",
+      });
+
       await sendMail({
         to: customerEmail,
-        subject: "Bestätigung deiner Kursbuchung",
+        subject: "Buchungsbestätigung",
         html: htmlCustomer,
       });
     }

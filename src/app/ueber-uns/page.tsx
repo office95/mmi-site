@@ -23,8 +23,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AboutPage() {
-  const region = getRegion();
+export default async function AboutPage() {
+  const region = await getRegion();
   const isAT = region === "AT";
   const isDE = region === "DE";
   return (

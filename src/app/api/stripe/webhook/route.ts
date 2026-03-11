@@ -92,7 +92,7 @@ export async function POST(req: Request) {
       sessionId
         ? supabase
             .from("sessions")
-            .select("id,title,start_date,start_time,partner_id,city,state,country,address,zip,tax_rate,price_cents,deposit_cents,zoho_item_id")
+            .select("id,title,start_date,start_time,partner_id,partner_name,city,state,country,address,zip,tax_rate,price_cents,deposit_cents,zoho_item_id")
             .eq("id", sessionId)
             .maybeSingle()
         : Promise.resolve({ data: null }),
@@ -212,13 +212,13 @@ export async function POST(req: Request) {
 
         const agbLink = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/2843bdf5-f579-4964-8465-e3d9d6798b42.pdf";
         const kursort = partnerRow?.data
-          ? `${partnerRow.data.street || partnerRow.data.address || ""}, ${partnerRow.data.zip || ""} ${partnerRow.data.city || ""}, ${partnerRow.data.state || ""}`
+          ? `${partnerRow.data.name || "Partner"}<br/>${partnerRow.data.zip || ""} ${partnerRow.data.city || ""}<br/>${partnerRow.data.state || ""}`
           : sessionRow?.data
-          ? `${sessionRow.data.address || ""}, ${sessionRow.data.zip || ""} ${sessionRow.data.city || ""}, ${sessionRow.data.state || ""}`
+          ? `${sessionRow.data.partner_name || "Partner"}<br/>${sessionRow.data.zip || ""} ${sessionRow.data.city || ""}<br/>${sessionRow.data.state || ""}`
           : "Online";
 
         const htmlCustomer = renderBookingConfirmationHtml({
-          anredeNachname: orderRow?.data?.last_name || orderRow?.data?.customer_name || "Teilnehmer/in",
+          anredeVorname: orderRow?.data?.first_name || orderRow?.data?.customer_name || "Teilnehmer/in",
           kursname: courseRow?.data?.title || "Kurs",
           terminDatum: formatDate(sessionRow?.data?.start_date),
           terminStartzeit: formatTime(sessionRow?.data?.start_time),
@@ -234,7 +234,7 @@ export async function POST(req: Request) {
           zahlungsart: cs.payment_method_types?.[0] || "Kreditkarte/PayPal",
           zahlungsdatum: new Date(cs.created * 1000).toLocaleDateString("de-AT"),
           linkAgb: agbLink,
-          firmenname: "Music Mission Institute",
+          firmenname: "Music Mission GmbH",
           strasseNr: partnerRow?.data?.street || partnerRow?.data?.address || "",
           plzOrt: `${partnerRow?.data?.zip ?? sessionRow?.data?.zip ?? ""} ${partnerRow?.data?.city ?? sessionRow?.data?.city ?? ""}`.trim(),
           land: "Österreich",
@@ -242,7 +242,7 @@ export async function POST(req: Request) {
           email: "office@musicmission.at",
           uidNr: "ATU80644028",
           firmenbuchNr: "FN 627518 x",
-          absenderName: "Music Mission Institute",
+          absenderName: "Music Mission GmbH",
         });
 
         await sendMail({

@@ -17,7 +17,7 @@ export async function sendMail({ to, subject, html }: MailPayload) {
   const pass = process.env.GMAIL_PASS;
   const from =
     process.env.MAIL_FROM ||
-    (user ? `"Music Mission Institute" <${user}>` : `"Music Mission Institute" <office@musicmission.at>`);
+    (user ? `"Music Mission GmbH" <${user}>` : `"Music Mission GmbH" <office@musicmission.at>`);
   if (!user || !pass) {
     console.warn("GMAIL_USER or GMAIL_PASS not set; skipping email send.");
     return;

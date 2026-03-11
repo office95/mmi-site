@@ -1,7 +1,7 @@
 import "server-only";
 
 export type BookingConfirmationData = {
-  anredeNachname: string;
+  anredeVorname: string;
   kursname: string;
   terminDatum: string;
   terminStartzeit?: string | null;
@@ -29,7 +29,7 @@ export type BookingConfirmationData = {
 
 export function renderBookingConfirmationHtml(data: BookingConfirmationData) {
   const {
-    anredeNachname,
+    anredeVorname,
     kursname,
     terminDatum,
     terminStartzeit,
@@ -79,8 +79,8 @@ export function renderBookingConfirmationHtml(data: BookingConfirmationData) {
 <body>
   <div class="card">
     <h1>Buchungsbestätigung – ${kursname} am ${terminDatum}</h1>
-    <p>Sehr geehrte/r ${anredeNachname},</p>
-    <p>vielen Dank für Ihre Buchung. Hiermit bestätigen wir verbindlich Ihre Teilnahme am folgenden Kurs:</p>
+    <p>Hallo ${anredeVorname},</p>
+    <p>vielen Dank für deine Buchung. Dein Platz ist fix reserviert:</p>
 
     <h2>Buchungsdetails</h2>
     <ul>
@@ -103,7 +103,7 @@ export function renderBookingConfirmationHtml(data: BookingConfirmationData) {
     <h2>Hinweise</h2>
     <p class="muted">
       Diese Buchungsbestätigung ist keine Rechnung.<br/>
-      Die Anzahlungsrechnung über die bereits geleistete Zahlung erhalten Sie separat.<br/>
+      Die Anzahlungsrechnung über die bereits geleistete Zahlung erhältst du separat.<br/>
       Nach Kursende stellen wir eine Schlussrechnung über den Gesamtbetrag abzüglich der Anzahlung aus.<br/>
       Es gelten unsere AGB und Stornobedingungen: <a href="${linkAgb}">${linkAgb}</a>.
     </p>
@@ -115,7 +115,7 @@ export function renderBookingConfirmationHtml(data: BookingConfirmationData) {
       UID ${uidNr}${firmenbuchNr ? ` · Firmenbuchnr. ${firmenbuchNr}` : ""}
     </p>
 
-    <p>Wir freuen uns auf Ihre Teilnahme!<br/>
+    <p>Wir freuen uns auf deine Teilnahme!<br/>
     Freundliche Grüße<br/>
     ${absenderName}<br/>
     ${firmenname}</p>

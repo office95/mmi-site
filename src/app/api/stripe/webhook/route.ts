@@ -322,7 +322,7 @@ export async function POST(req: Request) {
         organization_id: orgId,
         line_items: [
           {
-            item_name: `Anzahlung – ${cs.metadata?.course_title || "Kursbuchung"}`,
+            item_name: `Anzahlung ${cs.metadata?.course_title || "Kursbuchung"}`,
             rate: (amountCents ?? 0) / 100,
             quantity: 1,
             tax_percentage: taxPercentage,

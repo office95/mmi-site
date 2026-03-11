@@ -87,7 +87,7 @@ export async function POST(req: Request) {
         line_items: [
           {
             item_id: courseInfo?.zoho_item_id,
-            item_name: `Anzahlung – ${courseInfo?.title || "Kursbuchung"}`,
+            item_name: `Anzahlung ${courseInfo?.title || "Kursbuchung"}`,
             rate: amount,
             quantity: 1,
             tax_percentage: taxPercentage,

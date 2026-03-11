@@ -9,12 +9,15 @@ export async function POST(req: Request) {
   if (!serviceKey) return NextResponse.json({ error: "Service role key missing" }, { status: 500 });
   const authHeader = req.headers.get("x-service-role-key");
   if (authHeader !== serviceKey) {
-    console.warn("Zoho sync unauthorized", {
+    const info = {
       hasHeader: !!authHeader,
-      headerSample: authHeader?.slice(0, 12),
-      envSample: serviceKey.slice(0, 12),
-    });
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      headerLen: authHeader?.length ?? 0,
+      envLen: serviceKey.length,
+      headerSample: authHeader?.slice(0, 8),
+      envSample: serviceKey.slice(0, 8),
+    };
+    console.warn("Zoho sync unauthorized", info);
+    return NextResponse.json({ error: "Unauthorized", info }, { status: 401 });
   }
 
   const supabase = getSupabaseServiceClient();

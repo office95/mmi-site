@@ -243,6 +243,40 @@ export async function POST(req: Request) {
 
       const contactId = contactResp?.contact?.contact_id ?? contactResp?.contact_id ?? null;
 
+      // Bestehenden Kontakt um Adresse/Telefon ergänzen
+      if (contactId && (orderRow?.street || orderRow?.city || orderRow?.zip || orderRow?.country || orderRow?.phone)) {
+        const updatePayload = {
+          contact_name: customerName,
+          email: customerEmail,
+          phone: orderRow?.phone || undefined,
+          billing_address: {
+            attention: customerName || undefined,
+            address: orderRow?.street || undefined,
+            city: orderRow?.city || undefined,
+            state: undefined,
+            zip: orderRow?.zip || undefined,
+            country: orderRow?.country || undefined,
+          },
+          shipping_address: {
+            attention: customerName || undefined,
+            address: orderRow?.street || undefined,
+            city: orderRow?.city || undefined,
+            state: undefined,
+            zip: orderRow?.zip || undefined,
+            country: orderRow?.country || undefined,
+          },
+        };
+        try {
+          await zohoRequest(`/contacts/${contactId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": orgId },
+            body: JSON.stringify(updatePayload),
+          });
+        } catch (e) {
+          console.error("Zoho contact update failed", e);
+        }
+      }
+
       const itemId = await ensureZohoItem({
         title: cs.metadata?.course_title || "Kursbuchung",
         rate: (amountCents ?? 0) / 100,

@@ -15,11 +15,11 @@ export async function GET(req: NextRequest) {
   const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.,region.eq.%20`;
 
   // 1) Sessions laden
-  const { data: sessions, error: errSes } = await supabase
-    .from(TABLE)
-    .select("*")
-    .or(showAll ? undefined! : regionFilter)
-    .order("start_date", { ascending: true });
+  let query = supabase.from(TABLE).select("*");
+  if (!showAll) {
+    query = query.eq("status", "active").or(regionFilter);
+  }
+  const { data: sessions, error: errSes } = await query.order("start_date", { ascending: true });
   if (errSes) return NextResponse.json({ error: errSes.message }, { status: 500 });
   if (!sessions || sessions.length === 0) return NextResponse.json({ data: [] });
 

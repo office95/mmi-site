@@ -128,6 +128,14 @@ export async function POST(req: Request) {
       }
     };
 
+    const normalizeCountry = (raw?: string | null) => {
+      const v = (raw || "").trim().toLowerCase();
+      if (!v) return "Austria";
+      if (v.startsWith("österreich") || v.startsWith("austria") || v === "at") return "Austria";
+      if (v.startsWith("deutschland") || v.startsWith("germany") || v === "de") return "Germany";
+      return raw || "Austria";
+    };
+
     // Order aktualisieren, falls bereits angelegt (checkout-Route), sonst neu erstellen
     const payload = {
       session_id: sessionId,
@@ -199,6 +207,8 @@ export async function POST(req: Request) {
       ].map((v) => Number(v));
       const taxPercentage = taxCandidates.find((v) => Number.isFinite(v)) ?? 0;
       // Kontakt anlegen (minimal)
+      const country = normalizeCountry(orderRow?.country);
+
       const contactPayload = {
         organization_id: orgId,
         contact_name: customerName,
@@ -221,8 +231,7 @@ export async function POST(req: Request) {
           city: orderRow?.city || undefined,
           state: "",
           zip: orderRow?.zip || undefined,
-          country: orderRow?.country || "Austria",
-          country_code: (orderRow?.country || "").toLowerCase().startsWith("österreich") || (orderRow?.country || "").toLowerCase().startsWith("austria") ? "AUT" : undefined,
+          country,
         },
         shipping_address: {
           attention: customerName || undefined,
@@ -230,8 +239,7 @@ export async function POST(req: Request) {
           city: orderRow?.city || undefined,
           state: "",
           zip: orderRow?.zip || undefined,
-          country: orderRow?.country || "Austria",
-          country_code: (orderRow?.country || "").toLowerCase().startsWith("österreich") || (orderRow?.country || "").toLowerCase().startsWith("austria") ? "AUT" : undefined,
+          country,
         },
         notes: orderRow?.dob ? `Geburtsdatum: ${orderRow.dob}` : undefined,
       };
@@ -276,12 +284,7 @@ export async function POST(req: Request) {
             city: orderRow?.city || undefined,
             state: "",
             zip: orderRow?.zip || undefined,
-            country: orderRow?.country || "Austria",
-            country_code:
-              (orderRow?.country || "").toLowerCase().startsWith("österreich") ||
-              (orderRow?.country || "").toLowerCase().startsWith("austria")
-                ? "AUT"
-                : undefined,
+            country,
           },
           shipping_address: {
             attention: customerName || undefined,
@@ -289,12 +292,7 @@ export async function POST(req: Request) {
             city: orderRow?.city || undefined,
             state: "",
             zip: orderRow?.zip || undefined,
-            country: orderRow?.country || "Austria",
-            country_code:
-              (orderRow?.country || "").toLowerCase().startsWith("österreich") ||
-              (orderRow?.country || "").toLowerCase().startsWith("austria")
-                ? "AUT"
-                : undefined,
+            country,
           },
         };
         try {
@@ -333,8 +331,7 @@ export async function POST(req: Request) {
           city: orderRow?.city || undefined,
           state: "",
           zip: orderRow?.zip || undefined,
-          country: orderRow?.country || "Austria",
-          country_code: (orderRow?.country || "").toLowerCase().startsWith("österreich") || (orderRow?.country || "").toLowerCase().startsWith("austria") ? "AUT" : undefined,
+          country,
         },
         shipping_address: {
           attention: customerName || undefined,
@@ -342,8 +339,7 @@ export async function POST(req: Request) {
           city: orderRow?.city || undefined,
           state: "",
           zip: orderRow?.zip || undefined,
-          country: orderRow?.country || "Austria",
-          country_code: (orderRow?.country || "").toLowerCase().startsWith("österreich") || (orderRow?.country || "").toLowerCase().startsWith("austria") ? "AUT" : undefined,
+          country,
         },
         notes: orderRow?.dob ? `Geburtsdatum: ${orderRow.dob}` : undefined,
       };

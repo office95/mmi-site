@@ -1,33 +1,8 @@
-import "server-only";
+// Quick preview generator for booking confirmation email (no TS tooling needed)
+// Usage: node scripts/booking-preview.js
+const fs = require("fs");
 
-export type BookingConfirmationData = {
-  anredeVorname: string;
-  kursname: string;
-  terminDatum: string;
-  terminStartzeit?: string | null;
-  terminEndzeit?: string | null;
-  terminZeitraumBeschreibung?: string | null;
-  ortZeile: string;
-  teilnehmerName: string;
-  buchungsnummer: string;
-  gesamtpreisEur: string;
-  bereitsBezahltEur: string;
-  offenerBetragEur: string;
-  zahlungsart: string;
-  zahlungsdatum: string;
-  linkAgb: string;
-  firmenname: string;
-  strasseNr: string;
-  plzOrt: string;
-  land: string;
-  telefon: string;
-  email: string;
-  uidNr: string;
-  firmenbuchNr?: string;
-  absenderName: string;
-};
-
-export function renderBookingConfirmationHtml(data: BookingConfirmationData) {
+function renderBookingConfirmationHtml(data) {
   const {
     anredeVorname,
     kursname,
@@ -105,20 +80,52 @@ export function renderBookingConfirmationHtml(data: BookingConfirmationData) {
       Diese Buchungsbestätigung ist keine Rechnung.<br/>
       Die Anzahlungsrechnung über die bereits geleistete Zahlung erhältst du separat.<br/>
       Nach Kursende stellen wir eine Schlussrechnung über den Gesamtbetrag abzüglich der Anzahlung aus.<br/>
-      Es gelten unsere AGB und Stornobedingungen: <a href="${linkAgb}">AGB &amp; Storno</a>.
+      Es gelten unsere AGB und Stornobedingungen: <a href="${linkAgb}">${linkAgb}</a>.
     </p>
 
     <h2>Firmenangaben</h2>
     <p class="muted">
-      ${firmenname} · ${strasseNr} · ${plzOrt}<br/>
+      ${firmenname} · ${strasseNr} · ${plzOrt} · ${land}<br/>
       ${telefon ? `Tel. ${telefon} · ` : ""}E-Mail ${email}<br/>
       UID ${uidNr}${firmenbuchNr ? ` · Firmenbuchnr. ${firmenbuchNr}` : ""}
     </p>
 
     <p>Wir freuen uns auf deine Teilnahme!<br/>
     Freundliche Grüße<br/>
-    ${absenderName}</p>
+    ${absenderName}<br/>
+    ${firmenname}</p>
   </div>
 </body>
 </html>`;
 }
+
+// Sample data
+const html = renderBookingConfirmationHtml({
+  anredeVorname: "Chris",
+  kursname: "Pro Audio Basics",
+  terminDatum: "12.03.2026",
+  terminStartzeit: "10:00",
+  terminEndzeit: null,
+  terminZeitraumBeschreibung: null,
+  ortZeile: "Partner X<br/>1010 Wien<br/>Wien",
+  teilnehmerName: "Chris Muster",
+  buchungsnummer: "MMI-123",
+  gesamtpreisEur: "€ 500,00",
+  bereitsBezahltEur: "€ 200,00",
+  offenerBetragEur: "€ 300,00",
+  zahlungsart: "Kreditkarte",
+  zahlungsdatum: "12.03.2026",
+  linkAgb: "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/2843bdf5-f579-4964-8465-e3d9d6798b42.pdf",
+  firmenname: "Music Mission GmbH",
+  strasseNr: "",
+  plzOrt: "",
+  land: "Österreich",
+  telefon: "",
+  email: "office@musicmission.at",
+  uidNr: "ATU80644028",
+  firmenbuchNr: "FN 627518 x",
+  absenderName: "Music Mission GmbH",
+});
+
+fs.writeFileSync("/tmp/booking_preview.html", html);
+console.log("Preview geschrieben nach /tmp/booking_preview.html");

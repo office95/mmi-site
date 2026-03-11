@@ -14,6 +14,7 @@ export async function POST(req: Request) {
   }
 
   const supabase = getSupabaseServiceClient();
+  const orgId = ZOHO_ORG_ID || "";
 
   // Orders, die paid sind und noch keine Zoho-Verknüpfung haben
   const { data: orders, error } = await supabase
@@ -58,21 +59,21 @@ export async function POST(req: Request) {
       };
       const contactResp = (await zohoRequest<{ contact?: { contact_id?: string }; contact_id?: string }>("/contacts", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": ZOHO_ORG_ID },
+        headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": orgId },
         body: JSON.stringify(contactPayload),
       }).catch(async () => {
         // Fallback 1: nach E-Mail suchen
         if (email) {
           const list = await zohoRequest<{ contacts?: Array<{ contact_id?: string }> }>(
-            `/contacts?organization_id=${ZOHO_ORG_ID}&email=${encodeURIComponent(email)}`
-          );
-          const existing = list?.contacts?.[0];
-          if (existing?.contact_id) return { contact: existing } as { contact: { contact_id: string } };
-        }
-        // Fallback 2: nach Kontakt-Namen suchen (wenn Create z.B. wegen Duplikat scheitert)
-        const listByName = await zohoRequest<{ contacts?: Array<{ contact_id?: string }> }>(
-          `/contacts?organization_id=${ZOHO_ORG_ID}&contact_name=${encodeURIComponent(name)}`
+          `/contacts?organization_id=${orgId}&email=${encodeURIComponent(email)}`
         );
+        const existing = list?.contacts?.[0];
+        if (existing?.contact_id) return { contact: existing } as { contact: { contact_id: string } };
+      }
+      // Fallback 2: nach Kontakt-Namen suchen (wenn Create z.B. wegen Duplikat scheitert)
+      const listByName = await zohoRequest<{ contacts?: Array<{ contact_id?: string }> }>(
+        `/contacts?organization_id=${orgId}&contact_name=${encodeURIComponent(name)}`
+      );
         const existingByName = listByName?.contacts?.[0];
         if (existingByName?.contact_id) return { contact: existingByName } as { contact: { contact_id: string } };
         throw new Error("contact create failed");

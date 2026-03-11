@@ -1,30 +1,31 @@
 import { NextResponse } from "next/server";
 
-const ZB_CLIENT_ID = process.env.ZB_CLIENT_ID;
-const ZB_CLIENT_SECRET = process.env.ZB_CLIENT_SECRET;
-const ZB_REFRESH_TOKEN = process.env.ZB_REFRESH_TOKEN;
-const ZB_ORG_ID = process.env.ZB_ORG_ID;
-const ZB_DC = process.env.ZB_DC || "eu"; // eu, com, in, au, jp, sa, ca
+// Accept both legacy ZB_* and current ZOHO_* env names to avoid misconfig between env files and servers.
+const ZOHO_CLIENT_ID = process.env.ZOHO_CLIENT_ID || process.env.ZB_CLIENT_ID;
+const ZOHO_CLIENT_SECRET = process.env.ZOHO_CLIENT_SECRET || process.env.ZB_CLIENT_SECRET;
+const ZOHO_REFRESH_TOKEN = process.env.ZOHO_REFRESH_TOKEN || process.env.ZB_REFRESH_TOKEN;
+const ZOHO_ORG_ID_VALUE = process.env.ZOHO_ORG_ID || process.env.ZB_ORG_ID;
+const ZOHO_DC = process.env.ZOHO_DC || process.env.ZB_DC || "eu"; // eu, com, in, au, jp, sa, ca
 
-if (!ZB_CLIENT_ID || !ZB_CLIENT_SECRET || !ZB_REFRESH_TOKEN || !ZB_ORG_ID) {
-  console.warn("Zoho Books env vars missing: ZB_CLIENT_ID, ZB_CLIENT_SECRET, ZB_REFRESH_TOKEN, ZB_ORG_ID");
+if (!ZOHO_CLIENT_ID || !ZOHO_CLIENT_SECRET || !ZOHO_REFRESH_TOKEN || !ZOHO_ORG_ID_VALUE) {
+  console.warn("Zoho Books env vars missing: ZOHO_CLIENT_ID, ZOHO_CLIENT_SECRET, ZOHO_REFRESH_TOKEN, ZOHO_ORG_ID (legacy ZB_* also accepted)");
 }
 
-const accountsHost = `https://accounts.zoho.${ZB_DC}`;
-const apiHost = `https://www.zohoapis.${ZB_DC}`;
+const accountsHost = `https://accounts.zoho.${ZOHO_DC}`;
+const apiHost = `https://www.zohoapis.${ZOHO_DC}`;
 
 let cachedToken: { token: string; expiresAt: number } | null = null;
 
 async function fetchAccessToken(): Promise<string> {
   const now = Date.now();
   if (cachedToken && cachedToken.expiresAt - 60_000 > now) return cachedToken.token;
-  if (!ZB_CLIENT_ID || !ZB_CLIENT_SECRET || !ZB_REFRESH_TOKEN) throw new Error("Zoho Books credentials not configured");
+  if (!ZOHO_CLIENT_ID || !ZOHO_CLIENT_SECRET || !ZOHO_REFRESH_TOKEN) throw new Error("Zoho Books credentials not configured");
 
   const body = new URLSearchParams({
     grant_type: "refresh_token",
-    client_id: ZB_CLIENT_ID,
-    client_secret: ZB_CLIENT_SECRET,
-    refresh_token: ZB_REFRESH_TOKEN,
+    client_id: ZOHO_CLIENT_ID,
+    client_secret: ZOHO_CLIENT_SECRET,
+    refresh_token: ZOHO_REFRESH_TOKEN,
   });
 
   const res = await fetch(`${accountsHost}/oauth/v2/token`, {
@@ -60,11 +61,11 @@ export async function zohoRequest<T = any>(path: string, init: RequestInit = {})
 }
 
 export function requireZohoConfigured() {
-  if (!ZB_CLIENT_ID || !ZB_CLIENT_SECRET || !ZB_REFRESH_TOKEN || !ZB_ORG_ID) {
+  if (!ZOHO_CLIENT_ID || !ZOHO_CLIENT_SECRET || !ZOHO_REFRESH_TOKEN || !ZOHO_ORG_ID_VALUE) {
     return NextResponse.json({ error: "Zoho Books not configured" }, { status: 500 });
   }
   return null;
 }
 
-export const ZOHO_ORG_ID = ZB_ORG_ID;
+export const ZOHO_ORG_ID = ZOHO_ORG_ID_VALUE;
 export const ZOHO_API_HOST = apiHost;

@@ -84,6 +84,17 @@ export async function POST(req: Request) {
 
     const supabase = getSupabaseServiceClient();
 
+    const [courseRow, sessionRow] = await Promise.all([
+      courseId ? supabase.from("courses").select("title,tax_rate,zoho_item_id").eq("id", courseId).maybeSingle() : Promise.resolve({ data: null }),
+      sessionId
+        ? supabase
+            .from("sessions")
+            .select("start_date,start_time,partner_id,city,state,country,address,zip,tax_rate")
+            .eq("id", sessionId)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+    ]);
+
     // Zoho Item helper: versucht vorhandene Item-ID aus Kurs zu holen oder neu anzulegen
     const ensureZohoItem = async (opts: { title: string; rate: number; taxPercentage: number }) => {
       let courseItemId: string | null = null;
@@ -215,16 +226,6 @@ export async function POST(req: Request) {
     }
 
     // Benachrichtigung per E-Mail
-    const [courseRow, sessionRow] = await Promise.all([
-      courseId ? supabase.from("courses").select("title").eq("id", courseId).maybeSingle() : Promise.resolve({ data: null }),
-      sessionId
-        ? supabase
-            .from("sessions")
-            .select("start_date,start_time,partner_id,city,state,country,address,zip")
-            .eq("id", sessionId)
-            .maybeSingle()
-        : Promise.resolve({ data: null }),
-    ]);
     const partnerRow =
       sessionRow?.data?.partner_id &&
       (await supabase

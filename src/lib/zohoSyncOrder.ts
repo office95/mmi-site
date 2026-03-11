@@ -1,5 +1,5 @@
 import { getSupabaseServiceClient } from "@/lib/supabase";
-import { zohoRequest, ZOHO_ORG_ID } from "@/lib/zohoBooks";
+import { zohoRequest } from "@/lib/zohoBooks";
 
 type SupabaseClient = ReturnType<typeof getSupabaseServiceClient>;
 
@@ -58,7 +58,7 @@ type OrderWithJoins = {
   } | null;
 };
 
-const ORG_ID = ZOHO_ORG_ID || "";
+const getOrgId = () => process.env.ZOHO_ORG_ID || "";
 
 export async function syncOrderToZoho(orderId: string) {
   if (!ORG_ID) throw new Error("ZOHO_ORG_ID missing");
@@ -294,7 +294,7 @@ async function ensureZohoInvoice(order: OrderWithJoins, contactId: string, itemI
 
   const invoicePayload: Record<string, unknown> = {
     customer_id: contactId,
-    organization_id: ORG_ID,
+    organization_id: getOrgId(),
     date: new Date(order.created_at).toISOString().slice(0, 10),
     due_date: new Date(order.created_at).toISOString().slice(0, 10),
     reference_number: order.order_number,
@@ -318,7 +318,7 @@ async function ensureZohoInvoice(order: OrderWithJoins, contactId: string, itemI
 
   const created = (await zohoRequest<{ invoice?: { invoice_id?: string } }>("/invoices", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": ORG_ID },
+    headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": getOrgId() },
     body: JSON.stringify(invoicePayload),
   })) as { invoice?: { invoice_id?: string } };
 
@@ -343,7 +343,7 @@ async function ensureZohoPayment(order: OrderWithJoins, invoiceId: string, paidC
 
   const created = (await zohoRequest<{ payment?: { payment_id?: string } }>("/customerpayments", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": ORG_ID },
+    headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": getOrgId() },
     body: JSON.stringify(payload),
   })) as { payment?: { payment_id?: string } };
 

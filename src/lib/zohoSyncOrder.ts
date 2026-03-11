@@ -334,6 +334,14 @@ async function ensureZohoPayment(order: OrderWithJoins, invoiceId: string, paidC
   if (order.zoho_payment_id) return order.zoho_payment_id;
   // Keine Doppelzahlung: versuchen, Payment per reference zu finden? (Zoho API hat keinen direkten Search; wir überspringen.)
 
+  // Falls die Rechnung bereits als bezahlt markiert ist, Payment überspringen.
+  const balance = await getInvoiceBalance(invoiceId);
+  if (balance !== null && balance <= 0.0001) {
+    const paymentId = order.zoho_payment_id || "already-paid";
+    await persistPayment(order.id, paymentId);
+    return paymentId;
+  }
+
   const payload = {
     customer_id: order.zoho_contact_id || undefined,
     amount: paidCents / 100,
@@ -342,17 +350,27 @@ async function ensureZohoPayment(order: OrderWithJoins, invoiceId: string, paidC
     reference_number: order.stripe_payment_intent || order.checkout_session_id || order.order_number,
     invoices: [{ invoice_id: invoiceId, amount_applied: paidCents / 100 }],
   };
+  try {
+    const created = (await zohoRequest<{ payment?: { payment_id?: string } }>("/customerpayments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": getOrgId() },
+      body: JSON.stringify(payload),
+    })) as { payment?: { payment_id?: string } };
 
-  const created = (await zohoRequest<{ payment?: { payment_id?: string } }>("/customerpayments", {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": getOrgId() },
-    body: JSON.stringify(payload),
-  })) as { payment?: { payment_id?: string } };
-
-  const paymentId = created?.payment?.payment_id;
-  if (!paymentId) throw new Error("payment create failed");
-  await persistPayment(order.id, paymentId);
-  return paymentId;
+    const paymentId = created?.payment?.payment_id;
+    if (!paymentId) throw new Error("payment create failed");
+    await persistPayment(order.id, paymentId);
+    return paymentId;
+  } catch (e: any) {
+    const msg = String(e?.message || "");
+    // Zoho code 24016: Betrag höher als offener Betrag -> vermutlich schon bezahlt
+    if (msg.includes("24016")) {
+      const paymentId = "already-paid";
+      await persistPayment(order.id, paymentId);
+      return paymentId;
+    }
+    throw e;
+  }
 }
 
 // --- Persistence helpers ---
@@ -370,6 +388,18 @@ async function persistInvoice(orderId: string, invoiceId: string) {
 async function persistPayment(orderId: string, paymentId: string) {
   const supabase = getSupabaseServiceClient();
   await supabase.from("orders").update({ zoho_payment_id: paymentId }).eq("id", orderId);
+}
+
+async function getInvoiceBalance(invoiceId: string): Promise<number | null> {
+  try {
+    const res = (await zohoRequest<{ invoice?: { balance?: number } }>(`/invoices/${invoiceId}?organization_id=${getOrgId()}`)) as {
+      invoice?: { balance?: number };
+    };
+    return typeof res?.invoice?.balance === "number" ? res.invoice.balance : null;
+  } catch (e) {
+    console.warn("[zoho-sync] balance lookup failed", e);
+    return null;
+  }
 }
 
 // --- Zoho helpers ---

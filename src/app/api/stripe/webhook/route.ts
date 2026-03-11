@@ -211,11 +211,14 @@ export async function POST(req: Request) {
         const openCents = Math.max(totalCents - paidCents, 0);
 
         const agbLink = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/2843bdf5-f579-4964-8465-e3d9d6798b42.pdf";
-        const kursort = partnerRow?.data
-          ? `${partnerRow.data.name || "Partner"}<br/>${partnerRow.data.zip || ""} ${partnerRow.data.city || ""}<br/>${partnerRow.data.state || ""}`
-          : sessionRow?.data
-          ? `${sessionRow.data.partner_name || "Partner"}<br/>${sessionRow.data.zip || ""} ${sessionRow.data.city || ""}<br/>${sessionRow.data.state || ""}`
-          : "Online";
+        const kursortParts = [
+          partnerRow?.data?.name || sessionRow?.data?.partner_name || sessionRow?.data?.city || "Partner",
+          `${partnerRow?.data?.zip ?? sessionRow?.data?.zip ?? ""} ${partnerRow?.data?.city ?? sessionRow?.data?.city ?? ""}`.trim(),
+          partnerRow?.data?.state || sessionRow?.data?.state || "",
+        ]
+          .map((p) => (p ?? "").trim())
+          .filter((p) => p.length > 0);
+        const kursort = kursortParts.length > 0 ? kursortParts.join("<br/>") : "Online";
 
         const htmlCustomer = renderBookingConfirmationHtml({
           anredeVorname: orderRow?.data?.first_name || orderRow?.data?.customer_name || "Teilnehmer/in",

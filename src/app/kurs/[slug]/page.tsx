@@ -310,7 +310,7 @@ let host = "";
         <SiteHeader />
         <div className="px-6 py-20 text-center space-y-4">
           <h1 className="text-2xl font-semibold">Kurs nicht gefunden</h1>
-          <p className="text-slate-600 mt-2">Für den Slug „{slugClean || params.slug || "(leer)"}“ wurde kein Kurs gefunden.</p>
+          <p className="text-slate-600 mt-2">Für den Slug „{slugClean || "(leer)"}“ wurde kein Kurs gefunden.</p>
           {lastError && <p className="text-xs text-red-600">Fehler: {lastError}</p>}
           <p className="text-[11px] text-slate-500">Host: {host || "unbekannt"} · Region: {region || "?"}</p>
           {list && (

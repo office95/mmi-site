@@ -82,7 +82,8 @@ export async function middleware(req: NextRequest) {
   // Admin-POST-BYPASS: sync-orders ist bewusst öffentlich (interner Aufruf per cURL)
   const publicAdminService =
     url.pathname.startsWith("/api/admin/zoho/sync-orders") ||
-    url.pathname.startsWith("/api/admin/zoho/create-test-order");
+    url.pathname.startsWith("/api/admin/zoho/create-test-order") ||
+    url.pathname.startsWith("/api/admin/zoho/sync-sessions");
 
   let res = NextResponse.next({ request: { headers: requestHeaders } });
 

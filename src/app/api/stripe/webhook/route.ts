@@ -227,6 +227,7 @@ export async function POST(req: Request) {
         ],
         billing_address: {
           attention: customerName || undefined,
+          street: orderRow?.street || undefined,
           address: orderRow?.street || undefined,
           city: orderRow?.city || undefined,
           state: "",
@@ -235,6 +236,7 @@ export async function POST(req: Request) {
         },
         shipping_address: {
           attention: customerName || undefined,
+          street: orderRow?.street || undefined,
           address: orderRow?.street || undefined,
           city: orderRow?.city || undefined,
           state: "",
@@ -327,6 +329,7 @@ export async function POST(req: Request) {
         custom_fields: [],
         billing_address: {
           attention: customerName || undefined,
+          street: orderRow?.street || undefined,
           address: orderRow?.street || undefined,
           city: orderRow?.city || undefined,
           state: "",
@@ -335,6 +338,7 @@ export async function POST(req: Request) {
         },
         shipping_address: {
           attention: customerName || undefined,
+          street: orderRow?.street || undefined,
           address: orderRow?.street || undefined,
           city: orderRow?.city || undefined,
           state: "",

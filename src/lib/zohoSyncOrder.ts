@@ -58,7 +58,8 @@ type OrderWithJoins = {
   } | null;
 };
 
-const getOrgId = () => process.env.ZOHO_ORG_ID || "";
+// Accept both new ZOHO_* and legacy ZB_* env names to keep prod/local aligned
+const getOrgId = () => process.env.ZOHO_ORG_ID || process.env.ZB_ORG_ID || "";
 
 export async function syncOrderToZoho(orderId: string) {
   const ORG_ID = getOrgId();

@@ -31,7 +31,10 @@ export async function POST(req: Request) {
     try {
       const created = (await zohoRequest<{ item?: { item_id?: string } }>("/items", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-com-zoho-books-organizationid": ZOHO_ORG_ID,
+        },
         body: JSON.stringify({ organization_id: ZOHO_ORG_ID, name: title || "Kurs", rate: price, tax_percentage: tax }),
       })) as { item?: { item_id?: string } };
       const itemId = created?.item?.item_id;

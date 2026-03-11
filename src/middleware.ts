@@ -79,10 +79,8 @@ export async function middleware(req: NextRequest) {
       "/api/admin/course-languages",
     ].some((p) => url.pathname.startsWith(p));
 
-  // Admin-POST-BYPASS: wenn Service-Role-Key mitgeschickt wird (für technische Sync-Endpunkte)
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const hasServiceHeader = serviceKey && req.headers.get("x-service-role-key") === serviceKey;
-  const publicAdminService = hasServiceHeader && url.pathname.startsWith("/api/admin/zoho/sync-orders");
+  // Admin-POST-BYPASS: sync-orders ist bewusst öffentlich (interner Aufruf per cURL)
+  const publicAdminService = url.pathname.startsWith("/api/admin/zoho/sync-orders");
 
   let res = NextResponse.next({ request: { headers: requestHeaders } });
 

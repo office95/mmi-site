@@ -61,11 +61,20 @@ export async function POST(req: Request) {
         headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": ZOHO_ORG_ID },
         body: JSON.stringify(contactPayload),
       }).catch(async () => {
-        const list = await zohoRequest<{ contacts?: Array<{ contact_id?: string }> }>(
-          `/contacts?organization_id=${ZOHO_ORG_ID}&email=${encodeURIComponent(email)}`
+        // Fallback 1: nach E-Mail suchen
+        if (email) {
+          const list = await zohoRequest<{ contacts?: Array<{ contact_id?: string }> }>(
+            `/contacts?organization_id=${ZOHO_ORG_ID}&email=${encodeURIComponent(email)}`
+          );
+          const existing = list?.contacts?.[0];
+          if (existing?.contact_id) return { contact: existing } as { contact: { contact_id: string } };
+        }
+        // Fallback 2: nach Kontakt-Namen suchen (wenn Create z.B. wegen Duplikat scheitert)
+        const listByName = await zohoRequest<{ contacts?: Array<{ contact_id?: string }> }>(
+          `/contacts?organization_id=${ZOHO_ORG_ID}&contact_name=${encodeURIComponent(name)}`
         );
-        const existing = list?.contacts?.[0];
-        if (existing?.contact_id) return { contact: existing } as { contact: { contact_id: string } };
+        const existingByName = listByName?.contacts?.[0];
+        if (existingByName?.contact_id) return { contact: existingByName } as { contact: { contact_id: string } };
         throw new Error("contact create failed");
       })) as { contact?: { contact_id?: string }; contact_id?: string };
 

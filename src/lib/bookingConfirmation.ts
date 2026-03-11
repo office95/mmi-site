@@ -55,7 +55,7 @@ export function renderBookingConfirmationHtml(data: BookingConfirmationData) {
     absenderName,
   } = data;
 
-  const terminZeile = [terminDatum, terminStartzeit ? `von ${terminStartzeit}` : null, terminEndzeit ? `bis ${terminEndzeit}` : null, terminZeitraumBeschreibung]
+  const terminZeile = [terminDatum, terminStartzeit ? `| ${terminStartzeit} Uhr` : null, terminZeitraumBeschreibung]
     .filter(Boolean)
     .join(" ");
 

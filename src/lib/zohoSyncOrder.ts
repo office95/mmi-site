@@ -61,6 +61,7 @@ type OrderWithJoins = {
 const getOrgId = () => process.env.ZOHO_ORG_ID || "";
 
 export async function syncOrderToZoho(orderId: string) {
+  const ORG_ID = getOrgId();
   if (!ORG_ID) throw new Error("ZOHO_ORG_ID missing");
   const supabase = getSupabaseServiceClient();
   const order = await loadOrder(supabase, orderId);

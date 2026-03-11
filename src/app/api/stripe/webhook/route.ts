@@ -89,7 +89,7 @@ export async function POST(req: Request) {
       sessionId
         ? supabase
             .from("sessions")
-            .select("start_date,start_time,partner_id,city,state,country,address,zip,tax_rate,zoho_item_id")
+            .select("id,title,start_date,start_time,partner_id,city,state,country,address,zip,tax_rate,zoho_item_id")
             .eq("id", sessionId)
             .maybeSingle()
         : Promise.resolve({ data: null }),
@@ -239,7 +239,12 @@ export async function POST(req: Request) {
         contact_type: "customer",
         email: customerEmail,
         phone: orderRow?.phone || undefined,
-        notes: orderRow?.dob ? `Geburtsdatum: ${orderRow.dob}` : undefined,
+        notes: [
+          orderRow?.dob ? `Geburtsdatum: ${orderRow.dob}` : null,
+          (sessionRow?.data as any)?.city ? `Ort: ${(sessionRow?.data as any)?.city}` : null,
+        ]
+          .filter(Boolean)
+          .join(" • ") || undefined,
         contact_persons: [
           {
             first_name: (orderRow?.first_name || customerName || "").trim() || undefined,
@@ -334,8 +339,10 @@ export async function POST(req: Request) {
         }
       }
 
+      const sessionTitle = (sessionRow?.data as any)?.title || (courseRow?.data as any)?.title || cs.metadata?.course_title || "Kursbuchung";
+      const startDate = (sessionRow?.data as any)?.start_date || cs.metadata?.start_date || "";
       const itemId = await ensureZohoItem({
-        title: cs.metadata?.course_title || "Kursbuchung",
+        title: sessionTitle,
         rate: (amountCents ?? 0) / 100,
         taxPercentage,
       });
@@ -345,7 +352,7 @@ export async function POST(req: Request) {
         organization_id: orgId,
         line_items: [
           {
-            item_name: `Anzahlung ${cs.metadata?.order_number ? cs.metadata.order_number + " – " : ""}${cs.metadata?.course_title || "Kursbuchung"}`,
+            item_name: `Anzahlung ${(orderRow?.order_number || cs.metadata?.order_number) ? (orderRow?.order_number || cs.metadata?.order_number) + " – " : ""}${sessionTitle}${startDate ? " (Start: " + startDate + ")" : ""}`,
             rate: (amountCents ?? 0) / 100,
             quantity: 1,
             tax_percentage: taxPercentage,

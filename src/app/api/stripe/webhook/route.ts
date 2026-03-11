@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import { sendMail } from "@/lib/mail";
+import { zohoRequest, ZOHO_ORG_ID } from "@/lib/zohoBooks";
 
 export const dynamic = "force-dynamic";
 
@@ -24,10 +25,11 @@ export async function POST(req: Request) {
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(buf, sig, webhookSecret);
-  } catch (err: any) {
+  } catch (err: unknown) {
     const ip = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown";
-    console.warn(`[stripe-webhook] ungültige Signatur`, { ip, message: err?.message });
-    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+    const message = err instanceof Error ? err.message : "unknown";
+    console.warn(`[stripe-webhook] ungültige Signatur`, { ip, message });
+    return NextResponse.json({ error: `Webhook Error: ${message}` }, { status: 400 });
   }
 
   if (event.type === "checkout.session.completed") {
@@ -38,8 +40,8 @@ export async function POST(req: Request) {
     const priceMode = cs.metadata?.price_mode ?? "deposit";
 
     // Rabatt / Promotion-Code ermitteln
-    const discountEntry: any = cs.total_details?.breakdown?.discounts?.[0] ?? null;
-    const discountObj: any = discountEntry?.discount ?? null;
+    const discountEntry = cs.total_details?.breakdown?.discounts?.[0] as { discount?: { id?: string; promotion_code?: string; coupon?: { name?: string } } } | undefined;
+    const discountObj = discountEntry?.discount;
     const discountId = discountObj?.id ?? null; // di_...
     const promoId = discountObj?.promotion_code ?? null; // promo_...
     const discountAmount = cs.total_details?.amount_discount ?? null;
@@ -60,10 +62,10 @@ export async function POST(req: Request) {
     // 2) Falls nur Discount-ID vorhanden: Discount laden und PromotionCode daraus ziehen
     if (!promoCode && discountId && stripe) {
       try {
-        const disc = await (stripe as any).discounts.retrieve(discountId);
-        const promoFromDisc = (disc as any)?.promotion_code as string | undefined;
+        const disc = await (stripe as Stripe & { discounts: { retrieve: (id: string) => Promise<{ promotion_code?: string }> } }).discounts.retrieve(discountId);
+        const promoFromDisc = disc?.promotion_code;
         if (promoFromDisc) {
-          const pc = await (stripe as any).promotionCodes.retrieve(promoFromDisc);
+          const pc = await (stripe as Stripe & { promotionCodes: { retrieve: (id: string) => Promise<{ code?: string }> } }).promotionCodes.retrieve(promoFromDisc);
           promoCode = pc?.code || promoCode;
         }
       } catch (_) {
@@ -81,6 +83,39 @@ export async function POST(req: Request) {
     if (!couponCode && promoCode) couponCode = promoCode;
 
     const supabase = getSupabaseServiceClient();
+
+    // Zoho Item helper: versucht vorhandene Item-ID aus Kurs zu holen oder neu anzulegen
+    const ensureZohoItem = async (opts: { title: string; rate: number; taxPercentage: number }) => {
+      let courseItemId: string | null = null;
+      if (courseId) {
+        const courseFetch = await supabase.from("courses").select("zoho_item_id").eq("id", courseId).maybeSingle();
+        const maybeId = (courseFetch.data as { zoho_item_id?: string } | null)?.zoho_item_id;
+        if (maybeId) courseItemId = maybeId;
+      }
+      if (courseItemId) return courseItemId;
+
+      // Item neu anlegen
+      const itemPayload = {
+        organization_id: ZOHO_ORG_ID,
+        name: opts.title || "Kursbuchung",
+        rate: opts.rate,
+      };
+      try {
+        const created = (await zohoRequest<{ item?: { item_id?: string } }>("/items", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(itemPayload),
+        })) as { item?: { item_id?: string } };
+        const newId = created?.item?.item_id;
+        if (newId && courseId) {
+          await supabase.from("courses").update({ zoho_item_id: newId }).eq("id", courseId);
+        }
+        return newId ?? null;
+      } catch (e) {
+        console.error("Zoho item create failed", e);
+        return null;
+      }
+    };
 
     // Order aktualisieren, falls bereits angelegt (checkout-Route), sonst neu erstellen
     const payload = {
@@ -109,6 +144,74 @@ export async function POST(req: Request) {
     // Sitzplätze erhöhen
     if (sessionId) {
       await supabase.rpc("increment_seats", { p_session_id: sessionId, p_count: participants });
+    }
+
+    // Zoho Books: Rechnung erstellen (failsafe, blockiert Webhook nicht)
+    try {
+      const customerEmail = cs.customer_details?.email ?? "";
+      const customerName = cs.customer_details?.name || customerEmail || "Unbekannter Kunde";
+      const amountCents = cs.amount_total ?? 0;
+      const taxFromMeta = Number(cs.metadata?.tax_rate ?? cs.metadata?.tax_rate_percent ?? Number.NaN);
+      const taxFromSession = Number(sessionRow?.data?.tax_rate ?? Number.NaN);
+      const taxFromCourse = Number(courseRow?.data?.tax_rate ?? Number.NaN);
+      const taxPercentage = [taxFromMeta, taxFromSession, taxFromCourse].find((v) => Number.isFinite(v)) ?? 0;
+      // Kontakt anlegen (minimal)
+      const contactPayload = {
+        organization_id: ZOHO_ORG_ID,
+        contact_name: customerName,
+        customer_sub_type: "individual",
+        contact_type: "customer",
+        email: customerEmail,
+      };
+      const contactResp = (await zohoRequest<Record<string, unknown>>("/contacts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contactPayload),
+      }).catch(async (err: unknown) => {
+        // Falls Kontakt schon existiert, versuche ihn per List mit Email zu finden
+        try {
+          const list = await zohoRequest<{ contacts?: Array<Record<string, unknown>> }>(
+            `/contacts?organization_id=${ZOHO_ORG_ID}&email=${encodeURIComponent(customerEmail)}`
+          );
+          const existing = list?.contacts?.[0] as { contact_id?: string } | undefined;
+          if (existing?.contact_id) return { contact: existing };
+        } catch (_e) {
+          /* ignore */
+        }
+        throw err;
+      })) as { contact?: { contact_id?: string }; contact_id?: string };
+
+      const contactId = contactResp?.contact?.contact_id ?? contactResp?.contact_id ?? null;
+
+      const itemId = await ensureZohoItem({
+        title: cs.metadata?.course_title || "Kursbuchung",
+        rate: (amountCents ?? 0) / 100,
+        taxPercentage,
+      });
+
+      const invoicePayload = {
+        customer_id: contactId,
+        organization_id: ZOHO_ORG_ID,
+        line_items: [
+          {
+            item_name: cs.metadata?.course_title || "Kursbuchung",
+            rate: (amountCents ?? 0) / 100,
+            quantity: 1,
+            tax_percentage: taxPercentage,
+            item_id: itemId ?? undefined,
+          },
+        ],
+        custom_fields: [],
+      };
+
+      await zohoRequest("/invoices", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(invoicePayload),
+      });
+    } catch (err) {
+      console.error("Zoho invoice failed", err);
+      // Webhook nicht abbrechen, Stripe soll 200 bekommen
     }
 
     // Benachrichtigung per E-Mail

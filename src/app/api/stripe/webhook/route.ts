@@ -197,6 +197,62 @@ export async function POST(req: Request) {
       console.error("E-Mail Versand fehlgeschlagen", err);
       // Webhook trotzdem erfolgreich quittieren, damit Stripe nicht neu sendet
     }
+
+    // Kundenbestätigung (automatisierte Buchungsbestätigung)
+    try {
+      const customerEmail = cs.customer_details?.email ?? null;
+
+      if (customerEmail) {
+        const totalCents = (() => {
+          const base = sessionRow?.data?.price_cents ?? courseRow?.data?.base_price_cents ?? orderRow?.data?.amount_cents ?? 0;
+          return base * (orderRow?.data?.participants ?? participants ?? 1);
+        })();
+        const paidCents = orderRow?.data?.amount_cents ?? cs.amount_total ?? 0;
+        const openCents = Math.max(totalCents - paidCents, 0);
+
+        const agbLink = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/2843bdf5-f579-4964-8465-e3d9d6798b42.pdf";
+        const kursort = partnerRow?.data
+          ? `${partnerRow.data.street || partnerRow.data.address || ""}, ${partnerRow.data.zip || ""} ${partnerRow.data.city || ""}, ${partnerRow.data.state || ""}`
+          : sessionRow?.data
+          ? `${sessionRow.data.address || ""}, ${sessionRow.data.zip || ""} ${sessionRow.data.city || ""}, ${sessionRow.data.state || ""}`
+          : "Online";
+
+        const htmlCustomer = renderBookingConfirmationHtml({
+          anredeNachname: orderRow?.data?.last_name || orderRow?.data?.customer_name || "Teilnehmer/in",
+          kursname: courseRow?.data?.title || "Kurs",
+          terminDatum: formatDate(sessionRow?.data?.start_date),
+          terminStartzeit: formatTime(sessionRow?.data?.start_time),
+          terminEndzeit: null,
+          terminZeitraumBeschreibung: null,
+          ortZeile: kursort,
+          teilnehmerName:
+            orderRow?.data?.customer_name || `${orderRow?.data?.first_name || ""} ${orderRow?.data?.last_name || ""}`.trim() || "Teilnehmer/in",
+          buchungsnummer: orderRow?.data?.order_number || cs.metadata?.order_number || "—",
+          gesamtpreisEur: formatMoney(totalCents),
+          bereitsBezahltEur: formatMoney(paidCents),
+          offenerBetragEur: formatMoney(openCents),
+          zahlungsart: cs.payment_method_types?.[0] || "Kreditkarte/PayPal",
+          zahlungsdatum: new Date(cs.created * 1000).toLocaleDateString("de-AT"),
+          linkAgb: agbLink,
+          firmenname: "Music Mission Institute",
+          strasseNr: partnerRow?.data?.street || partnerRow?.data?.address || "",
+          plzOrt: `${partnerRow?.data?.zip ?? sessionRow?.data?.zip ?? ""} ${partnerRow?.data?.city ?? sessionRow?.data?.city ?? ""}`.trim(),
+          land: "Österreich",
+          telefon: "",
+          email: customerEmail,
+          uidNr: "",
+          absenderName: "Music Mission Institute",
+        });
+
+        await sendMail({
+          to: customerEmail,
+          subject: "Buchungsbestätigung",
+          html: htmlCustomer,
+        });
+      }
+    } catch (err) {
+      console.error("Customer mail failed", err);
+    }
   }
 
   if (event.type === "payment_intent.succeeded") {
@@ -214,67 +270,6 @@ export async function POST(req: Request) {
         })
         .eq("id", orderId);
     }
-  }
-
-  // Kundenbestätigung (automatisierte Buchungsbestätigung)
-  try {
-    const customerEmail =
-      event.type === "checkout.session.completed"
-        ? (event.data.object as Stripe.Checkout.Session).customer_details?.email ?? null
-        : null;
-
-    if (customerEmail) {
-      const cs = event.data.object as Stripe.Checkout.Session;
-      const orderData = orderRow?.data;
-
-      const totalCents = (() => {
-        const base = sessionRow?.data?.price_cents ?? courseRow?.data?.base_price_cents ?? orderData?.amount_cents ?? 0;
-        return base * (orderData?.participants ?? participants ?? 1);
-      })();
-      const paidCents = orderData?.amount_cents ?? cs.amount_total ?? 0;
-      const openCents = Math.max(totalCents - paidCents, 0);
-
-      const agbLink = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/2843bdf5-f579-4964-8465-e3d9d6798b42.pdf";
-      const kursort = partnerRow?.data
-        ? `${partnerRow.data.street || partnerRow.data.address || ""}, ${partnerRow.data.zip || ""} ${partnerRow.data.city || ""}, ${partnerRow.data.state || ""}`
-        : sessionRow?.data
-        ? `${sessionRow.data.address || ""}, ${sessionRow.data.zip || ""} ${sessionRow.data.city || ""}, ${sessionRow.data.state || ""}`
-        : "Online";
-
-      const htmlCustomer = renderBookingConfirmationHtml({
-        anredeNachname: orderData?.last_name || orderData?.customer_name || "Teilnehmer/in",
-        kursname: courseRow?.data?.title || "Kurs",
-        terminDatum: formatDate(sessionRow?.data?.start_date),
-        terminStartzeit: formatTime(sessionRow?.data?.start_time),
-        terminEndzeit: null,
-        terminZeitraumBeschreibung: null,
-        ortZeile: kursort,
-        teilnehmerName: orderData?.customer_name || `${orderData?.first_name || ""} ${orderData?.last_name || ""}`.trim() || "Teilnehmer/in",
-        buchungsnummer: orderData?.order_number || cs.metadata?.order_number || "—",
-        gesamtpreisEur: formatMoney(totalCents),
-        bereitsBezahltEur: formatMoney(paidCents),
-        offenerBetragEur: formatMoney(openCents),
-        zahlungsart: cs.payment_method_types?.[0] || "Kreditkarte/PayPal",
-        zahlungsdatum: new Date(cs.created * 1000).toLocaleDateString("de-AT"),
-        linkAgb: agbLink,
-        firmenname: "Music Mission Institute",
-        strasseNr: partnerRow?.data?.street || partnerRow?.data?.address || "",
-        plzOrt: `${partnerRow?.data?.zip ?? sessionRow?.data?.zip ?? ""} ${partnerRow?.data?.city ?? sessionRow?.data?.city ?? ""}`.trim(),
-        land: "Österreich",
-        telefon: "",
-        email: customerEmail,
-        uidNr: "",
-        absenderName: "Music Mission Institute",
-      });
-
-      await sendMail({
-        to: customerEmail,
-        subject: "Buchungsbestätigung",
-        html: htmlCustomer,
-      });
-    }
-  } catch (err) {
-    console.error("Customer mail failed", err);
   }
 
   return NextResponse.json({ received: true });

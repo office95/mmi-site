@@ -151,7 +151,7 @@ async function ensureZohoContact(order: OrderWithJoins): Promise<string> {
   // 2) Anlegen
   let contactName = company || fullName || email || `Kunde ${order.order_number}`;
   const payload = {
-    organization_id: ORG_ID,
+    organization_id: getOrgId(),
     contact_name: contactName,
     company_name: company,
     contact_type: "customer",
@@ -222,7 +222,7 @@ async function ensureSessionZohoItem(order: OrderWithJoins): Promise<{ itemId: s
   const rateCents = Number(session?.deposit_cents ?? session?.price_cents ?? order.deposit_cents ?? order.amount_cents ?? 0);
 
   const payload = {
-    organization_id: ORG_ID,
+    organization_id: getOrgId(),
     name: nameParts.join(" "),
     rate: rateCents / 100,
     tax_percentage: tax,
@@ -373,19 +373,19 @@ async function persistPayment(orderId: string, paymentId: string) {
 
 // --- Zoho helpers ---
 async function findContactByEmail(email: string): Promise<string | null> {
-  const res = await zohoRequest<{ contacts?: Array<{ contact_id?: string }> }>(`/contacts?organization_id=${ORG_ID}&email=${encodeURIComponent(email)}`);
+  const res = await zohoRequest<{ contacts?: Array<{ contact_id?: string }> }>(`/contacts?organization_id=${getOrgId()}&email=${encodeURIComponent(email)}`);
   return res?.contacts?.[0]?.contact_id || null;
 }
 
 async function findContactByName(name: string): Promise<string | null> {
-  const res = await zohoRequest<{ contacts?: Array<{ contact_id?: string }> }>(`/contacts?organization_id=${ORG_ID}&contact_name=${encodeURIComponent(name)}`);
+  const res = await zohoRequest<{ contacts?: Array<{ contact_id?: string }> }>(`/contacts?organization_id=${getOrgId()}&contact_name=${encodeURIComponent(name)}`);
   return res?.contacts?.[0]?.contact_id || null;
 }
 
 async function createContact(payload: Record<string, unknown>): Promise<string> {
   const res = (await zohoRequest<{ contact?: { contact_id?: string } }>("/contacts", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": ORG_ID },
+    headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": getOrgId() },
     body: JSON.stringify(payload),
   })) as { contact?: { contact_id?: string } };
   const id = res?.contact?.contact_id;
@@ -394,7 +394,7 @@ async function createContact(payload: Record<string, unknown>): Promise<string> 
 }
 
 async function findItemBySku(sku: string): Promise<string | null> {
-  const res = await zohoRequest<{ items?: Array<{ item_id?: string; sku?: string }> }>(`/items?organization_id=${ORG_ID}&sku=${encodeURIComponent(sku)}`);
+  const res = await zohoRequest<{ items?: Array<{ item_id?: string; sku?: string }> }>(`/items?organization_id=${getOrgId()}&sku=${encodeURIComponent(sku)}`);
   return res?.items?.[0]?.item_id || null;
 }
 
@@ -402,7 +402,7 @@ async function createItem(payload: Record<string, unknown>): Promise<string> {
   try {
     const res = (await zohoRequest<{ item?: { item_id?: string } }>("/items", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": ORG_ID },
+      headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": getOrgId() },
       body: JSON.stringify(payload),
     })) as { item?: { item_id?: string } };
     const id = res?.item?.item_id;
@@ -428,21 +428,21 @@ async function createItem(payload: Record<string, unknown>): Promise<string> {
 async function findInvoiceByReference(ref: string): Promise<string | null> {
   if (!ref) return null;
   const res = await zohoRequest<{ invoices?: Array<{ invoice_id?: string; reference_number?: string }> }>(
-    `/invoices?organization_id=${ORG_ID}&reference_number=${encodeURIComponent(ref)}`
+    `/invoices?organization_id=${getOrgId()}&reference_number=${encodeURIComponent(ref)}`
   );
   return res?.invoices?.[0]?.invoice_id || null;
 }
 
 async function findItemByName(name: string): Promise<string | null> {
   const res = await zohoRequest<{ items?: Array<{ item_id?: string; name?: string }> }>(
-    `/items?organization_id=${ORG_ID}&name=${encodeURIComponent(name)}`
+    `/items?organization_id=${getOrgId()}&name=${encodeURIComponent(name)}`
   );
   return res?.items?.[0]?.item_id || null;
 }
 
 async function findItemBySearch(term: string): Promise<string | null> {
   const res = await zohoRequest<{ items?: Array<{ item_id?: string; name?: string; sku?: string }> }>(
-    `/items?organization_id=${ORG_ID}&search_text=${encodeURIComponent(term)}`
+    `/items?organization_id=${getOrgId()}&search_text=${encodeURIComponent(term)}`
   );
   return res?.items?.[0]?.item_id || null;
 }
@@ -469,7 +469,7 @@ async function resolveZohoTaxId(taxPercentage: number): Promise<string | null> {
   try {
     const res = await zohoRequest<{ taxes?: Array<{ tax_id?: string; tax_percentage?: number; tax_name?: string }> }>(`/settings/taxes`, {
       method: "GET",
-      headers: { "X-com-zoho-books-organizationid": ORG_ID },
+      headers: { "X-com-zoho-books-organizationid": getOrgId() },
     });
     const taxes = res?.taxes || [];
     const found = taxes.find((t) => Math.round((Number(t.tax_percentage) || 0) * 1000) / 1000 === pct);

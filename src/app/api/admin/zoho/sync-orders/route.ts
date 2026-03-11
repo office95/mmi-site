@@ -100,7 +100,7 @@ export async function POST(req: Request) {
 
       const inv = (await zohoRequest<{ invoice?: { invoice_id?: string } }>("/invoices", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": ZOHO_ORG_ID },
+        headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": orgId },
         body: JSON.stringify(invoicePayload),
       })) as { invoice?: { invoice_id?: string } };
       const invoiceId = inv?.invoice?.invoice_id;

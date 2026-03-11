@@ -250,7 +250,7 @@ async function ensureZohoInvoice(order: OrderWithJoins, contactId: string, itemI
   // Falls Startdatum noch fehlt, einmal nachladen
   let startDate = session?.start_date || "";
   let city = session?.city || session?.partners?.city || "";
-  let partnerName = session?.partner_name || session?.partners?.name || "";
+  let partnerName = (session as any)?.partner_name || session?.partners?.name || "";
   if (!startDate && order.session_id) {
     const supa = getSupabaseServiceClient();
     const { data: sess } = await supa

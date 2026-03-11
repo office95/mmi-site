@@ -208,7 +208,7 @@ export async function POST(req: Request) {
         phone: orderRow?.phone || undefined,
         billing_address: {
           attention: customerName || undefined,
-          street_address1: orderRow?.street || undefined,
+          address: orderRow?.street || undefined,
           city: orderRow?.city || undefined,
           state: undefined,
           zip: orderRow?.zip || undefined,
@@ -216,7 +216,7 @@ export async function POST(req: Request) {
         },
         shipping_address: {
           attention: customerName || undefined,
-          street_address1: orderRow?.street || undefined,
+          address: orderRow?.street || undefined,
           city: orderRow?.city || undefined,
           state: undefined,
           zip: orderRow?.zip || undefined,

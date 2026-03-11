@@ -222,6 +222,7 @@ export async function POST(req: Request) {
           zip: orderRow?.zip || undefined,
           country: orderRow?.country || undefined,
         },
+        notes: orderRow?.dob ? `Geburtsdatum: ${orderRow.dob}` : undefined,
       };
       const contactResp = (await zohoRequest<Record<string, unknown>>("/contacts", {
         method: "POST",
@@ -315,7 +316,7 @@ export async function POST(req: Request) {
 
       await zohoRequest("/invoices", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": orgId },
         body: JSON.stringify(invoicePayload),
       });
     } catch (err) {

@@ -47,6 +47,7 @@ type OrderWithJoins = {
     price_cents: number | null;
     deposit_cents: number | null;
     zoho_item_id: string | null;
+    partner_name?: string | null;
     partners?: { name: string | null; city: string | null; address: string | null } | null;
   } | null;
   courses: {

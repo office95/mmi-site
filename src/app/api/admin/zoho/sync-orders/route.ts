@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   // Orders, die paid sind und noch keine Zoho-Verknüpfung haben
   const { data: orders, error } = await supabase
     .from("orders")
-    .select("id,course_id,session_id,email,amount_cents,currency,customer_first,customer_last,customer_name,coupon_code,promotion_code,notes,stripe_payment_intent")
+    .select("id,course_id,session_id,email,amount_cents,currency,customer_name,coupon_code,promotion_code,notes,stripe_payment_intent")
     .eq("status", "paid")
     .is("zoho_invoice_id", null)
     .order("created_at", { ascending: true });
@@ -45,12 +45,13 @@ export async function POST(req: Request) {
     const amount = Number(o.amount_cents ?? 0) / 100;
     const courseInfo = o.course_id ? courseMap.get(o.course_id) : undefined;
     const taxPercentage = Number(courseInfo?.tax_rate ?? 0);
+    const name = o.customer_name || email || "Unbekannt";
 
     try {
       // Kontakt anlegen/finden
       const contactPayload = {
         organization_id: ZOHO_ORG_ID,
-        contact_name: o.customer_name || `${o.customer_first ?? ""} ${o.customer_last ?? ""}`.trim() || email || "Unbekannt",
+        contact_name: name,
         customer_sub_type: "individual",
         contact_type: "customer",
         email,

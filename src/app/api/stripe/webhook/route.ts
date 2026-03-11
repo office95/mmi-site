@@ -202,7 +202,7 @@ export async function POST(req: Request) {
       if (cs.metadata?.order_id) {
         const { data } = await supabase
           .from("orders")
-          .select("customer_name,first_name,last_name,street,zip,city,country,phone,dob,email")
+          .select("customer_name,first_name,last_name,email,street,zip,city,country,phone,dob,order_number")
           .eq("id", cs.metadata.order_id)
           .maybeSingle();
         orderRow = data;

@@ -85,7 +85,7 @@ export function renderBookingConfirmationHtml(data: BookingConfirmationData) {
     <h2>Buchungsdetails</h2>
     <ul>
       <li><strong>Kurs:</strong> ${kursname}</li>
-      <li><strong>Termin:</strong> ${terminZeile}</li>
+      <li><strong>Kursstart:</strong> ${terminZeile}</li>
       <li><strong>Kursort:</strong> ${ortZeile}</li>
       <li><strong>Teilnehmer/in:</strong> ${teilnehmerName}</li>
       <li><strong>Buchungsnummer:</strong> ${buchungsnummer}</li>

@@ -15,6 +15,9 @@ type MailPayload = {
 export async function sendMail({ to, subject, html }: MailPayload) {
   const user = process.env.GMAIL_USER;
   const pass = process.env.GMAIL_PASS;
+  const from =
+    process.env.MAIL_FROM ||
+    (user ? `"Music Mission Institute" <${user}>` : `"Music Mission Institute" <office@musicmission.at>`);
   if (!user || !pass) {
     console.warn("GMAIL_USER or GMAIL_PASS not set; skipping email send.");
     return;
@@ -29,12 +32,7 @@ export async function sendMail({ to, subject, html }: MailPayload) {
   });
 
   try {
-    const info = await transporter.sendMail({
-      from: `"Music Mission Institute" <${user}>`,
-      to,
-      subject,
-      html,
-    });
+    const info = await transporter.sendMail({ from, to, subject, html });
     console.info("sendMail success", { to, subject, messageId: info.messageId });
   } catch (err) {
     console.error("sendMail failed", err);

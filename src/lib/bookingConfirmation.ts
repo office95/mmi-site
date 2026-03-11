@@ -23,6 +23,7 @@ export type BookingConfirmationData = {
   telefon: string;
   email: string;
   uidNr: string;
+  firmenbuchNr?: string;
   absenderName: string;
 };
 
@@ -50,6 +51,7 @@ export function renderBookingConfirmationHtml(data: BookingConfirmationData) {
     telefon,
     email,
     uidNr,
+    firmenbuchNr,
     absenderName,
   } = data;
 
@@ -109,7 +111,8 @@ export function renderBookingConfirmationHtml(data: BookingConfirmationData) {
     <h2>Firmenangaben</h2>
     <p class="muted">
       ${firmenname} · ${strasseNr} · ${plzOrt} · ${land}<br/>
-      Tel. ${telefon} · E-Mail ${email} · UID ${uidNr}
+      Tel. ${telefon} · E-Mail ${email}<br/>
+      UID ${uidNr}${firmenbuchNr ? ` · Firmenbuchnr. ${firmenbuchNr}` : ""}
     </p>
 
     <p>Wir freuen uns auf Ihre Teilnahme!<br/>

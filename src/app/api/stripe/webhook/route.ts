@@ -238,9 +238,10 @@ export async function POST(req: Request) {
           strasseNr: partnerRow?.data?.street || partnerRow?.data?.address || "",
           plzOrt: `${partnerRow?.data?.zip ?? sessionRow?.data?.zip ?? ""} ${partnerRow?.data?.city ?? sessionRow?.data?.city ?? ""}`.trim(),
           land: "Österreich",
-          telefon: "",
-          email: customerEmail,
-          uidNr: "",
+          telefon: "+43 1 000 0000",
+          email: "office@musicmission.at",
+          uidNr: "ATU80644028",
+          firmenbuchNr: "FN 627518 x",
           absenderName: "Music Mission Institute",
         });
 

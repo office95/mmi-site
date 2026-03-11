@@ -203,6 +203,9 @@ export async function POST(req: Request) {
       const customerEmail = cs.customer_details?.email ?? null;
 
       if (customerEmail) {
+        const startDate = sessionRow?.data?.start_date || (cs.metadata?.start_date as string | undefined);
+        const startTime = sessionRow?.data?.start_time || (cs.metadata?.start_time as string | undefined);
+
         const totalCents = (() => {
           const base = sessionRow?.data?.price_cents ?? courseRow?.data?.base_price_cents ?? orderRow?.data?.amount_cents ?? 0;
           return base * (orderRow?.data?.participants ?? participants ?? 1);
@@ -212,9 +215,16 @@ export async function POST(req: Request) {
 
         const agbLink = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/2843bdf5-f579-4964-8465-e3d9d6798b42.pdf";
         const kursortParts = [
-          partnerRow?.data?.name || sessionRow?.data?.partner_name || sessionRow?.data?.city || "Partner",
-          `${partnerRow?.data?.zip ?? sessionRow?.data?.zip ?? ""} ${partnerRow?.data?.city ?? sessionRow?.data?.city ?? ""}`.trim(),
-          partnerRow?.data?.state || sessionRow?.data?.state || "",
+          partnerRow?.data?.name ||
+            sessionRow?.data?.partner_name ||
+            (cs.metadata?.partner_name as string | undefined) ||
+            sessionRow?.data?.city ||
+            (cs.metadata?.city as string | undefined) ||
+            "Partner",
+          `${partnerRow?.data?.zip ?? sessionRow?.data?.zip ?? (cs.metadata?.zip as string | undefined) ?? ""} ${
+            partnerRow?.data?.city ?? sessionRow?.data?.city ?? (cs.metadata?.city as string | undefined) ?? ""
+          }`.trim(),
+          partnerRow?.data?.state || sessionRow?.data?.state || (cs.metadata?.state as string | undefined) || "",
         ]
           .map((p) => (p ?? "").trim())
           .filter((p) => p.length > 0);
@@ -223,8 +233,8 @@ export async function POST(req: Request) {
         const htmlCustomer = renderBookingConfirmationHtml({
           anredeVorname: orderRow?.data?.first_name || orderRow?.data?.customer_name || "Teilnehmer/in",
           kursname: courseRow?.data?.title || "Kurs",
-          terminDatum: formatDate(sessionRow?.data?.start_date),
-          terminStartzeit: formatTime(sessionRow?.data?.start_time),
+          terminDatum: formatDate(startDate),
+          terminStartzeit: formatTime(startTime),
           terminEndzeit: null,
           terminZeitraumBeschreibung: null,
           ortZeile: kursort,

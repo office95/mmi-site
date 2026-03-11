@@ -59,6 +59,8 @@ export function renderBookingConfirmationHtml(data: BookingConfirmationData) {
     .filter(Boolean)
     .join(" ");
 
+  const firmenZeile = [firmenname, strasseNr, plzOrt].filter((p) => (p || "").trim().length > 0).join(" · ");
+
   return `<!doctype html>
 <html lang="de">
 <head>
@@ -110,7 +112,7 @@ export function renderBookingConfirmationHtml(data: BookingConfirmationData) {
 
     <h2>Firmenangaben</h2>
     <p class="muted">
-      ${firmenname} · ${strasseNr} · ${plzOrt}<br/>
+      ${firmenZeile || firmenname}<br/>
       ${telefon ? `Tel. ${telefon} · ` : ""}E-Mail ${email}<br/>
       UID ${uidNr}${firmenbuchNr ? ` · Firmenbuchnr. ${firmenbuchNr}` : ""}
     </p>

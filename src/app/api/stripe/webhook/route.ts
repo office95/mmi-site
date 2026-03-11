@@ -89,27 +89,31 @@ export async function POST(req: Request) {
       sessionId
         ? supabase
             .from("sessions")
-            .select("start_date,start_time,partner_id,city,state,country,address,zip,tax_rate")
+            .select("start_date,start_time,partner_id,city,state,country,address,zip,tax_rate,zoho_item_id")
             .eq("id", sessionId)
             .maybeSingle()
         : Promise.resolve({ data: null }),
     ]);
 
-    // Zoho Item helper: versucht vorhandene Item-ID aus Kurs zu holen oder neu anzulegen
+    // Zoho Item helper: nutzt primär Session-Item, sonst Course-Item, sonst neu anlegen (Session-basiert)
     const ensureZohoItem = async (opts: { title: string; rate: number; taxPercentage: number }) => {
-      let courseItemId: string | null = null;
-      if (courseId) {
-        const courseFetch = await supabase.from("courses").select("zoho_item_id").eq("id", courseId).maybeSingle();
-        const maybeId = (courseFetch.data as { zoho_item_id?: string } | null)?.zoho_item_id;
-        if (maybeId) courseItemId = maybeId;
+      if (sessionId) {
+        const sessItem = (sessionRow?.data as { zoho_item_id?: string } | null)?.zoho_item_id;
+        if (sessItem) return sessItem;
       }
-      if (courseItemId) return courseItemId;
+      if (courseId) {
+        const courseItem = (courseRow?.data as { zoho_item_id?: string } | null)?.zoho_item_id;
+        if (courseItem) return courseItem;
+      }
 
-      // Item neu anlegen
+      const nameParts = [opts.title || "Kursbuchung"];
+      if (sessionRow?.data?.start_date) nameParts.push(`(${sessionRow.data.start_date})`);
+
       const itemPayload = {
         organization_id: ZOHO_ORG_ID,
-        name: opts.title || "Kursbuchung",
+        name: nameParts.join(" "),
         rate: opts.rate,
+        tax_percentage: opts.taxPercentage,
       };
       try {
         const created = (await zohoRequest<{ item?: { item_id?: string } }>("/items", {
@@ -118,7 +122,9 @@ export async function POST(req: Request) {
           body: JSON.stringify(itemPayload),
         })) as { item?: { item_id?: string } };
         const newId = created?.item?.item_id;
-        if (newId && courseId) {
+        if (newId && sessionId) {
+          await supabase.from("sessions").update({ zoho_item_id: newId }).eq("id", sessionId);
+        } else if (newId && courseId) {
           await supabase.from("courses").update({ zoho_item_id: newId }).eq("id", courseId);
         }
         return newId ?? null;

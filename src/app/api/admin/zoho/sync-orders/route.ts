@@ -29,9 +29,11 @@ export async function POST(req: Request) {
   const synced: Array<{ order_id: string; invoice_id: string }> = [];
   const failed: Array<{ order_id: string; reason: string }> = [];
 
-  // Lade Kurs-Infos (zoho_item_id, tax_rate)
+  // Lade Kurs- und Session-Infos (zoho_item_id, tax_rate)
   const courseIds = Array.from(new Set((orders ?? []).map((o) => o.course_id).filter(Boolean))) as string[];
+  const sessionIds = Array.from(new Set((orders ?? []).map((o) => o.session_id).filter(Boolean))) as string[];
   const courseMap = new Map<string, { zoho_item_id?: string | null; tax_rate?: number | null; title?: string }>();
+  const sessionMap = new Map<string, { zoho_item_id?: string | null; tax_rate?: number | null; title?: string; start_date?: string | null }>();
   if (courseIds.length) {
     const { data: courses } = await supabase
       .from("courses")
@@ -39,13 +41,21 @@ export async function POST(req: Request) {
       .in("id", courseIds);
     courses?.forEach((c) => courseMap.set(c.id, c));
   }
+  if (sessionIds.length) {
+    const { data: sessions } = await supabase
+      .from("sessions")
+      .select("id,zoho_item_id,tax_rate,start_date,course_id,title")
+      .in("id", sessionIds);
+    sessions?.forEach((s) => sessionMap.set(s.id, s));
+  }
 
   for (const o of orders ?? []) {
     const orderId = o.id;
     const email = o.email || "";
     const amount = Number(o.amount_cents ?? 0) / 100;
+    const sessionInfo = o.session_id ? sessionMap.get(o.session_id) : undefined;
     const courseInfo = o.course_id ? courseMap.get(o.course_id) : undefined;
-    const taxPercentage = Number(courseInfo?.tax_rate ?? 0);
+    const taxPercentage = Number(sessionInfo?.tax_rate ?? courseInfo?.tax_rate ?? 0);
     const name = o.customer_name || email || "Unbekannt";
 
     try {
@@ -86,8 +96,8 @@ export async function POST(req: Request) {
         organization_id: ZOHO_ORG_ID,
         line_items: [
           {
-            item_id: courseInfo?.zoho_item_id,
-            item_name: `Anzahlung ${courseInfo?.title || "Kursbuchung"}`,
+            item_id: sessionInfo?.zoho_item_id || courseInfo?.zoho_item_id,
+            item_name: `Anzahlung ${o.order_number ? o.order_number + " – " : ""}${sessionInfo?.title || courseInfo?.title || "Kursbuchung"}`,
             rate: amount,
             quantity: 1,
             tax_percentage: taxPercentage,

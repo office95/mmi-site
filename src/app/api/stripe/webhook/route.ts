@@ -191,7 +191,7 @@ export async function POST(req: Request) {
         orderRow = data;
       }
 
-      const customerEmail = cs.customer_details?.email ?? "";
+      const customerEmail = orderRow?.email || cs.customer_details?.email || "";
       const customerName =
         orderRow?.customer_name ||
         [orderRow?.first_name, orderRow?.last_name].filter(Boolean).join(" ").trim() ||
@@ -216,9 +216,10 @@ export async function POST(req: Request) {
         contact_type: "customer",
         email: customerEmail,
         phone: orderRow?.phone || undefined,
+        notes: orderRow?.dob ? `Geburtsdatum: ${orderRow.dob}` : undefined,
         contact_persons: [
           {
-            first_name: (orderRow?.first_name || "").trim() || undefined,
+            first_name: (orderRow?.first_name || customerName || "").trim() || undefined,
             last_name: (orderRow?.last_name || "").trim() || undefined,
             email: customerEmail || undefined,
             phone: orderRow?.phone || undefined,
@@ -227,8 +228,8 @@ export async function POST(req: Request) {
         ],
         billing_address: {
           attention: customerName || undefined,
-          street: orderRow?.street || undefined,
           address: orderRow?.street || undefined,
+          street: orderRow?.street || undefined,
           city: orderRow?.city || undefined,
           state: "",
           zip: orderRow?.zip || undefined,
@@ -236,14 +237,13 @@ export async function POST(req: Request) {
         },
         shipping_address: {
           attention: customerName || undefined,
-          street: orderRow?.street || undefined,
           address: orderRow?.street || undefined,
+          street: orderRow?.street || undefined,
           city: orderRow?.city || undefined,
           state: "",
           zip: orderRow?.zip || undefined,
           country,
         },
-        notes: orderRow?.dob ? `Geburtsdatum: ${orderRow.dob}` : undefined,
       };
       const contactResp = (await zohoRequest<Record<string, unknown>>("/contacts", {
         method: "POST",
@@ -271,9 +271,10 @@ export async function POST(req: Request) {
           contact_name: customerName,
           email: customerEmail,
           phone: orderRow?.phone || undefined,
+          notes: orderRow?.dob ? `Geburtsdatum: ${orderRow.dob}` : undefined,
           contact_persons: [
             {
-              first_name: (orderRow?.first_name || "").trim() || undefined,
+              first_name: (orderRow?.first_name || customerName || "").trim() || undefined,
               last_name: (orderRow?.last_name || "").trim() || undefined,
               email: customerEmail || undefined,
               phone: orderRow?.phone || undefined,
@@ -283,6 +284,7 @@ export async function POST(req: Request) {
           billing_address: {
             attention: customerName || undefined,
             address: orderRow?.street || undefined,
+            street: orderRow?.street || undefined,
             city: orderRow?.city || undefined,
             state: "",
             zip: orderRow?.zip || undefined,
@@ -291,6 +293,7 @@ export async function POST(req: Request) {
           shipping_address: {
             attention: customerName || undefined,
             address: orderRow?.street || undefined,
+            street: orderRow?.street || undefined,
             city: orderRow?.city || undefined,
             state: "",
             zip: orderRow?.zip || undefined,

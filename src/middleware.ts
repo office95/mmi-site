@@ -78,7 +78,6 @@ export async function middleware(req: NextRequest) {
       "/api/admin/course-formats",
       "/api/admin/course-languages",
     ].some((p) => url.pathname.startsWith(p));
-  const publicZohoSync = url.pathname.startsWith("/api/admin/zoho/sync-courses");
 
   let res = NextResponse.next({ request: { headers: requestHeaders } });
 
@@ -93,7 +92,7 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  if (isAdminRoute && !publicAdminGet && !publicZohoSync) {
+  if (isAdminRoute && !publicAdminGet) {
     const token = getAccessToken(req);
     const allowed = isAllowedSession(token);
 

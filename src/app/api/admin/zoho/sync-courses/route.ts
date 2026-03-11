@@ -5,7 +5,12 @@ import { zohoRequest, ZOHO_ORG_ID } from "@/lib/zohoBooks";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
-  // Temporär ohne Auth für lokalen Sync
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceKey) return NextResponse.json({ error: "Service role key missing" }, { status: 500 });
+  const authHeader = req.headers.get("x-service-role-key");
+  if (authHeader !== serviceKey) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const supabase = getSupabaseServiceClient();
 

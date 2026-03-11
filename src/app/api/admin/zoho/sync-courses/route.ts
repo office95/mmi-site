@@ -21,6 +21,8 @@ export async function POST(req: Request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+  const orgId = ZOHO_ORG_ID || "";
+
   const synced: Array<{ id: string; title: string; item_id: string }> = [];
   const skipped: Array<{ id: string; reason: string }> = [];
   for (const c of courses ?? []) {
@@ -38,9 +40,9 @@ export async function POST(req: Request) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-com-zoho-books-organizationid": ZOHO_ORG_ID,
+          "X-com-zoho-books-organizationid": orgId,
         },
-        body: JSON.stringify({ organization_id: ZOHO_ORG_ID, name: title || "Kurs", rate: price, tax_percentage: tax }),
+        body: JSON.stringify({ organization_id: orgId, name: title || "Kurs", rate: price, tax_percentage: tax }),
       })) as { item?: { item_id?: string } };
       const itemId = created?.item?.item_id;
       if (!itemId) throw new Error("no item_id returned");

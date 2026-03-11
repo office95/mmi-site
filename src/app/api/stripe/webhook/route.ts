@@ -128,6 +128,23 @@ export async function POST(req: Request) {
       }
     };
 
+
+    const recordPayment = async (invoiceId: string, customerId: string | null, amountCents: number, ref?: string | null) => {
+      const paymentDate = new Date().toISOString().slice(0, 10);
+      const payload = {
+        customer_id: customerId || undefined,
+        amount: (amountCents ?? 0) / 100,
+        date: paymentDate,
+        payment_mode: "Other",
+        reference_number: ref || undefined,
+        invoices: [{ invoice_id: invoiceId, amount_applied: (amountCents ?? 0) / 100 }],
+      };
+      await zohoRequest("/customerpayments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": orgId },
+        body: JSON.stringify(payload),
+      });
+    };
     const normalizeCountry = (raw?: string | null) => {
       const v = (raw || "").trim().toLowerCase();
       if (!v) return "Austria";
@@ -185,7 +202,7 @@ export async function POST(req: Request) {
       if (cs.metadata?.order_id) {
         const { data } = await supabase
           .from("orders")
-          .select("customer_name,first_name,last_name,street,zip,city,country,phone,dob")
+          .select("customer_name,first_name,last_name,street,zip,city,country,phone,dob,email")
           .eq("id", cs.metadata.order_id)
           .maybeSingle();
         orderRow = data;
@@ -322,7 +339,7 @@ export async function POST(req: Request) {
         organization_id: orgId,
         line_items: [
           {
-            item_name: `Anzahlung ${cs.metadata?.course_title || "Kursbuchung"}`,
+            item_name: `Anzahlung ${cs.metadata?.order_number ? cs.metadata.order_number + " – " : ""}${cs.metadata?.course_title || "Kursbuchung"}`,
             rate: (amountCents ?? 0) / 100,
             quantity: 1,
             tax_percentage: taxPercentage,
@@ -351,11 +368,17 @@ export async function POST(req: Request) {
         notes: orderRow?.dob ? `Geburtsdatum: ${orderRow.dob}` : undefined,
       };
 
-      await zohoRequest("/invoices", {
+      const invoiceResp = await zohoRequest<{ invoice?: { invoice_id?: string } }>("/invoices", {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": orgId },
         body: JSON.stringify(invoicePayload),
       });
+
+      const invoiceId = (invoiceResp as any)?.invoice?.invoice_id;
+      if (invoiceId) {
+        await recordPayment(invoiceId, contactId ?? null, amountCents, cs.payment_intent?.toString() ?? cs.id ?? null);
+      }
+
     } catch (err) {
       console.error("Zoho invoice failed", err);
       // Webhook nicht abbrechen, Stripe soll 200 bekommen

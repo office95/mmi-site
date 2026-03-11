@@ -53,9 +53,9 @@ const toHtml = (text: string | null | undefined) => {
   return `<p>${fmtInline(lines.join("<br>"))}</p>`;
 };
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const supabase = getSupabaseServiceClient();
-  const slug = params?.slug;
+  const { slug } = await params;
   if (!slug) return { title: "Kurs | Music Mission Institute" };
   try {
     const { data: course } = await supabase
@@ -100,8 +100,8 @@ export default async function CoursePage({
   params,
   searchParams,
 }: {
-  params: { slug: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const cleanSlugValue = (raw: string | null | undefined) => {
     if (!raw) return "";
@@ -115,7 +115,9 @@ export default async function CoursePage({
   };
   // Slug vor dem try/catch ermitteln – primär aus params, fallback auf searchParams.slug (zur Sicherheit bei fehlerhaften Links)
   const pickSlugEarly = async () => {
-    const raw = params?.slug ?? searchParams?.slug;
+    const resolvedParams = await params;
+    const resolvedSearch = (await searchParams) || {};
+    const raw = resolvedParams?.slug ?? resolvedSearch?.slug;
     if (Array.isArray(raw)) return raw[0];
     return typeof raw === "string" ? raw : "";
   };
@@ -244,7 +246,7 @@ export default async function CoursePage({
   }
 
 let course: any = null;
-let region: "AT" | "DE" = getRegion(); // Default, wird im try ggf. überschrieben
+let region: "AT" | "DE" = "AT"; // Default, wird im try ggf. überschrieben
 let supabase: ReturnType<typeof getSupabaseServerClient> | ReturnType<typeof getSupabaseServiceClient> | null = null;
 let slugClean = cleanSlugValue(slugCleanInitial);
 let lastError: any = null;
@@ -269,7 +271,7 @@ let host = "";
     const hdr = await headers();
     const rawHost = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
     host = rawHost.replace(/^www\./, "").split(":")[0]; // strip www + port
-    region = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
+    region = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : ((await getRegion()) as "AT" | "DE");
 
     // Ein einziges, reichhaltiges Query: Kurs + Sessions + Partner (30s Cache)
     const { data: courseRow, error } = await getCourseCached(slugClean);
@@ -292,9 +294,9 @@ let host = "";
     lastError = err instanceof Error ? err.message : String(err);
   }
 
-  const bookingFlag = typeof searchParams === "object" && searchParams
-    ? (Array.isArray(searchParams.booking) ? searchParams.booking[0] : searchParams.booking) ?? null
-    : null;
+  const resolvedSearch = (await searchParams) || {};
+  const bookingFlag =
+    (Array.isArray(resolvedSearch.booking) ? resolvedSearch.booking[0] : resolvedSearch.booking) ?? null;
 
   // Region-Mismatch nicht blockieren (insb. Preview/Mehrsprach-Domains)
 
@@ -329,7 +331,9 @@ let host = "";
     );
   }
 
-  const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.,region.eq.%20`; // strikt, aber erlaubt leere/null -> global
+  const regionStr = (region ?? "").toString();
+  const regionLc = regionStr.toLowerCase();
+  const regionFilter = `region.eq.${regionStr},region.eq.${regionLc},region.ilike.%${regionStr}%,region.is.null,region.eq.,region.eq.%20`; // strikt, aber erlaubt leere/null -> global
   const slugGuard = <SlugGuard renderedSlug={slugClean} />;
 
   const db = supabase ?? getSupabaseServerClient();
@@ -343,16 +347,16 @@ let host = "";
     today.setHours(0, 0, 0, 0);
     if (d.getTime() <= today.getTime()) return false;
 
-    if (!region) return true;
+    if (!regionStr) return true;
     const val = (s.region || "").toString().toLowerCase();
     if (!val) return true;
-    return val === region.toLowerCase();
+    return val === regionLc;
   });
 
   const { data: addons } = await db.from("addons").select("*").eq("course_id", course.id);
   // Region-basierte Session-Filter: auf AT-Seite keine DE-Sessions anzeigen (und umgekehrt)
   const allowedCountries =
-    region === "DE" ? ["deutschland", "germany"] : region === "AT" ? ["österreich", "austria"] : null;
+    regionStr === "DE" ? ["deutschland", "germany"] : regionStr === "AT" ? ["österreich", "austria"] : null;
   course.sessions = sessionsWithPartner.filter((s: any) => {
     if (!allowedCountries) return true;
     const country = (s.country || s.partners?.country || "").toString().toLowerCase();
@@ -369,7 +373,7 @@ let host = "";
       .select("id,state,city,country")
       .in("id", sessionPartners as string[]);
     const partnerMap2 = new Map<string, any>((partnerRows ?? []).map((p: any) => [p.id, p]));
-    const regionCountry = region === "DE" ? "deutschland" : region === "AT" ? "österreich" : "";
+    const regionCountry = regionStr === "DE" ? "deutschland" : regionStr === "AT" ? "österreich" : "";
     states = Array.from(
       new Set(
         (course.sessions ?? [])

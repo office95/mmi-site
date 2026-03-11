@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 };
 
 export default async function StandortePage() {
-  const region = getRegion();
+  const region = await getRegion();
   const supabase = getSupabaseServiceClient();
   const { data: partners } = await supabase
     .from("partners")

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseServiceClient } from "@/lib/supabase";
-import { zohoRequest, ZOHO_ORG_ID } from "@/lib/zohoBooks";
+import { syncOrderToZoho } from "@/lib/zohoSyncOrder";
 
 export const dynamic = "force-dynamic";
 
@@ -14,114 +14,30 @@ export async function POST(req: Request) {
   }
 
   const supabase = getSupabaseServiceClient();
-  const orgId = ZOHO_ORG_ID || "";
 
-  // Orders, die paid sind und noch keine Zoho-Verknüpfung haben
+  // Orders, die paid sind und noch nicht sauber synchronisiert
   const { data: orders, error } = await supabase
     .from("orders")
-    .select("id,course_id,session_id,email,amount_cents,currency,customer_name,coupon_code,promotion_code,notes,stripe_payment_intent")
+    .select("id, status, zoho_sync_status, zoho_invoice_id")
     .eq("status", "paid")
-    .is("zoho_invoice_id", null)
-    .order("created_at", { ascending: true });
+    .or("zoho_sync_status.in.(failed,pending),zoho_sync_status.is.null,zoho_invoice_id.is.null");
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const synced: Array<{ order_id: string; invoice_id: string }> = [];
+  const synced: Array<{ order_id: string }> = [];
   const failed: Array<{ order_id: string; reason: string }> = [];
 
-  // Lade Kurs- und Session-Infos (zoho_item_id, tax_rate)
-  const courseIds = Array.from(new Set((orders ?? []).map((o) => o.course_id).filter(Boolean))) as string[];
-  const sessionIds = Array.from(new Set((orders ?? []).map((o) => o.session_id).filter(Boolean))) as string[];
-  const courseMap = new Map<string, { zoho_item_id?: string | null; tax_rate?: number | null; title?: string }>();
-  const sessionMap = new Map<string, { zoho_item_id?: string | null; tax_rate?: number | null; title?: string; start_date?: string | null }>();
-  if (courseIds.length) {
-    const { data: courses } = await supabase
-      .from("courses")
-      .select("id,title,zoho_item_id,tax_rate")
-      .in("id", courseIds);
-    courses?.forEach((c) => courseMap.set(c.id, c));
-  }
-  if (sessionIds.length) {
-    const { data: sessions } = await supabase
-      .from("sessions")
-      .select("id,zoho_item_id,tax_rate,start_date,course_id,title")
-      .in("id", sessionIds);
-    sessions?.forEach((s) => sessionMap.set(s.id, s));
-  }
-
   for (const o of orders ?? []) {
-    const orderId = o.id;
-    const email = o.email || "";
-    const amount = Number(o.amount_cents ?? 0) / 100;
-    const sessionInfo = o.session_id ? sessionMap.get(o.session_id) : undefined;
-    const courseInfo = o.course_id ? courseMap.get(o.course_id) : undefined;
-    const taxPercentage = Number(sessionInfo?.tax_rate ?? courseInfo?.tax_rate ?? 0);
-    const name = o.customer_name || email || "Unbekannt";
-
     try {
-      // Kontakt anlegen/finden
-      const contactPayload = {
-        organization_id: ZOHO_ORG_ID,
-        contact_name: name,
-        customer_sub_type: "individual",
-        contact_type: "customer",
-        email,
-      };
-      const contactResp = (await zohoRequest<{ contact?: { contact_id?: string }; contact_id?: string }>("/contacts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": orgId },
-        body: JSON.stringify(contactPayload),
-      }).catch(async () => {
-        // Fallback 1: nach E-Mail suchen
-        if (email) {
-          const list = await zohoRequest<{ contacts?: Array<{ contact_id?: string }> }>(
-          `/contacts?organization_id=${orgId}&email=${encodeURIComponent(email)}`
-        );
-        const existing = list?.contacts?.[0];
-        if (existing?.contact_id) return { contact: existing } as { contact: { contact_id: string } };
-      }
-      // Fallback 2: nach Kontakt-Namen suchen (wenn Create z.B. wegen Duplikat scheitert)
-      const listByName = await zohoRequest<{ contacts?: Array<{ contact_id?: string }> }>(
-        `/contacts?organization_id=${orgId}&contact_name=${encodeURIComponent(name)}`
-      );
-        const existingByName = listByName?.contacts?.[0];
-        if (existingByName?.contact_id) return { contact: existingByName } as { contact: { contact_id: string } };
-        throw new Error("contact create failed");
-      })) as { contact?: { contact_id?: string }; contact_id?: string };
-
-      const contactId = contactResp?.contact?.contact_id ?? contactResp?.contact_id ?? null;
-
-      const invoicePayload = {
-        customer_id: contactId,
-        organization_id: ZOHO_ORG_ID,
-        line_items: [
-          {
-            item_id: sessionInfo?.zoho_item_id || courseInfo?.zoho_item_id,
-            item_name: `Anzahlung ${o.order_number ? o.order_number + " – " : ""}${sessionInfo?.title || courseInfo?.title || "Kursbuchung"}`,
-            rate: amount,
-            quantity: 1,
-            tax_percentage: taxPercentage,
-          },
-        ],
-        custom_fields: [],
-        reference_number: o.stripe_payment_intent || undefined,
-        notes: o.notes || undefined,
-      };
-
-      const inv = (await zohoRequest<{ invoice?: { invoice_id?: string } }>("/invoices", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": orgId },
-        body: JSON.stringify(invoicePayload),
-      })) as { invoice?: { invoice_id?: string } };
-      const invoiceId = inv?.invoice?.invoice_id;
-      if (!invoiceId) throw new Error("invoice create failed");
-
-      await supabase.from("orders").update({ zoho_invoice_id: invoiceId }).eq("id", orderId);
-      synced.push({ order_id: orderId, invoice_id: invoiceId });
-    } catch (e: unknown) {
-      failed.push({ order_id: orderId, reason: e instanceof Error ? e.message : "unknown" });
+      await syncOrderToZoho(o.id);
+      await supabase.from("orders").update({ zoho_sync_status: "synced", zoho_sync_error: null }).eq("id", o.id);
+      synced.push({ order_id: o.id });
+    } catch (e: any) {
+      const reason = e?.message || "unknown";
+      await supabase.from("orders").update({ zoho_sync_status: "failed", zoho_sync_error: reason }).eq("id", o.id);
+      failed.push({ order_id: o.id, reason: e?.message || "unknown" });
     }
   }
 
-  return NextResponse.json({ ok: true, synced, failed, count: orders?.length ?? 0 });
+return NextResponse.json({ ok: true, synced, failed, count: orders?.length ?? 0 });
 }

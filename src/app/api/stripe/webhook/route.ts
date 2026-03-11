@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import { sendMail } from "@/lib/mail";
-import { zohoRequest, ZOHO_ORG_ID } from "@/lib/zohoBooks";
+import { syncOrderToZoho } from "@/lib/zohoSyncOrder";
 
 export const dynamic = "force-dynamic";
 
@@ -95,70 +95,6 @@ export async function POST(req: Request) {
         : Promise.resolve({ data: null }),
     ]);
 
-    // Zoho Item helper: nutzt primär Session-Item, sonst Course-Item, sonst neu anlegen (Session-basiert)
-    const ensureZohoItem = async (opts: { title: string; rate: number; taxPercentage: number }) => {
-      if (sessionId) {
-        const sessItem = (sessionRow?.data as { zoho_item_id?: string } | null)?.zoho_item_id;
-        if (sessItem) return sessItem;
-      }
-      if (courseId) {
-        const courseItem = (courseRow?.data as { zoho_item_id?: string } | null)?.zoho_item_id;
-        if (courseItem) return courseItem;
-      }
-
-      const nameParts = [opts.title || "Kursbuchung"];
-      if (sessionRow?.data?.start_date) nameParts.push(`(${sessionRow.data.start_date})`);
-
-      const itemPayload = {
-        organization_id: ZOHO_ORG_ID,
-        name: nameParts.join(" "),
-        rate: opts.rate,
-        tax_percentage: opts.taxPercentage,
-      };
-      try {
-        const created = (await zohoRequest<{ item?: { item_id?: string } }>("/items", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(itemPayload),
-        })) as { item?: { item_id?: string } };
-        const newId = created?.item?.item_id;
-        if (newId && sessionId) {
-          await supabase.from("sessions").update({ zoho_item_id: newId }).eq("id", sessionId);
-        } else if (newId && courseId) {
-          await supabase.from("courses").update({ zoho_item_id: newId }).eq("id", courseId);
-        }
-        return newId ?? null;
-      } catch (e) {
-        console.error("Zoho item create failed", e);
-        return null;
-      }
-    };
-
-
-    const recordPayment = async (invoiceId: string, customerId: string | null, amountCents: number, ref?: string | null) => {
-      const paymentDate = new Date().toISOString().slice(0, 10);
-      const payload = {
-        customer_id: customerId || undefined,
-        amount: (amountCents ?? 0) / 100,
-        date: paymentDate,
-        payment_mode: "Other",
-        reference_number: ref || undefined,
-        invoices: [{ invoice_id: invoiceId, amount_applied: (amountCents ?? 0) / 100 }],
-      };
-      await zohoRequest("/customerpayments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": orgId },
-        body: JSON.stringify(payload),
-      });
-    };
-    const normalizeCountry = (raw?: string | null) => {
-      const v = (raw || "").trim().toLowerCase();
-      if (!v) return "Austria";
-      if (v.startsWith("österreich") || v.startsWith("austria") || v === "at") return "Austria";
-      if (v.startsWith("deutschland") || v.startsWith("germany") || v === "de") return "Germany";
-      return raw || "Austria";
-    };
-
     // Order aktualisieren, falls bereits angelegt (checkout-Route), sonst neu erstellen
     const payload = {
       session_id: sessionId,
@@ -188,216 +124,24 @@ export async function POST(req: Request) {
       await supabase.rpc("increment_seats", { p_session_id: sessionId, p_count: participants });
     }
 
-    // Zoho Books: Rechnung erstellen (failsafe, blockiert Webhook nicht)
+    // Zoho Books: Rechnung erstellen (zentral via syncOrderToZoho)
     try {
-      // Order-Daten für Adresse/DOB laden (falls vorhanden)
-      let orderRow:
-        | {
-            customer_name?: string | null;
-            first_name?: string | null;
-            last_name?: string | null;
-            street?: string | null;
-            zip?: string | null;
-            city?: string | null;
-            country?: string | null;
-            phone?: string | null;
-            dob?: string | null;
-          }
-        | null
-        | undefined = null;
+      const orderId = cs.metadata?.order_id;
+      if (!orderId) {
+        console.warn("[webhook] missing order_id for Zoho sync", { checkout_session: cs.id });
+      } else {
+        await syncOrderToZoho(orderId);
+        await supabase.from("orders").update({ zoho_sync_status: "synced", zoho_sync_error: null }).eq("id", orderId);
+      }
+    } catch (err: any) {
+      const msg = err?.message || "Zoho sync failed";
       if (cs.metadata?.order_id) {
-        const { data } = await supabase
-          .from("orders")
-          .select("customer_name,first_name,last_name,email,street,zip,city,country,phone,dob,order_number")
-          .eq("id", cs.metadata.order_id)
-          .maybeSingle();
-        orderRow = data;
+        await supabase.from("orders").update({ zoho_sync_status: "failed", zoho_sync_error: msg }).eq("id", cs.metadata.order_id);
       }
-
-      const customerEmail = orderRow?.email || cs.customer_details?.email || "";
-      const customerName =
-        orderRow?.customer_name ||
-        [orderRow?.first_name, orderRow?.last_name].filter(Boolean).join(" ").trim() ||
-        cs.customer_details?.name ||
-        customerEmail ||
-        "Unbekannter Kunde";
-      const amountCents = cs.amount_total ?? 0;
-      const taxCandidates = [
-        courseRow?.data?.tax_rate,
-        sessionRow?.data?.tax_rate,
-        cs.metadata?.tax_rate,
-        cs.metadata?.tax_rate_percent,
-      ].map((v) => Number(v));
-      const taxPercentage = taxCandidates.find((v) => Number.isFinite(v)) ?? 0;
-      // Kontakt anlegen (minimal)
-      const country = normalizeCountry(orderRow?.country);
-
-      const contactPayload = {
-        organization_id: orgId,
-        contact_name: customerName,
-        customer_sub_type: "individual",
-        contact_type: "customer",
-        email: customerEmail,
-        phone: orderRow?.phone || undefined,
-        notes: [
-          orderRow?.dob ? `Geburtsdatum: ${orderRow.dob}` : null,
-          (sessionRow?.data as any)?.city ? `Ort: ${(sessionRow?.data as any)?.city}` : null,
-        ]
-          .filter(Boolean)
-          .join(" • ") || undefined,
-        contact_persons: [
-          {
-            first_name: (orderRow?.first_name || customerName || "").trim() || undefined,
-            last_name: (orderRow?.last_name || "").trim() || undefined,
-            email: customerEmail || undefined,
-            phone: orderRow?.phone || undefined,
-            is_primary_contact: true,
-          },
-        ],
-        billing_address: {
-          attention: customerName || undefined,
-          address: orderRow?.street || undefined,
-          street: orderRow?.street || undefined,
-          city: orderRow?.city || undefined,
-          state: "",
-          zip: orderRow?.zip || undefined,
-          country,
-        },
-        shipping_address: {
-          attention: customerName || undefined,
-          address: orderRow?.street || undefined,
-          street: orderRow?.street || undefined,
-          city: orderRow?.city || undefined,
-          state: "",
-          zip: orderRow?.zip || undefined,
-          country,
-        },
-      };
-      const contactResp = (await zohoRequest<Record<string, unknown>>("/contacts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": orgId },
-        body: JSON.stringify(contactPayload),
-      }).catch(async (err: unknown) => {
-        // Falls Kontakt schon existiert, versuche ihn per List mit Email zu finden
-        try {
-          const list = await zohoRequest<{ contacts?: Array<Record<string, unknown>> }>(
-            `/contacts?organization_id=${orgId}&email=${encodeURIComponent(customerEmail)}`
-          );
-          const existing = list?.contacts?.[0] as { contact_id?: string } | undefined;
-          if (existing?.contact_id) return { contact: existing };
-        } catch (_e) {
-          /* ignore */
-        }
-        throw err;
-      })) as { contact?: { contact_id?: string }; contact_id?: string };
-
-      const contactId = contactResp?.contact?.contact_id ?? contactResp?.contact_id ?? null;
-
-      // Bestehenden Kontakt um Adresse/Telefon ergänzen
-      if (contactId && (orderRow?.street || orderRow?.city || orderRow?.zip || orderRow?.country || orderRow?.phone)) {
-        const updatePayload = {
-          contact_name: customerName,
-          email: customerEmail,
-          phone: orderRow?.phone || undefined,
-          notes: orderRow?.dob ? `Geburtsdatum: ${orderRow.dob}` : undefined,
-          contact_persons: [
-            {
-              first_name: (orderRow?.first_name || customerName || "").trim() || undefined,
-              last_name: (orderRow?.last_name || "").trim() || undefined,
-              email: customerEmail || undefined,
-              phone: orderRow?.phone || undefined,
-              is_primary_contact: true,
-            },
-          ],
-          billing_address: {
-            attention: customerName || undefined,
-            address: orderRow?.street || undefined,
-            street: orderRow?.street || undefined,
-            city: orderRow?.city || undefined,
-            state: "",
-            zip: orderRow?.zip || undefined,
-            country,
-          },
-          shipping_address: {
-            attention: customerName || undefined,
-            address: orderRow?.street || undefined,
-            street: orderRow?.street || undefined,
-            city: orderRow?.city || undefined,
-            state: "",
-            zip: orderRow?.zip || undefined,
-            country,
-          },
-        };
-        try {
-          await zohoRequest(`/contacts/${contactId}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": orgId },
-            body: JSON.stringify(updatePayload),
-          });
-        } catch (e) {
-          console.error("Zoho contact update failed", e);
-        }
-      }
-
-      const sessionTitle = (sessionRow?.data as any)?.title || (courseRow?.data as any)?.title || cs.metadata?.course_title || "Kursbuchung";
-      const startDate = (sessionRow?.data as any)?.start_date || cs.metadata?.start_date || "";
-      const itemId = await ensureZohoItem({
-        title: sessionTitle,
-        rate: (amountCents ?? 0) / 100,
-        taxPercentage,
-      });
-
-      const invoicePayload = {
-        customer_id: contactId,
-        organization_id: orgId,
-        line_items: [
-          {
-            item_name: `Anzahlung ${(orderRow?.order_number || cs.metadata?.order_number) ? (orderRow?.order_number || cs.metadata?.order_number) + " – " : ""}${sessionTitle}${startDate ? " (Start: " + startDate + ")" : ""}`,
-            rate: (amountCents ?? 0) / 100,
-            quantity: 1,
-            tax_percentage: taxPercentage,
-            item_id: itemId ?? undefined,
-          },
-        ],
-        custom_fields: [],
-        billing_address: {
-          attention: customerName || undefined,
-          street: orderRow?.street || undefined,
-          address: orderRow?.street || undefined,
-          city: orderRow?.city || undefined,
-          state: "",
-          zip: orderRow?.zip || undefined,
-          country,
-        },
-        shipping_address: {
-          attention: customerName || undefined,
-          street: orderRow?.street || undefined,
-          address: orderRow?.street || undefined,
-          city: orderRow?.city || undefined,
-          state: "",
-          zip: orderRow?.zip || undefined,
-          country,
-        },
-        notes: orderRow?.dob ? `Geburtsdatum: ${orderRow.dob}` : undefined,
-      };
-
-      const invoiceResp = await zohoRequest<{ invoice?: { invoice_id?: string } }>("/invoices", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-com-zoho-books-organizationid": orgId },
-        body: JSON.stringify(invoicePayload),
-      });
-
-      const invoiceId = (invoiceResp as any)?.invoice?.invoice_id;
-      if (invoiceId) {
-        await recordPayment(invoiceId, contactId ?? null, amountCents, cs.payment_intent?.toString() ?? cs.id ?? null);
-      }
-
-    } catch (err) {
-      console.error("Zoho invoice failed", err);
-      // Webhook nicht abbrechen, Stripe soll 200 bekommen
+      console.error("Zoho sync failed", err);
     }
 
-    // Benachrichtigung per E-Mail
+// Benachrichtigung per E-Mail
     const partnerRow =
       sessionRow?.data?.partner_id &&
       (await supabase

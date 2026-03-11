@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseServiceClient } from "@/lib/supabase";
+import { generateOrderNumber } from "@/lib/orderNumber";
 
 export const dynamic = "force-dynamic";
 
@@ -29,9 +30,18 @@ export async function POST(req: Request) {
     amount_cents: number;
   }>;
 
+  // Feste Default-Session (hat Startdatum + Partner): aus CSV geprüft
+  const DEFAULT_SESSION_ID = "10fb0cb1-33ba-42c5-b410-42b2a6ac4cc8";
+  const DEFAULT_COURSE_ID = "e25ed589-90c0-4bb2-a9f8-33b3a598ce41";
+
+  let courseId = body.course_id || DEFAULT_COURSE_ID;
+  let sessionId = body.session_id || DEFAULT_SESSION_ID;
+
+  const order_number = await generateOrderNumber(supabase);
+
   const payload = {
-    course_id: body.course_id || "465687f9-9edf-49bc-9217-fb263f049ed1",
-    session_id: body.session_id || "2aed3813-c455-4fd1-8d45-63ed8c6b9332",
+    course_id: courseId,
+    session_id: sessionId || "2aed3813-c455-4fd1-8d45-63ed8c6b9332",
     email: body.email || "zoho-test@example.com",
     customer_name: body.customer_name || "Zoho Test",
     first_name: body.first_name || "Zoho",
@@ -47,7 +57,7 @@ export async function POST(req: Request) {
     currency: "EUR",
     status: "paid" as const,
     participants: 1,
-    order_number: `MMI-DEV-${Math.floor(Math.random() * 9000 + 1000)}`,
+    order_number,
     stripe_payment_intent: "pi_test_local",
     zoho_invoice_id: null,
   };

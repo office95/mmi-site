@@ -74,7 +74,7 @@ async function loadCourses(region: "AT" | "DE"): Promise<Course[]> {
 export default async function ExtremkursPage() {
   const hdr = await headers();
   const host = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
-  const region: "AT" | "DE" = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
+  const region: "AT" | "DE" = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : await getRegion();
 
   const courses = await loadCourses(region);
   const heroVideo = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/3fb0f96e-9ba1-4d7b-b2ba-c3a30fb4ecff.mp4";

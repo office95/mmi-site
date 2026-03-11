@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getSupabaseServiceClient } from "@/lib/supabase";
+import { generateOrderNumber } from "@/lib/orderNumber";
 
 type CheckoutBody = {
   sessionId?: string;
@@ -24,31 +25,6 @@ type CheckoutBody = {
 };
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
-
-async function generateOrderNumber(supabase: ReturnType<typeof getSupabaseServiceClient>) {
-  const year = new Date().getFullYear();
-  const yearShort = String(year).slice(-2);
-  const prefix = `MMI-`;
-
-  // Höchste vorhandene Nummer ermitteln und +1; Startwert 10000
-  const { data } = await supabase
-    .from("orders")
-    .select("order_number")
-    .ilike("order_number", `${prefix}%`)
-    .order("order_number", { ascending: false })
-    .limit(1);
-
-  const last = data?.[0]?.order_number as string | undefined;
-  let lastSeq = 9999;
-  if (last && last.startsWith(prefix)) {
-    // Format: MMI-12345-26
-    const mid = last.replace(prefix, "").split("-")[0];
-    const num = parseInt(mid, 10);
-    if (!Number.isNaN(num)) lastSeq = num;
-  }
-  const next = lastSeq + 1;
-  return `${prefix}${next}-${yearShort}`;
-}
 
 // Simple in-memory rate limit (per instance). For production, replace with Redis/Upstash.
 const RATE_LIMIT_WINDOW_MS = 60_000;

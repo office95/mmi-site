@@ -54,8 +54,12 @@ export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const hdr = headers();
-  const get = (key: string) => (typeof (hdr as any).get === "function" ? ((hdr as any).get(key) as string | null) : null);
+  const hdr = await headers();
+  const get = (key: string) => {
+    const anyH: any = hdr as any;
+    if (typeof anyH.get === "function") return anyH.get(key) as string | null;
+    return null;
+  };
   const regionHeader = get("x-region")?.toUpperCase();
   const vercelHost = get("x-vercel-deployment-url") || "";
   const hostRaw = get("x-forwarded-host") || get("host") || vercelHost || "";
@@ -89,7 +93,7 @@ export default async function Home() {
       ? "DE"
       : host.endsWith(".at")
       ? "AT"
-      : getRegion());
+      : await getRegion());
   const supabase = getSupabaseServiceClient();
   const { data: heroRows } = await supabase
     .from("hero_slides")
@@ -166,7 +170,7 @@ export default async function Home() {
     d ? new Date(d + "T00:00:00").toLocaleDateString("de-AT", { weekday: "short", day: "2-digit", month: "short" }) : "Datum folgt";
   const fmtTime = (t?: string | null) => (t ? String(t).slice(0, 5) + " Uhr" : "");
 
-  // gemischte Kursliste (random pro Request)
+  // stabile Kursliste (nach Titel), keine Zufälligkeit -> keine Hydration-Mismatches
   const coursesMixed: HomeCourse[] = ((courseRows ?? []) as any[])
     .map((c) => ({
       id: c.id as string,
@@ -179,7 +183,7 @@ export default async function Home() {
         ? ("Extrem" as const)
         : ("Kurs" as const),
     }))
-    .sort(() => Math.random() - 0.5);
+    .sort((a, b) => a.title.localeCompare(b.title, "de"));
 
   return (
     <div className="min-h-screen text-foreground bg-white">

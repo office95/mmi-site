@@ -6,18 +6,10 @@ import { useMemo, useRef } from "react";
 
 type Course = { id: string; title: string; slug: string | null; hero: string | null; type: "Intensiv" | "Extrem" | "Kurs" };
 
-const shuffle = <T,>(arr: T[]): T[] => {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-};
-
 export default function CourseRail({ courses }: { courses: Course[] }) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const list = useMemo(() => shuffle(courses), [courses]);
+  // keine zufällige Sortierung: hydrationsicher
+  const list = useMemo(() => [...courses], [courses]);
 
   const scrollBy = (delta: number) => {
     if (!scrollRef.current) return;

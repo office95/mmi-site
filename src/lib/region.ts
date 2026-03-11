@@ -1,13 +1,13 @@
 import { headers } from "next/headers";
 
-export function getRegion(): "AT" | "DE" {
+// Muss async sein, weil headers() ein Promise liefert
+export async function getRegion(): Promise<"AT" | "DE"> {
   try {
-    const h = headers();
+    const h = await headers();
     const getHeader = (key: string) => {
-      // Headers in Next normally expose .get; be defensive for dev/hot-reload
       const anyH: any = h as any;
-      if (typeof anyH.get === "function") return anyH.get(key);
-      if (anyH && typeof anyH[key] === "function") return anyH[key](key);
+      if (typeof anyH.get === "function") return anyH.get(key) as string | undefined;
+      if (anyH && typeof anyH[key] === "function") return anyH[key](key) as string | undefined;
       return undefined;
     };
 

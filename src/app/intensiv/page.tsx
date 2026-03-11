@@ -70,7 +70,7 @@ export default async function IntensivPage() {
   const hdr = await headers();
   const rawHost = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
   const host = rawHost.replace(/^www\./, "").split(":")[0];
-  const region: "AT" | "DE" = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : getRegion();
+  const region: "AT" | "DE" = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : await getRegion();
 
   const courses = await loadCourses(region);
   const heroVideo = null;

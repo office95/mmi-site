@@ -68,12 +68,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const region = getRegion();
+  const region = await getRegion();
   const siteUrl = siteUrlEnv;
   const jsonLd = {
     "@context": "https://schema.org",

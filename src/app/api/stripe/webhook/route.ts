@@ -241,7 +241,7 @@ export async function POST(req: Request) {
           strasseNr: partnerRow?.data?.street || partnerRow?.data?.address || "",
           plzOrt: `${partnerRow?.data?.zip ?? sessionRow?.data?.zip ?? ""} ${partnerRow?.data?.city ?? sessionRow?.data?.city ?? ""}`.trim(),
           land: "Österreich",
-          telefon: "+43 1 000 0000",
+          telefon: "",
           email: "office@musicmission.at",
           uidNr: "ATU80644028",
           firmenbuchNr: "FN 627518 x",

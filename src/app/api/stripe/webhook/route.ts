@@ -162,10 +162,13 @@ export async function POST(req: Request) {
       const customerEmail = cs.customer_details?.email ?? "";
       const customerName = cs.customer_details?.name || customerEmail || "Unbekannter Kunde";
       const amountCents = cs.amount_total ?? 0;
-      const taxFromMeta = Number(cs.metadata?.tax_rate ?? cs.metadata?.tax_rate_percent ?? Number.NaN);
-      const taxFromSession = Number(sessionRow?.data?.tax_rate ?? Number.NaN);
-      const taxFromCourse = Number(courseRow?.data?.tax_rate ?? Number.NaN);
-      const taxPercentage = [taxFromMeta, taxFromSession, taxFromCourse].find((v) => Number.isFinite(v)) ?? 0;
+      const taxCandidates = [
+        courseRow?.data?.tax_rate,
+        sessionRow?.data?.tax_rate,
+        cs.metadata?.tax_rate,
+        cs.metadata?.tax_rate_percent,
+      ].map((v) => Number(v));
+      const taxPercentage = taxCandidates.find((v) => Number.isFinite(v)) ?? 0;
       // Kontakt anlegen (minimal)
       const contactPayload = {
         organization_id: ZOHO_ORG_ID,

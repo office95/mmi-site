@@ -422,11 +422,19 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
                           </svg>
                         ) : (
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="#ff1f8f" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M4 12h12" />
-                            <path d="M12 4v16" />
+                            <circle cx="18" cy="5" r="2" />
+                            <circle cx="6" cy="12" r="2" />
+                            <circle cx="18" cy="19" r="2" />
+                            <line x1="8" y1="11" x2="16" y2="6" />
+                            <line x1="8" y1="13" x2="16" y2="18" />
                           </svg>
                         )}
                       </button>
+                      {copiedId === s.id && (
+                        <span className="absolute right-12 top-1.5 rounded-full bg-black/80 px-3 py-1 text-[11px] font-semibold text-white shadow">
+                          Link in Zwischenablage kopiert
+                        </span>
+                      )}
                       <button
                         type="button"
                         aria-label={isFav ? "Aus Favoriten entfernen" : "Zu Favoriten hinzufügen"}

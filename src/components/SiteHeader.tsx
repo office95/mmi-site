@@ -7,7 +7,6 @@ import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Menu, X } from "lucide-react";
 import CourseSearch from "@/components/CourseSearch";
-import Link from "next/link";
 
 type SlotCourse = { id: string; slug: string; title: string };
 type Slot = { id: string; label: string; courses: SlotCourse[] };

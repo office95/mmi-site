@@ -272,6 +272,7 @@ export default function SessionsPage() {
             {filtered.map((s) => {
               const courseName = getName(s.course_id, courses.map((c) => ({ id: c.id, name: c.title }))) ?? "—";
               const partnerName = getName(s.partner_id, partners.map((p) => ({ id: p.id, name: p.name }))) ?? "—";
+              const courseType = courses.find((c) => c.id === s.course_id)?.type_id || "—";
               const isPast = (s.start_date || "") < new Date().toISOString().slice(0, 10);
               return (
                 <div key={s.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition">
@@ -280,7 +281,7 @@ export default function SessionsPage() {
                       <p className="font-semibold text-slate-900 line-clamp-2">{courseName}</p>
                       <p className="text-xs text-slate-500 line-clamp-2">{partnerName}</p>
                       <p className="text-xs text-slate-500">
-                        {s.start_date ?? "Datum fehlt"} {s.start_time ? `· ${s.start_time}` : ""}{" "}
+                        {s.start_date ?? "Datum fehlt"} · Typ: {courseType}
                       </p>
                     </div>
                     <div className="flex flex-col items-end gap-1">

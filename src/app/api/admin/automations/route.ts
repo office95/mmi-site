@@ -103,7 +103,7 @@ export async function GET() {
   // Seed defaults if missing
   try {
     for (const def of defaults) {
-      await db.from("automations").upsert({ ...def }, { onConflict: "key" });
+      await db.from("automations").insert({ ...def }).onConflict("key").ignore();
     }
   } catch (e) {
     // ignore seed errors

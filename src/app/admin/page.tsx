@@ -72,44 +72,6 @@ export default function AdminHome() {
           <StatCard title="Formular Einsendungen" value={current?.form_submissions} loading={isLoading || !current} />
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-          <a
-            href="/admin/orders"
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-          >
-            Bestellungen
-          </a>
-          <a
-            href="/admin/automationen"
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-          >
-            Automationen
-          </a>
-          <a
-            href="/admin/partners"
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-          >
-            Partner
-          </a>
-          <a
-            href="/admin/badges"
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-          >
-            Badges
-          </a>
-          <a
-            href="/admin/media"
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-          >
-            Medien
-          </a>
-          <a
-            href="/admin/hero"
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-          >
-            Hero Slides
-          </a>
-        </div>
       </div>
     </div>
   );

@@ -150,30 +150,32 @@ export default function CourseSearch({ variant = "default" }: { variant?: Varian
       </div>
 
       {results.length > 0 && (
-        <div className="fixed left-1/2 top-[62px] -translate-x-1/2 w-[82vw] max-w-[500px] max-h-[320px] overflow-y-auto overscroll-contain mt-2 rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-300/50 z-[60] px-[2px]">
-          <ul className="divide-y divide-slate-100" onWheel={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()}>
-            {results.map((c) => (
-              <li key={c.id}>
-                <Link href={`/kurs/${c.slug}`} className="flex items-center gap-3 px-3 py-2 hover:bg-slate-50">
-                  <div className="relative h-12 w-12 min-w-[48px] overflow-hidden rounded-xl bg-slate-100">
-                    {c.hero_image_url ? (
-                      <Image src={c.hero_image_url} alt={c.title} fill className="object-cover" sizes="48px" />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-[10px] text-slate-400">Kein Bild</div>
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-slate-900 truncate">{c.title}</p>
-                    <p className="text-[11px] text-slate-600 truncate">
-                      {types.find((t) => t.id === c.type_id)?.name ?? "Kurs"}
-                      {coursePartners[c.id]?.[0]?.partner ? ` · ${coursePartners[c.id][0].partner}` : ""}
-                      {coursePartners[c.id]?.[0]?.state ? ` · ${coursePartners[c.id][0].state}` : ""}
-                    </p>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
+        <div className="fixed inset-0 z-[60] flex items-start justify-center pointer-events-none">
+          <div className="mt-[62px] w-[82vw] max-w-[500px] max-h-[320px] overflow-y-auto overscroll-contain rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-300/50 px-[2px] pointer-events-auto">
+            <ul className="divide-y divide-slate-100" onWheel={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()}>
+              {results.map((c) => (
+                <li key={c.id}>
+                  <Link href={`/kurs/${c.slug}`} className="flex items-center gap-3 px-3 py-2 hover:bg-slate-50">
+                    <div className="relative h-12 w-12 min-w-[48px] overflow-hidden rounded-xl bg-slate-100">
+                      {c.hero_image_url ? (
+                        <Image src={c.hero_image_url} alt={c.title} fill className="object-cover" sizes="48px" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-[10px] text-slate-400">Kein Bild</div>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-slate-900 truncate">{c.title}</p>
+                      <p className="text-[11px] text-slate-600 truncate">
+                        {types.find((t) => t.id === c.type_id)?.name ?? "Kurs"}
+                        {coursePartners[c.id]?.[0]?.partner ? ` · ${coursePartners[c.id][0].partner}` : ""}
+                        {coursePartners[c.id]?.[0]?.state ? ` · ${coursePartners[c.id][0].state}` : ""}
+                      </p>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
     </div>

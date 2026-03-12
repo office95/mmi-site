@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseServiceClient } from "@/lib/supabase";
-import { sendMail } from "@/lib/mail";
+import { sendAutomationMail } from "@/lib/automationMailer";
 
 export const dynamic = "force-dynamic";
 
@@ -45,29 +45,53 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // E-Mail an office
+  // E-Mail an office (Automation)
   try {
-    const lines = [
-      "<h3>Neue Anmeldung – Professional Audio Diploma</h3>",
-      `<p><strong>Name:</strong> ${payload.first_name} ${payload.last_name}</p>`,
-      payload.birthdate ? `<p><strong>Geburtsdatum:</strong> ${payload.birthdate}</p>` : "",
-      `<p><strong>E-Mail:</strong> ${payload.email}</p>`,
-      payload.phone ? `<p><strong>Telefon:</strong> ${payload.phone}</p>` : "",
-      payload.street || payload.zip || payload.city
-        ? `<p><strong>Adresse:</strong> ${[payload.street, payload.zip, payload.city].filter(Boolean).join(", ")}</p>`
-        : "",
-      payload.location_preference ? `<p><strong>Kursstandort Wunsch:</strong> ${payload.location_preference}</p>` : "",
-      `<p><strong>Quelle:</strong> Professional Audio Diploma</p>`,
-      `<p><strong>Status:</strong> open</p>`,
-    ].join("");
-
-    await sendMail({
+    await sendAutomationMail({
+      key: "diploma_application_admin",
       to: "office@musicmission.at",
-      subject: "Neue Anmeldung – Professional Audio Diploma",
-      html: lines,
+      tokens: {
+        first_name: payload.first_name,
+        last_name: payload.last_name,
+        email: payload.email,
+        phone: payload.phone || "",
+        birthdate: payload.birthdate || "",
+        address: [payload.street, payload.zip, payload.city].filter(Boolean).join(", "),
+        location_preference: payload.location_preference || "",
+        status: "open",
+      },
+      fallbackSubject: "Neue Anmeldung – Professional Audio Diploma",
+      fallbackHtml: [
+        "<h3>Neue Anmeldung – Professional Audio Diploma</h3>",
+        `<p><strong>Name:</strong> {{first_name}} {{last_name}}</p>`,
+        `<p><strong>Geburtsdatum:</strong> {{birthdate}}</p>`,
+        `<p><strong>E-Mail:</strong> {{email}}</p>`,
+        `<p><strong>Telefon:</strong> {{phone}}</p>`,
+        `<p><strong>Adresse:</strong> {{address}}</p>`,
+        `<p><strong>Kursstandort Wunsch:</strong> {{location_preference}}</p>`,
+        `<p><strong>Status:</strong> {{status}}</p>`,
+      ].join(""),
     });
   } catch (err) {
     console.error("Mail send failed", err);
+  }
+
+  // E-Mail an Bewerber/in (Automation)
+  try {
+    await sendAutomationMail({
+      key: "diploma_application_customer",
+      to: payload.email,
+      tokens: {
+        first_name: payload.first_name,
+        last_name: payload.last_name,
+      },
+      fallbackSubject: "Eingangsbestätigung – Professional Audio Diploma",
+      fallbackHtml: `<p>Hallo {{first_name}},</p>
+        <p>vielen Dank für deine Anmeldung zum Professional Audio Diploma. Wir melden uns in Kürze mit weiteren Infos.</p>
+        <p>Liebe Grüße<br/>Music Mission</p>`,
+    });
+  } catch (err) {
+    console.error("Customer mail failed", err);
   }
 
   return NextResponse.json({ ok: true, data });

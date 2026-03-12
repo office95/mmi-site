@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { getSupabaseServiceClient } from "@/lib/supabase";
-import { sendMail } from "@/lib/mail";
+import { sendAutomationMail } from "@/lib/automationMailer";
 import { syncOrderToZoho } from "@/lib/zohoSyncOrder";
 import { renderBookingConfirmationHtml } from "@/lib/bookingConfirmation";
 
@@ -177,26 +177,36 @@ export async function POST(req: Request) {
         : `${adminBase}/admin/orders`;
 
     const customerPhone = cs.customer_details?.phone || cs.metadata?.phone || cs.metadata?.customer_phone || "";
-    const html = `
-      <h3>Du hast eine neue Buchung</h3>
-      <p><strong>Kurs:</strong> ${courseRow?.data?.title ?? "n/a"}</p>
-      <p><strong>Termin:</strong> ${formatDate(sessionRow?.data?.start_date)} ${formatTime(sessionRow?.data?.start_time)}</p>
-      <p><strong>Partner:</strong> ${partnerRow?.data?.name ?? "n/a"} (${partnerRow?.data?.city ?? sessionRow?.data?.city ?? ""})</p>
-      <p><strong>Teilnehmer (Anzahl):</strong> ${participants}</p>
-      <p><strong>Kursteilnehmer:</strong> ${cs.customer_details?.name ?? "n/a"} ${customerPhone ? "· " + customerPhone : ""} (${cs.customer_details?.email ?? ""})</p>
-      <p><strong>Order:</strong> ${cs.metadata?.order_number ?? "—"}</p>
-      <p><a href="${orderLink}" target="_blank" rel="noreferrer">Zur Bestellung</a></p>
-    `;
-    try {
-      await sendMail({
-        to: "office@musicmission.at",
-        subject: "Du hast eine neue Buchung",
-        html,
-      });
-    } catch (err) {
-      console.error("E-Mail Versand fehlgeschlagen", err);
-      // Webhook trotzdem erfolgreich quittieren, damit Stripe nicht neu sendet
-    }
+    const adminTokens = {
+      course_title: courseRow?.data?.title ?? "n/a",
+      start_date: formatDate(sessionRow?.data?.start_date),
+      start_time: formatTime(sessionRow?.data?.start_time),
+      partner_name: partnerRow?.data?.name ?? "n/a",
+      partner_city: partnerRow?.data?.city ?? sessionRow?.data?.city ?? "",
+      participants,
+      customer_name: cs.customer_details?.name ?? "n/a",
+      customer_phone: customerPhone,
+      customer_email: cs.customer_details?.email ?? "",
+      customer_contact: `${cs.customer_details?.name ?? "n/a"} ${customerPhone ? "· " + customerPhone : ""} (${cs.customer_details?.email ?? ""})`,
+      order_number: cs.metadata?.order_number ?? "—",
+      order_link: orderLink,
+    };
+    await sendAutomationMail({
+      key: "order_admin_new_booking",
+      to: "office@musicmission.at",
+      tokens: adminTokens,
+      fallbackSubject: "Du hast eine neue Buchung",
+      fallbackHtml: `
+        <h3>Du hast eine neue Buchung</h3>
+        <p><strong>Kurs:</strong> {{course_title}}</p>
+        <p><strong>Termin:</strong> {{start_date}} {{start_time}}</p>
+        <p><strong>Partner:</strong> {{partner_name}} ({{partner_city}})</p>
+        <p><strong>Teilnehmer (Anzahl):</strong> {{participants}}</p>
+        <p><strong>Kursteilnehmer:</strong> {{customer_contact}}</p>
+        <p><strong>Order:</strong> {{order_number}}</p>
+        <p><a href="{{order_link}}" target="_blank" rel="noreferrer">Zur Bestellung</a></p>
+      `,
+    });
 
     // Kundenbestätigung (automatisierte Buchungsbestätigung)
     try {
@@ -253,10 +263,18 @@ export async function POST(req: Request) {
           absenderName: "Music Mission GmbH",
         });
 
-        await sendMail({
+        await sendAutomationMail({
+          key: "order_customer_confirmation",
           to: customerEmail,
-          subject: "Buchungsbestätigung",
-          html: htmlCustomer,
+          tokens: {
+            order_number: orderRow?.data?.order_number || cs.metadata?.order_number || "—",
+            course_title: courseRow?.data?.title || "Kurs",
+            start_date: formatDate(startDate),
+            start_time: formatTime(startTime),
+            offener_betrag: formatMoney(openCents),
+          },
+          fallbackSubject: "Buchungsbestätigung",
+          fallbackHtml: htmlCustomer,
         });
       }
     } catch (err) {

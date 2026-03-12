@@ -1,8 +1,27 @@
 import { NextResponse } from "next/server";
 import { getSupabaseServiceClient } from "@/lib/supabase";
+import { sendMail } from "@/lib/mail";
+
+const defaults = [
+  { key: "order_admin_new_booking", name: "Admin: Neue Buchung", trigger: "Stripe webhook payment_intent.succeeded", enabled: true },
+  { key: "order_customer_confirmation", name: "Kunde: Buchungsbestätigung", trigger: "Stripe webhook payment_intent.succeeded", enabled: true },
+  { key: "order_paid", name: "Kunde: Zahlung bestätigt", trigger: "order.status=paid (Webhook)", enabled: true },
+  { key: "order_pending_reminder", name: "Kunde: Buchung offen – Reminder", trigger: "Cron: pending >24h", enabled: true },
+  { key: "diploma_application_admin", name: "Admin: Diploma-Anmeldung", trigger: "POST /api/diploma/apply", enabled: true },
+  { key: "diploma_application_customer", name: "Kunde: Diploma-Eingangsbestätigung", trigger: "POST /api/diploma/apply", enabled: true },
+  { key: "form_submit_notification", name: "Admin: Formulareingang", trigger: "POST /api/forms/[id]/submit", enabled: true },
+];
 
 export async function GET() {
   const db = getSupabaseServiceClient();
+  // Seed defaults if missing
+  try {
+    for (const def of defaults) {
+      await db.from("automations").upsert({ ...def }, { onConflict: "key" });
+    }
+  } catch (e) {
+    // ignore seed errors
+  }
   const { data: automations, error } = await db
     .from("automations")
     .select("id,key,name,trigger,enabled,updated_at,updated_by")
@@ -65,6 +84,65 @@ export async function PATCH(req: Request) {
 }
 
 export async function POST(req: Request) {
-  // Testmail stub
-  return NextResponse.json({ ok: true, note: "Testmodus: Versandstub" });
+  const body = await req.json().catch(() => ({}));
+  const { id, to, locale = "de-AT" } = body as { id?: string; to?: string; locale?: string };
+  if (!id || !to) return NextResponse.json({ error: "id und to sind erforderlich" }, { status: 400 });
+
+  const email = String(to).trim();
+  if (!email.includes("@")) return NextResponse.json({ error: "Ungültige E-Mail-Adresse" }, { status: 400 });
+
+  const hasMailCreds = process.env.GMAIL_USER && process.env.GMAIL_PASS;
+  if (!hasMailCreds) {
+    return NextResponse.json({ error: "Mailversand nicht konfiguriert (GMAIL_USER/GMAIL_PASS fehlen)" }, { status: 400 });
+  }
+
+  const db = getSupabaseServiceClient();
+
+  const { data: automation, error: autoError } = await db
+    .from("automations")
+    .select("id,key,name,enabled")
+    .eq("id", id)
+    .maybeSingle();
+  if (autoError) return NextResponse.json({ error: autoError.message }, { status: 500 });
+  if (!automation) return NextResponse.json({ error: "Automation nicht gefunden" }, { status: 404 });
+  if (!automation.enabled)
+    return NextResponse.json({ error: "Automation ist inaktiv – bitte aktivieren" }, { status: 400 });
+
+  const { data: tplExact, error: tplError } = await db
+    .from("automation_templates")
+    .select("subject,html_body,text_body,locale")
+    .eq("automation_id", id)
+    .eq("locale", locale)
+    .maybeSingle();
+  if (tplError) return NextResponse.json({ error: tplError.message }, { status: 500 });
+
+  const { data: tplFallback } = tplExact
+    ? { data: null }
+    : await db
+        .from("automation_templates")
+        .select("subject,html_body,text_body,locale")
+        .eq("automation_id", id)
+        .limit(1)
+        .maybeSingle();
+
+  const template = tplExact || tplFallback;
+  if (!template) return NextResponse.json({ error: "Kein Template hinterlegt" }, { status: 400 });
+
+  const subject = template.subject || `[${automation.key}] Testversand`;
+  const html =
+    template.html_body ||
+    (template.text_body
+      ? `<pre style="font-family: Inter, Arial, sans-serif; white-space: pre-wrap; font-size:14px;">${template.text_body}</pre>`
+      : "<p>(kein Inhalt hinterlegt)</p>");
+
+  try {
+    await sendMail({ to: email, subject, html });
+    await db.from("automation_logs").insert({ automation_id: id, status: "success", recipient: email, subject });
+    return NextResponse.json({ ok: true });
+  } catch (err: any) {
+    await db
+      .from("automation_logs")
+      .insert({ automation_id: id, status: "error", recipient: email, subject, error_message: err?.message || "send failed" });
+    return NextResponse.json({ error: "Testversand fehlgeschlagen" }, { status: 500 });
+  }
 }

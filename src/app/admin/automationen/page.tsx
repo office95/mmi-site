@@ -79,6 +79,27 @@ export default function AutomationenPage() {
     }
   };
 
+  const sendTest = async (item: any) => {
+    const to = prompt("Testmail senden an:", "meine.mail@example.com");
+    if (!to) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/automations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: item.id, to, locale: "de-AT" }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Testversand fehlgeschlagen");
+      alert(`Testmail an ${to} gesendet.`);
+      await load();
+    } catch (e: any) {
+      alert(e.message || "Fehler beim Testversand");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <SiteHeader />
@@ -146,7 +167,7 @@ export default function AutomationenPage() {
                         Template
                       </button>
                       <button
-                        onClick={() => alert("Testversand stub – Backend noch anpassen")}
+                        onClick={() => sendTest(item)}
                         className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-800 hover:bg-slate-100"
                       >
                         Testmail

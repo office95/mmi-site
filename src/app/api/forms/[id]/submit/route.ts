@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { getSupabaseServiceClient } from "@/lib/supabase";
-import { sendMail } from "@/lib/mail";
+import { sendAutomationMail } from "@/lib/automationMailer";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -53,7 +53,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (ansErr) return NextResponse.json({ error: ansErr.message }, { status: 500 });
   }
 
-  // Notify via email (best effort)
+  // Notify via Automation (best effort)
   try {
     const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3005";
     const adminLink = `${base}/admin/forms`;
@@ -98,13 +98,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     const answersHtml = sections.join("");
 
-    await sendMail({
+    await sendAutomationMail({
+      key: "form_submit_notification",
       to: "office@musicmission.at",
-      subject: "Kostenloses Beratungsgespräch beantragt",
-      html: `<p>Ein Formular wurde soeben eingereicht: <strong>Kostenloses Beratungsgespräch</strong>.</p>
-             <p><strong>Formular-ID:</strong> ${formId}<br/>
-             <strong>Submission:</strong> ${submissionId}</p>
-             <p><a href="${adminLink}" target="_blank" rel="noreferrer">Zum Formular / Admin-Dashboard</a></p>
+      tokens: {
+        form_id: formId,
+        submission_id: submissionId,
+        admin_link: adminLink,
+      },
+      fallbackSubject: "Formular eingereicht",
+      fallbackHtml: `<p>Ein Formular wurde soeben eingereicht.</p>
+             <p><strong>Formular-ID:</strong> {{form_id}}<br/>
+             <strong>Submission:</strong> {{submission_id}}</p>
+             <p><a href="{{admin_link}}" target="_blank" rel="noreferrer">Zum Formular / Admin-Dashboard</a></p>
              <p style="margin-top:12px;font-weight:700;color:#0f172a;">Antworten</p>
              <div style="border:1px solid #e2e8f0;border-radius:12px;padding:12px;background:#f8fafc;">
                ${answersHtml || "<em>Keine Angaben</em>"}

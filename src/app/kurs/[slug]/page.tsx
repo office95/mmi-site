@@ -620,10 +620,9 @@ let host = "";
           <div className="mx-auto max-w-[1200px] mb-6">
             <Link
               href={isExtrem ? "/extremkurs" : "/intensiv"}
-              className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-slate-900/15 hover:-translate-y-0.5 transition"
+              className="text-sm font-semibold text-slate-900 underline underline-offset-4 hover:text-pink-600"
             >
-              {isExtrem ? "Alle Extremkurse" : "Alle Intensivausbildungen"}
-              <span aria-hidden>→</span>
+              {isExtrem ? "Alle Extremkurse" : "Alle Intensivausbildungen"} →
             </Link>
           </div>
         )}

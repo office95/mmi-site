@@ -25,6 +25,7 @@ export default function CourseSearch({ variant = "default" }: { variant?: Varian
   const [loading, setLoading] = useState(false);
   const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
   const [coursePartners, setCoursePartners] = useState<Record<string, CoursePartner[]>>({});
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -138,12 +139,17 @@ export default function CourseSearch({ variant = "default" }: { variant?: Varian
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
+            onFocus={() => setOpen(true)}
+            onBlur={() => setTimeout(() => setOpen(false), 120)}
             type="text"
             placeholder="Kurs, Bundesland, Tag..."
             className={
               compact
-                ? "w-full border-none bg-transparent text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-0"
-                : "w-full border-none bg-transparent text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-0"
+                ? "w-full border-none bg-transparent text-sm sm:text-base text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-0 md:text-sm"
+                : "w-full border-none bg-transparent text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-0"
+            }
+            style={{
+              fontSize: "16px",
             }
           />
         </div>
@@ -153,13 +159,17 @@ export default function CourseSearch({ variant = "default" }: { variant?: Varian
         </div>
       </div>
 
-      {results.length > 0 && (
-        <div className="fixed inset-0 z-[60] flex items-start justify-center pointer-events-none">
+      {open && results.length > 0 && (
+        <div className="fixed inset-0 z-[60] flex items-start justify-center pointer-events-none" onMouseDown={(e) => e.preventDefault()}>
           <div className="mt-[62px] w-[82vw] max-w-[500px] max-h-[320px] overflow-y-auto overscroll-contain rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-300/50 px-[2px] pointer-events-auto">
             <ul className="divide-y divide-slate-100" onWheel={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()}>
               {results.map((c) => (
                 <li key={c.id}>
-                  <Link href={`/kurs/${c.slug}`} className="flex items-center gap-3 px-3 py-2 hover:bg-slate-50">
+                  <Link
+                    href={`/kurs/${c.slug}`}
+                    className="flex items-center gap-3 px-3 py-2 hover:bg-slate-50"
+                    onClick={() => setOpen(false)}
+                  >
                     <div className="relative h-12 w-12 min-w-[48px] overflow-hidden rounded-xl bg-slate-100">
                       {c.hero_image_url ? (
                         <Image src={c.hero_image_url} alt={c.title} fill className="object-cover" sizes="48px" />

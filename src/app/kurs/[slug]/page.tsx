@@ -19,6 +19,7 @@ import Script from "next/script";
 import { SlugSelfHeal } from "./SlugSelfHeal";
 import { SlugGuard } from "./SlugGuard";
 import { fetchSeoForPage, resolvedSeoToMetadata } from "@/lib/seo-matrix";
+import { ShareButton } from "@/components/ShareButton";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
@@ -649,15 +650,21 @@ let host = "";
             )}
 
             {course.content && (
-              <div className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm">
-                <h2 className="text-xl font-semibold text-slate-900 mb-2">Kursinhalt</h2>
+              <div className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm" id="kursinhalt">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <h2 className="text-xl font-semibold text-slate-900">Kursinhalt</h2>
+                  <ShareButton url={`${canonical || ""}#kursinhalt`} label="Teilen" compact />
+                </div>
                 <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: toHtml(course.content) }} />
               </div>
             )}
 
             {course.audience && (
-              <div className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">Für wen?</h3>
+              <div className="rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm" id="fuer-wen">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <h3 className="text-lg font-semibold text-slate-900">Für wen?</h3>
+                  <ShareButton url={`${canonical || ""}#fuer-wen`} label="Teilen" compact />
+                </div>
                 <div className="prose prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: toHtml(course.audience) }} />
               </div>
             )}
@@ -745,9 +752,12 @@ let host = "";
       )}
 
       {(course.faqs ?? []).length > 0 && (
-        <section className="bg-slate-100 py-10 sm:py-12">
+        <section className="bg-slate-100 py-10 sm:py-12" id="faq">
           <div className="mx-auto max-w-[1200px] px-4 sm:px-8 lg:px-20 space-y-4">
-            <h3 className="text-xl font-semibold text-slate-900">FAQs</h3>
+            <div className="flex items-center justify-between gap-3">
+              <h3 className="text-xl font-semibold text-slate-900">FAQs</h3>
+              <ShareButton url={`${canonical || ""}#faq`} label="Teilen" compact />
+            </div>
             <FaqAccordion faqs={course.faqs ?? []} />
           </div>
         </section>

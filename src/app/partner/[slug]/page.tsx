@@ -336,7 +336,7 @@ export default function PartnerPage() {
           <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
             <div className="mx-auto max-w-4xl space-y-3 drop-shadow-[0_18px_40px_rgba(0,0,0,0.45)]">
               <p className="text-sm uppercase tracking-[0.22em] text-white/70">Partner</p>
-              <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl text-white leading-tight">
+              <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl text-white leading-tight underline-pink">
                 {loading ? "Lade..." : partner?.name || `Kein Treffer für "${slug || "(leer)"}`}
               </h1>
               <p

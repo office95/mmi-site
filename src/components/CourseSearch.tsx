@@ -139,7 +139,7 @@ export default function CourseSearch({ variant = "default" }: { variant?: Varian
       </div>
 
       {results.length > 0 && (
-        <div className="absolute left-0 right-0 mt-2 rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-300/50 overflow-hidden z-50">
+        <div className="absolute left-1/2 -translate-x-1/2 w-[90vw] sm:left-0 sm:right-0 sm:w-auto sm:translate-x-0 mt-2 rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-300/50 overflow-hidden z-50">
           <ul className="divide-y divide-slate-100">
             {results.map((c) => (
               <li key={c.id}>

@@ -394,27 +394,10 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
                 const infoHref = courseSlug ? `/kurs/${courseSlug}${s.id ? `?booking=${s.id}` : ""}` : `/entdecken`;
                 const coursePartnerHref =
                   courseSlug && s.partner_id ? `/kurs/${courseSlug}?partner=${s.partner_id}${s.id ? `&booking=${s.id}` : ""}` : infoHref;
-                const shareData = () => {
-                  const loc = locationText(s);
-                  const dateTxt = s.start_date ? new Date(s.start_date + "T00:00:00").toLocaleDateString("de-AT") : "";
-                  const title = s.course?.title || "Kurs";
-                  const primary = (typeof window !== "undefined" ? window.location.origin : "") + coursePartnerHref;
-                  const secondary = (typeof window !== "undefined" ? window.location.origin : "") + bookingHref;
-                  const textParts = [title, loc ? `in ${loc}` : null, dateTxt ? `ab ${dateTxt}` : null].filter(Boolean);
-                  return { title: "Music Mission Kurs", text: textParts.join(" · "), primary, secondary };
-                };
                 const doShare = async () => {
-                  const data = shareData();
-                  if (typeof navigator !== "undefined" && navigator.share) {
-                    try {
-                      await navigator.share({ title: data.title, text: data.text, url: data.primary });
-                      return;
-                    } catch (_) {
-                      // fallback to copy
-                    }
-                  }
+                  const primary = (typeof window !== "undefined" ? window.location.origin : "") + coursePartnerHref;
                   try {
-                    await navigator.clipboard.writeText(data.primary);
+                    await navigator.clipboard.writeText(primary);
                     setCopiedId(s.id);
                     setTimeout(() => setCopiedId(null), 1600);
                   } catch (_) {
@@ -439,9 +422,8 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
                           </svg>
                         ) : (
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="#ff1f8f" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="m4 12 8-8 8 8" />
-                            <path d="M12 4v12" />
-                            <path d="M20 20H4" />
+                            <path d="M4 12h12" />
+                            <path d="M12 4v16" />
                           </svg>
                         )}
                       </button>

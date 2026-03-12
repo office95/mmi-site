@@ -19,6 +19,7 @@ export default function AutomationenPage() {
   const [logFilters, setLogFilters] = useState({ search: "", status: "", automation_key: "", recipient: "" });
   const [logPeriod, setLogPeriod] = useState<"today" | "week" | "month" | "year" | "all">("today");
   const [logDetail, setLogDetail] = useState<any | null>(null);
+  const [tab, setTab] = useState<"automations" | "logs">("automations");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -88,11 +89,11 @@ export default function AutomationenPage() {
     } finally {
       setLogsLoading(false);
     }
-  }, [logFilters]);
+  }, [logFilters, logPeriod]);
 
   useEffect(() => {
-    loadLogs();
-  }, [loadLogs]);
+    if (tab === "logs") loadLogs();
+  }, [tab, logFilters, logPeriod, loadLogs]);
 
   const openEdit = (item: any) => {
     const tpl = (item.templates || []).find((t: any) => t.locale === "de-AT") || item.templates?.[0] || {};
@@ -171,88 +172,105 @@ export default function AutomationenPage() {
           <p className="text-slate-600">Alle automatischen E-Mails, Trigger, Status & Logs.</p>
         </div>
 
-        {error && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
-
-        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <table className="min-w-full text-sm">
-            <thead className="bg-slate-50 text-slate-600">
-              <tr>
-                <th className="px-4 py-3 text-left">Name</th>
-                <th className="px-4 py-3 text-left">Trigger</th>
-                <th className="px-4 py-3 text-left">Status</th>
-                <th className="px-4 py-3 text-left">Letzter Versand</th>
-                <th className="px-4 py-3 text-left">Aktion</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {loading && (
-                <tr>
-                  <td colSpan={5} className="px-4 py-6 text-center text-slate-500">
-                    Lädt…
-                  </td>
-                </tr>
-              )}
-              {!loading &&
-                items.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3">
-                      <div className="font-semibold text-slate-900">{item.name}</div>
-                      <div className="text-xs text-slate-500">Key: {item.key}</div>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-slate-700">{item.trigger || "–"}</td>
-                    <td className="px-4 py-3">
-                      <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-800">
-                        <div
-                          className={`relative inline-flex h-5 w-10 items-center rounded-full transition ${
-                            item.enabled ? "bg-emerald-500" : "bg-slate-300"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={item.enabled}
-                            onChange={() => toggleEnabled(item)}
-                            className="peer sr-only"
-                            aria-label="Automation aktivieren/deaktivieren"
-                          />
-                          <span
-                            className={`absolute left-1 h-3.5 w-3.5 rounded-full bg-white shadow transition ${
-                              item.enabled ? "translate-x-5" : "translate-x-0"
-                            }`}
-                          />
-                        </div>
-                        {item.enabled ? "Aktiv" : "Inaktiv"}
-                      </label>
-                    </td>
-                    <td className="px-4 py-3 text-xs text-slate-600">
-                      {item.last_log ? (
-                        <div>
-                          <div>{new Date(item.last_log.sent_at).toLocaleString("de-AT")}</div>
-                          <div className="text-[11px] text-slate-500">{item.last_log.recipient || ""}</div>
-                        </div>
-                      ) : (
-                        "–"
-                      )}
-                    </td>
-                    <td className="px-4 py-3 space-x-2">
-                      <button
-                        onClick={() => openEdit(item)}
-                        className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-800 hover:bg-slate-100"
-                      >
-                        Template
-                      </button>
-                      <button
-                        onClick={() => sendTest(item)}
-                        className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-800 hover:bg-slate-100"
-                      >
-                        Testmail
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
+        <div className="flex gap-2">
+          {(["automations", "logs"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`rounded-full px-4 py-2 text-sm font-semibold ${
+                tab === t ? "bg-slate-900 text-white" : "border border-slate-200 bg-white text-slate-700"
+              }`}
+            >
+              {t === "automations" ? "Automationen" : "Logs"}
+            </button>
+          ))}
         </div>
 
+        {error && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
+
+        {tab === "automations" && (
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <table className="min-w-full text-sm">
+              <thead className="bg-slate-50 text-slate-600">
+                <tr>
+                  <th className="px-4 py-3 text-left">Name</th>
+                  <th className="px-4 py-3 text-left">Trigger</th>
+                  <th className="px-4 py-3 text-left">Status</th>
+                  <th className="px-4 py-3 text-left">Letzter Versand</th>
+                  <th className="px-4 py-3 text-left">Aktion</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {loading && (
+                  <tr>
+                    <td colSpan={5} className="px-4 py-6 text-center text-slate-500">
+                      Lädt…
+                    </td>
+                  </tr>
+                )}
+                {!loading &&
+                  items.map((item) => (
+                    <tr key={item.id} className="hover:bg-slate-50">
+                      <td className="px-4 py-3">
+                        <div className="font-semibold text-slate-900">{item.name}</div>
+                        <div className="text-xs text-slate-500">Key: {item.key}</div>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-700">{item.trigger || "–"}</td>
+                      <td className="px-4 py-3">
+                        <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-800">
+                          <div
+                            className={`relative inline-flex h-5 w-10 items-center rounded-full transition ${
+                              item.enabled ? "bg-emerald-500" : "bg-slate-300"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={item.enabled}
+                              onChange={() => toggleEnabled(item)}
+                              className="peer sr-only"
+                              aria-label="Automation aktivieren/deaktivieren"
+                            />
+                            <span
+                              className={`absolute left-1 h-3.5 w-3.5 rounded-full bg-white shadow transition ${
+                                item.enabled ? "translate-x-5" : "translate-x-0"
+                              }`}
+                            />
+                          </div>
+                          {item.enabled ? "Aktiv" : "Inaktiv"}
+                        </label>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-slate-600">
+                        {item.last_log ? (
+                          <div>
+                            <div>{new Date(item.last_log.sent_at).toLocaleString("de-AT")}</div>
+                            <div className="text-[11px] text-slate-500">{item.last_log.recipient || ""}</div>
+                          </div>
+                        ) : (
+                          "–"
+                        )}
+                      </td>
+                      <td className="px-4 py-3 space-x-2">
+                        <button
+                          onClick={() => openEdit(item)}
+                          className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-800 hover:bg-slate-100"
+                        >
+                          Template
+                        </button>
+                        <button
+                          onClick={() => sendTest(item)}
+                          className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-800 hover:bg-slate-100"
+                        >
+                          Testmail
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {tab === "logs" && (
         <section className="space-y-3">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <div>

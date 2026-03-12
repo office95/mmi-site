@@ -249,6 +249,7 @@ export default function SessionsPage() {
                 { value: "", label: "Alle" },
                 { value: "active", label: "Aktiv" },
                 { value: "inactive", label: "Inaktiv" },
+                { value: "archived", label: "Archiviert" },
               ]}
             />
             <Select
@@ -282,7 +283,7 @@ export default function SessionsPage() {
               const partnerName = getName(s.partner_id, partners.map((p) => ({ id: p.id, name: p.name }))) ?? "—";
               const courseTypeId = courses.find((c) => c.id === s.course_id)?.type_id || "";
               const courseTypeLabel = types.find((t) => t.value === courseTypeId)?.label || "—";
-              const isPast = (s.start_date || "") < new Date().toISOString().slice(0, 10);
+              const isArchived = (s.status ?? "") === "archived";
               return (
                 <div key={s.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition">
                   <div className="flex items-start justify-between gap-2">
@@ -296,14 +297,18 @@ export default function SessionsPage() {
                     <div className="flex flex-col items-end gap-1">
                       <span
                         className={
-                          (s.status ?? "active") === "active"
+                          (s.status ?? "active") === "archived"
+                            ? "rounded-full px-2 py-0.5 text-[11px] font-semibold border border-slate-300 text-slate-700"
+                            : (s.status ?? "active") === "active"
                             ? "rounded-full px-2 py-0.5 text-[11px] font-semibold border border-emerald-200 text-emerald-700"
                             : "rounded-full px-2 py-0.5 text-[11px] font-semibold border border-amber-200 text-amber-700"
                         }
                       >
                         {s.status ?? "—"}
                       </span>
-                      {isPast && <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-700">Archiviert</span>}
+                      {isArchived && (
+                        <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-700">Archiviert</span>
+                      )}
                     </div>
                   </div>
                   <div className="mt-3 flex gap-2">

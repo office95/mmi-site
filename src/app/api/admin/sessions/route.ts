@@ -15,19 +15,23 @@ export async function GET(req: NextRequest) {
   const includePast = req.nextUrl.searchParams.get("include_past") === "1";
   const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.,region.eq.%20`;
 
+  const todayIso = new Date().toISOString().slice(0, 10);
+  // Auto-Archivierung: Termine vor heute als archived markieren
+  await supabase.from(TABLE).update({ status: "archived" }).lt("start_date", todayIso).neq("status", "archived");
+
   // 1) Sessions laden
   let query = supabase.from(TABLE).select("*");
   if (!showAll) {
     query = query.eq("status", "active").or(regionFilter);
   }
+  if (!includePast && !showAll) {
+    query = query.neq("status", "archived");
+  }
   const { data: sessions, error: errSes } = await query.order("start_date", { ascending: true });
   if (errSes) return NextResponse.json({ error: errSes.message }, { status: 500 });
   if (!sessions || sessions.length === 0) return NextResponse.json({ data: [] });
 
-  const todayIso = new Date().toISOString().slice(0, 10);
   const filteredSessions = (sessions as any[]).filter((s) => {
-    const isPast = (s.start_date || "") < todayIso;
-    if (!includePast && isPast) return false;
     if (!onlyOpen) return true;
     const max = Number(s.max_participants ?? 0);
     const taken = Number(s.seats_taken ?? 0);

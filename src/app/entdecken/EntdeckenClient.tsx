@@ -37,6 +37,7 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [onlyFavs, setOnlyFavs] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showFavPopover, setShowFavPopover] = useState(false);
   const [debugHost, setDebugHost] = useState("");
   const [debugRegion, setDebugRegion] = useState("");
   const [debugXRegion, setDebugXRegion] = useState("");
@@ -238,6 +239,18 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
 
   const regionText = debugRegion === "DE" ? "Deutschland" : "Österreich";
 
+  const sessionMap = useMemo(() => {
+    const map = new Map<string, SessionCard>();
+    futureSessions.forEach((s) => map.set(s.id, s));
+    return map;
+  }, [futureSessions]);
+
+  const favoriteSessions = useMemo(() => {
+    return Array.from(favorites)
+      .map((id) => sessionMap.get(id))
+      .filter(Boolean) as SessionCard[];
+  }, [favorites, sessionMap]);
+
   const sessionBadges = (s: SessionCard) => {
     const badges: { name: string; color: string }[] = [];
     const typeName = types.find((t) => t.id === s.course?.type_id)?.name?.toLowerCase();
@@ -281,6 +294,80 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
           heightClass="h-[60vh] sm:h-[60vh] lg:h-[60vh] min-h-[35vh] -mt-[5.5rem] sm:-mt-[5.5rem]"
         />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-b from-transparent via-white/10 to-neutral-100" />
+        <div className="pointer-events-auto absolute right-4 top-4 hidden sm:flex items-center gap-2">
+          <div
+            onMouseEnter={() => setShowFavPopover(true)}
+            onMouseLeave={() => setShowFavPopover(false)}
+            className="relative"
+          >
+            <button
+              type="button"
+              aria-label="Favoriten anzeigen"
+              onClick={() => setShowFavPopover((v) => !v)}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-pink-600 shadow-lg shadow-black/10 border border-white/80 hover:scale-105 transition"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-6 w-6">
+                <path
+                  d="M12.1 21.35 12 21.46l-.1-.11C6.14 15.95 2 12.19 2 8.5 2 5.42 4.42 3 7.5 3c1.9 0 3.63.9 4.5 2.09C12.87 3.9 14.6 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.69-4.14 7.45-9.9 12.85Z"
+                  fill={favoriteSessions.length ? "#ff1f8f" : "none"}
+                  stroke="#ff1f8f"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+            {showFavPopover && (
+              <div className="absolute right-0 mt-2 w-72 max-w-[80vw] rounded-2xl border border-slate-200 bg-white shadow-xl shadow-black/10 p-3 text-left">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-slate-900">Favoriten ({favoriteSessions.length})</p>
+                  <button
+                    onClick={() => {
+                      setOnlyFavs(true);
+                      setShowFavPopover(false);
+                    }}
+                    className="text-[11px] font-semibold text-pink-600 underline underline-offset-2"
+                  >
+                    Nur Favoriten anzeigen
+                  </button>
+                </div>
+                <div className="mt-2 space-y-2 max-h-64 overflow-auto pr-1">
+                  {favoriteSessions.length === 0 && (
+                    <p className="text-sm text-slate-600">Noch keine Favoriten. Klicke auf ein Herz bei einem Termin.</p>
+                  )}
+                  {favoriteSessions.slice(0, 6).map((fav) => (
+                    <div key={fav.id} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                      <p className="text-sm font-semibold text-slate-900 line-clamp-1">{fav.course?.title || "Kurs"}</p>
+                      <p className="text-xs text-slate-600 line-clamp-1">
+                        {(fav.start_date && new Date(fav.start_date + "T00:00:00").toLocaleDateString("de-AT")) || "Datum folgt"}
+                        {fav.partners?.city || fav.state ? ` · ${fav.partners?.city || fav.state}` : ""}
+                      </p>
+                      <div className="mt-1 flex gap-2">
+                        <Link
+                          href={`/kurs/${fav.course?.slug || fav.course?.id || fav.id}?booking=${fav.id}${
+                            fav.partner_id ? `&partner=${fav.partner_id}` : ""
+                          }`}
+                          className="text-[11px] font-semibold text-pink-600 underline underline-offset-2"
+                        >
+                          Öffnen
+                        </Link>
+                        <button
+                          className="text-[11px] font-semibold text-slate-600 underline underline-offset-2"
+                          onClick={() => toggleFavorite(fav.id)}
+                        >
+                          Entfernen
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {favoriteSessions.length > 6 && (
+                    <p className="text-xs text-slate-500">+ {favoriteSessions.length - 6} weitere</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <section className="w-full bg-neutral-100 -mt-10 sm:-mt-12 pb-6">
@@ -290,6 +377,26 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
               <div className="flex flex-col gap-4">
                 <div className="space-y-3">
                   <div className="grid w-full max-w-4xl gap-3 sm:grid-cols-3">
+                    <div className="sm:hidden flex justify-end">
+                      <button
+                        onClick={() => setOnlyFavs((v) => !v)}
+                        className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold transition ${
+                          onlyFavs ? "border-pink-500 bg-pink-50 text-black" : "border-slate-200 bg-white text-black"
+                        }`}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-4 w-4">
+                          <path
+                            d="M12.1 21.35 12 21.46l-.1-.11C6.14 15.95 2 12.19 2 8.5 2 5.42 4.42 3 7.5 3c1.9 0 3.63.9 4.5 2.09C12.87 3.9 14.6 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.69-4.14 7.45-9.9 12.85Z"
+                            fill={favoriteSessions.length ? "#ff1f8f" : "none"}
+                            stroke="#ff1f8f"
+                            strokeWidth="1.6"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        Favoriten ({favoriteSessions.length})
+                      </button>
+                    </div>
                     <div className="sm:col-span-3">
                       <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
                         <div className="h-9 w-9 flex items-center justify-center rounded-full bg-[#ff1f8f]/12 text-[#ff1f8f]">

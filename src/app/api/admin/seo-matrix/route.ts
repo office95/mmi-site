@@ -92,7 +92,7 @@ export async function GET(req: NextRequest) {
         .eq("domain_variant", variant)
         .maybeSingle();
       if (!exists.data) {
-        await supabase.from(TABLE).insert({
+        const seed = {
           page_key: page.pageKey,
           slug,
           domain_variant: variant,
@@ -102,7 +102,8 @@ export async function GET(req: NextRequest) {
           meta_description: page.defaultDescription ?? null,
           robots_index: true,
           robots_follow: true,
-        });
+        };
+        await supabase.from(TABLE).insert([seed as any]);
       }
     }
   }

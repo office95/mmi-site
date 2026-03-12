@@ -22,7 +22,7 @@ export default async function KursstandortePage() {
   return (
     <>
       <h1 className="sr-only">{seo.h1}</h1>
-      <KursstandorteClient />
+      <KursstandorteClient title={seo.h1} subtitle={seo.heroSubline} />
     </>
   );
 }

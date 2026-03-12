@@ -38,7 +38,7 @@ const toUrl = (path: string | null) => {
   return `${base}/storage/v1/object/public/${path.replace(/^\/+/m, "")}`;
 };
 
-export default function KursstandorteClient() {
+export default function KursstandorteClient({ title, subtitle }: { title?: string; subtitle?: string }) {
   const [debugRegion, setDebugRegion] = useState("AT");
   const [debugHost, setDebugHost] = useState("");
   const [debugXRegion] = useState("(client)");
@@ -212,10 +212,10 @@ export default function KursstandorteClient() {
       <SiteHeader />
 
       <div className="relative">
-        <HeroSection
+          <HeroSection
           eyebrow="Kursstandorte"
-          title={`Unsere Kursstandorte in ${regionLabel}`}
-          subtitle={`Finde Studios und Partner in ${regionLabel} für Musikproduktion, Tontechnik, Live-Sound, DJing und Vocalcoaching.`}
+          title={title || `Unsere Kursstandorte in ${regionLabel}`}
+          subtitle={subtitle || `Finde Studios und Partner in ${regionLabel} für Musikproduktion, Tontechnik, Live-Sound, DJing und Vocalcoaching.`}
           image="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/f5ca6ab3-c2a6-4fa2-8bea-474f1cbd445b.webp"
           overlayStrength="strong"
           heightClass="h-[60vh] sm:h-[60vh] lg:h-[60vh] min-h-[55vh] -mt-[5.5rem] sm:-mt-[5.5rem]"

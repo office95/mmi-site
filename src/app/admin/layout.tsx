@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
+import { useEffect, useState } from "react";
 import { LogOut } from "lucide-react";
 
 const nav = [
@@ -29,6 +30,22 @@ const nav = [
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const supabase = getSupabaseBrowserClient();
   const pathname = usePathname();
+  const [region, setRegion] = useState<"AT" | "DE">("AT");
+
+  useEffect(() => {
+    const cookie = document.cookie
+      .split(";")
+      .map((c) => c.trim())
+      .find((c) => c.startsWith("region="));
+    const val = cookie?.split("=")?.[1]?.toUpperCase();
+    if (val === "DE" || val === "AT") setRegion(val);
+  }, []);
+
+  const switchRegion = (val: "AT" | "DE") => {
+    document.cookie = `region=${val}; path=/; max-age=31536000`;
+    setRegion(val);
+    window.location.reload();
+  };
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -45,6 +62,16 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           <div>
             <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Dashboard</p>
             <p className="text-sm font-semibold">Music Mission Institute</p>
+          </div>
+          <div className="ml-auto">
+            <select
+              value={region}
+              onChange={(e) => switchRegion((e.target.value as "AT" | "DE") || "AT")}
+              className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs font-semibold text-slate-800"
+            >
+              <option value="AT">musicmission.at</option>
+              <option value="DE">musicmission.de</option>
+            </select>
           </div>
         </div>
         <nav className="flex-1 px-4 py-4 space-y-1 text-sm font-semibold">
@@ -84,12 +111,22 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </span>
             <span>MMI Admin</span>
           </div>
-          <button
-            onClick={signOut}
-            className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-900 hover:bg-slate-100"
-          >
-            Logout
-          </button>
+          <div className="flex items-center gap-2">
+            <select
+              value={region}
+              onChange={(e) => switchRegion((e.target.value as "AT" | "DE") || "AT")}
+              className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs font-semibold text-slate-800"
+            >
+              <option value="AT">.at</option>
+              <option value="DE">.de</option>
+            </select>
+            <button
+              onClick={signOut}
+              className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-900 hover:bg-slate-100"
+            >
+              Logout
+            </button>
+          </div>
         </header>
         <main className="min-h-screen">{children}</main>
       </div>

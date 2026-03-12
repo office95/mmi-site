@@ -349,26 +349,6 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
               <div className="flex flex-col gap-4">
                 <div className="space-y-3">
                   <div className="grid w-full max-w-4xl gap-3 sm:grid-cols-3">
-                    <div className="sm:hidden flex justify-end">
-                      <button
-                        onClick={() => setOnlyFavs((v) => !v)}
-                        className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold transition ${
-                          onlyFavs ? "border-pink-500 bg-pink-50 text-black" : "border-slate-200 bg-white text-black"
-                        }`}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-4 w-4">
-                          <path
-                            d="M12.1 21.35 12 21.46l-.1-.11C6.14 15.95 2 12.19 2 8.5 2 5.42 4.42 3 7.5 3c1.9 0 3.63.9 4.5 2.09C12.87 3.9 14.6 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.69-4.14 7.45-9.9 12.85Z"
-                            fill={favoriteSessions.length ? "#ff1f8f" : "none"}
-                            stroke="#ff1f8f"
-                            strokeWidth="1.6"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                        Favoriten ({favoriteSessions.length})
-                      </button>
-                    </div>
                     <div className="sm:col-span-3">
                       <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
                         <div className="h-9 w-9 flex items-center justify-center rounded-full bg-[#ff1f8f]/12 text-[#ff1f8f]">

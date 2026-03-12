@@ -167,11 +167,11 @@ export default function KursstandorteClient({ title, subtitle }: { title?: strin
       const hasSessions = (partnerCourseIds.get(p.id) ?? new Set()).size > 0;
 
       const stateLc = (p.state || "").toLowerCase();
-      const countryLc = (p.country || "").toLowerCase();
+      const countryLc2 = (p.country || "").toLowerCase();
       const allowedCountriesCandidate = targetRegion === "DE" ? ["deutschland", "germany"] : ["österreich", "austria"];
       const stateMatch = allowedStates.some((st) => stateLc.includes(st));
-      const countryMatch = allowedCountriesCandidate.some((c) => countryLc.includes(c));
-      if (stateLc || countryLc) {
+      const countryMatch = allowedCountriesCandidate.some((c) => countryLc2.includes(c));
+      if (stateLc || countryLc2) {
         if (!(stateMatch || countryMatch)) return false;
       }
 

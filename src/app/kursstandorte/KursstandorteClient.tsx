@@ -146,8 +146,8 @@ export default function KursstandorteClient() {
 
   const filtered = useMemo(() => {
     return partners.filter((p) => {
+      // Zeige auch Partner ohne Sessions, damit neue Standorte sichtbar sind
       const hasSessions = (partnerCourseIds.get(p.id) ?? new Set()).size > 0;
-      if (!hasSessions) return false;
 
       const stateLc = (p.state || "").toLowerCase();
       const countryLc = (p.country || "").toLowerCase();
@@ -200,6 +200,9 @@ export default function KursstandorteClient() {
         if (filterType && !courseObjs.some((c) => c.type_id === filterType)) return false;
         if (filterFormat && !courseObjs.some((c) => c.format_id === filterFormat)) return false;
       }
+      // Wenn explizit nach Kurskriterien gefiltert wird, Partner ohne Sessions ausblenden
+      if ((filterCategory || filterType || filterFormat) && !hasSessions) return false;
+
       return true;
     });
   }, [partners, search, filterState, filterCategory, filterType, filterFormat, partnerCourseIds, courses, regionCountries]);

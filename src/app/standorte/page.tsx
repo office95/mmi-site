@@ -2,29 +2,26 @@ import Image from "next/image";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import { getRegion } from "@/lib/region";
-import type { Metadata } from "next";
+import { fetchSeoForPage, resolvedSeoToMetadata } from "@/lib/seo-matrix";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Standorte | Music Mission Institute",
-  description: "Unsere Partner-Standorte für Kurse in Musikproduktion, Tontechnik, Live-Sound und DJing.",
-  alternates: { canonical: "/standorte" },
-  openGraph: {
-    title: "Standorte | Music Mission Institute",
-    description: "Partner-Studios und Locations in AT & DE für deine Music-Mission-Kurse.",
-    url: "/standorte",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Standorte | Music Mission Institute",
-    description: "Alle Partner-Standorte für Music Mission Kurse in DACH.",
-  },
+const defaults = {
+  pageKey: "standorte",
+  defaultSlug: "/standorte",
+  defaultTitle: "Standorte | Music Mission Institute",
+  defaultDescription: "Unsere Partner-Standorte für Kurse in Musikproduktion, Tontechnik, Live-Sound und DJing.",
+  defaultH1: "Unsere Partner-Standorte",
 };
 
+export async function generateMetadata() {
+  const seo = await fetchSeoForPage(defaults);
+  return resolvedSeoToMetadata(seo);
+}
+
 export default async function StandortePage() {
+  const seo = await fetchSeoForPage(defaults);
   const region = await getRegion();
   const supabase = getSupabaseServiceClient();
   const { data: partners } = await supabase
@@ -46,8 +43,9 @@ export default async function StandortePage() {
           <div className="absolute bottom-10 left-6 sm:left-12 text-left space-y-2">
             <p className="text-sm uppercase tracking-[0.22em] text-white/70">Standorte</p>
             <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl text-white leading-tight drop-shadow-lg">
-              Unsere Partner-Standorte
+              {seo.h1}
             </h1>
+            {seo.heroSubline ? <p className="text-base text-white/85 max-w-3xl">{seo.heroSubline}</p> : null}
           </div>
         </section>
         {/* Weitere Abschnitte folgen */}

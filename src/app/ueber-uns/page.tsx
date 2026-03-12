@@ -1,32 +1,29 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getRegion } from "@/lib/region";
-import type { Metadata } from "next";
+import { fetchSeoForPage, resolvedSeoToMetadata } from "@/lib/seo-matrix";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export const metadata: Metadata = {
-  title: "Über uns | Music Mission Institute",
-  description: "Wer wir sind, wofür wir stehen und wie wir Menschen in Musikproduktion, Tontechnik und DJing voranbringen.",
-  alternates: { canonical: "/ueber-uns" },
-  openGraph: {
-    title: "Über uns | Music Mission Institute",
-    description: "Lerne das Team und die Mission hinter den Music Mission Kursen kennen.",
-    url: "/ueber-uns",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Über uns | Music Mission Institute",
-    description: "Die Mission hinter den Kursen für Musikproduktion, Tontechnik & DJing.",
-  },
+const defaults = {
+  pageKey: "ueber-uns",
+  defaultSlug: "/ueber-uns",
+  defaultTitle: "Über uns | Music Mission Institute",
+  defaultDescription: "Wer wir sind, wofür wir stehen und wie wir Menschen in Musikproduktion, Tontechnik und DJing voranbringen.",
+  defaultH1: "Über uns",
 };
+
+export async function generateMetadata() {
+  const seo = await fetchSeoForPage(defaults);
+  return resolvedSeoToMetadata(seo);
+}
 
 export default async function AboutPage() {
   const region = await getRegion();
   const isAT = region === "AT";
   const isDE = region === "DE";
+  const seo = await fetchSeoForPage(defaults);
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
@@ -49,11 +46,12 @@ export default async function AboutPage() {
         <div className="absolute inset-0 z-20 flex items-center justify-center px-6 text-center">
           <div className="mx-auto max-w-4xl space-y-4">
             <p className="text-xs uppercase tracking-[0.22em] text-white/70">Music Mission Institute</p>
-            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-[1.05] drop-shadow-[0_12px_32px_rgba(0,0,0,0.45)]">Über uns</h1>
+            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-[1.05] drop-shadow-[0_12px_32px_rgba(0,0,0,0.45)]">{seo.h1}</h1>
             <p className="text-base sm:text-lg text-white/85 leading-relaxed">
-              {isAT
-                ? "Wir verbinden Praxis, Technologie und Kreativität. Unsere Mission: Menschen in Musikproduktion, Tontechnik und Performance auf das nächste Level zu heben – mit kompakten Extremkursen, tiefgehenden Intensivausbildungen und einem Netzwerk an starken Partner-Standorten in Österreich."
-                : "Wir verbinden Praxis, Technologie und Kreativität. Unsere Mission: Menschen in Musikproduktion, Tontechnik und Performance auf das nächste Level zu heben – mit kompakten Extremkursen, tiefgehenden Intensivausbildungen und einem Netzwerk an starken Partner-Standorten in Deutschland."}
+              {seo.heroSubline ||
+                (isAT
+                  ? "Wir verbinden Praxis, Technologie und Kreativität. Unsere Mission: Menschen in Musikproduktion, Tontechnik und Performance auf das nächste Level zu heben – mit kompakten Extremkursen, tiefgehenden Intensivausbildungen und einem Netzwerk an starken Partner-Standorten in Österreich."
+                  : "Wir verbinden Praxis, Technologie und Kreativität. Unsere Mission: Menschen in Musikproduktion, Tontechnik und Performance auf das nächste Level zu heben – mit kompakten Extremkursen, tiefgehenden Intensivausbildungen und einem Netzwerk an starken Partner-Standorten in Deutschland.")}
             </p>
           </div>
         </div>

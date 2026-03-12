@@ -12,6 +12,7 @@ import { PartnerMarqueeClient } from "@/components/PartnerMarqueeClient";
 import { URL } from "node:url";
 import Link from "next/link";
 import CourseRail from "@/components/CourseRail";
+import { fetchSeoForPage, resolvedSeoToMetadata } from "@/lib/seo-matrix";
 
 const toUrl = (path: string | null) => {
   if (!path) return null;
@@ -52,6 +53,20 @@ type HomeSession = {
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
+
+const homeSeoDefaults = {
+  pageKey: "homepage",
+  defaultSlug: "/",
+  defaultTitle: "Musikproduktion, Tontechnik, DJ & Vocal Kurse | Music Mission Institute",
+  defaultDescription:
+    "Music Mission Institute ist Anbieter für Kurse in Musikproduktion, Tontechnik, Livetontechnik, DJing und Vocalcoaching. Praxisnahe Kurse mit Profis aus der Musikbranche.",
+  defaultH1: "Music Mission Institute – Kurse für Musikproduktion, Tontechnik & DJing",
+};
+
+export async function generateMetadata() {
+  const seo = await fetchSeoForPage(homeSeoDefaults);
+  return resolvedSeoToMetadata(seo);
+}
 
 export default async function Home() {
   const hdr = await headers();
@@ -94,6 +109,7 @@ export default async function Home() {
       : host.endsWith(".at")
       ? "AT"
       : await getRegion());
+  const seo = await fetchSeoForPage(homeSeoDefaults);
   const supabase = getSupabaseServiceClient();
   const { data: heroRows } = await supabase
     .from("hero_slides")
@@ -188,6 +204,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen text-foreground bg-white">
       <SiteHeader />
+      <h1 className="sr-only">{seo.h1}</h1>
       <main className="relative">
         <section className="relative min-h-screen -mt-[5.5rem] sm:-mt-[5.5rem]">
           <div className="flex h-full flex-col">

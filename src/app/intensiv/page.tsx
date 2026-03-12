@@ -6,37 +6,24 @@ import { getRegion } from "@/lib/region";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import type { Metadata } from "next";
+import { fetchSeoForPage, resolvedSeoToMetadata } from "@/lib/seo-matrix";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-const SITE_AT = process.env.NEXT_PUBLIC_DOMAIN_AT || process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at";
-const SITE_DE = process.env.NEXT_PUBLIC_DOMAIN_DE || "https://musicmission.de";
-
-export const metadata: Metadata = {
-  title: "Intensivausbildungen | Music Mission Institute",
-  description: "Berufsbegleitende Intensivausbildungen in Musikproduktion, Tontechnik und Live-Sound in Österreich & Deutschland.",
-  alternates: {
-    canonical: "/intensiv",
-    languages: {
-      "de-AT": `${SITE_AT}/intensiv`,
-      "de-DE": `${SITE_DE}/intensiv`,
-      "x-default": `${SITE_AT}/intensiv`,
-    },
-  },
-  openGraph: {
-    title: "Intensivausbildungen | Music Mission Institute",
-    description: "Tiefgehende Intensivausbildungen in Musikproduktion & Tontechnik – berufsbegleitend in AT & DE.",
-    url: "/intensiv",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Intensivausbildungen | Music Mission Institute",
-    description: "Berufsbegleitende Intensivprogramme für Musikproduktion & Live-Sound in DACH.",
-  },
+const defaults = {
+  pageKey: "intensiv",
+  defaultSlug: "/intensiv",
+  defaultTitle: "Intensivausbildungen | Music Mission Institute",
+  defaultDescription: "Berufsbegleitende Intensivausbildungen in Musikproduktion, Tontechnik und Live-Sound in Österreich & Deutschland.",
+  defaultH1: "Intensivausbildungen Musikproduktion & Tontechnik",
+  defaultHeroSubline: "Für alle, die mehr wollen. Ohne Kompromisse.",
 };
+
+export async function generateMetadata() {
+  const seo = await fetchSeoForPage(defaults);
+  return resolvedSeoToMetadata(seo);
+}
 
 type Course = {
   id: string;
@@ -71,6 +58,7 @@ export default async function IntensivPage() {
   const rawHost = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
   const host = rawHost.replace(/^www\./, "").split(":")[0];
   const region: "AT" | "DE" = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : await getRegion();
+  const seo = await fetchSeoForPage(defaults);
 
   const courses = await loadCourses(region);
   const heroVideo = null;
@@ -90,9 +78,9 @@ export default async function IntensivPage() {
         <div className="absolute inset-0 flex items-center justify-center px-6 lg:px-16 text-center">
           <div className="max-w-4xl space-y-4 drop-shadow-[0_12px_40px_rgba(0,0,0,0.45)]">
             <p className="text-sm uppercase tracking-[0.24em] text-white/80">Kurstyp</p>
-            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">Intensivausbildungen Musikproduktion & Tontechnik</h1>
+            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">{seo.h1}</h1>
             <p className="max-w-2xl mx-auto text-base sm:text-lg text-white/90">
-              Für alle, die mehr wollen. Ohne Kompromisse.
+              {seo.heroSubline || "Für alle, die mehr wollen. Ohne Kompromisse."}
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <a

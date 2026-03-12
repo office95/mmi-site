@@ -26,3 +26,11 @@ Stack: Next.js App Router, Supabase (DB/Storage/Auth), Stripe Checkout, Tailwind
 
 ### Tests
 - Playwright Setup unter `tests/` (siehe `playwright.config.ts`)
+
+### SEO Matrix (AT/DE)
+- Admin-UI: `/admin/seo-matrix` – gepflegte Tabelle mit Title, Description, H1, Canonical, hreflang je Domain (AT/DE) und Page-Key; inkl. Zeichenlängen, Preview und Warnungen.
+- Datenmodell: `public.seo_matrix` (Migration `supabase/migrations/20260312_seo_matrix.sql`), Unique `page_key + domain_variant`, RLS: Service-Role Vollzugriff, anonyme Lese-Policy.
+- API: `/api/admin/seo-matrix` (GET/POST/PATCH/DELETE, Validierungen & Normalisierung von Slugs/URLs).
+- Frontend: Helper `src/lib/seo-matrix.ts` (`fetchSeoForPage`, `resolvedSeoToMetadata`) lädt passende Einträge je Domain, baut Canonical/hreflang/robots und liefert H1/Hero-Subline; fällt auf Defaults zurück und loggt fehlende Einträge.
+- Beispiel-Einbindung: Startseite, Entdecken, Standorte, Intensiv/Extrem, Blog, Partner werden, Über uns etc. nutzen das SEO-Matrix-Helper-Pattern.
+- Automatisches Hinzufügen neuer Seiten/Templates: Zentrale Liste `src/lib/seo-registry.ts`. GET `/api/admin/seo-matrix` seedet fehlende `page_key`/Domain-Kombis (AT/DE) automatisch, damit neue Keys im Admin sofort erscheinen. Bei neuen Seiten einfach Eintrag in der Registry ergänzen.

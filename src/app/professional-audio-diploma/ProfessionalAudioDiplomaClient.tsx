@@ -7,7 +7,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 const heroImg =
   "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/b4f50227-9cbd-44d9-8947-2afdf30e801d.webp";
 
-export default function ProfessionalAudioDiplomaClient() {
+export default function ProfessionalAudioDiplomaClient({ h1, heroSubline }: { h1?: string; heroSubline?: string }) {
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -96,7 +96,8 @@ export default function ProfessionalAudioDiplomaClient() {
         <div className="absolute inset-0 flex items-start px-6 lg:px-20 pt-[10%]">
           <div className="max-w-4xl space-y-4 drop-shadow-[0_10px_40px_rgba(0,0,0,0.4)]">
             <p className="text-sm uppercase tracking-[0.28em] text-white/80">Studiengang</p>
-            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">Professional Audio Diploma</h1>
+            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">{h1 || "Professional Audio Diploma"}</h1>
+            {heroSubline ? <p className="text-base sm:text-lg text-white/90 max-w-3xl">{heroSubline}</p> : null}
             <div className="flex flex-wrap gap-3">
               <a
                 href="#anmeldung"

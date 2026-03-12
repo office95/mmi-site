@@ -21,6 +21,7 @@ const nav = [
   { href: "/admin/forms", label: "Formulare" },
   { href: "/admin/blog", label: "Blog" },
   { href: "/admin/automationen", label: "Automationen" },
+  { href: "/admin/seo-matrix", label: "SEO Matrix" },
   { href: "/admin/settings", label: "Verwaltung" },
   { href: "/admin/users", label: "Benutzer" },
 ];

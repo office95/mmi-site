@@ -2,27 +2,23 @@ import { getSupabaseServiceClient } from "@/lib/supabase";
 import Link from "next/link";
 import Image from "next/image";
 import Script from "next/script";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Blog | Music Mission Institute",
-  description: "Stories, Insights und Tipps rund um Musikproduktion, Tontechnik, Live-Sound und DJing.",
-  alternates: { canonical: "/blog" },
-  openGraph: {
-    title: "Blog | Music Mission Institute",
-    description: "Aktuelle Artikel zu Musikproduktion, Tontechnik, Live-Sound und DJing.",
-    url: "/blog",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Blog | Music Mission Institute",
-    description: "Neuigkeiten und Know-how aus Musikproduktion, Tontechnik & DJing.",
-  },
-};
+import { fetchSeoForPage, resolvedSeoToMetadata } from "@/lib/seo-matrix";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
+
+const defaults = {
+  pageKey: "blog",
+  defaultSlug: "/blog",
+  defaultTitle: "Blog | Music Mission Institute",
+  defaultDescription: "Stories, Insights und Tipps rund um Musikproduktion, Tontechnik, Live-Sound und DJing.",
+  defaultH1: "Blog: Musikproduktion, Tontechnik, DJing & Live-Sound",
+};
+
+export async function generateMetadata() {
+  const seo = await fetchSeoForPage(defaults);
+  return resolvedSeoToMetadata(seo);
+}
 
 const toUrl = (path: string | null) => {
   if (!path) return null;
@@ -32,6 +28,7 @@ const toUrl = (path: string | null) => {
 };
 
 export default async function BlogListPage() {
+  const seo = await fetchSeoForPage(defaults);
   const supabase = getSupabaseServiceClient();
   const { data } = await supabase
     .from("posts")
@@ -55,7 +52,8 @@ export default async function BlogListPage() {
       <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-16 py-12 space-y-8">
         <div className="space-y-2">
           <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Blog</p>
-          <h1 className="font-anton text-4xl sm:text-5xl">Blog: Musikproduktion, Tontechnik, DJing & Live-Sound</h1>
+          <h1 className="font-anton text-4xl sm:text-5xl">{seo.h1}</h1>
+          {seo.heroSubline ? <p className="text-sm text-slate-600">{seo.heroSubline}</p> : null}
         </div>
 
         {posts.length === 0 ? (

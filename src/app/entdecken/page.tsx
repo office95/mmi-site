@@ -1,36 +1,24 @@
-import type { Metadata } from "next";
 import EntdeckenClient from "./EntdeckenClient";
-
-const SITE_AT = process.env.NEXT_PUBLIC_DOMAIN_AT || process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at";
-const SITE_DE = process.env.NEXT_PUBLIC_DOMAIN_DE || "https://musicmission.de";
+import { fetchSeoForPage, resolvedSeoToMetadata } from "@/lib/seo-matrix";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Kurstermine entdecken | Music Mission Institute",
-  description: "Alle kommenden Kurstermine in Musikproduktion, Tontechnik, Livetontechnik, DJing und Vocalcoaching in Österreich & Deutschland.",
-  alternates: {
-    canonical: "/entdecken",
-    languages: {
-      "de-AT": `${SITE_AT}/entdecken`,
-      "de-DE": `${SITE_DE}/entdecken`,
-      "x-default": `${SITE_AT}/entdecken`,
-    },
-  },
-  openGraph: {
-    title: "Kurstermine entdecken | Music Mission Institute",
-    description: "Filtere Kurse nach Ort, Partner und Kategorie – jetzt Termin sichern.",
-    url: "/entdecken",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Kurstermine entdecken | Music Mission Institute",
-    description: "Alle Music Mission Termine für Musikproduktion, Tontechnik, DJing & Vocalcoaching.",
-  },
+const defaults = {
+  pageKey: "entdecken",
+  defaultSlug: "/entdecken",
+  defaultTitle: "Kurstermine entdecken | Music Mission Institute",
+  defaultDescription: "Alle kommenden Kurstermine in Musikproduktion, Tontechnik, Livetontechnik, DJing und Vocalcoaching in Österreich & Deutschland.",
+  defaultH1: "Alle Kurstermine in Österreich",
+  defaultHeroSubline: "Entdecke unser Angebot an innovativen Kursen.",
 };
 
-export default function EntdeckenPage() {
-  return <EntdeckenClient />;
+export async function generateMetadata() {
+  const seo = await fetchSeoForPage(defaults);
+  return resolvedSeoToMetadata(seo);
+}
+
+export default async function EntdeckenPage() {
+  const seo = await fetchSeoForPage(defaults);
+  return <EntdeckenClient h1={seo.h1} heroSubline={seo.heroSubline} />;
 }

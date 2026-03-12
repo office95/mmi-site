@@ -6,37 +6,24 @@ import { getRegion } from "@/lib/region";
 import Image from "next/image";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
-import type { Metadata } from "next";
+import { fetchSeoForPage, resolvedSeoToMetadata } from "@/lib/seo-matrix";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-const SITE_AT = process.env.NEXT_PUBLIC_DOMAIN_AT || process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at";
-const SITE_DE = process.env.NEXT_PUBLIC_DOMAIN_DE || "https://musicmission.de";
-
-export const metadata: Metadata = {
-  title: "Extremkurse | Music Mission Institute",
-  description: "Kurz, hart, maximal praxisnah: Extremkurse in Musikproduktion und Tontechnik in AT & DE.",
-  alternates: {
-    canonical: "/extremkurs",
-    languages: {
-      "de-AT": `${SITE_AT}/extremkurs`,
-      "de-DE": `${SITE_DE}/extremkurs`,
-      "x-default": `${SITE_AT}/extremkurs`,
-    },
-  },
-  openGraph: {
-    title: "Extremkurse | Music Mission Institute",
-    description: "Intensive Kurzformate für Musikproduktion & Live-Sound – mit Top-Dozenten in DACH.",
-    url: "/extremkurs",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Extremkurse | Music Mission Institute",
-    description: "Extremkurse mit maximaler Praxis in Musikproduktion & Tontechnik.",
-  },
+const defaults = {
+  pageKey: "extremkurs",
+  defaultSlug: "/extremkurs",
+  defaultTitle: "Extremkurse | Music Mission Institute",
+  defaultDescription: "Kurz, hart, maximal praxisnah: Extremkurse in Musikproduktion und Tontechnik in AT & DE.",
+  defaultH1: "Extremkurse Musikproduktion & Live-Tontechnik",
+  defaultHeroSubline: "Maximales Wissen in kurzer Zeit. Unsere Extremkurse richten sich an alle, die schnell vorankommen wollen.",
 };
+
+export async function generateMetadata() {
+  const seo = await fetchSeoForPage(defaults);
+  return resolvedSeoToMetadata(seo);
+}
 
 type Course = {
   id: string;
@@ -75,6 +62,7 @@ export default async function ExtremkursPage() {
   const hdr = await headers();
   const host = (hdr.get("x-forwarded-host") || hdr.get("host") || "").toLowerCase();
   const region: "AT" | "DE" = host.endsWith(".de") ? "DE" : host.endsWith(".at") ? "AT" : await getRegion();
+  const seo = await fetchSeoForPage(defaults);
 
   const courses = await loadCourses(region);
   const heroVideo = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/3fb0f96e-9ba1-4d7b-b2ba-c3a30fb4ecff.mp4";
@@ -105,12 +93,12 @@ export default async function ExtremkursPage() {
           <Image src={heroFallback} alt="Extremkurse" fill className="object-cover opacity-0" priority sizes="100vw" />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/35 to-black/10" />
-        <div className="absolute inset-0 flex items-center justify-center px-6 lg:px-16 text-center">
+          <div className="absolute inset-0 flex items-center justify-center px-6 lg:px-16 text-center">
           <div className="mx-auto max-w-4xl space-y-4 drop-shadow-[0_12px_40px_rgba(0,0,0,0.45)]">
             <p className="text-sm uppercase tracking-[0.24em] text-white/80">Kurstyp</p>
-            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">Extremkurse Musikproduktion &amp; Live-Tontechnik</h1>
+            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">{seo.h1}</h1>
             <p className="max-w-2xl mx-auto text-base sm:text-lg text-white/90">
-              Maximales Wissen in kurzer Zeit. Unsere Extremkurse richten sich an alle, die in kürzester Zeit das Maximum aus sich und ihrer Musikproduktion herausholen wollen.
+              {seo.heroSubline || "Maximales Wissen in kurzer Zeit. Unsere Extremkurse richten sich an alle, die in kürzester Zeit das Maximum aus sich und ihrer Musikproduktion herausholen wollen."}
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <a

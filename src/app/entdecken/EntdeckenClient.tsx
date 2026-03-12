@@ -24,7 +24,7 @@ type SessionCard = {
   tags?: string[];
 };
 
-export default function EntdeckenClient() {
+export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; heroSubline?: string }) {
   const [sessions, setSessions] = useState<SessionCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [qSearch, setQSearch] = useState("");
@@ -222,11 +222,12 @@ export default function EntdeckenClient() {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
+      <h1 className="sr-only">{h1 ?? "Alle Kurstermine in Österreich"}</h1>
       <div className="relative">
         <HeroSection
           eyebrow="Entdecken"
-          title="Alle Kurstermine in Österreich"
-          subtitle="Entdecke unser Angebot an innovativen Kursen."
+          title={h1 ?? "Alle Kurstermine in Österreich"}
+          subtitle={heroSubline ?? "Entdecke unser Angebot an innovativen Kursen."}
           image="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/b4f50227-9cbd-44d9-8947-2afdf30e801d.webp"
           align="center"
           overlayStrength="strong"

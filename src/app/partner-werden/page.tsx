@@ -1,23 +1,25 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
-import type { Metadata } from "next";
 import { PartnerCountryStateSelect } from "@/components/PartnerCountryStateSelect";
 import { ScrollToFormButton } from "@/components/ScrollToFormButton";
+import { fetchSeoForPage, resolvedSeoToMetadata } from "@/lib/seo-matrix";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "Partner werden | Music Mission Institute",
-  description:
+const defaults = {
+  pageKey: "partner-werden",
+  defaultSlug: "/partner-werden",
+  defaultTitle: "Partner werden | Music Mission Institute",
+  defaultDescription:
     "Nutze dein Studio besser – wir bringen Teilnehmer, Marketing und Kursstruktur. Werde Partner im Music Mission Netzwerk.",
-  alternates: { canonical: "/partner-werden" },
-  openGraph: {
-    title: "Partner werden | Music Mission Institute",
-    description: "Studio-Auslastung erhöhen, Marketing-Power nutzen, praxisnahe Kurse hosten – gemeinsam mit dem Music Mission Institute.",
-    url: "/partner-werden",
-    type: "website",
-  },
+  defaultH1: "Partner werden",
+  defaultHeroSubline: "Studio-Auslastung erhöhen, Marketing-Power nutzen, praxisnahe Kurse hosten – gemeinsam mit dem Music Mission Institute.",
 };
+
+export async function generateMetadata() {
+  const seo = await fetchSeoForPage(defaults);
+  return resolvedSeoToMetadata(seo);
+}
 
 const focusAreas = [
   "Tontechnik / Audio Engineering",
@@ -61,7 +63,8 @@ const steps = [
   { title: "Kurse starten", text: "Termine live schalten, Marketing aktivieren, Teilnehmer empfangen." },
 ];
 
-export default function PartnerWerdenPage() {
+export default async function PartnerWerdenPage() {
+  const seo = await fetchSeoForPage(defaults);
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <SiteHeader />
@@ -83,9 +86,10 @@ export default function PartnerWerdenPage() {
         <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
           <div className="relative z-10 mx-auto max-w-4xl space-y-5 drop-shadow-[0_16px_40px_rgba(0,0,0,0.45)]">
             <p className="text-xs uppercase tracking-[0.2em] text-white/70">Music Mission Institute</p>
-            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-[1.05]">Partner werden</h1>
+            <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-[1.05]">{seo.h1}</h1>
             <p className="text-base sm:text-lg text-white/85 leading-relaxed">
-              Nutze dein Studio besser – wir bringen die Teilnehmer. Music Mission verwandelt freie Slots in planbare Kursformate mit Marketing, Plattform und Struktur. Du konzentrierst dich auf Praxis und Sound.
+              {seo.heroSubline ||
+                "Nutze dein Studio besser – wir bringen die Teilnehmer. Music Mission verwandelt freie Slots in planbare Kursformate mit Marketing, Plattform und Struktur. Du konzentrierst dich auf Praxis und Sound."}
             </p>
             {/* CTA im Hero entfernt auf Wunsch */}
           </div>

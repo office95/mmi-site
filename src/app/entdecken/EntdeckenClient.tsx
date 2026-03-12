@@ -34,6 +34,7 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
   const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [onlyFavs, setOnlyFavs] = useState(false);
   const [debugHost, setDebugHost] = useState("");
   const [debugRegion, setDebugRegion] = useState("");
   const [debugXRegion, setDebugXRegion] = useState("");
@@ -203,7 +204,7 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
     const tSel = filterType;
     const cSel = filterCategory;
 
-    return futureSessions.filter((s) => {
+    const base = futureSessions.filter((s) => {
       if (q) {
         const hay = [
           s.course?.title,
@@ -224,7 +225,13 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
       if (cSel && s.course?.category_id !== cSel) return false;
       return true;
     });
-  }, [futureSessions, qSearch, filterState, filterType, filterCategory]);
+
+    if (onlyFavs) {
+      return base.filter((s) => favorites.has(s.id));
+    }
+
+    return base;
+  }, [futureSessions, qSearch, filterState, filterType, filterCategory, favorites, onlyFavs]);
 
   const regionText = debugRegion === "DE" ? "Deutschland" : "Österreich";
 
@@ -336,6 +343,20 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
                     </select>
                   </div>
                   <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      onClick={() => setOnlyFavs((v) => !v)}
+                      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-semibold transition ${
+                        onlyFavs ? "border-pink-500 bg-pink-50 text-pink-700" : "border-slate-200 bg-white text-slate-700"
+                      }`}
+                    >
+                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-pink-50 text-pink-600 border border-pink-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-4 w-4" fill={onlyFavs ? "#ff1f8f" : "none"} stroke="#ff1f8f" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12.1 21.35 12 21.46l-.1-.11C6.14 15.95 2 12.19 2 8.5 2 5.42 4.42 3 7.5 3c1.9 0 3.63.9 4.5 2.09C12.87 3.9 14.6 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.69-4.14 7.45-9.9 12.85Z" />
+                        </svg>
+                      </span>
+                      {onlyFavs ? "Nur Favoriten" : "Favoriten filtern"}
+                      <span className="ml-1 rounded-full bg-slate-100 px-2 py-[2px] text-[11px] font-semibold text-slate-700">{favorites.size}</span>
+                    </button>
                     <button
                       onClick={() => {
                         setQSearch("");

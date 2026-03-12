@@ -17,6 +17,7 @@ export default function AutomationenPage() {
   const [logsLoading, setLogsLoading] = useState(false);
   const [logsError, setLogsError] = useState<string | null>(null);
   const [logFilters, setLogFilters] = useState({ search: "", status: "", automation_key: "", recipient: "" });
+  const [logPeriod, setLogPeriod] = useState<"today" | "week" | "month" | "year" | "all">("today");
   const [logDetail, setLogDetail] = useState<any | null>(null);
 
   const load = useCallback(async () => {
@@ -48,6 +49,36 @@ export default function AutomationenPage() {
       if (logFilters.status) params.set("status", logFilters.status);
       if (logFilters.automation_key) params.set("automation_key", logFilters.automation_key);
       if (logFilters.recipient) params.set("recipient", logFilters.recipient);
+      const now = new Date();
+      const start = (() => {
+        const d = new Date();
+        if (logPeriod === "today") {
+          d.setHours(0, 0, 0, 0);
+          return d;
+        }
+        if (logPeriod === "week") {
+          d.setHours(0, 0, 0, 0);
+          const day = d.getDay(); // So=0
+          const diff = day === 0 ? -6 : 1 - day;
+          d.setDate(d.getDate() + diff);
+          return d;
+        }
+        if (logPeriod === "month") {
+          d.setHours(0, 0, 0, 0);
+          d.setDate(1);
+          return d;
+        }
+        if (logPeriod === "year") {
+          d.setHours(0, 0, 0, 0);
+          d.setMonth(0, 1);
+          return d;
+        }
+        return null;
+      })();
+      if (start) {
+        params.set("from", start.toISOString());
+        params.set("to", now.toISOString());
+      }
       const res = await fetch(`/api/admin/automation-logs?${params.toString()}`, { cache: "no-store" });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Fehler beim Laden der Logs");
@@ -223,12 +254,12 @@ export default function AutomationenPage() {
         </div>
 
         <section className="space-y-3">
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <div>
-              <h2 className="text-xl font-semibold text-slate-900">Logs</h2>
-              <p className="text-sm text-slate-600">Historie aller gesendeten Automations-E-Mails.</p>
-            </div>
-            <div className="flex gap-2">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <h2 className="text-xl font-semibold text-slate-900">Logs</h2>
+                <p className="text-sm text-slate-600">Historie aller gesendeten Automations-E-Mails.</p>
+              </div>
+            <div className="flex gap-2 flex-wrap">
               <input
                 placeholder="Suche Betreff/Empfänger"
                 value={logFilters.search}
@@ -261,6 +292,17 @@ export default function AutomationenPage() {
                     {item.name}
                   </option>
                 ))}
+              </select>
+              <select
+                value={logPeriod}
+                onChange={(e) => setLogPeriod(e.target.value as any)}
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              >
+                <option value="today">Heute</option>
+                <option value="week">Diese Woche</option>
+                <option value="month">Dieser Monat</option>
+                <option value="year">Dieses Jahr</option>
+                <option value="all">Alle</option>
               </select>
             </div>
           </div>

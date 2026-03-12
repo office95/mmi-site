@@ -12,6 +12,8 @@ export async function GET(req: Request) {
   const recipient = url.searchParams.get("recipient");
   const search = url.searchParams.get("search");
   const contextId = url.searchParams.get("context_id");
+  const from = url.searchParams.get("from");
+  const to = url.searchParams.get("to");
 
   const db = getSupabaseServiceClient();
   let query = db
@@ -30,6 +32,8 @@ export async function GET(req: Request) {
   if (search) {
     query = query.or(`subject.ilike.%${search}%,recipient.ilike.%${search}%`);
   }
+  if (from) query = query.gte("sent_at", from);
+  if (to) query = query.lte("sent_at", to);
 
   const { data, error } = await query;
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

@@ -95,14 +95,16 @@ export async function POST(request: Request) {
 
   const { data: sessionRow, error: sessionErr } = await supabase
     .from("sessions")
-    .select(
-      "id, start_date, start_time, city, state, country, address, zip, partner_id, partner_name, price_cents, deposit_cents, max_participants, seats_taken, course_id, courses ( id, title, slug, base_price_cents, deposit_cents )"
-    )
+    .select("*, courses ( id, title, slug, base_price_cents, deposit_cents )")
     .eq("id", sessionId)
     .maybeSingle();
 
   if (sessionErr || !sessionRow) {
-    console.error("checkout: session lookup failed", { sessionId, error: sessionErr?.message });
+    console.error("checkout: session lookup failed", {
+      sessionId,
+      error: sessionErr?.message,
+      supabase: sessionErr,
+    });
     return NextResponse.json({ error: "Kurstermin nicht gefunden" }, { status: 404 });
   }
 

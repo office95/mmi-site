@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { unstable_cache } from "next/cache";
 import { getSupabaseServerClient, getSupabaseServiceClient } from "@/lib/supabase";
 import { SiteHeader } from "@/components/SiteHeader";

@@ -145,46 +145,31 @@ export default function KursstandorteClient({ title, subtitle }: { title?: strin
   }, [sessions]);
 
   const filtered = useMemo(() => {
+    const targetRegion = debugRegion; // AT oder DE je Domain
     return partners.filter((p) => {
+      // Region pro Partner bestimmen (region-Feld > Country > default)
+      const regionField = (p as any)?.region?.toString().toUpperCase() || "";
+      const countryLc = (p.country || "").toLowerCase();
+      const inferredRegion =
+        regionField === "DE"
+          ? "DE"
+          : regionField === "AT"
+          ? "AT"
+          : countryLc.includes("germany") || countryLc.includes("deutschland")
+          ? "DE"
+          : countryLc.includes("österreich") || countryLc.includes("austria")
+          ? "AT"
+          : targetRegion;
+
+      if (inferredRegion !== targetRegion) return false;
+
       // Zeige auch Partner ohne Sessions, damit neue Standorte sichtbar sind
       const hasSessions = (partnerCourseIds.get(p.id) ?? new Set()).size > 0;
 
       const stateLc = (p.state || "").toLowerCase();
       const countryLc = (p.country || "").toLowerCase();
-      const partnerRegion = countryLc.includes("deutschland") || countryLc.includes("germany") ? "DE" : countryLc ? "AT" : debugRegion;
-      const allowedStatesCandidate =
-        partnerRegion === "DE"
-          ? [
-              "bayern",
-              "berlin",
-              "brandenburg",
-              "bremen",
-              "hamburg",
-              "hessen",
-              "mecklenburg-vorpommern",
-              "niedersachsen",
-              "nordrhein-westfalen",
-              "rheinland-pfalz",
-              "saarland",
-              "sachsen",
-              "sachsen-anhalt",
-              "schleswig-holstein",
-              "thüringen",
-            ]
-          : [
-              "wien",
-              "niederösterreich",
-              "oberösterreich",
-              "steiermark",
-              "salzburg",
-              "kärnten",
-              "tirol",
-              "vorarlberg",
-              "burgenland",
-            ];
-      const allowedCountriesCandidate = partnerRegion === "DE" ? ["deutschland", "germany"] : ["österreich", "austria"];
-
-      const stateMatch = allowedStatesCandidate.some((st) => stateLc.includes(st));
+      const allowedCountriesCandidate = targetRegion === "DE" ? ["deutschland", "germany"] : ["österreich", "austria"];
+      const stateMatch = allowedStates.some((st) => stateLc.includes(st));
       const countryMatch = allowedCountriesCandidate.some((c) => countryLc.includes(c));
       if (stateLc || countryLc) {
         if (!(stateMatch || countryMatch)) return false;

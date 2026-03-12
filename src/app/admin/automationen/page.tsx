@@ -17,6 +17,7 @@ export default function AutomationenPage() {
   const [logsLoading, setLogsLoading] = useState(false);
   const [logsError, setLogsError] = useState<string | null>(null);
   const [logFilters, setLogFilters] = useState({ search: "", status: "", automation_key: "", recipient: "" });
+  const [logDetail, setLogDetail] = useState<any | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -286,7 +287,7 @@ export default function AutomationenPage() {
                 )}
                 {!logsLoading &&
                   logs.map((log) => (
-                    <tr key={log.id} className="hover:bg-slate-50">
+                    <tr key={log.id} className="hover:bg-slate-50 cursor-pointer" onClick={() => setLogDetail(log)}>
                       <td className="px-4 py-3 text-xs text-slate-600 whitespace-nowrap">{new Date(log.sent_at).toLocaleString("de-AT")}</td>
                       <td className="px-4 py-3">
                         <div className="font-semibold text-slate-900">{log.automation_key || "–"}</div>
@@ -373,6 +374,80 @@ export default function AutomationenPage() {
                 className="rounded-full bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-white shadow hover:-translate-y-0.5 transition"
               >
                 Speichern
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {logDetail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" onClick={() => setLogDetail(null)}>
+          <div className="w-full max-w-3xl rounded-2xl bg-white shadow-2xl p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-slate-900">Log-Detail</h3>
+                <p className="text-xs text-slate-500">{logDetail.id}</p>
+              </div>
+              <button className="text-slate-500 hover:text-slate-800" onClick={() => setLogDetail(null)}>
+                ✕
+              </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-700">
+              <div><span className="font-semibold">Zeit:</span> {new Date(logDetail.sent_at).toLocaleString("de-AT")}</div>
+              <div><span className="font-semibold">Status:</span> {logDetail.status}</div>
+              <div><span className="font-semibold">Empfänger:</span> {logDetail.recipient}</div>
+              <div><span className="font-semibold">Betreff:</span> {logDetail.subject}</div>
+              <div><span className="font-semibold">Automation:</span> {logDetail.automation_key || "–"}</div>
+              <div><span className="font-semibold">Locale:</span> {logDetail.locale || "de-AT"}</div>
+              {logDetail.error_message && <div className="sm:col-span-2 text-red-600">{logDetail.error_message}</div>}
+              {logDetail.context_type && (
+                <div className="sm:col-span-2">
+                  <span className="font-semibold">Kontext:</span>{" "}
+                  {logDetail.context_type} · {logDetail.context_id || "–"}{" "}
+                  {logDetail.context_type === "order" && logDetail.context_id && (
+                    <a className="text-[#ff1f8f] hover:underline" href={`/admin/orders/${logDetail.context_id}`}>
+                      (zur Order)
+                    </a>
+                  )}
+                  {logDetail.context_type === "form_submission" && logDetail.context_id && (
+                    <a className="text-[#ff1f8f] hover:underline" href={`/admin/forms`}>
+                      (zu Formular)
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700 max-h-64 overflow-auto">
+              <div className="font-semibold mb-1">Preview</div>
+              <div className="whitespace-pre-wrap break-words">{logDetail.text_preview || logDetail.html_preview || "–"}</div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setLogDetail(null)}
+                className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100"
+              >
+                Schließen
+              </button>
+              <button
+                onClick={async () => {
+                  try {
+                    const res = await fetch("/api/admin/automation-logs/resend", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ log_id: logDetail.id }),
+                    });
+                    const json = await res.json();
+                    if (!res.ok) throw new Error(json.error || "Fehler beim erneuten Versand");
+                    alert("Erneut gesendet");
+                    setLogDetail(null);
+                    loadLogs();
+                  } catch (e: any) {
+                    alert(e.message || "Fehler");
+                  }
+                }}
+                className="rounded-full bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-white shadow hover:-translate-y-0.5 transition"
+              >
+                Erneut senden
               </button>
             </div>
           </div>

@@ -20,6 +20,12 @@ export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const host = url.hostname.toLowerCase();
 
+  // Zeitgesteuertes Live-Schalten der DE-Domain (bypasst Coming-Soon)
+  const liveUntilEnv = process.env.DE_LIVE_UNTIL || "";
+  const liveUntil = liveUntilEnv ? Date.parse(liveUntilEnv) : 0;
+  const now = Date.now();
+  const allowDeLive = liveUntil > 0 && now < liveUntil;
+
   // Domain → Region Mapping
   const region = host.endsWith(".at") ? "AT" : host.endsWith(".de") ? "DE" : "AT";
   const pathSegments = url.pathname.split("/").filter(Boolean);
@@ -43,6 +49,7 @@ export async function middleware(req: NextRequest) {
   // DE-Domain: Coming Soon Seite (ohne Assets/API/Admin)
   if (
     region === "DE" &&
+    !allowDeLive &&
     !isAssetPath &&
     !url.pathname.startsWith("/api") &&
     !url.pathname.startsWith("/admin") &&

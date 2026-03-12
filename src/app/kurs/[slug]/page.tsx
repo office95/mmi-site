@@ -52,6 +52,35 @@ const toHtml = (text: string | null | undefined) => {
   return `<p>${fmtInline(lines.join("<br>"))}</p>`;
 };
 
+const buildLocationString = (sessions: any[] | undefined, region: "AT" | "DE"): string => {
+  const fallback = region === "DE" ? "Deutschland" : "Österreich";
+  if (!sessions || sessions.length === 0) return fallback;
+  const seen = new Set<string>();
+  const parts: string[] = [];
+  for (const s of sessions) {
+    const raw =
+      s?.city?.toString().trim() ||
+      s?.state?.toString().trim() ||
+      s?.country?.toString().trim() ||
+      s?.partners?.city?.toString().trim() ||
+      s?.partners?.state?.toString().trim() ||
+      s?.partners?.country?.toString().trim() ||
+      "";
+    if (!raw) continue;
+    const key = raw.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    parts.push(raw);
+    if (parts.length >= 4) break; // sammeln, aber kürzen unten
+  }
+  if (parts.length === 0) return fallback;
+  const limited = parts.slice(0, 3);
+  if (parts.length > 3) {
+    return `${limited.join(", ")} und weitere Standorte`;
+  }
+  return limited.join(", ");
+};
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const supabase = getSupabaseServiceClient();
   const { slug } = await params;
@@ -59,10 +88,23 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   try {
     const { data: course } = await supabase
       .from("courses")
-      .select("title,subtitle,summary,hero_image_url,slug")
+      .select("id,title,subtitle,summary,hero_image_url,slug")
       .eq("slug", slug)
       .maybeSingle();
+    const today = new Date().toISOString().slice(0, 10);
+    const { data: sessionRows } = course?.id
+      ? await supabase
+          .from("sessions")
+          .select("city,state,country,start_date")
+          .eq("course_id", course.id)
+          .gte("start_date", today)
+          .order("start_date", { ascending: true })
+          .limit(10)
+      : { data: [] };
+
+    const region = await getRegion();
     const desc = course?.subtitle || course?.summary || "Kurs beim Music Mission Institute.";
+    const location = buildLocationString(sessionRows ?? [], region);
     const defaults = {
       pageKey: "kurs-template",
       defaultSlug: `/kurs/${slug}`,
@@ -75,6 +117,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: course ? `${course.title} | Music Mission Institute` : undefined,
       description: desc,
       h1: course?.title,
+      location,
     });
     const image = course?.hero_image_url ? toUrl(course.hero_image_url) || OG_FALLBACK : OG_FALLBACK;
     const meta = resolvedSeoToMetadata(seo);
@@ -417,7 +460,22 @@ let host = "";
   const sloganMediaMobile = course.slogan_image_mobile_url ?? course.slogan_image_url ?? "";
   const stateText = states.length ? states.join(" | ") : region === "DE" ? "Standort in Deutschland" : "Bundesland folgt";
 
-  const canonical = `${region === "DE" ? SITE_DE : SITE_AT}/kurs/${course.slug}`;
+  const location = buildLocationString(course.sessions, region || "AT");
+  const seoDefaults = {
+    pageKey: "kurs-template",
+    defaultSlug: `/kurs/${course.slug}`,
+    defaultTitle: `${course.title} | Music Mission Institute`,
+    defaultDescription: course.subtitle || course.summary || "Kurs beim Music Mission Institute.",
+    defaultH1: course.title,
+  };
+  const seoResolved = await fetchSeoForPage(seoDefaults, {
+    slug: `/kurs/${course.slug}`,
+    title: `${course.title} | Music Mission Institute`,
+    description: seoDefaults.defaultDescription,
+    h1: course.title,
+    location,
+  });
+  const canonical = seoResolved.canonical;
 
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -525,7 +583,7 @@ let host = "";
                   className="font-anton leading-[0.95] text-white text-center"
                   style={{ fontSize: "clamp(56px, 8vw, 90px)" }}
                 >
-                  {course.title}
+                  {seoResolved.h1 || course.title}
                 </h1>
                 {programLogo && (
                   <img

@@ -53,6 +53,7 @@ export type SeoOverride = {
   description?: string;
   h1?: string;
   heroSubline?: string;
+  location?: string;
 };
 
 const normalizeSlug = (raw: string | null | undefined) => {
@@ -78,6 +79,18 @@ const originForVariant = (variant: DomainVariant) => {
   return `https://${env}`;
 };
 
+const applyPlaceholders = (template: string | null | undefined, replacements: Record<string, string>, fallback: string): string => {
+  if (!template) return fallback;
+  let out = template;
+  for (const [key, value] of Object.entries(replacements)) {
+    const safe = value && value.trim().length ? value.trim() : fallback;
+    out = out.split(`{{${key}}}`).join(safe);
+  }
+  // Entferne verbleibende Platzhalter, falls nicht befüllt, durch Fallback
+  if (out.includes("{{")) return fallback;
+  return out.replace(/\s+/g, " ").trim();
+};
+
 export async function fetchSeoForPage(defaults: SeoDefaults, override?: SeoOverride): Promise<ResolvedSeo> {
   const region = await getRegion();
   const domainVariant: DomainVariant = region === "DE" ? "de" : "at";
@@ -91,10 +104,20 @@ export async function fetchSeoForPage(defaults: SeoDefaults, override?: SeoOverr
   const slug = normalizeSlug(override?.slug ?? entry?.slug ?? defaults.defaultSlug ?? "/");
   const counterpartSlug = normalizeSlug(counterpart?.slug ?? override?.slug ?? defaults.defaultSlug ?? "/");
 
-  const entryTitle = entry?.title_tag || override?.title || defaults.defaultTitle;
-  const entryDescription = entry?.meta_description || override?.description || defaults.defaultDescription || "";
-  const h1 = entry?.h1 || override?.h1 || defaults.defaultH1 || entryTitle;
-  const heroSubline = entry?.hero_subline || override?.heroSubline || defaults.defaultHeroSubline || undefined;
+  const replacements: Record<string, string> = {
+    title: override?.title || defaults.defaultTitle,
+    location: override?.location || "",
+  };
+
+  const rawTitle = entry?.title_tag || override?.title || defaults.defaultTitle;
+  const rawDescription = entry?.meta_description || override?.description || defaults.defaultDescription || "";
+  const rawH1 = entry?.h1 || override?.h1 || defaults.defaultH1 || rawTitle;
+  const rawHeroSubline = entry?.hero_subline || override?.heroSubline || defaults.defaultHeroSubline || undefined;
+
+  const entryTitle = applyPlaceholders(rawTitle, replacements, defaults.defaultTitle);
+  const entryDescription = applyPlaceholders(rawDescription, replacements, defaults.defaultDescription || "");
+  const h1 = applyPlaceholders(rawH1, replacements, defaults.defaultH1 || entryTitle);
+  const heroSubline = rawHeroSubline ? applyPlaceholders(rawHeroSubline, replacements, rawHeroSubline) : undefined;
 
   const selfOrigin = originForVariant(domainVariant).replace(/\/$/, "");
   const otherOrigin = originForVariant(otherVariant).replace(/\/$/, "");

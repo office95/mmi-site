@@ -85,9 +85,14 @@ export async function GET(req: NextRequest) {
     for (const variant of ALLOWED_VARIANTS) {
       const locale = variant === "de" ? "de-DE" : "de-AT";
       const slug = normalizeSlug(page.slug);
-      await supabase
+      const exists = await supabase
         .from(TABLE)
-        .upsert(
+        .select("id")
+        .eq("page_key", page.pageKey)
+        .eq("domain_variant", variant)
+        .maybeSingle();
+      if (!exists.data) {
+        await supabase.from(TABLE).insert(
           {
             page_key: page.pageKey,
             slug,
@@ -99,8 +104,9 @@ export async function GET(req: NextRequest) {
             robots_index: true,
             robots_follow: true,
           },
-          { onConflict: "page_key,domain_variant" }
+          { count: null }
         );
+      }
     }
   }
 

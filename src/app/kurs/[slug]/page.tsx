@@ -586,7 +586,7 @@ let host = "";
                 </h1>
               </div>
               {programLabel && (
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/80">
+                <p className="hero-program-label text-sm font-semibold uppercase tracking-[0.2em] text-white/85">
                   <span className="text-[#ff1f8f]">{programLabel.slice(0, 1)}</span>
                   {programLabel.slice(1)}
                 </p>

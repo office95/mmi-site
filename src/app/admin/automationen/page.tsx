@@ -1,116 +1,161 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 
 export const dynamic = "force-dynamic";
 
-const sections: { title: string; items: { label: string; detail: string }[] }[] = [
-  {
-    title: "Zahlungen & Webhooks (Stripe)",
-    items: [
-      {
-        label: "checkout.session.completed",
-        detail:
-          "Setzt Order auf paid, speichert Promotion-/Coupon-Code, erhöht Sitzplätze via RPC increment_seats. Mail an office@musicmission.at + Kunden-Bestätigung.",
-      },
-      {
-        label: "Payment-Intent Info",
-        detail: "payment_intent wird in orders.stripe_payment_intent gespeichert (Metadaten aus Checkout).",
-      },
-      {
-        label: "Env",
-        detail: "STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY müssen gesetzt sein.",
-      },
-    ],
-  },
-  {
-    title: "Order-Erzeugung",
-    items: [
-      { label: "Nummernformat", detail: "MMI-<laufende>-<yy>, erzeugt in /api/checkout (pending → paid via Webhook)." },
-      { label: "Statusflow", detail: "pending → paid; canceled aktuell manuell. Restbetrag-Handling noch offen." },
-    ],
-  },
-  {
-    title: "Region-Logik",
-    items: [
-      { label: "Host → Region", detail: ".at = AT, .de = DE; Preview/localhost erlaubt alle." },
-      { label: "Sessions", detail: "DE-Sessions nie auf .at, AT-Sessions nie auf .de (Filter in Kursseite)." },
-    ],
-  },
-  {
-    title: "Uploads",
-    items: [{ label: "/api/upload", detail: "Schreibt in Supabase Storage Bucket media, URLs via toUrl() in Frontend." }],
-  },
-  {
-    title: "Badges (Auto-Regeln)",
-    items: [
-      { label: "Seats", detail: "z.B. seats<=3 → \"Letzte Plätze\" (konfigurierbar in Admin Badges)." },
-      { label: "Typen", detail: "type:intensiv/extrem u.ä.; Regeln in Tabelle badges." },
-    ],
-  },
-  {
-    title: "Sitzplätze",
-    items: [
-      { label: "Erhöhen", detail: "Nur bei paid (Webhook) increment_seats(session_id, count)." },
-      { label: "Reduzieren", detail: "Bei Storno aktuell manuell." },
-    ],
-  },
-  {
-    title: "E-Mail Versand",
-    items: [
-      { label: "SMTP", detail: "GMAIL_USER / GMAIL_PASS (smtp.gmail.com:465). Logging sendMail success/failed." },
-      { label: "Admin-Mail", detail: "office@musicmission.at mit Kurs, Termin, Partner, Order-Link." },
-      { label: "Kunden-Mail", detail: "Betreff \"Bestätigung deiner Kursbuchung\" mit Kurs/Termin/Ort." },
-    ],
-  },
-  {
-    title: "Offene Punkte",
-    items: [
-      { label: "Restbetrag-Reminder", detail: "Automatische Erinnerung & Zahlung des Restbetrags fehlt noch." },
-      { label: "Storno-Flow", detail: "Automatisches Freigeben von Sitzplätzen bei Storno fehlt." },
-    ],
-  },
-];
-
 export default function AutomationenPage() {
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [editing, setEditing] = useState<any | null>(null);
+  const [draft, setDraft] = useState({ subject: "", html_body: "", text_body: "", locale: "de-AT" });
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/automations", { cache: "no-store" });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Fehler beim Laden");
+      setItems(json.data || []);
+    } catch (e: any) {
+      setError(e.message || "Fehler");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const openEdit = (item: any) => {
+    const tpl = (item.templates || []).find((t: any) => t.locale === "de-AT") || item.templates?.[0] || {};
+    setEditing(item);
+    setDraft({
+      subject: tpl.subject || "",
+      html_body: tpl.html_body || "",
+      text_body: tpl.text_body || "",
+      locale: tpl.locale || "de-AT",
+    });
+  };
+
+  const saveDraft = async () => {
+    if (!editing) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/automations", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: editing.id, ...draft }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Speichern fehlgeschlagen");
+      setEditing(null);
+      await load();
+    } catch (e: any) {
+      alert(e.message || "Fehler beim Speichern");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleEnabled = async (item: any) => {
+    try {
+      const res = await fetch("/api/admin/automations", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: item.id, enabled: !item.enabled }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Update fehlgeschlagen");
+      await load();
+    } catch (e: any) {
+      alert(e.message || "Fehler beim Aktualisieren");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <SiteHeader />
-      <main className="mx-auto max-w-5xl px-4 sm:px-8 py-10 space-y-8">
+      <main className="mx-auto max-w-6xl px-4 sm:px-8 py-10 space-y-8">
         <div className="space-y-2">
           <p className="text-sm uppercase tracking-[0.18em] text-slate-500">Admin</p>
           <h1 className="text-3xl font-bold text-slate-900">Automationen</h1>
-          <p className="text-slate-600">
-            Übersicht über alle automatischen Abläufe (Zahlungen, E-Mails, Badges, Region-Filter). Read-only Dokumentation.
-          </p>
+          <p className="text-slate-600">Alle automatischen E-Mails, Trigger, Status & Logs.</p>
         </div>
 
-        <div className="grid gap-4">
-          {sections.map((section) => (
-            <div key={section.title} className="rounded-2xl border border-slate-200 bg-white shadow-sm p-5 space-y-3">
-              <h2 className="text-lg font-semibold text-slate-900">{section.title}</h2>
-              <ul className="space-y-2 text-sm text-slate-700">
-                {section.items.map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <span className="mt-[3px] h-2 w-2 rounded-full bg-[#ff1f8f]" />
-                    <div>
-                      <p className="font-semibold text-slate-900">{item.label}</p>
-                      <p className="text-slate-700">{item.detail}</p>
-                    </div>
-                  </li>
+        {error && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
+
+        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <table className="min-w-full text-sm">
+            <thead className="bg-slate-50 text-slate-600">
+              <tr>
+                <th className="px-4 py-3 text-left">Name</th>
+                <th className="px-4 py-3 text-left">Trigger</th>
+                <th className="px-4 py-3 text-left">Status</th>
+                <th className="px-4 py-3 text-left">Letzter Versand</th>
+                <th className="px-4 py-3 text-left">Aktion</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {loading && (
+                <tr>
+                  <td colSpan={5} className="px-4 py-6 text-center text-slate-500">
+                    Lädt…
+                  </td>
+                </tr>
+              )}
+              {!loading &&
+                items.map((item) => (
+                  <tr key={item.id} className="hover:bg-slate-50">
+                    <td className="px-4 py-3">
+                      <div className="font-semibold text-slate-900">{item.name}</div>
+                      <div className="text-xs text-slate-500">Key: {item.key}</div>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-slate-700">{item.trigger || "–"}</td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => toggleEnabled(item)}
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                          item.enabled ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-700"
+                        }`}
+                      >
+                        {item.enabled ? "Aktiv" : "Inaktiv"}
+                      </button>
+                    </td>
+                    <td className="px-4 py-3 text-xs text-slate-600">
+                      {item.last_log ? (
+                        <div>
+                          <div>{new Date(item.last_log.sent_at).toLocaleString("de-AT")}</div>
+                          <div className="text-[11px] text-slate-500">{item.last_log.recipient || ""}</div>
+                        </div>
+                      ) : (
+                        "–"
+                      )}
+                    </td>
+                    <td className="px-4 py-3 space-x-2">
+                      <button
+                        onClick={() => openEdit(item)}
+                        className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-800 hover:bg-slate-100"
+                      >
+                        Template
+                      </button>
+                      <button
+                        onClick={() => alert("Testversand stub – Backend noch anpassen")}
+                        className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-800 hover:bg-slate-100"
+                      >
+                        Testmail
+                      </button>
+                    </td>
+                  </tr>
                 ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white/80 p-5 text-sm text-slate-700 space-y-2">
-          <p className="font-semibold">Ideen / ToDo</p>
-          <ul className="list-disc list-inside space-y-1">
-            <li>Restbetrag-Reminder (E-Mail + optional Link für Restzahlung).</li>
-            <li>Automatisches Freigeben von Plätzen bei Storno.</li>
-            <li>Health-Check: Warn-Mail, wenn Webhook-Fehler &gt; 3x/Tag.</li>
-          </ul>
+            </tbody>
+          </table>
         </div>
 
         <div className="text-sm text-slate-500">
@@ -119,6 +164,64 @@ export default function AutomationenPage() {
           </Link>
         </div>
       </main>
+
+      {editing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" onClick={() => setEditing(null)}>
+          <div className="w-full max-w-3xl rounded-2xl bg-white shadow-2xl p-6 space-y-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-slate-900">Template bearbeiten: {editing.name}</h3>
+                <p className="text-xs text-slate-500">Key: {editing.key} · Locale: {draft.locale}</p>
+              </div>
+              <button className="text-slate-500 hover:text-slate-800" onClick={() => setEditing(null)}>
+                ✕
+              </button>
+            </div>
+            <div className="space-y-3">
+              <label className="block text-sm font-semibold text-slate-800">
+                Betreff
+                <input
+                  value={draft.subject}
+                  onChange={(e) => setDraft((d) => ({ ...d, subject: e.target.value }))}
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm"
+                />
+              </label>
+              <label className="block text-sm font-semibold text-slate-800">
+                HTML
+                <textarea
+                  value={draft.html_body}
+                  onChange={(e) => setDraft((d) => ({ ...d, html_body: e.target.value }))}
+                  rows={8}
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm font-mono"
+                />
+              </label>
+              <label className="block text-sm font-semibold text-slate-800">
+                Text (Plain)
+                <textarea
+                  value={draft.text_body}
+                  onChange={(e) => setDraft((d) => ({ ...d, text_body: e.target.value }))}
+                  rows={4}
+                  className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm font-mono"
+                />
+              </label>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                onClick={() => setEditing(null)}
+                className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-800 hover:bg-slate-100"
+              >
+                Abbrechen
+              </button>
+              <button
+                onClick={saveDraft}
+                className="rounded-full bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-white shadow hover:-translate-y-0.5 transition"
+              >
+                Speichern
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

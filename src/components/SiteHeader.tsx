@@ -351,9 +351,11 @@ export function SiteHeader() {
                 strokeLinejoin="round"
               />
             </svg>
-            <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-pink-600 px-[3px] text-[10px] font-bold text-white">
-              {favCount}
-            </span>
+            {favCount > 0 && (
+              <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-pink-600 px-[3px] text-[10px] font-bold text-white">
+                {favCount}
+              </span>
+            )}
           </Link>
           <button
           className="header-btn lg:hidden inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-slate-800 hover:bg-slate-100 mr-3 sm:mr-4 lg:mr-8"

@@ -125,7 +125,7 @@ export default function CourseSearch({ variant = "default" }: { variant?: Varian
       <div
         className={
           compact
-            ? "flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 shadow-sm max-w-full"
+            ? "flex h-11 items-center gap-2 rounded-full border border-slate-200 bg-white px-3 shadow-sm max-w-full focus-within:border-slate-300"
             : "flex items-center gap-3 rounded-[20px] border border-slate-200/80 bg-white/95 px-4 py-3 shadow-lg shadow-slate-300/40 backdrop-blur-sm"
         }
       >
@@ -140,7 +140,11 @@ export default function CourseSearch({ variant = "default" }: { variant?: Varian
             onChange={(e) => setQ(e.target.value)}
             type="text"
             placeholder="Kurs, Bundesland, Tag..."
-            className={compact ? "w-full border-none bg-transparent text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none" : "w-full border-none bg-transparent text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none"}
+            className={
+              compact
+                ? "w-full border-none bg-transparent text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-0"
+                : "w-full border-none bg-transparent text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-0"
+            }
           />
         </div>
         <div className="flex items-center gap-2 text-[11px] text-slate-500">

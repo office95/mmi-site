@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { ChevronDown, Menu, X } from "lucide-react";
 import CourseSearch from "@/components/CourseSearch";
+import Link from "next/link";
 
 type SlotCourse = { id: string; slug: string; title: string };
 type Slot = { id: string; label: string; courses: SlotCourse[] };
@@ -28,6 +29,8 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const [favCount, setFavCount] = useState(0);
+  const [showFavPopover, setShowFavPopover] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -35,6 +38,34 @@ export function SiteHeader() {
     onScroll();
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem("mmi_favorites");
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) setFavCount(arr.length);
+      }
+      const handler = () => {
+        try {
+          const raw2 = window.localStorage.getItem("mmi_favorites");
+          if (raw2) {
+            const arr = JSON.parse(raw2);
+            if (Array.isArray(arr)) setFavCount(arr.length);
+          } else {
+            setFavCount(0);
+          }
+        } catch {
+          /* ignore */
+        }
+      };
+      window.addEventListener("storage", handler);
+      return () => window.removeEventListener("storage", handler);
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   // Body scroll lock, damit der Drawer auf iOS/Android nicht durch Hintergrund-Scroll blockiert wird.
@@ -233,6 +264,45 @@ export function SiteHeader() {
             Kursstandorte
           </Link>
         </nav>
+        <div className="hidden lg:flex items-center justify-end gap-3 ml-4">
+          <div
+            className="relative"
+            onMouseEnter={() => setShowFavPopover(true)}
+            onMouseLeave={() => setShowFavPopover(false)}
+          >
+            <Link
+              href="/entdecken?onlyFavs=1"
+              aria-label="Favoriten anzeigen"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-pink-600 shadow-sm shadow-black/10 border border-slate-200 hover:-translate-y-0.5 transition"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5">
+                <path
+                  d="M12.1 21.35 12 21.46l-.1-.11C6.14 15.95 2 12.19 2 8.5 2 5.42 4.42 3 7.5 3c1.9 0 3.63.9 4.5 2.09C12.87 3.9 14.6 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.69-4.14 7.45-9.9 12.85Z"
+                  fill={favCount ? "#ff1f8f" : "none"}
+                  stroke="#ff1f8f"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
+            <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-pink-600 px-1 text-[10px] font-bold text-white">
+              {favCount}
+            </span>
+            {showFavPopover && (
+              <div className="absolute right-0 mt-2 w-64 max-w-[80vw] rounded-2xl border border-slate-200 bg-white shadow-xl shadow-black/10 p-3 text-left">
+                <p className="text-sm font-semibold text-slate-900">Favoriten ({favCount})</p>
+                <p className="text-xs text-slate-600 mt-1">Klicke, um nur Favoriten zu sehen.</p>
+                <Link
+                  href="/entdecken?onlyFavs=1"
+                  className="mt-2 inline-flex items-center justify-center rounded-full bg-pink-600 px-3 py-2 text-xs font-semibold text-white w-full text-center hover:-translate-y-0.5 transition"
+                >
+                  Nur Favoriten anzeigen
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* Mobile Burger */}
         <button

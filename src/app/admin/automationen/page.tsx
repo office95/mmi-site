@@ -393,6 +393,10 @@ export default function AutomationenPage() {
                 Gutscheincodes speichern, Zoho-Rechnung synchronisieren.
               </li>
               <li>
+                <span className="font-semibold">Kurstermine Auto-Archiv:</span> Termine mit Startdatum in der Vergangenheit werden automatisch auf
+                Status <em>archived</em> gesetzt; nur sichtbar, wenn das Archiv eingeblendet wird.
+              </li>
+              <li>
                 <span className="font-semibold">Zoho-Sync:</span> Rechnungen/Items nach Zoho Books schreiben; Fehlerstatus in der Order sichtbar.
               </li>
               <li>

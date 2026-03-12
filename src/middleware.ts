@@ -21,10 +21,11 @@ export async function middleware(req: NextRequest) {
   const host = url.hostname.toLowerCase();
 
   // Zeitgesteuertes Live-Schalten der DE-Domain (bypasst Coming-Soon)
+  // Temporär: musicmission.de live schalten (Coming-Soon aus)
   const liveUntilEnv = process.env.DE_LIVE_UNTIL || "";
   const liveUntil = liveUntilEnv ? Date.parse(liveUntilEnv) : 0;
   const now = Date.now();
-  const allowDeLive = liveUntil > 0 && now < liveUntil;
+  const allowDeLive = true || (liveUntil > 0 && now < liveUntil); // TODO: zurücksetzen, wenn Coming-Soon wieder aktiv soll
 
   // Domain → Region Mapping
   const region = host.endsWith(".at") ? "AT" : host.endsWith(".de") ? "DE" : "AT";

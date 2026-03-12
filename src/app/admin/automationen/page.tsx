@@ -19,7 +19,7 @@ export default function AutomationenPage() {
   const [logFilters, setLogFilters] = useState({ search: "", status: "", automation_key: "", recipient: "" });
   const [logPeriod, setLogPeriod] = useState<"today" | "week" | "month" | "year" | "all">("today");
   const [logDetail, setLogDetail] = useState<any | null>(null);
-  const [tab, setTab] = useState<"automations" | "logs">("automations");
+  const [tab, setTab] = useState<"automations" | "logs" | "doku">("automations");
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -172,8 +172,8 @@ export default function AutomationenPage() {
           <p className="text-slate-600">Alle automatischen E-Mails, Trigger, Status & Logs.</p>
         </div>
 
-        <div className="flex gap-2">
-          {(["automations", "logs"] as const).map((t) => (
+        <div className="flex gap-2 flex-wrap">
+          {(["automations", "logs", "doku"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -181,7 +181,7 @@ export default function AutomationenPage() {
                 tab === t ? "bg-slate-900 text-white" : "border border-slate-200 bg-white text-slate-700"
               }`}
             >
-              {t === "automations" ? "Automationen" : "Logs"}
+              {t === "automations" ? "Automationen" : t === "logs" ? "Logs" : "Automation-Doku"}
             </button>
           ))}
         </div>
@@ -381,6 +381,35 @@ export default function AutomationenPage() {
             </table>
           </div>
         </section>
+        )}
+
+        {tab === "doku" && (
+          <section className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <h2 className="text-xl font-semibold text-slate-900">Automation-Doku (kurz & verständlich)</h2>
+            <p className="text-sm text-slate-600">Automationen werden automatisch gelistet, sobald sie existieren. Wichtige Flows:</p>
+            <ul className="list-disc pl-5 space-y-2 text-sm text-slate-700">
+              <li>
+                <span className="font-semibold">Bestellung bezahlt (Stripe Webhook):</span> Order auf <em>paid</em> setzen, Sitzplätze erhöhen,
+                Gutscheincodes speichern, Zoho-Rechnung synchronisieren.
+              </li>
+              <li>
+                <span className="font-semibold">Zoho-Sync:</span> Rechnungen/Items nach Zoho Books schreiben; Fehlerstatus in der Order sichtbar.
+              </li>
+              <li>
+                <span className="font-semibold">Formulare:</span> Eingaben speichern (form_submissions + form_answers); Admin-Info per Automation.
+              </li>
+              <li>
+                <span className="font-semibold">Diploma-Anmeldungen:</span> Datensatz anlegen (status open), Admin-Info + Eingangsbestätigung an Bewerber/in.
+              </li>
+              <li>
+                <span className="font-semibold">Magic-Links (Admin/Partner):</span> Einmal-Links generieren; optional Versand per Automation.
+              </li>
+            </ul>
+            <p className="text-sm text-slate-600">
+              Neue Automationen tauchen automatisch in der Liste auf (Key/Trigger). Templates können dort bearbeitet und aktiviert/deaktiviert werden.
+            </p>
+          </section>
+        )}
 
         <div className="text-sm text-slate-500">
           <Link className="text-[#ff1f8f] hover:underline" href="/admin">

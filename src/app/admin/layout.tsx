@@ -42,11 +42,17 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   }, []);
 
   const switchRegion = (val: "AT" | "DE") => {
-    document.cookie = `region=${val}; path=/; max-age=31536000`;
+    document.cookie = `region=${val}; path=/; max-age=31536000; samesite=lax`;
     setRegion(val);
     const url = new URL(window.location.href);
     url.searchParams.set("region", val);
     window.location.href = url.toString();
+  };
+
+  const withRegion = (href: string) => {
+    const url = new URL(href, typeof window === "undefined" ? "http://localhost" : window.location.origin);
+    url.searchParams.set("region", region);
+    return url.pathname + url.search;
   };
 
   const signOut = async () => {
@@ -78,11 +84,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </div>
         <nav className="flex-1 px-4 py-4 space-y-1 text-sm font-semibold">
           {nav.map((item) => {
+            const link = withRegion(item.href);
             const active = pathname === item.href;
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={link}
                 className={`flex items-center gap-2 rounded-xl px-3 py-2 transition ${
                   active
                     ? "bg-[#ff1f8f] text-white shadow-md shadow-[#ff1f8f]/30"

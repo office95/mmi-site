@@ -17,12 +17,13 @@ const slugify = (name: string) =>
 
 export async function GET(req: NextRequest) {
   const region = getRegionFromRequest(req);
+  const includeAll = req.nextUrl.searchParams.get("all") === "1";
   const supabase = getSupabaseServiceClient();
-  const { data, error } = await supabase
-    .from(TABLE)
-    .select("*")
-    .or(`region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.,region.eq.%20`)
-    .order("updated_at", { ascending: false });
+  const base = supabase.from(TABLE).select("*");
+  const query = includeAll
+    ? base
+    : base.or(`region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.,region.eq.%20`);
+  const { data, error } = await query.order("updated_at", { ascending: false });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ data });
 }

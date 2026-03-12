@@ -112,7 +112,7 @@ export default function KursstandorteClient() {
       setLoading(true);
       try {
         const [pRes, sRes, cRes, catRes, tRes, fRes] = await Promise.all([
-          fetch("/api/admin/partners"),
+          fetch("/api/admin/partners?all=1"),
           fetch("/api/admin/sessions"),
           fetch("/api/admin/courses"),
           fetch("/api/admin/course-categories"),
@@ -151,9 +151,41 @@ export default function KursstandorteClient() {
 
       const stateLc = (p.state || "").toLowerCase();
       const countryLc = (p.country || "").toLowerCase();
-      const stateMatch = allowedStates.length ? allowedStates.some((st) => stateLc.includes(st)) : true;
-      const countryMatch = regionCountries.length ? regionCountries.some((c) => countryLc.includes(c)) : true;
-      // Wenn Bundesland nicht zuordenbar ist, reicht Country-Match, damit Partner nicht fälschlich rausfällt
+      const partnerRegion = countryLc.includes("deutschland") || countryLc.includes("germany") ? "DE" : countryLc ? "AT" : debugRegion;
+      const allowedStatesCandidate =
+        partnerRegion === "DE"
+          ? [
+              "bayern",
+              "berlin",
+              "brandenburg",
+              "bremen",
+              "hamburg",
+              "hessen",
+              "mecklenburg-vorpommern",
+              "niedersachsen",
+              "nordrhein-westfalen",
+              "rheinland-pfalz",
+              "saarland",
+              "sachsen",
+              "sachsen-anhalt",
+              "schleswig-holstein",
+              "thüringen",
+            ]
+          : [
+              "wien",
+              "niederösterreich",
+              "oberösterreich",
+              "steiermark",
+              "salzburg",
+              "kärnten",
+              "tirol",
+              "vorarlberg",
+              "burgenland",
+            ];
+      const allowedCountriesCandidate = partnerRegion === "DE" ? ["deutschland", "germany"] : ["österreich", "austria"];
+
+      const stateMatch = allowedStatesCandidate.some((st) => stateLc.includes(st));
+      const countryMatch = allowedCountriesCandidate.some((c) => countryLc.includes(c));
       if (stateLc || countryLc) {
         if (!(stateMatch || countryMatch)) return false;
       }

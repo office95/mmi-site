@@ -25,7 +25,7 @@ export async function middleware(req: NextRequest) {
   const liveUntilEnv = process.env.DE_LIVE_UNTIL || "";
   const liveUntil = liveUntilEnv ? Date.parse(liveUntilEnv) : 0;
   const now = Date.now();
-  const allowDeLive = true || (liveUntil > 0 && now < liveUntil); // TODO: zurücksetzen, wenn Coming-Soon wieder aktiv soll
+  const allowDeLive = liveUntil > 0 && now < liveUntil; // DE nur live, wenn DE_LIVE_UNTIL in Zukunft gesetzt ist
 
   // Domain → Region Mapping
   const region = host.endsWith(".at") ? "AT" : host.endsWith(".de") ? "DE" : "AT";

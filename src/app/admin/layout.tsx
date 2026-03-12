@@ -44,7 +44,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const switchRegion = (val: "AT" | "DE") => {
     document.cookie = `region=${val}; path=/; max-age=31536000`;
     setRegion(val);
-    window.location.reload();
+    const url = new URL(window.location.href);
+    url.searchParams.set("region", val);
+    window.location.href = url.toString();
   };
 
   const signOut = async () => {

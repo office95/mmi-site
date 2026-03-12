@@ -55,9 +55,9 @@ export function renderBookingConfirmationHtml(data: BookingConfirmationData) {
     absenderName,
   } = data;
 
-  const terminZeile = [terminDatum, terminStartzeit ? `| ${terminStartzeit} Uhr` : null, terminZeitraumBeschreibung]
-    .filter(Boolean)
-    .join(" ");
+  const cleanDatum = terminDatum && terminDatum !== "n/a" ? terminDatum : "";
+  const cleanStart = terminStartzeit && terminStartzeit !== "n/a" ? `${terminStartzeit} Uhr` : "";
+  const terminZeile = [cleanDatum, cleanStart, terminZeitraumBeschreibung].filter(Boolean).join(" | ");
 
   const firmenZeile = [firmenname, strasseNr, plzOrt].filter((p) => (p || "").trim().length > 0).join(" · ");
 

@@ -455,6 +455,7 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
                       <button
                         type="button"
                         aria-label="Teilen"
+                        title="Link teilen"
                         onClick={doShare}
                         className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/92 text-pink-600 shadow-sm shadow-black/10 border border-white/80 hover:scale-105 transition"
                       >
@@ -480,6 +481,7 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
                       <button
                         type="button"
                         aria-label={isFav ? "Aus Favoriten entfernen" : "Zu Favoriten hinzufügen"}
+                        title={isFav ? "Aus Favoriten entfernen" : "Zu Favoriten hinzufügen"}
                         onClick={() => favoriteId && toggleFavorite(favoriteId)}
                         className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/92 text-pink-600 shadow-sm shadow-black/10 border border-white/80 hover:scale-105 transition"
                       >

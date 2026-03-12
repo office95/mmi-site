@@ -163,7 +163,7 @@ export default function ProfessionalAudioDiplomaClient({ h1, heroSubline }: { h1
               </div>
               <div className="rounded-2xl overflow-hidden shadow-lg border border-slate-200 bg-white relative min-h-[260px]">
                 <Image
-                  src="https://static.wixstatic.com/media/c10044_6c4451e9b4c74e7e969b947acf3f46fe~mv2.jpg"
+                  src="https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/be2eea1f-cc16-4257-8434-9a3896fe196a.webp"
                   alt="Professional Audio Diploma"
                   fill
                   className="object-cover"

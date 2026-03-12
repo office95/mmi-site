@@ -339,16 +339,10 @@ export default function PartnerPage() {
               <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl text-white leading-tight">
                 {loading ? "Lade..." : partner?.name || `Kein Treffer für "${slug || "(leer)"}`}
               </h1>
-              {!loading && tags.length > 0 && (
-                <div className="flex flex-wrap justify-center gap-2 pt-2">
-                  {tags.map((t: string, idx: number) => (
-                    <span key={idx} className="rounded-full bg-pink-500 px-3 py-1 text-xs font-semibold text-white">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              )}
-              <p className="text-white/85 text-lg font-semibold pt-1">
+              <p
+                className="text-white/90 font-semibold pt-2"
+                style={{ fontSize: "clamp(22px, 3.2vw, 40px)" }}
+              >
                 {loading ? "" : partner?.state || partner?.city || "Bundesland folgt"}
               </p>
               {appliedPartnerBadges.length > 0 && (
@@ -370,6 +364,18 @@ export default function PartnerPage() {
         <section className="mx-auto max-w-6xl px-6 py-12">
           <div className="grid gap-10 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-6">
+              {!loading && tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((t: string, idx: number) => (
+                    <span
+                      key={idx}
+                      className="rounded-full border border-pink-200 bg-pink-50 px-3 py-[6px] text-[11px] font-semibold tracking-wide text-pink-700"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              )}
               <ScrollReveal>
                 <div>
                   <h2 className="font-anton text-3xl text-slate-900">Aktuelle Kurse</h2>

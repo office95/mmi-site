@@ -30,6 +30,7 @@ export function SiteHeader() {
   const pathname = usePathname();
   const [favCount, setFavCount] = useState(0);
   const [showFavPopover, setShowFavPopover] = useState(false);
+  const [favMeta, setFavMeta] = useState<any[]>([]);
 
   useEffect(() => {
     setMounted(true);
@@ -43,18 +44,30 @@ export function SiteHeader() {
     if (typeof window === "undefined") return;
     try {
       const raw = window.localStorage.getItem("mmi_favorites");
+      const rawMeta = window.localStorage.getItem("mmi_favorites_meta");
       if (raw) {
         const arr = JSON.parse(raw);
         if (Array.isArray(arr)) setFavCount(arr.length);
       }
+      if (rawMeta) {
+        const meta = JSON.parse(rawMeta);
+        if (Array.isArray(meta)) setFavMeta(meta);
+      }
       const handler = () => {
         try {
           const raw2 = window.localStorage.getItem("mmi_favorites");
+          const rawMeta2 = window.localStorage.getItem("mmi_favorites_meta");
           if (raw2) {
             const arr = JSON.parse(raw2);
             if (Array.isArray(arr)) setFavCount(arr.length);
           } else {
             setFavCount(0);
+          }
+          if (rawMeta2) {
+            const meta = JSON.parse(rawMeta2);
+            if (Array.isArray(meta)) setFavMeta(meta);
+          } else {
+            setFavMeta([]);
           }
         } catch {
           /* ignore */
@@ -273,6 +286,7 @@ export function SiteHeader() {
               href="/entdecken?onlyFavs=1"
               aria-label="Favoriten anzeigen"
               className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-pink-600 shadow-sm shadow-black/10 border border-slate-200 hover:-translate-y-0.5 transition"
+              title="Favoriten öffnen"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5">
                 <path
@@ -289,9 +303,32 @@ export function SiteHeader() {
               {favCount}
             </span>
             {showFavPopover && (
-              <div className="absolute right-0 mt-2 w-64 max-w-[80vw] rounded-2xl border border-slate-200 bg-white shadow-xl shadow-black/10 p-3 text-left">
+              <div className="absolute right-0 mt-2 w-72 max-w-[90vw] rounded-2xl border border-slate-200 bg-white shadow-xl shadow-black/10 p-3 text-left">
                 <p className="text-sm font-semibold text-slate-900">Favoriten ({favCount})</p>
-                <p className="text-xs text-slate-600 mt-1">Klicke, um nur Favoriten zu sehen.</p>
+                <div className="mt-2 space-y-2 max-h-72 overflow-auto pr-1">
+                  {favMeta.length === 0 && <p className="text-xs text-slate-600">Noch keine Favoriten.</p>}
+                  {favMeta.slice(0, 5).map((fav, idx) => (
+                    <Link
+                      key={idx}
+                      href={`/kurs/${fav.slug || ""}?booking=${fav.id}${fav.partner_id ? `&partner=${fav.partner_id}` : ""}`}
+                      className="flex items-center gap-2 rounded-xl border border-slate-200 px-2 py-2 hover:bg-slate-50 transition"
+                    >
+                      <div className="h-10 w-10 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0">
+                        {fav.hero ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={fav.hero} alt={fav.title || "Kurs"} className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center text-[10px] text-slate-500">Kein Bild</div>
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-slate-900 truncate">{fav.title || "Kurs"}</p>
+                        {fav.start_date && <p className="text-[11px] text-slate-600">{new Date(fav.start_date + "T00:00:00").toLocaleDateString("de-AT")}</p>}
+                      </div>
+                    </Link>
+                  ))}
+                  {favMeta.length > 5 && <p className="text-[11px] text-slate-500">+ {favMeta.length - 5} weitere</p>}
+                </div>
                 <Link
                   href="/entdecken?onlyFavs=1"
                   className="mt-2 inline-flex items-center justify-center rounded-full bg-pink-600 px-3 py-2 text-xs font-semibold text-white w-full text-center hover:-translate-y-0.5 transition"

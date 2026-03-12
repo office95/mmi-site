@@ -25,6 +25,16 @@ type SessionCard = {
   tags?: string[];
 };
 
+type FavoriteMeta = {
+  id: string;
+  title?: string | null;
+  slug?: string | null;
+  hero?: string | null;
+  partner_id?: string | null;
+  start_date?: string | null;
+  location?: string | null;
+};
+
 export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; heroSubline?: string }) {
   const [sessions, setSessions] = useState<SessionCard[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,6 +45,7 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
   const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [favoriteMeta, setFavoriteMeta] = useState<FavoriteMeta[]>([]);
   const [onlyFavs, setOnlyFavs] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showFavPopover, setShowFavPopover] = useState(false);
@@ -186,6 +197,11 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
     if (typeof window === "undefined") return;
     try {
       const raw = window.localStorage.getItem("mmi_favorites");
+      const rawMeta = window.localStorage.getItem("mmi_favorites_meta");
+      if (rawMeta) {
+        const meta = JSON.parse(rawMeta);
+        if (Array.isArray(meta)) setFavoriteMeta(meta);
+      }
       if (raw) {
         const arr = JSON.parse(raw);
         if (Array.isArray(arr)) setFavorites(new Set(arr.filter((x) => typeof x === "string")));
@@ -195,19 +211,31 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
     }
   }, []);
 
-  const toggleFavorite = (id: string) => {
+  const toggleFavorite = (id: string, meta?: FavoriteMeta) => {
     setFavorites((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
+      return next;
+    });
+    setFavoriteMeta((prev) => {
+      let nextMeta = [...prev];
+      if (prev.find((m) => m.id === id)) {
+        nextMeta = prev.filter((m) => m.id !== id);
+      } else if (meta) {
+        nextMeta = [{ ...meta }, ...prev].slice(0, 50); // cap
+      }
       if (typeof window !== "undefined") {
         try {
-          window.localStorage.setItem("mmi_favorites", JSON.stringify(Array.from(next)));
+          window.localStorage.setItem("mmi_favorites_meta", JSON.stringify(nextMeta));
+          // ids auch weiter pflegen für Abwärtskompatibilität
+          const ids = nextMeta.map((m) => m.id);
+          window.localStorage.setItem("mmi_favorites", JSON.stringify(ids));
         } catch (e) {
           console.error("Favoriten speichern fehlgeschlagen", e);
         }
       }
-      return next;
+      return nextMeta;
     });
   };
 
@@ -255,10 +283,18 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
   }, [futureSessions]);
 
   const favoriteSessions = useMemo(() => {
+    if (favoriteMeta.length) {
+      return favoriteMeta
+        .map((m) => {
+          const live = sessionMap.get(m.id);
+          return live || (m as any as SessionCard);
+        })
+        .filter(Boolean) as SessionCard[];
+    }
     return Array.from(favorites)
       .map((id) => sessionMap.get(id))
       .filter(Boolean) as SessionCard[];
-  }, [favorites, sessionMap]);
+  }, [favorites, favoriteMeta, sessionMap]);
 
   const sessionBadges = (s: SessionCard) => {
     const badges: { name: string; color: string }[] = [];
@@ -482,7 +518,18 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
                         type="button"
                         aria-label={isFav ? "Aus Favoriten entfernen" : "Zu Favoriten hinzufügen"}
                         title={isFav ? "Aus Favoriten entfernen" : "Zu Favoriten hinzufügen"}
-                        onClick={() => favoriteId && toggleFavorite(favoriteId)}
+                        onClick={() =>
+                          favoriteId &&
+                          toggleFavorite(favoriteId, {
+                            id: favoriteId,
+                            title: s.course?.title,
+                            slug: s.course?.slug,
+                            hero: s.course?.hero_image_url ?? null,
+                            partner_id: s.partner_id ?? null,
+                            start_date: s.start_date ?? null,
+                            location: locationText(s),
+                          })
+                        }
                         className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/92 text-pink-600 shadow-sm shadow-black/10 border border-white/80 hover:scale-105 transition"
                       >
                         <svg

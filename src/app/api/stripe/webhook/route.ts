@@ -234,6 +234,12 @@ export async function POST(req: Request) {
           .map((p) => (p ?? "").trim())
           .filter((p) => p.length > 0);
         const kursort = kursortParts.length > 0 ? kursortParts.join("<br/>") : "Online";
+        const terminZeile = [formatDate(startDate), formatTime(startTime)].filter((v) => v && v !== "n/a").join(" | ");
+        const firmenzeile = ["Music Mission GmbH", partnerRow?.data?.city || sessionRow?.data?.city || ""]
+          .filter((v) => (v ?? "").trim().length > 0)
+          .join(" · ");
+        const telefonzeile = "E-Mail office@musicmission.at";
+        const firmenbuchNrLine = " · Firmenbuchnr. FN 627518 x";
 
         const htmlCustomer = renderBookingConfirmationHtml({
           anredeVorname: orderRow?.data?.first_name || orderRow?.data?.customer_name || "Teilnehmer/in",
@@ -267,11 +273,30 @@ export async function POST(req: Request) {
           key: "order_customer_confirmation",
           to: customerEmail,
           tokens: {
-            order_number: orderRow?.data?.order_number || cs.metadata?.order_number || "—",
-            course_title: courseRow?.data?.title || "Kurs",
-            start_date: formatDate(startDate),
-            start_time: formatTime(startTime),
-            offener_betrag: formatMoney(openCents),
+            anredeVorname: orderRow?.data?.first_name || orderRow?.data?.customer_name || "Teilnehmer/in",
+            kursname: courseRow?.data?.title || "Kurs",
+            terminDatum: formatDate(startDate),
+            terminStartzeit: formatTime(startTime),
+            terminEndzeit: "",
+            terminZeitraumBeschreibung: "",
+            terminZeile,
+            ortZeile: kursort.replace(/<br\\/>/g, " · "),
+            teilnehmerName:
+              orderRow?.data?.customer_name ||
+              `${orderRow?.data?.first_name || ""} ${orderRow?.data?.last_name || ""}`.trim() ||
+              "Teilnehmer/in",
+            buchungsnummer: orderRow?.data?.order_number || cs.metadata?.order_number || "—",
+            gesamtpreisEur: formatMoney(totalCents),
+            bereitsBezahltEur: formatMoney(paidCents),
+            offenerBetragEur: formatMoney(openCents),
+            zahlungsart: cs.payment_method_types?.[0] || "Kreditkarte/PayPal",
+            zahlungsdatum: new Date(cs.created * 1000).toLocaleDateString("de-AT"),
+            linkAgb: agbLink,
+            firmenzeile,
+            telefonzeile,
+            uidNr: "ATU80644028",
+            firmenbuchNr_line: firmenbuchNrLine,
+            absenderName: "Music Mission GmbH",
           },
           fallbackSubject: "Buchungsbestätigung",
           fallbackHtml: htmlCustomer,

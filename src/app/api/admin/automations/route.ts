@@ -12,6 +12,92 @@ const defaults = [
   { key: "form_submit_notification", name: "Admin: Formulareingang", trigger: "POST /api/forms/[id]/submit", enabled: true },
 ];
 
+const defaultTemplates: Record<
+  string,
+  { locale: string; subject: string; html_body: string; text_body?: string }
+> = {
+  order_admin_new_booking: {
+    locale: "de-AT",
+    subject: "Du hast eine neue Buchung",
+    html_body: `
+      <h3>Du hast eine neue Buchung</h3>
+      <p><strong>Kurs:</strong> {{course_title}}</p>
+      <p><strong>Termin:</strong> {{start_date}} {{start_time}}</p>
+      <p><strong>Partner:</strong> {{partner_name}} ({{partner_city}})</p>
+      <p><strong>Teilnehmer (Anzahl):</strong> {{participants}}</p>
+      <p><strong>Kursteilnehmer:</strong> {{customer_contact}}</p>
+      <p><strong>Order:</strong> {{order_number}}</p>
+      <p><a href="{{order_link}}" target="_blank" rel="noreferrer">Zur Bestellung</a></p>
+    `,
+  },
+  order_customer_confirmation: {
+    locale: "de-AT",
+    subject: "Buchungsbestätigung",
+    html_body: `<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    body { font-family: Arial, sans-serif; color:#111; margin:0; padding:24px; background:#f7f7f8; }
+    .card { max-width:700px; margin:auto; background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:28px; }
+    h1 { font-size:22px; margin:0 0 12px; }
+    h2 { font-size:16px; margin:22px 0 10px; }
+    p { line-height:1.6; margin:0 0 12px; }
+    ul { padding-left:18px; margin:0; }
+    li { margin:4px 0; }
+    .muted { color:#555; font-size:14px; }
+    .divider { border-top:1px solid #e5e7eb; margin:20px 0; }
+    a { color:#0d6efd; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Buchungsbestätigung – {{kursname}} am {{terminDatum}}</h1>
+    <p>Hallo {{anredeVorname}},</p>
+    <p>vielen Dank für deine Buchung. Dein Platz ist fix reserviert:</p>
+
+    <h2>Buchungsdetails</h2>
+    <ul>
+      <li><strong>Kurs:</strong> {{kursname}}</li>
+      <li><strong>Kursstart:</strong> {{terminZeile}}</li>
+      <li><strong>Kursort:</strong> {{ortZeile}}</li>
+      <li><strong>Teilnehmer/in:</strong> {{teilnehmerName}}</li>
+      <li><strong>Buchungsnummer:</strong> {{buchungsnummer}}</li>
+    </ul>
+
+    <h2>Zahlung & Betrag</h2>
+    <ul>
+      <li><strong>Gesamtpreis (brutto):</strong> {{gesamtpreisEur}}</li>
+      <li><strong>Bereits bezahlt (Anzahlung):</strong> {{bereitsBezahltEur}} am {{zahlungsdatum}} per {{zahlungsart}}</li>
+      <li><strong>Offener Betrag:</strong> {{offenerBetragEur}} (fällig zum Kursstart)</li>
+    </ul>
+
+    <div class="divider"></div>
+
+    <h2>Hinweise</h2>
+    <p class="muted">
+      Diese Buchungsbestätigung ist keine Rechnung.<br/>
+      Die Anzahlungsrechnung über die bereits geleistete Zahlung erhältst du separat.<br/>
+      Nach Kursende stellen wir eine Schlussrechnung über den Gesamtbetrag abzüglich der Anzahlung aus.<br/>
+      Es gelten unsere AGB und Stornobedingungen: <a href="{{linkAgb}}">AGB &amp; Storno</a>.
+    </p>
+
+    <h2>Firmenangaben</h2>
+    <p class="muted">
+      {{firmenzeile}}<br/>
+      {{telefonzeile}}<br/>
+      UID {{uidNr}}{{firmenbuchNr_line}}
+    </p>
+
+    <p>Wir freuen uns auf deine Teilnahme!<br/>
+    Freundliche Grüße<br/>
+    {{absenderName}}</p>
+  </div>
+</body>
+</html>`,
+  },
+};
+
 export async function GET() {
   const db = getSupabaseServiceClient();
   // Seed defaults if missing
@@ -27,6 +113,27 @@ export async function GET() {
     .select("id,key,name,trigger,enabled,updated_at,updated_by")
     .order("name", { ascending: true });
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Seed default templates if missing
+  try {
+    for (const auto of automations ?? []) {
+      const tpl = defaultTemplates[auto.key];
+      if (!tpl) continue;
+      const { data: existing } = await db
+        .from("automation_templates")
+        .select("id,subject,html_body,text_body")
+        .eq("automation_id", auto.id)
+        .eq("locale", tpl.locale)
+        .maybeSingle();
+      if (!existing) {
+        await db.from("automation_templates").insert({ automation_id: auto.id, ...tpl });
+      } else if (!existing.subject && !existing.html_body && !existing.text_body) {
+        await db.from("automation_templates").update({ subject: tpl.subject, html_body: tpl.html_body, text_body: tpl.text_body }).eq("id", existing.id);
+      }
+    }
+  } catch (e) {
+    // ignore template seed errors
+  }
 
   const ids = (automations ?? []).map((a: any) => a.id);
   const { data: templates } = ids.length

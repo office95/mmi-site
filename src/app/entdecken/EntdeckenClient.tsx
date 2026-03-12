@@ -35,6 +35,7 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [onlyFavs, setOnlyFavs] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [debugHost, setDebugHost] = useState("");
   const [debugRegion, setDebugRegion] = useState("");
   const [debugXRegion, setDebugXRegion] = useState("");
@@ -389,32 +390,79 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
                   s.course?.slug ? `?kurs=${s.course.slug}` : s.course?.id ? `?courseId=${s.course.id}` : ""
                 }`;
                 const infoHref = courseSlug ? `/kurs/${courseSlug}${s.id ? `?booking=${s.id}` : ""}` : `/entdecken`;
+                const shareData = () => {
+                  const loc = locationText(s);
+                  const dateTxt = s.start_date ? new Date(s.start_date + "T00:00:00").toLocaleDateString("de-AT") : "";
+                  const title = s.course?.title || "Kurs";
+                  const primary = (typeof window !== "undefined" ? window.location.origin : "") + bookingHref;
+                  const secondary = (typeof window !== "undefined" ? window.location.origin : "") + infoHref;
+                  const textParts = [title, loc ? `in ${loc}` : null, dateTxt ? `ab ${dateTxt}` : null].filter(Boolean);
+                  return { title: "Music Mission Kurs", text: textParts.join(" · "), primary, secondary };
+                };
+                const doShare = async () => {
+                  const data = shareData();
+                  if (typeof navigator !== "undefined" && navigator.share) {
+                    try {
+                      await navigator.share({ title: data.title, text: data.text, url: data.primary });
+                      return;
+                    } catch (_) {
+                      // fallback to copy
+                    }
+                  }
+                  try {
+                    await navigator.clipboard.writeText(data.primary);
+                    setCopiedId(s.id);
+                    setTimeout(() => setCopiedId(null), 1600);
+                  } catch (_) {
+                    // ignore
+                  }
+                };
                 return (
                   <div
                     key={s.id}
                     className="group relative rounded-2xl border border-slate-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-lg transition overflow-hidden"
                   >
-                    <button
-                      type="button"
-                      aria-label={isFav ? "Aus Favoriten entfernen" : "Zu Favoriten hinzufügen"}
-                      onClick={() => favoriteId && toggleFavorite(favoriteId)}
-                      className="absolute right-3 top-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/92 text-pink-600 shadow-sm shadow-black/10 border border-white/80 hover:scale-105 transition"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        className="h-5 w-5"
+                    <div className="absolute right-3 top-3 z-20 flex items-center gap-2">
+                      <button
+                        type="button"
+                        aria-label="Teilen"
+                        onClick={doShare}
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/92 text-pink-600 shadow-sm shadow-black/10 border border-white/80 hover:scale-105 transition"
                       >
-                        <path
-                          d="M12.1 21.35 12 21.46l-.1-.11C6.14 15.95 2 12.19 2 8.5 2 5.42 4.42 3 7.5 3c1.9 0 3.63.9 4.5 2.09C12.87 3.9 14.6 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.69-4.14 7.45-9.9 12.85Z"
-                          fill={isFav ? "#ff1f8f" : "none"}
-                          stroke="#ff1f8f"
-                          strokeWidth="1.6"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </button>
+                        {copiedId === s.id ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5" fill="#16a34a">
+                            <path d="M9.55 18.45 4.8 13.7l1.4-1.4 3.35 3.35 8.25-8.25 1.4 1.4-9.65 9.65Z" />
+                          </svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="#ff1f8f" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m4 12 8-8 8 8" />
+                            <path d="M12 4v12" />
+                            <path d="M20 20H4" />
+                          </svg>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={isFav ? "Aus Favoriten entfernen" : "Zu Favoriten hinzufügen"}
+                        onClick={() => favoriteId && toggleFavorite(favoriteId)}
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/92 text-pink-600 shadow-sm shadow-black/10 border border-white/80 hover:scale-105 transition"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          className="h-5 w-5"
+                        >
+                          <path
+                            d="M12.1 21.35 12 21.46l-.1-.11C6.14 15.95 2 12.19 2 8.5 2 5.42 4.42 3 7.5 3c1.9 0 3.63.9 4.5 2.09C12.87 3.9 14.6 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.69-4.14 7.45-9.9 12.85Z"
+                            fill={isFav ? "#ff1f8f" : "none"}
+                            stroke="#ff1f8f"
+                            strokeWidth="1.6"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    </div>
                     <Link href={infoHref} className="relative block h-44 w-full bg-slate-100">
                       {s.course?.hero_image_url ? (
                         <Image

@@ -33,6 +33,7 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
   const [filterCategory, setFilterCategory] = useState("");
   const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [debugHost, setDebugHost] = useState("");
   const [debugRegion, setDebugRegion] = useState("");
   const [debugXRegion, setDebugXRegion] = useState("");
@@ -165,6 +166,36 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
       return d > today;
     });
   }, [sessions, today, debugRegion]);
+
+  // Favoriten aus localStorage laden
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem("mmi_favorites");
+      if (raw) {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) setFavorites(new Set(arr.filter((x) => typeof x === "string")));
+      }
+    } catch (e) {
+      console.error("Favoriten laden fehlgeschlagen", e);
+    }
+  }, []);
+
+  const toggleFavorite = (id: string) => {
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      if (typeof window !== "undefined") {
+        try {
+          window.localStorage.setItem("mmi_favorites", JSON.stringify(Array.from(next)));
+        } catch (e) {
+          console.error("Favoriten speichern fehlgeschlagen", e);
+        }
+      }
+      return next;
+    });
+  };
 
   const filtered = useMemo(() => {
     const q = qSearch.trim().toLowerCase();
@@ -330,6 +361,8 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filtered.map((s) => {
                 const courseSlug = s.course?.slug || s.course?.id || s.id;
+                const favoriteId = s.course?.id || courseSlug || s.id;
+                const isFav = favoriteId ? favorites.has(favoriteId) : false;
                 const bookingHref = `/buchen/${s.id}${
                   s.course?.slug ? `?kurs=${s.course.slug}` : s.course?.id ? `?courseId=${s.course.id}` : ""
                 }`;
@@ -337,8 +370,29 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
                 return (
                   <div
                     key={s.id}
-                    className="group rounded-2xl border border-slate-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-lg transition overflow-hidden"
+                    className="group relative rounded-2xl border border-slate-200 bg-white shadow-sm hover:-translate-y-1 hover:shadow-lg transition overflow-hidden"
                   >
+                    <button
+                      type="button"
+                      aria-label={isFav ? "Aus Favoriten entfernen" : "Zu Favoriten hinzufügen"}
+                      onClick={() => favoriteId && toggleFavorite(favoriteId)}
+                      className="absolute right-3 top-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-pink-600 shadow-sm shadow-black/10 border border-white/80 hover:scale-105 transition"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill={isFav ? "#ff1f8f" : "none"}
+                        stroke="#ff1f8f"
+                        strokeWidth="1.8"
+                        className="h-5 w-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 21s-6.5-4.35-9.1-8.18C1.26 10.5 2 7 5.2 6c1.9-.6 3.8.1 4.8 1.7 1-1.6 2.9-2.3 4.8-1.7 3.2 1 3.94 4.5 2.3 6.82C18.5 16.65 12 21 12 21Z"
+                        />
+                      </svg>
+                    </button>
                     <Link href={infoHref} className="relative block h-44 w-full bg-slate-100">
                       {s.course?.hero_image_url ? (
                         <Image

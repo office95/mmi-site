@@ -27,12 +27,6 @@ export const SEO_PAGE_REGISTRY: SeoRegistryEntry[] = [
     defaultH1: "Alle Kurstermine",
   },
   {
-    pageKey: "standorte",
-    slug: "/standorte",
-    defaultTitle: "Standorte | Music Mission Institute",
-    defaultH1: "Unsere Partner-Standorte",
-  },
-  {
     pageKey: "kursstandorte",
     slug: "/kursstandorte",
     defaultTitle: "Kursstandorte | Music Mission Institute",

@@ -109,7 +109,12 @@ export async function GET(req: NextRequest) {
   }
 
   const pageKey = req.nextUrl.searchParams.get("page_key");
-  const query = supabase.from(TABLE).select("*").order("page_key", { ascending: true }).order("domain_variant", { ascending: true });
+  const query = supabase
+    .from(TABLE)
+    .select("*")
+    .order("page_key", { ascending: true })
+    .order("domain_variant", { ascending: true })
+    .neq("page_key", "standorte"); // standorte deaktiviert
   const { data, error } = pageKey ? await query.eq("page_key", pageKey) : await query;
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 

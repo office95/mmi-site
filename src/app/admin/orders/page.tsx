@@ -196,7 +196,7 @@ export default function OrdersPage() {
 
         {tab === "orders" && (
           <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <table className="min-w-full text-sm">
+          <table className="min-w-full text-xs sm:text-[13px]">
             <thead className="bg-slate-50 text-slate-600">
               <tr>
                 <th className="px-4 py-3 text-left">Bestellnr.</th>

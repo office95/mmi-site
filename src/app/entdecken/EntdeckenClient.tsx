@@ -156,7 +156,7 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
     const allowedCountries = targetRegion === "DE" ? ["deutschland", "germany"] : ["österreich", "austria"];
     return sessions.filter((s) => {
       // Region-Filter: nur Sessions mit passendem Land anzeigen
-      const country = (s.partners?.country || s.country || "").toLowerCase();
+      const country = (s.partners?.country || "").toLowerCase();
       if (!allowedCountries.some((c) => country.includes(c))) return false;
 
       if (!s.start_date) return false;

@@ -92,20 +92,17 @@ export async function GET(req: NextRequest) {
         .eq("domain_variant", variant)
         .maybeSingle();
       if (!exists.data) {
-        await supabase.from(TABLE).insert(
-          {
-            page_key: page.pageKey,
-            slug,
-            domain_variant: variant,
-            locale,
-            title_tag: page.defaultTitle,
-            h1: page.defaultH1,
-            meta_description: page.defaultDescription ?? null,
-            robots_index: true,
-            robots_follow: true,
-          },
-          { count: null }
-        );
+        await supabase.from(TABLE).insert({
+          page_key: page.pageKey,
+          slug,
+          domain_variant: variant,
+          locale,
+          title_tag: page.defaultTitle,
+          h1: page.defaultH1,
+          meta_description: page.defaultDescription ?? null,
+          robots_index: true,
+          robots_follow: true,
+        });
       }
     }
   }

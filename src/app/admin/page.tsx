@@ -1,17 +1,6 @@
- "use client";
+"use client";
 
 export default function AdminHome() {
-  const wipe = async () => {
-    if (!confirm("Wirklich alle Partner, Kurse und Stammdaten löschen?")) return;
-    const res = await fetch("/api/admin/wipe", { method: "POST" });
-    if (!res.ok) {
-      const j = await res.json().catch(() => ({}));
-      alert(`Fehler beim Löschen: ${j.error ?? res.status}`);
-      return;
-    }
-    alert("Alle Daten gelöscht. Bitte Seiten neu laden.");
-    window.location.reload();
-  };
 
   return (
     <div className="px-6 py-12">
@@ -62,14 +51,6 @@ export default function AdminHome() {
           >
             Automationen (Doku)
           </a>
-        </div>
-        <div className="pt-6">
-          <button
-            onClick={wipe}
-            className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-          >
-            Alles löschen (Partner, Kurse, Stammdaten)
-          </button>
         </div>
       </div>
     </div>

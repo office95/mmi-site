@@ -227,6 +227,14 @@ export default function SessionsPage() {
             <button onClick={openNew} className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-black shadow-md shadow-[#ff1f8f]/30 hover:bg-[#e40073]">
               + Neuen Kurstermin anlegen
             </button>
+            <button
+              onClick={() => setIncludePast((v) => !v)}
+              className={`rounded-xl px-4 py-2 text-sm font-semibold border ${
+                includePast ? "border-slate-300 bg-slate-100 text-slate-800" : "border-slate-200 bg-white text-slate-700"
+              }`}
+            >
+              {includePast ? "Archiv ausblenden" : "Archivierte anzeigen"}
+            </button>
           </div>
         </div>
 
@@ -272,7 +280,8 @@ export default function SessionsPage() {
             {filtered.map((s) => {
               const courseName = getName(s.course_id, courses.map((c) => ({ id: c.id, name: c.title }))) ?? "—";
               const partnerName = getName(s.partner_id, partners.map((p) => ({ id: p.id, name: p.name }))) ?? "—";
-              const courseType = courses.find((c) => c.id === s.course_id)?.type_id || "—";
+              const courseTypeId = courses.find((c) => c.id === s.course_id)?.type_id || "";
+              const courseTypeLabel = types.find((t) => t.value === courseTypeId)?.label || "—";
               const isPast = (s.start_date || "") < new Date().toISOString().slice(0, 10);
               return (
                 <div key={s.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition">
@@ -281,7 +290,7 @@ export default function SessionsPage() {
                       <p className="font-semibold text-slate-900 line-clamp-2">{courseName}</p>
                       <p className="text-xs text-slate-500 line-clamp-2">{partnerName}</p>
                       <p className="text-xs text-slate-500">
-                        {s.start_date ?? "Datum fehlt"} · Typ: {courseType}
+                        {s.start_date ?? "Datum fehlt"} · Typ: {courseTypeLabel}
                       </p>
                     </div>
                     <div className="flex flex-col items-end gap-1">

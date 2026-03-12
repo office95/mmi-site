@@ -280,7 +280,7 @@ export async function POST(req: Request) {
             terminEndzeit: "",
             terminZeitraumBeschreibung: "",
             terminZeile,
-            ortZeile: kursort.replace(/<br\\/>/g, " · "),
+            ortZeile: kursort.replaceAll("<br/>", " · ").replaceAll("<br />", " · "),
             teilnehmerName:
               orderRow?.data?.customer_name ||
               `${orderRow?.data?.first_name || ""} ${orderRow?.data?.last_name || ""}`.trim() ||

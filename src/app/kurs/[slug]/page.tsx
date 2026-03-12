@@ -591,15 +591,6 @@ let host = "";
                   {programLabel.slice(1)}
                 </p>
               )}
-              {Array.isArray(course.tags) && course.tags.length > 0 && (
-                <div className="flex flex-wrap justify-center gap-2">
-                  {course.tags.map((t: string, idx: number) => (
-                    <span key={idx} className="rounded-full bg-[#ff1f8f] px-3 py-1 text-[11px] font-semibold text-white shadow-sm shadow-black/20">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              )}
               <p
                 className="font-semibold leading-tight text-white/90"
                 style={{ fontSize: "clamp(22px, 3.2vw, 40px)" }}
@@ -631,6 +622,18 @@ let host = "";
                   className="prose mt-1 text-lg font-semibold max-w-none text-[#ff1f8f]"
                   dangerouslySetInnerHTML={{ __html: toHtml(course.subtitle) }}
                 />
+              )}
+              {Array.isArray(course.tags) && course.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {course.tags.map((t: string, idx: number) => (
+                    <span
+                      key={idx}
+                      className="rounded-full border border-pink-200 bg-pink-50 px-3 py-[6px] text-[11px] font-semibold tracking-wide text-pink-700"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
               )}
               {course.summary && (
                 <div className="prose prose-slate mt-3 text-lg max-w-none" dangerouslySetInnerHTML={{ __html: toHtml(course.summary) }} />

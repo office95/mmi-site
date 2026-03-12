@@ -207,7 +207,7 @@ export async function POST(req: Request) {
         <p><a href="{{order_link}}" target="_blank" rel="noreferrer">Zur Bestellung</a></p>
       `,
       contextType: "order",
-      contextId: cs.metadata?.order_id || null,
+      contextId: cs.metadata?.order_id ?? undefined,
     });
 
     // Kundenbestätigung (automatisierte Buchungsbestätigung)
@@ -303,7 +303,7 @@ export async function POST(req: Request) {
       fallbackSubject: "Buchungsbestätigung",
       fallbackHtml: htmlCustomer,
       contextType: "order",
-      contextId: cs.metadata?.order_id || null,
+      contextId: cs.metadata?.order_id ?? undefined,
     });
       }
     } catch (err) {

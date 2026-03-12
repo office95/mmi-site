@@ -361,7 +361,8 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filtered.map((s) => {
                 const courseSlug = s.course?.slug || s.course?.id || s.id;
-                const favoriteId = s.course?.id || courseSlug || s.id;
+                // Favorit pro Termin (Session), nicht kursübergreifend, damit unterschiedliche Standorte nicht gemeinsam getoggelt werden
+                const favoriteId = s.id;
                 const isFav = favoriteId ? favorites.has(favoriteId) : false;
                 const bookingHref = `/buchen/${s.id}${
                   s.course?.slug ? `?kurs=${s.course.slug}` : s.course?.id ? `?courseId=${s.course.id}` : ""
@@ -376,20 +377,20 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
                       type="button"
                       aria-label={isFav ? "Aus Favoriten entfernen" : "Zu Favoriten hinzufügen"}
                       onClick={() => favoriteId && toggleFavorite(favoriteId)}
-                      className="absolute right-3 top-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-pink-600 shadow-sm shadow-black/10 border border-white/80 hover:scale-105 transition"
+                      className="absolute right-3 top-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/92 text-pink-600 shadow-sm shadow-black/10 border border-white/80 hover:scale-105 transition"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
-                        fill={isFav ? "#ff1f8f" : "none"}
-                        stroke="#ff1f8f"
-                        strokeWidth="1.8"
                         className="h-5 w-5"
                       >
                         <path
+                          d="M12 21s-6.4-4.3-9-8.1C1.2 10.5 2 7.1 5.1 6.1c1.8-.6 3.7 0.1 4.7 1.6 1-1.5 2.9-2.2 4.7-1.6 3.1 1 3.9 4.4 2.2 6.8C18.4 16.7 12 21 12 21Z"
+                          fill={isFav ? "#ff1f8f" : "none"}
+                          stroke="#ff1f8f"
+                          strokeWidth="1.6"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          d="M12 21s-6.5-4.35-9.1-8.18C1.26 10.5 2 7 5.2 6c1.9-.6 3.8.1 4.8 1.7 1-1.6 2.9-2.3 4.8-1.7 3.2 1 3.94 4.5 2.3 6.82C18.5 16.65 12 21 12 21Z"
                         />
                       </svg>
                     </button>

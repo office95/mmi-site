@@ -19,6 +19,7 @@ type SessionCard = {
   seats_taken?: number | null;
   max_participants?: number | null;
   price_cents?: number;
+  partner_id?: string | null;
   course?: { id: string; title: string; slug: string; hero_image_url?: string; type_id?: string | null; category_id?: string | null; created_at?: string | null };
   partners?: { name?: string; city?: string; state?: string; country?: string } | null;
   tags?: string[];
@@ -103,6 +104,7 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
               seats_taken: (s as any).seats_taken ?? null,
               max_participants: (s as any).max_participants ?? null,
               price_cents: s.price_cents,
+              partner_id: (s as any).partner_id ?? null,
               course: (s.courses ?? s.course ?? undefined) as any,
               partners: (s.partners ?? s.partner ?? undefined) as any,
               tags,
@@ -390,12 +392,14 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
                   s.course?.slug ? `?kurs=${s.course.slug}` : s.course?.id ? `?courseId=${s.course.id}` : ""
                 }`;
                 const infoHref = courseSlug ? `/kurs/${courseSlug}${s.id ? `?booking=${s.id}` : ""}` : `/entdecken`;
+                const coursePartnerHref =
+                  courseSlug && s.partner_id ? `/kurs/${courseSlug}?partner=${s.partner_id}${s.id ? `&booking=${s.id}` : ""}` : infoHref;
                 const shareData = () => {
                   const loc = locationText(s);
                   const dateTxt = s.start_date ? new Date(s.start_date + "T00:00:00").toLocaleDateString("de-AT") : "";
                   const title = s.course?.title || "Kurs";
-                  const primary = (typeof window !== "undefined" ? window.location.origin : "") + bookingHref;
-                  const secondary = (typeof window !== "undefined" ? window.location.origin : "") + infoHref;
+                  const primary = (typeof window !== "undefined" ? window.location.origin : "") + coursePartnerHref;
+                  const secondary = (typeof window !== "undefined" ? window.location.origin : "") + bookingHref;
                   const textParts = [title, loc ? `in ${loc}` : null, dateTxt ? `ab ${dateTxt}` : null].filter(Boolean);
                   return { title: "Music Mission Kurs", text: textParts.join(" · "), primary, secondary };
                 };

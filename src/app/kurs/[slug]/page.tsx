@@ -334,6 +334,8 @@ let host = "";
   const resolvedSearch = (await searchParams) || {};
   const bookingFlag =
     (Array.isArray(resolvedSearch.booking) ? resolvedSearch.booking[0] : resolvedSearch.booking) ?? null;
+  const partnerFilter =
+    (Array.isArray(resolvedSearch.partner) ? resolvedSearch.partner[0] : resolvedSearch.partner) ?? null;
 
   // Region-Mismatch nicht blockieren (insb. Preview/Mehrsprach-Domains)
 
@@ -401,6 +403,11 @@ let host = "";
     return allowedCountries.some((c) => country.includes(c));
   });
   course.addons = addons ?? [];
+
+  // Falls aus einem geteilten Link ein Partnerfilter kommt, nur Sessions dieses Standorts anzeigen
+  if (partnerFilter) {
+    course.sessions = (course.sessions ?? []).filter((s: any) => s.partner_id === partnerFilter);
+  }
 
   let states: string[] = [];
   const sessionPartners = Array.from(new Set((course.sessions ?? []).map((s: any) => s.partner_id).filter(Boolean)));

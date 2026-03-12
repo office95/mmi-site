@@ -215,16 +215,11 @@ export async function POST(req: Request) {
 
         const agbLink = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/2843bdf5-f579-4964-8465-e3d9d6798b42.pdf";
         const kursortParts = [
-          partnerRow?.data?.name ||
-            sessionRow?.data?.partner_name ||
-            (cs.metadata?.partner_name as string | undefined) ||
-            sessionRow?.data?.city ||
-            (cs.metadata?.city as string | undefined) ||
-            "Partner",
-          `${partnerRow?.data?.zip ?? sessionRow?.data?.zip ?? (cs.metadata?.zip as string | undefined) ?? ""} ${
-            partnerRow?.data?.city ?? sessionRow?.data?.city ?? (cs.metadata?.city as string | undefined) ?? ""
+          sessionRow?.data?.partner_name || partnerRow?.data?.name || (cs.metadata?.partner_name as string | undefined) || "Partner",
+          `${sessionRow?.data?.zip ?? partnerRow?.data?.zip ?? (cs.metadata?.zip as string | undefined) ?? ""} ${
+            sessionRow?.data?.city ?? partnerRow?.data?.city ?? (cs.metadata?.city as string | undefined) ?? ""
           }`.trim(),
-          partnerRow?.data?.state || sessionRow?.data?.state || (cs.metadata?.state as string | undefined) || "",
+          sessionRow?.data?.state || partnerRow?.data?.state || (cs.metadata?.state as string | undefined) || "",
         ]
           .map((p) => (p ?? "").trim())
           .filter((p) => p.length > 0);

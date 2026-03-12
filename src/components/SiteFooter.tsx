@@ -11,7 +11,7 @@ const toUrl = (path: string | null) => {
 
 export default async function SiteFooter() {
   const supabase = getSupabaseServiceClient();
-  const host = headers().get("host")?.toLowerCase() ?? "";
+  const host = (await headers()).get("host")?.toLowerCase() ?? "";
   const disableLegalLinks = host.includes("musicmission.de") || host.endsWith(".de");
   let logo = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp";
   const { data: settings } = await supabase.from("settings").select("key,value").in("key", ["site_logo_url", "pdf_agb_url", "pdf_datenschutz_url"]);

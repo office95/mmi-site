@@ -47,6 +47,14 @@ export type SeoDefaults = {
   defaultHeroSubline?: string;
 };
 
+export type SeoOverride = {
+  slug?: string;
+  title?: string;
+  description?: string;
+  h1?: string;
+  heroSubline?: string;
+};
+
 const normalizeSlug = (raw: string | null | undefined) => {
   if (!raw) return "/";
   let s = raw.trim();
@@ -70,7 +78,7 @@ const originForVariant = (variant: DomainVariant) => {
   return `https://${env}`;
 };
 
-export async function fetchSeoForPage(defaults: SeoDefaults): Promise<ResolvedSeo> {
+export async function fetchSeoForPage(defaults: SeoDefaults, override?: SeoOverride): Promise<ResolvedSeo> {
   const region = await getRegion();
   const domainVariant: DomainVariant = region === "DE" ? "de" : "at";
   const otherVariant: DomainVariant = domainVariant === "de" ? "at" : "de";
@@ -80,13 +88,13 @@ export async function fetchSeoForPage(defaults: SeoDefaults): Promise<ResolvedSe
   const entry = (data || []).find((r) => r.domain_variant === domainVariant) as SeoMatrixEntry | undefined | null;
   const counterpart = (data || []).find((r) => r.domain_variant === otherVariant) as SeoMatrixEntry | undefined | null;
 
-  const slug = normalizeSlug(entry?.slug ?? defaults.defaultSlug ?? "/");
-  const counterpartSlug = normalizeSlug(counterpart?.slug ?? defaults.defaultSlug ?? "/");
+  const slug = normalizeSlug(override?.slug ?? entry?.slug ?? defaults.defaultSlug ?? "/");
+  const counterpartSlug = normalizeSlug(counterpart?.slug ?? override?.slug ?? defaults.defaultSlug ?? "/");
 
-  const entryTitle = entry?.title_tag || defaults.defaultTitle;
-  const entryDescription = entry?.meta_description || defaults.defaultDescription || "";
-  const h1 = entry?.h1 || defaults.defaultH1 || entryTitle;
-  const heroSubline = entry?.hero_subline || defaults.defaultHeroSubline || undefined;
+  const entryTitle = entry?.title_tag || override?.title || defaults.defaultTitle;
+  const entryDescription = entry?.meta_description || override?.description || defaults.defaultDescription || "";
+  const h1 = entry?.h1 || override?.h1 || defaults.defaultH1 || entryTitle;
+  const heroSubline = entry?.hero_subline || override?.heroSubline || defaults.defaultHeroSubline || undefined;
 
   const selfOrigin = originForVariant(domainVariant).replace(/\/$/, "");
   const otherOrigin = originForVariant(otherVariant).replace(/\/$/, "");

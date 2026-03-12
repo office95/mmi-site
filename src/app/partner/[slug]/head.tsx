@@ -1,4 +1,5 @@
 import { getSupabaseServiceClient } from "@/lib/supabase";
+import { fetchSeoForPage, resolvedSeoToMetadata } from "@/lib/seo-matrix";
 
 type Props = { params: { slug: string } };
 
@@ -12,53 +13,80 @@ const toUrl = (path: string | null) => {
 export default async function Head({ params }: Props) {
   const supabase = getSupabaseServiceClient();
   const slug = params?.slug;
-  let title = "Partner | Music Mission Institute";
-  let description = "Standorte und Partner des Music Mission Institute.";
-  let image: string | null = null;
-  let breadcrumb: any = null;
-
   const site = process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at";
 
-  if (slug) {
-    try {
-      const { data } = await supabase
+  const { data: partner } = slug
+    ? await supabase
         .from("partners")
-        .select("name,city,state,hero1_path,slug")
+        .select("name,city,state,country,hero1_path,slug")
         .eq("slug", slug)
-        .maybeSingle();
-      if (data?.name) {
-        title = `${data.name} | Music Mission Institute`;
-        const loc = [data.city, data.state].filter(Boolean).join(" • ");
-        description = loc ? `${data.name} – Standort ${loc}` : `${data.name} – Partnerstandort des Music Mission Institute.`;
-        image = data.hero1_path ? toUrl(data.hero1_path) : null;
-        breadcrumb = {
+        .maybeSingle()
+    : { data: null };
+
+  const defaults = {
+    pageKey: "partner-template",
+    defaultSlug: `/partner/${slug}`,
+    defaultTitle: partner ? `${partner.name} | Partner | Music Mission Institute` : "Partner | Music Mission Institute",
+    defaultDescription: partner
+      ? `${partner.name} – Partnerstandort${partner.city ? " in " + partner.city : ""}.`
+      : "Partnerstandort bei Music Mission.",
+    defaultH1: partner?.name || "Partner",
+    defaultHeroSubline: partner?.city ? `${partner.city}${partner.state ? ", " + partner.state : ""}` : undefined,
+  };
+
+  const seo = await fetchSeoForPage(defaults, {
+    slug: `/partner/${partner?.slug || slug}`,
+    title: defaults.defaultTitle,
+    description: defaults.defaultDescription,
+    h1: partner?.name,
+    heroSubline: defaults.defaultHeroSubline,
+  });
+  const meta = resolvedSeoToMetadata(seo);
+  const image = partner?.hero1_path ? toUrl(partner.hero1_path) : null;
+
+  const breadcrumb =
+    partner && slug
+      ? {
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
             { "@type": "ListItem", position: 1, name: "Startseite", item: site },
             { "@type": "ListItem", position: 2, name: "Partner", item: `${site}/kursstandorte` },
-            { "@type": "ListItem", position: 3, name: data.name, item: `${site}/partner/${data.slug}` },
+            { "@type": "ListItem", position: 3, name: partner.name, item: `${site}/partner/${partner.slug}` },
           ],
-        };
-      }
-    } catch {
-      /* ignore */
-    }
-  }
+        }
+      : null;
+
+  const languages = meta.alternates?.languages as Record<string, string> | undefined;
 
   return (
     <>
-      <title>{title}</title>
-      <meta name="description" content={description} />
+      <title>{meta.title as string}</title>
+      {meta.description ? <meta name="description" content={meta.description} /> : null}
+      {meta.robots && (
+        <meta
+          name="robots"
+          content={`${meta.robots.index ? "index" : "noindex"}, ${meta.robots.follow ? "follow" : "nofollow"}`}
+        />
+      )}
+      {meta.alternates?.canonical ? <link rel="canonical" href={meta.alternates.canonical as string} /> : null}
+      {languages
+        ? Object.entries(languages).map(([locale, href]) => (
+            <link key={locale} rel="alternate" hrefLang={locale} href={href} />
+          ))
+        : null}
+
+      <meta property="og:title" content={(meta.openGraph?.title as string) || (meta.title as string)} />
+      {meta.openGraph?.description ? <meta property="og:description" content={meta.openGraph.description as string} /> : null}
+      <meta property="og:type" content={meta.openGraph?.type || "website"} />
+      {meta.openGraph?.url ? <meta property="og:url" content={meta.openGraph.url as string} /> : null}
       {image ? <meta property="og:image" content={image} /> : null}
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content={`${site}/partner/${slug}`} />
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
+
+      <meta name="twitter:card" content={meta.twitter?.card || "summary_large_image"} />
+      <meta name="twitter:title" content={(meta.twitter?.title as string) || (meta.title as string)} />
+      {meta.twitter?.description ? <meta name="twitter:description" content={meta.twitter.description as string} /> : null}
       {image ? <meta name="twitter:image" content={image} /> : null}
+
       {breadcrumb ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} /> : null}
     </>
   );

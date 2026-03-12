@@ -17,12 +17,11 @@ import { FaqAccordion } from "./FaqAccordion";
 import Script from "next/script";
 import { SlugSelfHeal } from "./SlugSelfHeal";
 import { SlugGuard } from "./SlugGuard";
+import { fetchSeoForPage, resolvedSeoToMetadata } from "@/lib/seo-matrix";
 
 export const revalidate = 0;
 export const dynamic = "force-dynamic";
 
-const SITE_AT = process.env.NEXT_PUBLIC_DOMAIN_AT || process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at";
-const SITE_DE = process.env.NEXT_PUBLIC_DOMAIN_DE || "https://musicmission.de";
 const OG_FALLBACK =
   "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=1600&q=80&sat=-15&exp=5";
 
@@ -63,33 +62,27 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       .select("title,subtitle,summary,hero_image_url,slug")
       .eq("slug", slug)
       .maybeSingle();
-    if (!course) return { title: "Kurs | Music Mission Institute" };
-    const desc = course.subtitle || course.summary || "Kurs beim Music Mission Institute.";
-    const image = course.hero_image_url ? toUrl(course.hero_image_url) || OG_FALLBACK : OG_FALLBACK;
-    const canonical = `${SITE_AT}/kurs/${course.slug ?? slug}`;
+    const desc = course?.subtitle || course?.summary || "Kurs beim Music Mission Institute.";
+    const defaults = {
+      pageKey: "kurs-template",
+      defaultSlug: `/kurs/${slug}`,
+      defaultTitle: course ? `${course.title} | Music Mission Institute` : "Kurs | Music Mission Institute",
+      defaultDescription: desc,
+      defaultH1: course?.title || "Kurs",
+    };
+    const seo = await fetchSeoForPage(defaults, {
+      slug: `/kurs/${course?.slug || slug}`,
+      title: course ? `${course.title} | Music Mission Institute` : undefined,
+      description: desc,
+      h1: course?.title,
+    });
+    const image = course?.hero_image_url ? toUrl(course.hero_image_url) || OG_FALLBACK : OG_FALLBACK;
+    const meta = resolvedSeoToMetadata(seo);
+    // Ergänze OG/Twitter Bild falls vorhanden
     return {
-      title: `${course.title} | Music Mission Institute`,
-      description: desc.slice(0, 155),
-      alternates: {
-        canonical,
-        languages: {
-          "de-AT": `${SITE_AT}/kurs/${course.slug ?? slug}`,
-          "de-DE": `${SITE_DE}/kurs/${course.slug ?? slug}`,
-          "x-default": canonical,
-        },
-      },
-      openGraph: {
-        title: `${course.title} | Music Mission Institute`,
-        description: desc.slice(0, 200),
-        url: canonical,
-        images: [{ url: image }],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: `${course.title} | Music Mission Institute`,
-        description: desc.slice(0, 200),
-        images: [image],
-      },
+      ...meta,
+      openGraph: { ...(meta.openGraph || {}), images: [{ url: image }], url: seo.canonical },
+      twitter: { ...(meta.twitter || {}), images: [image] },
     };
   } catch {
     return { title: "Kurs | Music Mission Institute" };

@@ -204,9 +204,7 @@ export default function OrdersPage() {
                 <th className="px-4 py-3 text-left">Kunde</th>
                 <th className="px-4 py-3 text-left">Kurs</th>
                 <th className="px-4 py-3 text-left">Termin/Partner</th>
-                <th className="px-4 py-3 text-left">Teilnehmer</th>
                 <th className="px-4 py-3 text-left">Gesamt</th>
-                <th className="px-4 py-3 text-left">Gutschein</th>
                 <th className="px-4 py-3 text-left">Status</th>
                 <th className="px-4 py-3 text-left">Aktion</th>
               </tr>
@@ -214,14 +212,14 @@ export default function OrdersPage() {
             <tbody className="divide-y divide-slate-100">
               {isLoading && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-6 text-center text-slate-500">
+                  <td colSpan={8} className="px-4 py-6 text-center text-slate-500">
                     Lädt…
                   </td>
                 </tr>
               )}
               {error && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-6 text-center text-red-600">
+                  <td colSpan={8} className="px-4 py-6 text-center text-red-600">
                     Fehler beim Laden.
                   </td>
                 </tr>
@@ -258,14 +256,7 @@ export default function OrdersPage() {
                         </div>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-slate-800">{o.participants ?? 1}</td>
                     <td className="px-4 py-3 text-slate-800 font-semibold align-top">{total ? `${total.toFixed(2)} €` : "–"}</td>
-                    <td className="px-4 py-3 text-slate-700 text-xs">
-                      {o.promotion_code || o.coupon_code || "–"}
-                      {o.discount_amount_cents ? (
-                        <span className="block text-[11px] text-emerald-600">-{(o.discount_amount_cents / 100).toFixed(2)} €</span>
-                      ) : null}
-                    </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${statusColor}`}>{o.status || "?"}</span>
                     </td>
@@ -282,7 +273,7 @@ export default function OrdersPage() {
               })}
               {!isLoading && !error && filtered.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-6 text-center text-slate-500">
+                  <td colSpan={8} className="px-4 py-6 text-center text-slate-500">
                     Keine Bestellungen gefunden.
                   </td>
                 </tr>

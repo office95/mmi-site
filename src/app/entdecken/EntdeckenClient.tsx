@@ -152,13 +152,19 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
   }, []);
 
   const futureSessions = useMemo(() => {
+    const targetRegion = debugRegion === "DE" ? "DE" : "AT";
+    const allowedCountries = targetRegion === "DE" ? ["deutschland", "germany"] : ["österreich", "austria"];
     return sessions.filter((s) => {
+      // Region-Filter: nur Sessions mit passendem Land anzeigen
+      const country = (s.partners?.country || s.country || "").toLowerCase();
+      if (!allowedCountries.some((c) => country.includes(c))) return false;
+
       if (!s.start_date) return false;
       const d = new Date(s.start_date + "T00:00:00");
       // Am Starttag ausblenden -> nur strikt zukünftige Termine anzeigen
       return d > today;
     });
-  }, [sessions, today]);
+  }, [sessions, today, debugRegion]);
 
   const filtered = useMemo(() => {
     const q = qSearch.trim().toLowerCase();

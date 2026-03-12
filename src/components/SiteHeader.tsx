@@ -333,13 +333,34 @@ export function SiteHeader() {
         </div>
 
         {/* Mobile Burger */}
-        <button
-          className="header-btn lg:hidden inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-slate-800 hover:bg-slate-100 mr-5 sm:mr-6 lg:mr-8"
+        <div className="lg:hidden flex items-center gap-2 mr-2 sm:mr-3">
+          <Link
+            href="/entdecken?onlyFavs=1"
+            aria-label="Favoriten anzeigen"
+            className="inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-pink-500 hover:bg-slate-100 relative"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5">
+              <path
+                d="M12.1 21.35 12 21.46l-.1-.11C6.14 15.95 2 12.19 2 8.5 2 5.42 4.42 3 7.5 3c1.9 0 3.63.9 4.5 2.09C12.87 3.9 14.6 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.69-4.14 7.45-9.9 12.85Z"
+                fill={favCount ? "#ff1f8f" : "none"}
+                stroke={favCount ? "#ff1f8f" : "#f9a8d4"}
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span className="absolute -right-1 -top-1 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-pink-600 px-[3px] text-[10px] font-bold text-white">
+              {favCount}
+            </span>
+          </Link>
+          <button
+          className="header-btn lg:hidden inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-slate-800 hover:bg-slate-100 mr-3 sm:mr-4 lg:mr-8"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Menü"
         >
           {mobileOpen ? <X size={18} /> : <Menu size={18} />}
         </button>
+        </div>
       </div>
 
       {/* Mobile Drawer wird in ein Portal gehoben, damit er auch nach Scroll immer über allem liegt */}

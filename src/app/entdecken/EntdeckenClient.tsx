@@ -231,6 +231,7 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
           // ids auch weiter pflegen für Abwärtskompatibilität
           const ids = nextMeta.map((m) => m.id);
           window.localStorage.setItem("mmi_favorites", JSON.stringify(ids));
+          window.dispatchEvent(new Event("mmi_favorites_change"));
         } catch (e) {
           console.error("Favoriten speichern fehlgeschlagen", e);
         }

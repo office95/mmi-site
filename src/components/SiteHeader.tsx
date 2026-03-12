@@ -42,42 +42,34 @@ export function SiteHeader() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    try {
-      const raw = window.localStorage.getItem("mmi_favorites");
-      const rawMeta = window.localStorage.getItem("mmi_favorites_meta");
-      if (raw) {
-        const arr = JSON.parse(raw);
-        if (Array.isArray(arr)) setFavCount(arr.length);
-      }
-      if (rawMeta) {
-        const meta = JSON.parse(rawMeta);
-        if (Array.isArray(meta)) setFavMeta(meta);
-      }
-      const handler = () => {
-        try {
-          const raw2 = window.localStorage.getItem("mmi_favorites");
-          const rawMeta2 = window.localStorage.getItem("mmi_favorites_meta");
-          if (raw2) {
-            const arr = JSON.parse(raw2);
-            if (Array.isArray(arr)) setFavCount(arr.length);
-          } else {
-            setFavCount(0);
-          }
-          if (rawMeta2) {
-            const meta = JSON.parse(rawMeta2);
-            if (Array.isArray(meta)) setFavMeta(meta);
-          } else {
-            setFavMeta([]);
-          }
-        } catch {
-          /* ignore */
+    const loadFavs = () => {
+      try {
+        const raw = window.localStorage.getItem("mmi_favorites");
+        const rawMeta = window.localStorage.getItem("mmi_favorites_meta");
+        if (raw) {
+          const arr = JSON.parse(raw);
+          if (Array.isArray(arr)) setFavCount(arr.length);
+        } else {
+          setFavCount(0);
         }
-      };
-      window.addEventListener("storage", handler);
-      return () => window.removeEventListener("storage", handler);
-    } catch {
-      /* ignore */
-    }
+        if (rawMeta) {
+          const meta = JSON.parse(rawMeta);
+          if (Array.isArray(meta)) setFavMeta(meta);
+        } else {
+          setFavMeta([]);
+        }
+      } catch {
+        /* ignore */
+      }
+    };
+    loadFavs();
+    const handler = () => loadFavs();
+    window.addEventListener("storage", handler);
+    window.addEventListener("mmi_favorites_change", handler);
+    return () => {
+      window.removeEventListener("storage", handler);
+      window.removeEventListener("mmi_favorites_change", handler);
+    };
   }, []);
 
   // Body scroll lock, damit der Drawer auf iOS/Android nicht durch Hintergrund-Scroll blockiert wird.
@@ -285,14 +277,14 @@ export function SiteHeader() {
             <Link
               href="/entdecken?onlyFavs=1"
               aria-label="Favoriten anzeigen"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-pink-600 shadow-sm shadow-black/10 border border-slate-200 hover:-translate-y-0.5 transition"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-pink-500 shadow-sm shadow-black/5 border border-slate-200 hover:-translate-y-0.5 transition"
               title="Favoriten öffnen"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-5 w-5">
                 <path
                   d="M12.1 21.35 12 21.46l-.1-.11C6.14 15.95 2 12.19 2 8.5 2 5.42 4.42 3 7.5 3c1.9 0 3.63.9 4.5 2.09C12.87 3.9 14.6 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.69-4.14 7.45-9.9 12.85Z"
                   fill={favCount ? "#ff1f8f" : "none"}
-                  stroke="#ff1f8f"
+                  stroke={favCount ? "#ff1f8f" : "#f9a8d4"}
                   strokeWidth="1.6"
                   strokeLinecap="round"
                   strokeLinejoin="round"

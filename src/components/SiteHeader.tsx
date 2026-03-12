@@ -169,7 +169,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="relative hidden lg:flex flex-1 flex-nowrap whitespace-nowrap items-center justify-center gap-4 lg:gap-5 xl:gap-6 text-[13px] sm:text-sm pl-[1.5vh]">
-          <div className="w-full max-w-[14rem] lg:max-w-[16rem] xl:max-w-[18rem] min-w-[14rem] flex-shrink-0">
+          <div className="w-full max-w-[18rem] lg:max-w-[20rem] xl:max-w-[22rem] min-w-[14rem] flex-shrink-0">
             <CourseSearch variant="compact" />
           </div>
           <Link href="/entdecken" className={`nav-link ${isActive("/entdecken") ? "underline underline-offset-4" : ""}`}>

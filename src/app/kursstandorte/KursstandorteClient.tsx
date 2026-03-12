@@ -151,10 +151,11 @@ export default function KursstandorteClient() {
 
       const stateLc = (p.state || "").toLowerCase();
       const countryLc = (p.country || "").toLowerCase();
-      if (allowedStates.length && stateLc) {
-        if (!allowedStates.some((st) => stateLc.includes(st))) return false;
-      } else if (regionCountries.length && countryLc) {
-        if (!regionCountries.some((c) => countryLc.includes(c))) return false;
+      const stateMatch = allowedStates.length ? allowedStates.some((st) => stateLc.includes(st)) : true;
+      const countryMatch = regionCountries.length ? regionCountries.some((c) => countryLc.includes(c)) : true;
+      // Wenn Bundesland nicht zuordenbar ist, reicht Country-Match, damit Partner nicht fälschlich rausfällt
+      if (stateLc || countryLc) {
+        if (!(stateMatch || countryMatch)) return false;
       }
 
       const text = [p.name, p.state, p.country, ...(p.tags ?? [])].join(" ").toLowerCase();

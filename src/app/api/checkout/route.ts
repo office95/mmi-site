@@ -96,7 +96,7 @@ export async function POST(request: Request) {
   const { data: sessionRow, error: sessionErr } = await supabase
     .from("sessions")
     .select(
-      "id, start_date, start_time, city, price_cents, deposit_cents, max_participants, seats_taken, course_id, courses ( id, title, slug, base_price_cents, deposit_cents )"
+      "id, start_date, start_time, city, state, country, address, zip, partner_name, price_cents, deposit_cents, max_participants, seats_taken, course_id, courses ( id, title, slug, base_price_cents, deposit_cents )"
     )
     .eq("id", sessionId)
     .maybeSingle();
@@ -198,6 +198,12 @@ export async function POST(request: Request) {
         price_mode: depositCents ? "deposit" : "full",
         order_number: orderNumber,
         coupon_code: coupon_code || "",
+        start_date: sessionRow.start_date || "",
+        start_time: sessionRow.start_time || "",
+        partner_name: sessionRow.partner_name || "",
+        zip: sessionRow.zip || "",
+        city: sessionRow.city || "",
+        state: sessionRow.state || "",
       },
       success_url: successUrl,
       cancel_url: cancelUrl,

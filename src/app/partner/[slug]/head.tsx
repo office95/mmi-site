@@ -82,7 +82,7 @@ export default async function Head({ params }: Props) {
 
       <meta property="og:title" content={(meta.openGraph?.title as string) || (meta.title as string)} />
       {meta.openGraph?.description ? <meta property="og:description" content={meta.openGraph.description as string} /> : null}
-      <meta property="og:type" content={meta.openGraph?.type || "website"} />
+      <meta property="og:type" content={(meta.openGraph as any)?.type || "website"} />
       {meta.openGraph?.url ? <meta property="og:url" content={meta.openGraph.url as string} /> : null}
       {image ? <meta property="og:image" content={image} /> : null}
 

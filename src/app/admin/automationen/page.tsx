@@ -249,12 +249,6 @@ export default function AutomationenPage() {
                   </option>
                 ))}
               </select>
-              <button
-                onClick={loadLogs}
-                className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow hover:-translate-y-0.5 transition"
-              >
-                Laden
-              </button>
             </div>
           </div>
           {logsError && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{logsError}</div>}

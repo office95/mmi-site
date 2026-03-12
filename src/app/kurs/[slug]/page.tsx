@@ -449,10 +449,7 @@ let host = "";
   const typeNameLc = (courseTypeName || "").toLowerCase();
   const isExtrem = typeNameLc.includes("extrem");
   const isIntensiv = typeNameLc.includes("intensiv");
-  const programLogo =
-    (isExtrem && toUrl(logoExtremSetting?.value ?? null)) ||
-    (isIntensiv && toUrl(logoIntensivSetting?.value ?? null)) ||
-    null;
+  const programLabel = isExtrem ? "Extrem" : isIntensiv ? "Intensiv" : null;
 
   const heroDefault = "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=1600&q=80";
   const heroDesktop = toUrl(course.hero_image_url) ?? heroDefault;
@@ -587,14 +584,13 @@ let host = "";
                 >
                   {seoResolved.h1 || course.title}
                 </h1>
-                {programLogo && (
-                  <img
-                    src={programLogo}
-                    alt={isExtrem ? "Extrem Programm" : isIntensiv ? "Intensiv Programm" : "Programm Logo"}
-                    className="h-12 sm:h-14 md:h-16 lg:h-18 w-auto max-w-[200px] object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.3)] bg-transparent"
-                  />
-                )}
               </div>
+              {programLabel && (
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm shadow-black/10 border border-white/70">
+                  <span className="inline-block h-2 w-2 rounded-full bg-[#ff1f8f]" />
+                  {programLabel} Programm
+                </div>
+              )}
               {Array.isArray(course.tags) && course.tags.length > 0 && (
                 <div className="flex flex-wrap justify-center gap-2">
                   {course.tags.map((t: string, idx: number) => (

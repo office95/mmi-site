@@ -206,6 +206,8 @@ export async function POST(req: Request) {
         <p><strong>Order:</strong> {{order_number}}</p>
         <p><a href="{{order_link}}" target="_blank" rel="noreferrer">Zur Bestellung</a></p>
       `,
+      contextType: "order",
+      contextId: cs.metadata?.order_id || null,
     });
 
     // Kundenbestätigung (automatisierte Buchungsbestätigung)
@@ -269,10 +271,10 @@ export async function POST(req: Request) {
           absenderName: "Music Mission GmbH",
         });
 
-        await sendAutomationMail({
-          key: "order_customer_confirmation",
-          to: customerEmail,
-          tokens: {
+    await sendAutomationMail({
+      key: "order_customer_confirmation",
+      to: customerEmail,
+      tokens: {
             anredeVorname: orderRow?.data?.first_name || orderRow?.data?.customer_name || "Teilnehmer/in",
             kursname: courseRow?.data?.title || "Kurs",
             terminDatum: formatDate(startDate),
@@ -296,11 +298,13 @@ export async function POST(req: Request) {
             telefonzeile,
             uidNr: "ATU80644028",
             firmenbuchNr_line: firmenbuchNrLine,
-            absenderName: "Music Mission GmbH",
-          },
-          fallbackSubject: "Buchungsbestätigung",
-          fallbackHtml: htmlCustomer,
-        });
+        absenderName: "Music Mission GmbH",
+      },
+      fallbackSubject: "Buchungsbestätigung",
+      fallbackHtml: htmlCustomer,
+      contextType: "order",
+      contextId: cs.metadata?.order_id || null,
+    });
       }
     } catch (err) {
       console.error("Customer mail failed", err);

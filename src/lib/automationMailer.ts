@@ -11,6 +11,9 @@ type SendAutomationArgs = {
   fallbackSubject?: string;
   fallbackHtml?: string;
   fallbackText?: string;
+  contextType?: string;
+  contextId?: string;
+  templateVersion?: string;
 };
 
 function applyTokens(input: string, tokens: Record<string, string | number | null | undefined>) {
@@ -36,6 +39,9 @@ export async function sendAutomationMail({
   fallbackSubject,
   fallbackHtml,
   fallbackText,
+  contextType,
+  contextId,
+  templateVersion,
 }: SendAutomationArgs) {
   const email = String(to).trim();
   if (!email.includes("@")) return { ok: false, error: "Ungültige E-Mail" };
@@ -98,6 +104,8 @@ export async function sendAutomationMail({
 
   let ok = false;
   let error: string | undefined;
+  const htmlPreview = html ? html.slice(0, 2000) : null;
+  const textPreview = text ? text.slice(0, 2000) : null;
   try {
     await sendMail({ to: email, subject, html });
     ok = true;
@@ -108,7 +116,20 @@ export async function sendAutomationMail({
   try {
     await db
       .from("automation_logs")
-      .insert({ automation_id: automation.id, status: ok ? "success" : "error", recipient: email, subject, error_message: error });
+      .insert({
+        automation_id: automation.id,
+        automation_key: key,
+        locale,
+        status: ok ? "success" : "error",
+        recipient: email,
+        subject,
+        error_message: error,
+        context_type: contextType ?? null,
+        context_id: contextId ?? null,
+        html_preview: htmlPreview,
+        text_preview: textPreview,
+        template_version: templateVersion ?? null,
+      });
   } catch (e) {
     // Logging darf Versand nicht blockieren
   }

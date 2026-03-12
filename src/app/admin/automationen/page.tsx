@@ -13,6 +13,10 @@ export default function AutomationenPage() {
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<any | null>(null);
   const [draft, setDraft] = useState({ subject: "", html_body: "", text_body: "", locale: "de-AT" });
+  const [logs, setLogs] = useState<any[]>([]);
+  const [logsLoading, setLogsLoading] = useState(false);
+  const [logsError, setLogsError] = useState<string | null>(null);
+  const [logFilters, setLogFilters] = useState({ search: "", status: "", automation_key: "", recipient: "" });
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -32,6 +36,31 @@ export default function AutomationenPage() {
   useEffect(() => {
     load();
   }, [load]);
+
+  const loadLogs = useCallback(async () => {
+    setLogsLoading(true);
+    setLogsError(null);
+    try {
+      const params = new URLSearchParams();
+      params.set("limit", "50");
+      if (logFilters.search) params.set("search", logFilters.search);
+      if (logFilters.status) params.set("status", logFilters.status);
+      if (logFilters.automation_key) params.set("automation_key", logFilters.automation_key);
+      if (logFilters.recipient) params.set("recipient", logFilters.recipient);
+      const res = await fetch(`/api/admin/automation-logs?${params.toString()}`, { cache: "no-store" });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Fehler beim Laden der Logs");
+      setLogs(json.data || []);
+    } catch (e: any) {
+      setLogsError(e.message || "Fehler");
+    } finally {
+      setLogsLoading(false);
+    }
+  }, [logFilters]);
+
+  useEffect(() => {
+    loadLogs();
+  }, [loadLogs]);
 
   const openEdit = (item: any) => {
     const tpl = (item.templates || []).find((t: any) => t.locale === "de-AT") || item.templates?.[0] || {};
@@ -103,7 +132,7 @@ export default function AutomationenPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <SiteHeader />
-      <main className="mx-auto max-w-6xl px-4 sm:px-8 py-10 space-y-8">
+      <main className="mx-auto max-w-6xl px-4 sm:px-8 py-10 space-y-10">
         <div className="space-y-2">
           <p className="text-sm uppercase tracking-[0.18em] text-slate-500">Admin</p>
           <h1 className="text-3xl font-bold text-slate-900">Automationen</h1>
@@ -178,6 +207,112 @@ export default function AutomationenPage() {
             </tbody>
           </table>
         </div>
+
+        <section className="space-y-3">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h2 className="text-xl font-semibold text-slate-900">Logs</h2>
+              <p className="text-sm text-slate-600">Historie aller gesendeten Automations-E-Mails.</p>
+            </div>
+            <div className="flex gap-2">
+              <input
+                placeholder="Suche Betreff/Empfänger"
+                value={logFilters.search}
+                onChange={(e) => setLogFilters((f) => ({ ...f, search: e.target.value }))}
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              />
+              <input
+                placeholder="Empfänger"
+                value={logFilters.recipient}
+                onChange={(e) => setLogFilters((f) => ({ ...f, recipient: e.target.value }))}
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              />
+              <select
+                value={logFilters.status}
+                onChange={(e) => setLogFilters((f) => ({ ...f, status: e.target.value }))}
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              >
+                <option value="">Status</option>
+                <option value="success">success</option>
+                <option value="error">error</option>
+              </select>
+              <select
+                value={logFilters.automation_key}
+                onChange={(e) => setLogFilters((f) => ({ ...f, automation_key: e.target.value }))}
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm"
+              >
+                <option value="">Automation</option>
+                {items.map((item) => (
+                  <option key={item.id} value={item.key}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={loadLogs}
+                className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow hover:-translate-y-0.5 transition"
+              >
+                Laden
+              </button>
+            </div>
+          </div>
+          {logsError && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{logsError}</div>}
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <table className="min-w-full text-sm">
+              <thead className="bg-slate-50 text-slate-600">
+                <tr>
+                  <th className="px-4 py-3 text-left">Zeit</th>
+                  <th className="px-4 py-3 text-left">Automation</th>
+                  <th className="px-4 py-3 text-left">Empfänger</th>
+                  <th className="px-4 py-3 text-left">Betreff</th>
+                  <th className="px-4 py-3 text-left">Status</th>
+                  <th className="px-4 py-3 text-left">Preview</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {logsLoading && (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-6 text-center text-slate-500">
+                      Lädt…
+                    </td>
+                  </tr>
+                )}
+                {!logsLoading && logs.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-6 text-center text-slate-500">
+                      Keine Einträge.
+                    </td>
+                  </tr>
+                )}
+                {!logsLoading &&
+                  logs.map((log) => (
+                    <tr key={log.id} className="hover:bg-slate-50">
+                      <td className="px-4 py-3 text-xs text-slate-600 whitespace-nowrap">{new Date(log.sent_at).toLocaleString("de-AT")}</td>
+                      <td className="px-4 py-3">
+                        <div className="font-semibold text-slate-900">{log.automation_key || "–"}</div>
+                        <div className="text-xs text-slate-500">{log.locale || "de-AT"}</div>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-slate-700">{log.recipient}</td>
+                      <td className="px-4 py-3 text-xs text-slate-700">{log.subject}</td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`rounded-full px-2 py-1 text-[11px] font-semibold ${
+                            log.status === "success" ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
+                          }`}
+                        >
+                          {log.status}
+                        </span>
+                        {log.error_message && <div className="text-[11px] text-red-600">{log.error_message}</div>}
+                      </td>
+                      <td className="px-4 py-3 text-xs text-slate-600 max-w-xs truncate">
+                        {log.text_preview || log.html_preview || "—"}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
         <div className="text-sm text-slate-500">
           <Link className="text-[#ff1f8f] hover:underline" href="/admin">

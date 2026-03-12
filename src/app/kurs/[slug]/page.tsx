@@ -615,6 +615,17 @@ let host = "";
       </section>
 
       <main className="px-4 py-10 sm:px-8 lg:px-20 bg-slate-50/40">
+        {(isExtrem || isIntensiv) && (
+          <div className="mx-auto max-w-[1200px] mb-6">
+            <Link
+              href={isExtrem ? "/extremkurs" : "/intensiv"}
+              className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-slate-900/15 hover:-translate-y-0.5 transition"
+            >
+              {isExtrem ? "Alle Extremkurse" : "Alle Intensivausbildungen"}
+              <span aria-hidden>→</span>
+            </Link>
+          </div>
+        )}
         <div className="mx-auto max-w-[1200px] grid gap-8 lg:gap-10 lg:grid-cols-3">
           <div className="space-y-8 lg:col-span-2">
             <div className="space-y-3">

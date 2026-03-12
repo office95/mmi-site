@@ -63,12 +63,16 @@ export default async function Head({ params }: Props) {
     <>
       <title>{meta.title as string}</title>
       {meta.description ? <meta name="description" content={meta.description} /> : null}
-      {meta.robots && (
-        <meta
-          name="robots"
-          content={`${meta.robots.index ? "index" : "noindex"}, ${meta.robots.follow ? "follow" : "nofollow"}`}
-        />
-      )}
+      {meta.robots
+        ? typeof meta.robots === "string"
+          ? <meta name="robots" content={meta.robots} />
+          : (
+            <meta
+              name="robots"
+              content={`${meta.robots.index ? "index" : "noindex"}, ${meta.robots.follow ? "follow" : "nofollow"}`}
+            />
+          )
+        : null}
       {meta.alternates?.canonical ? <link rel="canonical" href={meta.alternates.canonical as string} /> : null}
       {languages
         ? Object.entries(languages).map(([locale, href]) => (

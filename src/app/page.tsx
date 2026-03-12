@@ -284,6 +284,7 @@ export default async function Home() {
           <FlyInCards />
         </section>
 
+        {region === "AT" && (
         <section className="px-6 py-14 sm:px-10 lg:px-16 bg-[#f7f8fb]">
           <div className="mx-auto max-w-6xl">
             <div className="relative overflow-hidden rounded-[40px] border border-slate-200/80 bg-gradient-to-b from-white via-white to-[#f0f1f5] p-[1px] shadow-[0_40px_90px_-70px_rgba(15,23,42,0.8)] isolate">
@@ -356,6 +357,7 @@ export default async function Home() {
             </div>
           </div>
         </section>
+        )}
 
         {/* Kurs-Marquee */}
         <section className="bg-white px-6 py-14 sm:px-10 lg:px-16">

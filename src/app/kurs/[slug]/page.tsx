@@ -474,6 +474,8 @@ let host = "";
     location,
   });
   const canonical = seoResolved.canonical;
+  const heroH1Candidate = (seoResolved.h1 || "").trim();
+  const heroH1 = heroH1Candidate && heroH1Candidate.toLowerCase() !== "kurs" ? heroH1Candidate : course.title;
 
   const SITE_AT = process.env.NEXT_PUBLIC_DOMAIN_AT || process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at";
   const breadcrumbLd = {
@@ -582,7 +584,7 @@ let host = "";
                   className="font-anton leading-[0.95] text-white text-center"
                   style={{ fontSize: "clamp(56px, 8vw, 90px)" }}
                 >
-                  {seoResolved.h1 || course.title}
+                  {heroH1}
                 </h1>
               </div>
               {programLabel && (

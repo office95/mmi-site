@@ -170,14 +170,27 @@ export default function AutomationenPage() {
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-700">{item.trigger || "–"}</td>
                     <td className="px-4 py-3">
-                      <button
-                        onClick={() => toggleEnabled(item)}
-                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                          item.enabled ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-700"
-                        }`}
-                      >
+                      <label className="inline-flex items-center gap-2 text-xs font-semibold text-slate-800">
+                        <div
+                          className={`relative inline-flex h-5 w-10 items-center rounded-full transition ${
+                            item.enabled ? "bg-emerald-500" : "bg-slate-300"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={item.enabled}
+                            onChange={() => toggleEnabled(item)}
+                            className="peer sr-only"
+                            aria-label="Automation aktivieren/deaktivieren"
+                          />
+                          <span
+                            className={`absolute left-1 h-3.5 w-3.5 rounded-full bg-white shadow transition ${
+                              item.enabled ? "translate-x-5" : "translate-x-0"
+                            }`}
+                          />
+                        </div>
                         {item.enabled ? "Aktiv" : "Inaktiv"}
-                      </button>
+                      </label>
                     </td>
                     <td className="px-4 py-3 text-xs text-slate-600">
                       {item.last_log ? (

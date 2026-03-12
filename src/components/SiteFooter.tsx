@@ -1,5 +1,6 @@
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import Image from "next/image";
+import { headers } from "next/headers";
 
 const toUrl = (path: string | null) => {
   if (!path) return null;
@@ -10,14 +11,16 @@ const toUrl = (path: string | null) => {
 
 export default async function SiteFooter() {
   const supabase = getSupabaseServiceClient();
+  const host = headers().get("host")?.toLowerCase() ?? "";
+  const disableLegalLinks = host.includes("musicmission.de") || host.endsWith(".de");
   let logo = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp";
   const { data: settings } = await supabase.from("settings").select("key,value").in("key", ["site_logo_url", "pdf_agb_url", "pdf_datenschutz_url"]);
   const logoRow = settings?.find((s: any) => s.key === "site_logo_url");
   const agbRow = settings?.find((s: any) => s.key === "pdf_agb_url");
   const dsRow = settings?.find((s: any) => s.key === "pdf_datenschutz_url");
   if (logoRow?.value) logo = toUrl(logoRow.value) ?? logo;
-  const agbUrl = toUrl(agbRow?.value ?? null) || "";
-  const dsUrl = toUrl(dsRow?.value ?? null) || "";
+  const agbUrl = disableLegalLinks ? "" : toUrl(agbRow?.value ?? null) || "";
+  const dsUrl = disableLegalLinks ? "" : toUrl(dsRow?.value ?? null) || "";
 
   return (
     <footer className="relative bg-[#ff1f8f] text-white px-5 sm:px-10 lg:px-20 z-40 shadow-[0_-16px_48px_rgba(0,0,0,0.14)] pt-10 pb-10 sm:pt-12 sm:pb-12">

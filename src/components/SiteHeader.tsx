@@ -291,9 +291,11 @@ export function SiteHeader() {
                 />
               </svg>
             </Link>
-            <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-pink-600 px-1 text-[10px] font-bold text-white">
-              {favCount}
-            </span>
+            {favCount > 0 && (
+              <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-pink-600 px-1 text-[10px] font-bold text-white">
+                {favCount}
+              </span>
+            )}
             {showFavPopover && (
               <div className="absolute right-0 mt-2 w-72 max-w-[90vw] rounded-2xl border border-slate-200 bg-white shadow-xl shadow-black/10 p-3 text-left">
                 <p className="text-sm font-semibold text-slate-900">Favoriten ({favCount})</p>

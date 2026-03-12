@@ -101,8 +101,13 @@ function FilterDropdown({
 }
 
 export default function OrdersPage() {
-  const { data, error, isLoading } = useSWR("/api/admin/orders", fetcher);
-  const { data: appsData, error: appsError, isLoading: appsLoading, mutate: mutateApps } = useSWR("/api/admin/diploma-applications", fetcher);
+  const { data, error, isLoading } = useSWR("/api/admin/orders", fetcher, { refreshInterval: 15000, revalidateOnFocus: true });
+  const {
+    data: appsData,
+    error: appsError,
+    isLoading: appsLoading,
+    mutate: mutateApps,
+  } = useSWR("/api/admin/diploma-applications", fetcher, { refreshInterval: 30000, revalidateOnFocus: true });
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [tab, setTab] = useState<"orders" | "applications">("orders");

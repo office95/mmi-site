@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import useSWR from "swr";
 
 type PeriodKey = "today" | "week" | "month" | "year";
 
@@ -18,31 +19,18 @@ type DashboardData = {
   form_submissions: number;
 };
 
+const fetcher = async (url: string) => {
+  const res = await fetch(url, { cache: "no-store" });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || "Fehler beim Laden");
+  return json;
+};
+
 export default function AdminHome() {
-  const [data, setData] = useState<Record<PeriodKey, DashboardData> | null>(null);
+  const { data, error, isLoading } = useSWR("/api/admin/dashboard", fetcher, { refreshInterval: 15000, revalidateOnFocus: true });
   const [active, setActive] = useState<PeriodKey>("today");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await fetch("/api/admin/dashboard", { cache: "no-store" });
-        const json = await res.json();
-        if (!res.ok) throw new Error(json.error || "Fehler beim Laden");
-        setData(json.periods);
-      } catch (e: any) {
-        setError(e.message || "Fehler");
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
-
-  const current = useMemo(() => (data ? data[active] : null), [data, active]);
+  const current = useMemo(() => (data ? data.periods?.[active] : null), [data, active]);
 
   const formatEur = (cents: number) =>
     new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format((cents || 0) / 100);
@@ -71,15 +59,17 @@ export default function AdminHome() {
           </div>
         </div>
 
-        {error && <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}
+        {error && (
+          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error.message || "Fehler"}</div>
+        )}
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard title="Bestellungen" value={current?.orders.total} loading={loading || !current} />
-          <StatCard title="Umsatz (paid)" value={current ? formatEur(current.orders.revenue_cents_paid) : "–"} loading={loading || !current} />
-          <StatCard title="Paid / Pending" value={current ? `${current.orders.paid} / ${current.orders.pending}` : "–"} loading={loading || !current} />
-          <StatCard title="Automations Mails" value={current ? `${current.automations.sent} gesendet` : "–"} hint={current ? `${current.automations.errors} Fehler` : ""} loading={loading || !current} />
-          <StatCard title="Diploma Anmeldungen" value={current?.diploma_applications} loading={loading || !current} />
-          <StatCard title="Formular Einsendungen" value={current?.form_submissions} loading={loading || !current} />
+          <StatCard title="Bestellungen" value={current?.orders.total} loading={isLoading || !current} />
+          <StatCard title="Umsatz (paid)" value={current ? formatEur(current.orders.revenue_cents_paid) : "–"} loading={isLoading || !current} />
+          <StatCard title="Paid / Pending" value={current ? `${current.orders.paid} / ${current.orders.pending}` : "–"} loading={isLoading || !current} />
+          <StatCard title="Automations Mails" value={current ? `${current.automations.sent} gesendet` : "–"} hint={current ? `${current.automations.errors} Fehler` : ""} loading={isLoading || !current} />
+          <StatCard title="Diploma Anmeldungen" value={current?.diploma_applications} loading={isLoading || !current} />
+          <StatCard title="Formular Einsendungen" value={current?.form_submissions} loading={isLoading || !current} />
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">

@@ -477,6 +477,7 @@ let host = "";
   });
   const canonical = seoResolved.canonical;
 
+  const SITE_AT = process.env.NEXT_PUBLIC_DOMAIN_AT || process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at";
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

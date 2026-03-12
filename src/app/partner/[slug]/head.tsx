@@ -86,9 +86,11 @@ export default async function Head({ params }: Props) {
       {meta.openGraph?.url ? <meta property="og:url" content={meta.openGraph.url as string} /> : null}
       {image ? <meta property="og:image" content={image} /> : null}
 
-      <meta name="twitter:card" content={meta.twitter?.card || "summary_large_image"} />
-      <meta name="twitter:title" content={(meta.twitter?.title as string) || (meta.title as string)} />
-      {meta.twitter?.description ? <meta name="twitter:description" content={meta.twitter.description as string} /> : null}
+      <meta name="twitter:card" content={(meta.twitter as any)?.card || "summary_large_image"} />
+      <meta name="twitter:title" content={(meta.twitter as any)?.title || (meta.title as string)} />
+      {(meta.twitter as any)?.description ? (
+        <meta name="twitter:description" content={(meta.twitter as any).description as string} />
+      ) : null}
       {image ? <meta name="twitter:image" content={image} /> : null}
 
       {breadcrumb ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} /> : null}

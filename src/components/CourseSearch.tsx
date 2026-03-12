@@ -94,17 +94,28 @@ export default function CourseSearch({ variant = "default" }: { variant?: Varian
   const results = useMemo(() => {
     const term = q.trim().toLowerCase();
     if (!term) return [];
-    return allCourses
-      .filter((c) => {
+    const scored = allCourses
+      .map((c) => {
         const hay = c.title?.toLowerCase() ?? "";
         const tagHay = (c.tags ?? []).join(" ").toLowerCase();
         const partnerHay = (coursePartners[c.id] ?? [])
           .map((p) => `${p.partner ?? ""} ${p.state ?? ""} ${p.city ?? ""}`)
           .join(" ")
           .toLowerCase();
-        return hay.includes(term) || tagHay.includes(term) || partnerHay.includes(term);
+        const matchTitle = hay.includes(term);
+        const matchStart = hay.startsWith(term);
+        const matchTag = tagHay.includes(term);
+        const matchPartner = partnerHay.includes(term);
+        const score =
+          (matchStart ? 3 : 0) +
+          (matchTitle ? 2 : 0) +
+          (matchPartner ? 1 : 0) +
+          (matchTag ? 0.5 : 0);
+        return { c, score };
       })
-      .slice(0, 8);
+      .filter((x) => x.score > 0)
+      .sort((a, b) => b.score - a.score);
+    return scored.slice(0, 5).map((x) => x.c);
   }, [q, allCourses, coursePartners]);
 
   const compact = variant === "compact";
@@ -139,8 +150,8 @@ export default function CourseSearch({ variant = "default" }: { variant?: Varian
       </div>
 
       {results.length > 0 && (
-        <div className="fixed left-1/2 top-[62px] -translate-x-1/2 w-[82vw] max-w-[500px] max-h-[60vh] overflow-y-auto mt-2 rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-300/50 z-[60] px-[2px]">
-          <ul className="divide-y divide-slate-100">
+        <div className="fixed left-1/2 top-[62px] -translate-x-1/2 w-[82vw] max-w-[500px] max-h-[320px] overflow-y-auto overscroll-contain mt-2 rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-300/50 z-[60] px-[2px]">
+          <ul className="divide-y divide-slate-100" onWheel={(e) => e.stopPropagation()} onTouchMove={(e) => e.stopPropagation()}>
             {results.map((c) => (
               <li key={c.id}>
                 <Link href={`/kurs/${c.slug}`} className="flex items-center gap-3 px-3 py-2 hover:bg-slate-50">

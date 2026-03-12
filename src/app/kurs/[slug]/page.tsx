@@ -449,7 +449,7 @@ let host = "";
   const typeNameLc = (courseTypeName || "").toLowerCase();
   const isExtrem = typeNameLc.includes("extrem");
   const isIntensiv = typeNameLc.includes("intensiv");
-  const programLabel = isExtrem ? "Extrem" : isIntensiv ? "Intensiv" : null;
+  const programLabel = isExtrem ? "Extremkurs" : isIntensiv ? "Intensivausbildung" : null;
 
   const heroDefault = "https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=1600&q=80";
   const heroDesktop = toUrl(course.hero_image_url) ?? heroDefault;
@@ -586,10 +586,10 @@ let host = "";
                 </h1>
               </div>
               {programLabel && (
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm shadow-black/10 border border-white/70">
-                  <span className="inline-block h-2 w-2 rounded-full bg-[#ff1f8f]" />
-                  {programLabel} Programm
-                </div>
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/80">
+                  <span className="text-[#ff1f8f]">{programLabel.slice(0, 1)}</span>
+                  {programLabel.slice(1)}
+                </p>
               )}
               {Array.isArray(course.tags) && course.tags.length > 0 && (
                 <div className="flex flex-wrap justify-center gap-2">

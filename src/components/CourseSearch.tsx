@@ -148,9 +148,7 @@ export default function CourseSearch({ variant = "default" }: { variant?: Varian
                 ? "w-full border-none bg-transparent text-sm sm:text-base text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-0 md:text-sm"
                 : "w-full border-none bg-transparent text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-0"
             }
-            style={{
-              fontSize: "16px",
-            }
+            style={{ fontSize: "16px" }}
           />
         </div>
         <div className="flex items-center gap-2 text-[11px] text-slate-500">

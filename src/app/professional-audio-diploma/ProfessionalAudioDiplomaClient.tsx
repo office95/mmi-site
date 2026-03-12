@@ -93,12 +93,12 @@ export default function ProfessionalAudioDiplomaClient({ h1, heroSubline }: { h1
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <Image src={heroImg} alt="Professional Audio Diploma" fill className="object-cover" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/40 to-black/15" />
-        <div className="absolute inset-0 flex items-start px-6 lg:px-20 pt-[10%]">
-          <div className="max-w-4xl space-y-4 drop-shadow-[0_10px_40px_rgba(0,0,0,0.4)]">
+        <div className="absolute inset-0 flex items-center justify-center px-6 lg:px-20">
+          <div className="max-w-4xl space-y-4 text-center drop-shadow-[0_10px_40px_rgba(0,0,0,0.4)]">
             <p className="text-sm uppercase tracking-[0.28em] text-white/80">Studiengang</p>
             <h1 className="font-anton text-4xl sm:text-5xl lg:text-6xl leading-tight">{h1 || "Professional Audio Diploma"}</h1>
-            {heroSubline ? <p className="text-base sm:text-lg text-white/90 max-w-3xl">{heroSubline}</p> : null}
-            <div className="flex flex-wrap gap-3">
+            {heroSubline ? <p className="text-base sm:text-lg text-white/90 max-w-3xl mx-auto">{heroSubline}</p> : null}
+            <div className="flex flex-wrap justify-center gap-3">
               <a
                 href="#anmeldung"
                 className="rounded-full bg-[#ff1f8f] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-pink-500/40 hover:-translate-y-0.5 transition"

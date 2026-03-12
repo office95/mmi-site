@@ -349,7 +349,7 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
                     <button
                       onClick={() => setOnlyFavs((v) => !v)}
                       className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-semibold transition ${
-                        onlyFavs ? "border-pink-500 bg-pink-50 text-pink-700" : "border-slate-200 bg-white text-slate-700"
+                        onlyFavs ? "border-pink-500 bg-pink-50 text-black" : "border-slate-200 bg-white text-black"
                       }`}
                     >
                       <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-pink-50 text-pink-600 border border-pink-200">

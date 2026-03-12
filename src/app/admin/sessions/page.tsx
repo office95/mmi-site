@@ -90,6 +90,7 @@ export default function SessionsPage() {
   const [filterFormat, setFilterFormat] = useState("");
   const [filterLanguage, setFilterLanguage] = useState("");
   const [onlyOpen, setOnlyOpen] = useState(false);
+  const [includePast, setIncludePast] = useState(false);
   const [showAllModal, setShowAllModal] = useState(false);
   const [allSessions, setAllSessions] = useState<any[]>([]);
   const [allLoading, setAllLoading] = useState(false);
@@ -116,7 +117,7 @@ export default function SessionsPage() {
   useEffect(() => {
     const load = async () => {
       const [sRes, cRes, pRes, catRes, fRes, lRes, tRes] = await Promise.all([
-        fetch(`/api/admin/sessions${onlyOpen ? "?open=1" : ""}`),
+        fetch(`/api/admin/sessions?${onlyOpen ? "open=1&" : ""}${includePast ? "include_past=1" : ""}`),
         fetch("/api/admin/courses"),
         fetch("/api/admin/partners"),
         fetch("/api/admin/course-categories"),
@@ -133,7 +134,7 @@ export default function SessionsPage() {
       if (tRes.ok) setTypes(((await tRes.json()).data ?? []).map((t: any) => ({ value: t.id, label: t.name })));
     };
     load();
-  }, [onlyOpen]);
+  }, [onlyOpen, includePast]);
 
   const openNew = () => {
     setEditing({ ...emptySession, id: uuid() });
@@ -241,6 +242,14 @@ export default function SessionsPage() {
               {onlyOpen ? "Alle Kurstermine" : "Offene Kurstermine"}
             </button>
             <button
+              onClick={() => setIncludePast((v) => !v)}
+              className={`rounded-xl px-4 py-2 text-sm font-semibold border ${
+                includePast ? "border-slate-300 bg-slate-100 text-slate-800" : "border-slate-200 bg-white text-slate-700"
+              }`}
+            >
+              {includePast ? "Vergangene ausblenden" : "Vergangene anzeigen"}
+            </button>
+            <button
               onClick={loadAllSessions}
               disabled={allLoading}
               className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:border-[#ff1f8f] hover:text-[#ff1f8f] disabled:opacity-60"
@@ -292,6 +301,7 @@ export default function SessionsPage() {
             {filtered.map((s) => {
               const courseName = getName(s.course_id, courses.map((c) => ({ id: c.id, name: c.title }))) ?? "—";
               const partnerName = getName(s.partner_id, partners.map((p) => ({ id: p.id, name: p.name }))) ?? "—";
+              const isPast = (s.start_date || "") < new Date().toISOString().slice(0, 10);
               return (
                 <div key={s.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition">
                   <div className="flex items-start justify-between gap-2">
@@ -302,15 +312,18 @@ export default function SessionsPage() {
                         {s.start_date ?? "Datum fehlt"} {s.start_time ? `· ${s.start_time}` : ""}{" "}
                       </p>
                     </div>
-                    <span
-                      className={
-                        (s.status ?? "active") === "active"
-                          ? "rounded-full px-2 py-0.5 text-[11px] font-semibold border border-emerald-200 text-emerald-700"
-                          : "rounded-full px-2 py-0.5 text-[11px] font-semibold border border-amber-200 text-amber-700"
-                      }
-                    >
-                      {s.status ?? "—"}
-                    </span>
+                    <div className="flex flex-col items-end gap-1">
+                      <span
+                        className={
+                          (s.status ?? "active") === "active"
+                            ? "rounded-full px-2 py-0.5 text-[11px] font-semibold border border-emerald-200 text-emerald-700"
+                            : "rounded-full px-2 py-0.5 text-[11px] font-semibold border border-amber-200 text-amber-700"
+                        }
+                      >
+                        {s.status ?? "—"}
+                      </span>
+                      {isPast && <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-semibold text-slate-700">Archiviert</span>}
+                    </div>
                   </div>
                   <div className="mt-3 flex gap-2">
                     <button

@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
   const region = getRegionFromRequest(req);
   const showAll = req.nextUrl.searchParams.get("all") === "1";
   const onlyOpen = req.nextUrl.searchParams.get("open") === "1";
+  const includePast = req.nextUrl.searchParams.get("include_past") === "1";
   const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.,region.eq.%20`;
 
   // 1) Sessions laden
@@ -23,14 +24,16 @@ export async function GET(req: NextRequest) {
   if (errSes) return NextResponse.json({ error: errSes.message }, { status: 500 });
   if (!sessions || sessions.length === 0) return NextResponse.json({ data: [] });
 
-  const filteredSessions = onlyOpen
-    ? (sessions as any[]).filter((s) => {
-        const max = Number(s.max_participants ?? 0);
-        const taken = Number(s.seats_taken ?? 0);
-        if (!max) return true; // kein Limit hinterlegt → als offen zeigen
-        return taken < max;
-      })
-    : sessions;
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const filteredSessions = (sessions as any[]).filter((s) => {
+    const isPast = (s.start_date || "") < todayIso;
+    if (!includePast && isPast) return false;
+    if (!onlyOpen) return true;
+    const max = Number(s.max_participants ?? 0);
+    const taken = Number(s.seats_taken ?? 0);
+    if (!max) return true; // kein Limit hinterlegt → als offen zeigen
+    return taken < max;
+  });
 
   // 2) Kurse nachladen
   const courseIds = Array.from(

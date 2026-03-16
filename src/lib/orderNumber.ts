@@ -2,30 +2,33 @@ import { getSupabaseServiceClient } from "@/lib/supabase";
 
 type OrderNumberOptions = {
   supabase?: ReturnType<typeof getSupabaseServiceClient>;
-  regionSuffix?: string; // e.g. "AT" | "DE"
+  regionSuffix?: string; // z.B. "AT" | "DE" (fällt sonst auf "XX")
 };
 
-// Generiert Ordernummern im Format: MMI-<laufendeZahl ab 1100>-<Jahr>[-<Region>]
+// Neues Format: MMI-<LAND>-<Jahr>-<fünfstellige Sequenz>
+// Beispiel: MMI-AT-2026-00001
 export async function generateOrderNumber(opts: OrderNumberOptions = {}) {
   const supabase = opts.supabase ?? getSupabaseServiceClient();
   const year = new Date().getFullYear();
-  const prefix = `MMI-`;
-  const suffix = opts.regionSuffix ? `-${year}-${opts.regionSuffix}` : `-${year}`;
+  const region = (opts.regionSuffix || "XX").toUpperCase();
+  const prefix = `MMI-${region}-${year}-`;
 
   const { data } = await supabase
     .from("orders")
     .select("order_number")
-    .ilike("order_number", `${prefix}%${suffix}`)
+    .ilike("order_number", `${prefix}%`)
     .order("order_number", { ascending: false })
     .limit(1);
 
   const last = data?.[0]?.order_number as string | undefined;
-  let lastSeq = 1099; // Start -> next = 1100
-  if (last && last.startsWith(prefix) && last.endsWith(suffix)) {
-    const mid = last.replace(prefix, "").replace(suffix, "");
-    const num = parseInt(mid, 10);
+  let lastSeq = 0;
+  if (last && last.startsWith(prefix)) {
+    const seq = last.slice(prefix.length);
+    const num = parseInt(seq, 10);
     if (!Number.isNaN(num)) lastSeq = num;
   }
+
   const next = lastSeq + 1;
-  return `${prefix}${next}${suffix}`;
+  const seqPart = String(next).padStart(5, "0");
+  return `${prefix}${seqPart}`;
 }

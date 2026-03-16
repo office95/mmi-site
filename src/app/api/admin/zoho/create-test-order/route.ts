@@ -37,7 +37,7 @@ export async function POST(req: Request) {
   let courseId = body.course_id || DEFAULT_COURSE_ID;
   let sessionId = body.session_id || DEFAULT_SESSION_ID;
 
-  const order_number = await generateOrderNumber(supabase);
+  const order_number = await generateOrderNumber({ supabase });
 
   const payload = {
     course_id: courseId,

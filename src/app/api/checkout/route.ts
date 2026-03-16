@@ -127,7 +127,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Keine Plätze mehr frei" }, { status: 409 });
   }
 
-  const orderNumber = await generateOrderNumber(supabase);
+  const hostHeader = request.headers.get("x-forwarded-host") || request.headers.get("host") || "";
+  const originHeader = request.headers.get("origin") || "";
+  const domainSource = (hostHeader || originHeader).toLowerCase();
+  const hostname = domainSource.split("://").pop()?.split(":")[0] || "";
+  const regionSuffix = hostname.endsWith("musicmission.at")
+    ? "AT"
+    : hostname.endsWith("musicmission.de")
+      ? "DE"
+      : undefined;
+
+  const orderNumber = await generateOrderNumber({ supabase, regionSuffix });
 
   const { data: orderInsert, error: orderErr } = await supabase
     .from("orders")
@@ -206,6 +216,7 @@ export async function POST(request: Request) {
         participants: String(participants),
         price_mode: depositCents ? "deposit" : "full",
         order_number: orderNumber,
+        region_suffix: regionSuffix || "",
         coupon_code: coupon_code || "",
         start_date: sessionRow.start_date || "",
         start_time: sessionRow.start_time || "",

@@ -13,6 +13,7 @@ import { URL } from "node:url";
 import Link from "next/link";
 import CourseRail from "@/components/CourseRail";
 import { fetchSeoForPage, resolvedSeoToMetadata } from "@/lib/seo-matrix";
+import Script from "next/script";
 
 const toUrl = (path: string | null) => {
   if (!path) return null;
@@ -201,11 +202,64 @@ export default async function Home() {
     }))
     .sort((a, b) => a.title.localeCompare(b.title, "de"));
 
+  // JSON-LD: FAQ + Kurs-ItemList für bessere Keyword-Abdeckung ohne optische Änderungen
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://musicmission.at";
+  const faqLd =
+    faqList.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqList.slice(0, 12).map((faq) => ({
+            "@type": "Question",
+            name: faq.q,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: Array.isArray(faq.a) ? faq.a.join(" ") : faq.a,
+            },
+          })),
+        }
+      : null;
+
+  const courseItemList =
+    coursesMixed.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          itemListElement: coursesMixed
+            .filter((c) => c.slug)
+            .slice(0, 12)
+            .map((course, idx) => ({
+              "@type": "ListItem",
+              position: idx + 1,
+              url: `${baseUrl}/kurs/${course.slug}`,
+              name: course.title,
+            })),
+        }
+      : null;
+
   return (
     <div className="min-h-screen text-foreground bg-white">
       <SiteHeader />
       <h1 className="sr-only">{seo.h1}</h1>
       <main className="relative">
+        {faqLd ? (
+          <Script
+            id="home-faq-ld"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(faqLd),
+            }}
+          />
+        ) : null}
+        {courseItemList ? (
+          <Script
+            id="home-course-list-ld"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(courseItemList),
+            }}
+          />
+        ) : null}
         <section className="relative min-h-screen -mt-[5.5rem] sm:-mt-[5.5rem]">
           <div className="flex h-full flex-col">
             <div className="h-[80vh] overflow-visible bg-black relative">

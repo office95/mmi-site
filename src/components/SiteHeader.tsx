@@ -163,9 +163,9 @@ export function SiteHeader() {
   return (
     <header className="site-header fixed top-0 left-0 right-0 z-40 w-full" style={{ pointerEvents: "auto" }}>
       <div className="h-10 sm:h-8 bg-black text-white flex items-center justify-center px-3">
-        <h1 className="text-center text-[11px] tracking-[0.14em] uppercase font-semibold">
+        <p className="text-center text-[11px] tracking-[0.14em] uppercase font-semibold">
           Kurse in Musikproduktion · Tontechnik · DJ · Vocalcoaching
-        </h1>
+        </p>
       </div>
       <div
         className={`flex h-14 w-full items-center pl-[2vh] pr-3 text-sm font-semibold tracking-tight sm:pr-6 lg:pr-20 shadow-sm transition-colors transition-backdrop duration-200 flex-nowrap ${

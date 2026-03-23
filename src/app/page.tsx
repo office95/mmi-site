@@ -58,10 +58,10 @@ export const dynamic = "force-dynamic";
 const homeSeoDefaults = {
   pageKey: "homepage",
   defaultSlug: "/",
-  defaultTitle: "Musikproduktion, Tontechnik, DJ & Vocal Kurse | Music Mission Institute",
+  defaultTitle: "Musikproduktion & Tontechnik Kurse | Music Mission Institute",
   defaultDescription:
-    "Music Mission Institute ist Anbieter für Kurse in Musikproduktion, Tontechnik, Livetontechnik, DJing und Vocalcoaching. Praxisnahe Kurse mit Profis aus der Musikbranche.",
-  defaultH1: "Music Mission Institute – Kurse für Musikproduktion, Tontechnik & DJing",
+    "Praxisnahe Kurse in Musikproduktion, Tontechnik, Live-Tontechnik, DJing & Vocalcoaching in Österreich und Deutschland. Lerne im Studio von Profis – jetzt Platz sichern.",
+  defaultH1: "Musikproduktion & Tontechnik Kurse – Music Mission Institute",
 };
 
 export async function generateMetadata() {
@@ -240,7 +240,9 @@ export default async function Home() {
   return (
     <div className="min-h-screen text-foreground bg-white">
       <SiteHeader />
-      <h1 className="sr-only">{seo.h1}</h1>
+      <h1 className="px-6 pt-[6.5rem] text-center font-anton text-[clamp(32px,5vw,54px)] leading-tight text-slate-900">
+        {seo.h1}
+      </h1>
       <main className="relative">
         {faqLd ? (
           <Script
@@ -290,7 +292,7 @@ export default async function Home() {
                 </div>
               </div>
             </div>
-            <div className="bg-white px-6 py-8 sm:px-12 sm:py-10 md:py-12 flex items-center justify-center">
+            <div className="bg-white px-6 py-6 sm:px-12 sm:py-8 md:py-9 flex items-center justify-center">
               <div className="flex flex-col items-center gap-5 text-center">
                 <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 whitespace-nowrap font-semibold text-[#ff1f8f] font-anton leading-[1.05] pb-2 sm:pb-0">
                   <span className="text-[clamp(20px,4vw,40px)]">Top-bewertet auf</span>
@@ -329,7 +331,7 @@ export default async function Home() {
           <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-16 pt-12 pb-6 text-center space-y-3">
             <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Unsere Kursformate</p>
             <h2 className="font-anton text-3xl sm:text-4xl lg:text-5xl text-slate-900 leading-tight">
-              Unsere Kursformate – kurz, knackig oder intensiv
+              Musikproduktion, Tontechnik, DJing und Vocalcoaching – kurz, knackig oder intensiv
             </h2>
             <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto">
               Von kompakten Kurzformaten wie unseren Extremkursen bis zu intensiven Ausbildungen.
@@ -339,7 +341,7 @@ export default async function Home() {
         </section>
 
         {region === "AT" && (
-        <section className="px-6 py-14 sm:px-10 lg:px-16 bg-[#f7f8fb]">
+        <section className="px-6 py-14 sm:px-10 lg:px-16 bg-white">
           <div className="mx-auto max-w-6xl">
             <div className="relative overflow-hidden rounded-[40px] border border-slate-200/80 bg-gradient-to-b from-white via-white to-[#f0f1f5] p-[1px] shadow-[0_40px_90px_-70px_rgba(15,23,42,0.8)] isolate">
               <div className="absolute inset-0 pointer-events-none">
@@ -414,15 +416,15 @@ export default async function Home() {
         )}
 
         {/* Kurs-Marquee */}
-        <section className="bg-white px-6 py-14 sm:px-10 lg:px-16">
+        <section className="bg-[#f7f8fb] px-6 py-14 sm:px-10 lg:px-16">
           <div className="mx-auto max-w-6xl space-y-6">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4">
-              <div className="flex-1 text-center lg:text-center space-y-1">
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Unser Kursangebot</p>
-                <h2 className="font-anton text-3xl sm:text-4xl lg:text-5xl text-slate-900 leading-tight">
-                  Entdecke Top aktuelle Kurse
-                </h2>
-              </div>
+              <div className="flex flex-col lg:flex-row lg:items-center lg:gap-4">
+                <div className="flex-1 text-center lg:text-center space-y-1">
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Unser Kursangebot</p>
+                  <h2 className="font-anton text-3xl sm:text-4xl lg:text-5xl text-slate-900 leading-tight">
+                  Aktuelle Kurse für Musikproduktion, Tontechnik &amp; DJing
+                  </h2>
+                </div>
               <div className="mt-2 lg:mt-0 flex justify-center lg:justify-end">
                 <Link
                   href="/entdecken"
@@ -492,7 +494,9 @@ export default async function Home() {
           <section id="faq" className="relative z-30 bg-[#f3f4f6] px-6 py-20 sm:px-10 lg:px-20 min-h-[70vh]">
             <div className="mx-auto max-w-6xl space-y-10">
               <div className="text-center space-y-4">
-                <h2 className="font-anton text-[clamp(72px,9vw,90px)] leading-[0.9] text-slate-900">Fragen? Wir haben die Antworten.</h2>
+                <h2 className="font-anton text-[clamp(72px,9vw,90px)] leading-[0.9] text-slate-900">
+                  Fragen zu Musikproduktion &amp; Tontechnik Kursen? Wir haben die Antworten.
+                </h2>
               </div>
               <FAQAccordion items={faqList} initiallyOpen={0} />
             </div>

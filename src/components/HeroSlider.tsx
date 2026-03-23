@@ -42,7 +42,7 @@ export function HeroSlider({ slides }: { slides?: Slide[] }) {
         >
           <Image
             src={slide.src}
-            alt={slide.alt ?? "Hero Slide"}
+            alt={slide.alt ?? slide.title ?? "Music Mission Institute Kurs"}
             fill
             className="object-cover"
             priority={i === 0}
@@ -51,9 +51,9 @@ export function HeroSlider({ slides }: { slides?: Slide[] }) {
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/20" />
           <div className="absolute inset-0 flex items-center px-6 sm:px-10 lg:px-20">
             <div className="max-w-3xl space-y-3">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight">
                 {slide.title}
-              </h1>
+              </h2>
               <p className="text-base sm:text-lg text-white/80">{slide.subtitle}</p>
             </div>
           </div>

@@ -11,9 +11,12 @@ const domainDE = process.env.NEXT_PUBLIC_DOMAIN_DE;
 
 export async function generateMetadata(): Promise<Metadata> {
   const siteUrl = siteUrlEnv;
-  const languageAlternates: Record<string, string> = { de: "/" };
-  if (domainAT) languageAlternates["de-AT"] = `https://${domainAT}`;
-  if (domainDE) languageAlternates["de-DE"] = `https://${domainDE}`;
+  const languageAlternates: Record<string, string> = {
+    "x-default": siteUrl,
+    de: "/",
+    "de-AT": domainAT ? `https://${domainAT}` : siteUrl,
+    "de-DE": domainDE ? `https://${domainDE}` : siteUrl.replace("musicmission.at", "musicmission.de"),
+  };
 
   let faviconUrl: string | undefined;
   try {

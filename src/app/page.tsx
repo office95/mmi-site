@@ -284,6 +284,25 @@ export default async function Home() {
           .filter((c) => c.offers.price)
       : null;
 
+  const trustpilotRating = parseFloat(process.env.NEXT_PUBLIC_TRUSTPILOT_RATING || "");
+  const trustpilotCount = parseInt(process.env.NEXT_PUBLIC_TRUSTPILOT_COUNT || "", 10);
+  const trustpilotLd =
+    trustpilotRating > 0 && trustpilotCount > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Music Mission Institute",
+          url: baseUrl,
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: trustpilotRating.toFixed(1),
+            reviewCount: trustpilotCount,
+            bestRating: "5",
+            worstRating: "1",
+          },
+        }
+      : null;
+
   return (
     <div className="min-h-screen text-foreground bg-white">
       <SiteHeader />
@@ -322,6 +341,15 @@ export default async function Home() {
             type="application/ld+json"
             dangerouslySetInnerHTML={{
               __html: JSON.stringify(courseOfferLd),
+            }}
+          />
+        ) : null}
+        {trustpilotLd ? (
+          <Script
+            id="home-trustpilot-ld"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(trustpilotLd),
             }}
           />
         ) : null}

@@ -383,37 +383,35 @@ export default async function Home() {
                 </div>
               </div>
             </div>
-            <div className="bg-white px-6 py-6 sm:px-12 sm:py-8 md:py-9 flex items-center justify-center">
-              <div className="flex flex-col items-center gap-5 text-center">
-                <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 whitespace-nowrap font-semibold text-[#ff1f8f] font-anton leading-[1.05] pb-2 sm:pb-0">
-                  <span className="text-[clamp(20px,4vw,40px)]">Top-bewertet auf</span>
-                  <span className="animate-pulse-slow text-[clamp(28px,6vw,64px)] leading-none">★</span>
-                  <span className="text-[clamp(22px,4.5vw,44px)]">Trustpilot</span>
-                </div>
-                <a
-                  className="btn-primary text-sm sm:text-base whitespace-nowrap !text-white inline-flex items-center gap-2"
-                  href="https://at.trustpilot.com/review/musicmission.at"
-                  target="_blank"
-                  rel="noreferrer"
+            <div className="bg-white px-6 py-6 sm:px-12 sm:py-8 md:py-9 text-center flex flex-col items-center gap-4">
+              <p className="flex items-center gap-2 sm:gap-3 lg:gap-4 whitespace-nowrap font-semibold text-[#ff1f8f] font-anton leading-[1.05]">
+                <span className="text-[clamp(20px,4vw,40px)]">Top-bewertet auf</span>
+                <span className="animate-pulse-slow text-[clamp(28px,6vw,64px)] leading-none">★</span>
+                <span className="text-[clamp(22px,4.5vw,44px)]">Trustpilot</span>
+              </p>
+              <a
+                className="btn-primary text-sm sm:text-base whitespace-nowrap !text-white inline-flex items-center gap-2"
+                href="https://at.trustpilot.com/review/musicmission.at"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Bewertungen ansehen
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
                 >
-                  Bewertungen ansehen
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                    <polyline points="15 3 21 3 21 9" />
-                    <line x1="10" y1="14" x2="21" y2="3" />
-                  </svg>
-                </a>
-              </div>
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <polyline points="15 3 21 3 21 9" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
+                </svg>
+              </a>
             </div>
           </div>
         </section>

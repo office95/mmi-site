@@ -209,7 +209,7 @@ export default async function Home() {
       ? {
           "@context": "https://schema.org",
           "@type": "FAQPage",
-          mainEntity: faqList.slice(0, 12).map((faq) => ({
+          mainEntity: faqList.slice(0, 8).map((faq) => ({
             "@type": "Question",
             name: faq.q,
             acceptedAnswer: {
@@ -227,7 +227,7 @@ export default async function Home() {
           "@type": "ItemList",
           itemListElement: coursesMixed
             .filter((c) => c.slug)
-            .slice(0, 12)
+            .slice(0, 5)
             .map((course, idx) => ({
               "@type": "ListItem",
               position: idx + 1,
@@ -254,7 +254,7 @@ export default async function Home() {
     upcomingSessions.length > 0
       ? upcomingSessions
           .filter((s) => s.courses?.slug)
-          .slice(0, 10)
+          .slice(0, 5)
           .map((s) => {
             const price = s.price_cents ?? s.deposit_cents ?? null;
             const startDate = s.start_date
@@ -369,16 +369,12 @@ export default async function Home() {
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-[0.2vh] pointer-events-none px-4">
                 <div className="w-full overflow-hidden">
                   <div className="marquee-track animate-marquee text-white font-bold uppercase tracking-[0.18em] text-[clamp(48px,6vw,96px)] whitespace-nowrap" style={{ fontFamily: "\"Montserrat\", sans-serif" }}>
-                    {Array(8)
-                      .fill("Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing   ")
-                      .join("")}
+                    Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing &nbsp; Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing
                   </div>
                 </div>
                 <div className="w-full overflow-hidden">
                   <div className="marquee-track animate-marquee-reverse text-[#ff1f8f] font-bold uppercase tracking-[0.18em] text-[clamp(48px,6vw,96px)] whitespace-nowrap" style={{ fontFamily: "\"Montserrat\", sans-serif" }}>
-                    {Array(8)
-                      .fill("Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing   ")
-                      .join("")}
+                    Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing &nbsp; Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing
                   </div>
                 </div>
               </div>
@@ -586,6 +582,9 @@ export default async function Home() {
                 <h2 className="font-anton text-[clamp(72px,9vw,90px)] leading-[0.9] text-slate-900">
                   Fragen zu Musikproduktion &amp; Tontechnik Kursen? Wir haben die Antworten.
                 </h2>
+                <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto">
+                  Die wichtigsten Fragen unserer Teilnehmer – kompakt beantwortet. Ablauf, Zertifikat, Online-Zugang, Zahlung und mehr.
+                </p>
               </div>
               <FAQAccordion items={faqList} initiallyOpen={0} />
             </div>

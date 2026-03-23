@@ -237,6 +237,53 @@ export default async function Home() {
         }
       : null;
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: baseUrl,
+      },
+    ],
+  };
+
+  const courseOfferLd =
+    upcomingSessions.length > 0
+      ? upcomingSessions
+          .filter((s) => s.courses?.slug)
+          .slice(0, 10)
+          .map((s) => {
+            const price = s.price_cents ?? s.deposit_cents ?? null;
+            const startDate = s.start_date
+              ? `${s.start_date}${s.start_time ? `T${s.start_time}` : "T00:00:00"}`
+              : undefined;
+            const locationParts = [s.city, s.state, s.country].filter(Boolean).join(", ");
+            return {
+              "@context": "https://schema.org",
+              "@type": "Course",
+              name: s.courses?.title || "Kurs",
+              url: `${baseUrl}/kurs/${s.courses?.slug}`,
+              offers: {
+                "@type": "Offer",
+                priceCurrency: "EUR",
+                price: price ? (price / 100).toFixed(2) : undefined,
+                availability: "https://schema.org/InStock",
+                validFrom: startDate,
+              },
+              provider: {
+                "@type": "Organization",
+                name: "Music Mission Institute",
+              },
+              startDate,
+              location: locationParts || undefined,
+            };
+          })
+          .filter((c) => c.offers.price)
+      : null;
+
   return (
     <div className="min-h-screen text-foreground bg-white">
       <SiteHeader />
@@ -259,6 +306,22 @@ export default async function Home() {
             type="application/ld+json"
             dangerouslySetInnerHTML={{
               __html: JSON.stringify(courseItemList),
+            }}
+          />
+        ) : null}
+        <Script
+          id="home-breadcrumb-ld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(breadcrumbLd),
+          }}
+        />
+        {courseOfferLd && courseOfferLd.length > 0 ? (
+          <Script
+            id="home-course-offers-ld"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(courseOfferLd),
             }}
           />
         ) : null}

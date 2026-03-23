@@ -6,10 +6,20 @@ const BASE_URL =
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-    },
+    rules: [
+      {
+        userAgent: "GPTBot",
+        allow: "/",
+      },
+      {
+        userAgent: "Google-Extended",
+        allow: "/",
+      },
+      {
+        userAgent: "*",
+        allow: "/",
+      },
+    ],
     sitemap: `${BASE_URL}/sitemap.xml`,
   };
 }

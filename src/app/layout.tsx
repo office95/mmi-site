@@ -78,6 +78,11 @@ export default async function RootLayout({
 }>) {
   const region = await getRegion();
   const siteUrl = siteUrlEnv;
+  const altLinks = [
+    { hreflang: "x-default", href: siteUrl },
+    { hreflang: "de-AT", href: domainAT ? `https://${domainAT}` : siteUrl },
+    { hreflang: "de-DE", href: domainDE ? `https://${domainDE}` : siteUrl.replace("musicmission.at", "musicmission.de") },
+  ];
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -97,6 +102,9 @@ export default async function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Lato:wght@400;700&family=Archivo+Black&family=Anton&display=swap"
           rel="stylesheet"
         />
+        {altLinks.map((l) => (
+          <link key={l.hreflang} rel="alternate" hrefLang={l.hreflang} href={l.href} />
+        ))}
       </head>
       <body className="antialiased pt-14 sm:pt-16">
         <script type="application/ld+json" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />

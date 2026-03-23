@@ -70,8 +70,8 @@ export function FlyInCards() {
   }, []);
 
   return (
-    <section className="relative bg-white h-full w-full px-4 sm:px-8 lg:px-20 py-10 sm:py-14 flex items-center">
-      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 h-full">
+    <div className="relative px-4 sm:px-8 lg:px-20 py-10 sm:py-14">
+      <div className="mx-auto grid max-w-6xl grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
         {cards.map((card, idx) => (
           <div
             key={card.title}
@@ -95,7 +95,7 @@ export function FlyInCards() {
           </div>
         ))}
       </div>
-    </section>
+    </div>
   );
 }
 

@@ -416,8 +416,8 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="relative bg-white min-h-screen">
-          <div className="mx-auto max-w-6xl px-6 sm:px-10 lg:px-16 pt-12 pb-6 text-center space-y-3">
+        <section className="relative bg-white min-h-screen px-6 sm:px-10 lg:px-16 pt-12 pb-6">
+          <div className="mx-auto max-w-6xl text-center space-y-3">
             <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Unsere Kursformate</p>
             <h2 className="font-anton text-3xl sm:text-4xl lg:text-5xl text-slate-900 leading-tight">
               Musikproduktion, Tontechnik, DJing und Vocalcoaching – kurz, knackig oder intensiv

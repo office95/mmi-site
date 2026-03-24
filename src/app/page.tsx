@@ -371,7 +371,7 @@ export default async function Home() {
                 </div>
                 <div className="w-full overflow-hidden">
                   <div className="marquee-track animate-marquee-reverse text-[#ff1f8f] font-bold uppercase tracking-[0.18em] text-[clamp(48px,6vw,96px)] whitespace-nowrap font-montserrat-custom">
-                    Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing &nbsp; Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing
+                    Workshops &amp; Ausbildungen in Österreich und Deutschland &nbsp; Workshops &amp; Ausbildungen in Österreich und Deutschland
                   </div>
                 </div>
               </div>

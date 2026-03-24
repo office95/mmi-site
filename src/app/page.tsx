@@ -409,18 +409,6 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Kurzinfos für Besucher – hebt Textanteil und Keyword-Relevanz */}
-        <section className="bg-white px-6 sm:px-10 lg:px-16 py-8">
-          <div className="mx-auto max-w-5xl space-y-4 text-center">
-            <p className="text-lg sm:text-xl font-semibold text-slate-900">
-              Wir sind das Music Mission Institute: praxisnahe Kurse und Ausbildungen in Musikproduktion, Tontechnik, Live-Sound, DJing und Vocalcoaching.
-            </p>
-            <p className="text-base sm:text-lg text-slate-700">
-              Ideal für ambitionierte Einsteiger und Fortgeschrittene, die schneller zu professionellen Ergebnissen kommen wollen – im Studio, auf der Bühne oder im eigenen Homestudio. Standorte in Österreich und Deutschland, flexible Formate von Wochenenden bis mehrmonatigen Intensivprogrammen.
-            </p>
-          </div>
-        </section>
-
         <section className="relative bg-white min-h-screen px-6 sm:px-10 lg:px-16 pt-12 pb-6">
           <div className="mx-auto max-w-6xl text-center space-y-3">
             <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Unsere Kursformate</p>

@@ -48,7 +48,15 @@ type PriceTier = {
   tax_rate?: number | null;
 };
 
-type Addon = { id: string; name: string; price_cents?: number | null; description?: string | null; image_url?: string | null; tax_rate?: number | null };
+type Addon = {
+  id: string;
+  name: string;
+  price_cents?: number | null;
+  price_input?: string;
+  description?: string | null;
+  image_url?: string | null;
+  tax_rate?: number | null;
+};
 
 const emptyCourse: Course = {
   id: "",
@@ -207,7 +215,7 @@ export default function CoursesPage() {
     await load();
   };
 
-  const newAddon = (): Addon => ({ id: uuid(), name: "", price_cents: null, description: "", image_url: "", tax_rate: null });
+  const newAddon = (): Addon => ({ id: uuid(), name: "", price_cents: null, price_input: "", description: "", image_url: "", tax_rate: null });
   const newPriceTier = (): PriceTier => ({ id: uuid(), label: "", description: "", price_cents: null, deposit_cents: null, tax_rate: null });
 
   const patchAddon = (id: string, patch: Partial<Addon>) =>
@@ -660,10 +668,13 @@ export default function CoursesPage() {
                         <Input label="Name" value={a.name} onChange={(v) => patchAddon(a.id, { name: v })} />
                         <Input
                           label="Preis Brutto (EUR)"
-                          value={a.price_cents ? (a.price_cents / 100).toString() : ""}
+                          value={a.price_input ?? (a.price_cents ? (a.price_cents / 100).toString() : "")}
                           onChange={(v) => {
                             const num = v ? parseFloat(v.replace(",", ".")) : NaN;
-                            patchAddon(a.id, { price_cents: Number.isFinite(num) ? Math.round(num * 100) : null });
+                            patchAddon(a.id, {
+                              price_input: v,
+                              price_cents: Number.isFinite(num) ? Math.round(num * 100) : null,
+                            });
                           }}
                         />
                         <Input label="MwSt. (%)" value={a.tax_rate?.toString() ?? ""} onChange={(v) => {

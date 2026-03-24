@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
     root: __dirname, // stellt sicher, dass .env.local im Projekt geladen wird
   },
   serverExternalPackages: ["nodemailer"],
+  poweredByHeader: false,
   /* config options here */
   images: {
     remotePatterns: [

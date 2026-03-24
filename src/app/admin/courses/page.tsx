@@ -48,7 +48,7 @@ type PriceTier = {
   tax_rate?: number | null;
 };
 
-type Addon = { id: string; name: string; price_cents?: number | null; description?: string | null };
+type Addon = { id: string; name: string; price_cents?: number | null; description?: string | null; image_url?: string | null; tax_rate?: number | null };
 
 const emptyCourse: Course = {
   id: "",
@@ -207,7 +207,7 @@ export default function CoursesPage() {
     await load();
   };
 
-  const newAddon = (): Addon => ({ id: uuid(), name: "", price_cents: null, description: "" });
+  const newAddon = (): Addon => ({ id: uuid(), name: "", price_cents: null, description: "", image_url: "", tax_rate: null });
   const newPriceTier = (): PriceTier => ({ id: uuid(), label: "", description: "", price_cents: null, deposit_cents: null, tax_rate: null });
 
   const patchAddon = (id: string, patch: Partial<Addon>) =>
@@ -656,12 +656,24 @@ export default function CoursesPage() {
                           Entfernen
                         </button>
                       </div>
-                      <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-3">
+                      <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-4">
                         <Input label="Name" value={a.name} onChange={(v) => patchAddon(a.id, { name: v })} />
                         <Input
                           label="Preis (EUR)"
                           value={a.price_cents ? (a.price_cents / 100).toString() : ""}
-                          onChange={(v) => patchAddon(a.id, { price_cents: v ? Math.round(parseFloat(v) * 100) : null })}
+                          onChange={(v) => {
+                            const num = v ? parseFloat(v.replace(",", ".")) : NaN;
+                            patchAddon(a.id, { price_cents: Number.isFinite(num) ? Math.round(num * 100) : null });
+                          }}
+                        />
+                        <Input label="Bild URL" value={a.image_url ?? ""} onChange={(v) => patchAddon(a.id, { image_url: v || null })} />
+                        <Input
+                          label="MwSt. (%)"
+                          value={a.tax_rate?.toString() ?? ""}
+                          onChange={(v) => {
+                            const num = v ? parseFloat(v.replace(",", ".")) : NaN;
+                            patchAddon(a.id, { tax_rate: Number.isFinite(num) ? num : null });
+                          }}
                         />
                         <Textarea label="Beschreibung" value={a.description ?? ""} onChange={(v) => patchAddon(a.id, { description: v })} />
                       </div>

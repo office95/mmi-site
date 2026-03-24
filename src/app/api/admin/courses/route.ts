@@ -187,6 +187,8 @@ export async function POST(req: Request) {
         name: a.name,
         description: a.description ?? null,
         price_cents: a.price_cents ?? 0,
+        image_url: a.image_url ?? null,
+        tax_rate: a.tax_rate ?? null,
       }));
     if (addons.length) await supabase.from("addons").insert(addons);
   }

@@ -40,7 +40,7 @@ export default async function BookingPage({
   if (!session && (courseSlug || courseId)) {
     const { data: courseRow } = await supabase
       .from("courses")
-      .select("id, title, slug, base_price_cents, deposit_cents, tax_rate, sessions(*)")
+      .select("id, title, slug, base_price_cents, deposit_cents, tax_rate, sessions(*), addons(id,name,price_cents,tax_rate,image_url,description)")
       .or(courseSlug ? `slug.eq.${courseSlug}` : "")
       .or(courseId ? `id.eq.${courseId}` : "")
       .maybeSingle();
@@ -64,7 +64,7 @@ export default async function BookingPage({
   if (session && !course && session.course_id) {
     const { data: courseRow } = await supabase
       .from("courses")
-      .select("id, title, slug, base_price_cents, deposit_cents, tax_rate")
+      .select("id, title, slug, base_price_cents, deposit_cents, tax_rate, addons(id,name,price_cents,tax_rate,image_url,description)")
       .eq("id", session.course_id)
       .maybeSingle();
     course = courseRow;
@@ -188,7 +188,7 @@ export default async function BookingPage({
             </div>
           </div>
         </div>
-        <BookingFlow session={session} course={course} agbUrl={agbUrl} privacyUrl={privacyUrl} />
+        <BookingFlow session={session} course={course} addons={course?.addons ?? []} agbUrl={agbUrl} privacyUrl={privacyUrl} />
       </main>
     </div>
   );

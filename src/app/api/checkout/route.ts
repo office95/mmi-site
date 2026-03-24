@@ -115,12 +115,21 @@ export async function POST(request: Request) {
 
   const priceCents = sessionRow.price_cents ?? course.base_price_cents;
   const depositCents = sessionRow.deposit_cents ?? course.deposit_cents ?? null;
+  const addonIds: string[] = Array.isArray(body.addons) ? body.addons.filter((id: any) => typeof id === "string") : [];
+  let addonSum = 0;
+  let addonRows: { id: string; name: string; price_cents: number }[] = [];
+  if (addonIds.length) {
+    const { data: addonData, error: addonErr } = await supabase.from("addons").select("id,name,price_cents").in("id", addonIds);
+    if (addonErr) return NextResponse.json({ error: addonErr.message }, { status: 500 });
+    addonRows = (addonData || []).map((a) => ({ id: a.id, name: a.name, price_cents: a.price_cents ?? 0 }));
+    addonSum = addonRows.reduce((sum, a) => sum + a.price_cents, 0);
+  }
 
   if (!priceCents) {
     return NextResponse.json({ error: "Kein Preis für diesen Termin hinterlegt" }, { status: 400 });
   }
 
-  const chargeCents = (depositCents ?? priceCents) * participants;
+  const chargeCents = (depositCents ?? priceCents) * participants + addonSum;
 
   // Kapazität prüfen
   if (sessionRow.max_participants && (sessionRow.seats_taken ?? 0) + participants > sessionRow.max_participants) {
@@ -160,7 +169,7 @@ export async function POST(request: Request) {
       coupon_code: coupon_code || null,
       is_company,
       consent_gdpr: !!consent_gdpr,
-      amount_cents: chargeCents,
+      amount_cents: (priceCents * participants) + addonSum,
       deposit_cents: depositCents ?? null,
       currency: "EUR",
       status: stripe ? "pending" : "paid",
@@ -192,23 +201,48 @@ export async function POST(request: Request) {
       partner = pRes.data || null;
     }
 
+    if (addonRows.length) {
+      const addonInserts = addonRows.map((a) => ({
+        order_id: orderInsert.id,
+        addon_id: a.id,
+        price_cents: a.price_cents,
+      }));
+      await supabase.from("order_addons").insert(addonInserts);
+    }
+
+    const lineItems: any[] = [
+      {
+        quantity: participants,
+        price_data: {
+          currency: "eur",
+          unit_amount: depositCents ?? priceCents,
+          product_data: {
+            name: course.title,
+            description: sessionRow.city ? `Termin in ${sessionRow.city}` : "Kurstermin",
+          },
+        },
+      },
+    ];
+    if (addonRows.length) {
+      addonRows.forEach((a) => {
+        lineItems.push({
+          quantity: 1,
+          price_data: {
+            currency: "eur",
+            unit_amount: a.price_cents,
+            product_data: {
+              name: `Add-on: ${a.name}`,
+            },
+          },
+        });
+      });
+    }
+
     const checkout = await stripe.checkout.sessions.create({
       mode: "payment",
       customer_email: email,
       allow_promotion_codes: true,
-      line_items: [
-        {
-          quantity: participants,
-          price_data: {
-            currency: "eur",
-            unit_amount: depositCents ?? priceCents,
-            product_data: {
-              name: course.title,
-              description: sessionRow.city ? `Termin in ${sessionRow.city}` : "Kurstermin",
-            },
-          },
-        },
-      ],
+      line_items: lineItems,
       metadata: {
         order_id: orderInsert.id,
         session_id: sessionRow.id,
@@ -224,6 +258,7 @@ export async function POST(request: Request) {
         zip: partner?.zip || sessionRow.zip || "",
         city: partner?.city || sessionRow.city || "",
         state: partner?.state || sessionRow.state || "",
+        addons: addonRows.map((a) => a.id).join(","),
       },
       success_url: successUrl,
       cancel_url: cancelUrl,

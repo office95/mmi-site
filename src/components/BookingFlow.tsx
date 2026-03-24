@@ -20,14 +20,25 @@ type CourseInfo = {
   tax_rate?: number | null;
 };
 
+type AddonInfo = {
+  id: string;
+  name: string;
+  price_cents?: number | null;
+  tax_rate?: number | null;
+  image_url?: string | null;
+  description?: string | null;
+};
+
 export default function BookingFlow({
   session,
   course,
+  addons = [],
   agbUrl,
   privacyUrl,
 }: {
   session: SessionInfo;
   course: CourseInfo;
+  addons?: AddonInfo[];
   agbUrl?: string | null;
   privacyUrl?: string | null;
 }) {
@@ -47,14 +58,18 @@ export default function BookingFlow({
   const [companyUid, setCompanyUid] = useState("");
   const [coupon, setCoupon] = useState("");
   const [consent, setConsent] = useState(false);
+  const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const fmt = new Intl.NumberFormat("de-AT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const price = session.price_cents ?? course.base_price_cents ?? 0; // Brutto je TN
+  const addonTotal = addons
+    .filter((a) => selectedAddons.includes(a.id))
+    .reduce((sum, a) => sum + (a.price_cents ?? 0), 0);
   const deposit = session.deposit_cents ?? course.deposit_cents ?? null;
-  const totalFull = price * participants; // Gesamtpreis Brutto aller TN
-  const totalCharge = (deposit ?? price) * participants; // Brutto fällig jetzt (Anzahlung oder Gesamt)
+  const totalFull = price * participants + addonTotal; // Gesamtpreis Brutto
+  const totalCharge = (deposit ?? price) * participants + addonTotal; // Jetzt fällig
   const rawTax = course.tax_rate ?? 0;
   const taxRate = rawTax > 1 ? rawTax / 100 : rawTax; // 0.2 statt 20
   const grossNow = totalCharge;
@@ -105,6 +120,7 @@ export default function BookingFlow({
         body: JSON.stringify({
           sessionId: session.id,
           courseId: course.id,
+          addons: selectedAddons,
           email,
           first_name: firstName,
           last_name: lastName,
@@ -186,6 +202,40 @@ export default function BookingFlow({
       {step === "form" && (
         <div className="space-y-4">
           <h2 className="text-2xl font-anton text-slate-900">Deine Daten</h2>
+          {addons.length > 0 && (
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+              <div className="text-sm font-semibold text-slate-900">Optionale Add-ons</div>
+              <div className="space-y-2">
+                {addons.map((a) => {
+                  const price = (a.price_cents ?? 0) / 100;
+                  const rate = a.tax_rate ?? course.tax_rate ?? 0;
+                  return (
+                    <label key={a.id} className="flex items-start gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 hover:border-slate-300">
+                      <input
+                        type="checkbox"
+                        className="mt-1 h-4 w-4"
+                        checked={selectedAddons.includes(a.id)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setSelectedAddons((prev) =>
+                            checked ? Array.from(new Set([...prev, a.id])) : prev.filter((id) => id !== a.id)
+                          );
+                        }}
+                      />
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-slate-900">{a.name}</span>
+                          <span className="text-xs text-slate-500">{rate ? `${rate}% MwSt.` : "inkl. MwSt."}</span>
+                        </div>
+                        {a.description && <p className="text-sm text-slate-600 leading-snug">{a.description}</p>}
+                        <div className="text-sm font-semibold text-[#e0007a]">{fmt.format(price)} €</div>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          )}
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="text-sm space-y-1">
               <span>Vorname *</span>

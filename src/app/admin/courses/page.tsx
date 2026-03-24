@@ -656,26 +656,36 @@ export default function CoursesPage() {
                           Entfernen
                         </button>
                       </div>
-                      <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-4">
+                      <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-6">
                         <Input label="Name" value={a.name} onChange={(v) => patchAddon(a.id, { name: v })} />
                         <Input
-                          label="Preis (EUR)"
+                          label="Preis Brutto (EUR)"
                           value={a.price_cents ? (a.price_cents / 100).toString() : ""}
                           onChange={(v) => {
                             const num = v ? parseFloat(v.replace(",", ".")) : NaN;
                             patchAddon(a.id, { price_cents: Number.isFinite(num) ? Math.round(num * 100) : null });
                           }}
                         />
+                        <Input label="MwSt. (%)" value={a.tax_rate?.toString() ?? ""} onChange={(v) => {
+                          const num = v ? parseFloat(v.replace(",", ".")) : NaN;
+                          patchAddon(a.id, { tax_rate: Number.isFinite(num) ? num : null });
+                        }} />
+                        {(() => {
+                          const gross = (a.price_cents ?? 0) / 100;
+                          const rate = a.tax_rate ?? 0;
+                          const net = rate > -100 ? gross / (1 + rate / 100) : gross;
+                          const vat = Math.max(gross - net, 0);
+                          return (
+                            <>
+                              <Input label="MwSt. (EUR)" value={gross ? vat.toFixed(2) : ""} onChange={() => {}} />
+                              <Input label="Preis Netto (EUR)" value={gross ? net.toFixed(2) : ""} onChange={() => {}} />
+                            </>
+                          );
+                        })()}
                         <Input label="Bild URL" value={a.image_url ?? ""} onChange={(v) => patchAddon(a.id, { image_url: v || null })} />
-                        <Input
-                          label="MwSt. (%)"
-                          value={a.tax_rate?.toString() ?? ""}
-                          onChange={(v) => {
-                            const num = v ? parseFloat(v.replace(",", ".")) : NaN;
-                            patchAddon(a.id, { tax_rate: Number.isFinite(num) ? num : null });
-                          }}
-                        />
-                        <Textarea label="Beschreibung" value={a.description ?? ""} onChange={(v) => patchAddon(a.id, { description: v })} />
+                        <div className="md:col-span-6">
+                          <Textarea label="Beschreibung" value={a.description ?? ""} onChange={(v) => patchAddon(a.id, { description: v })} />
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -730,7 +740,23 @@ export default function CoursesPage() {
   );
 }
 
-function Input({ label, value, onChange, required, placeholder }: { label: string; value: string; onChange: (v: string) => void; required?: boolean; placeholder?: string }) {
+function Input({
+  label,
+  value,
+  onChange,
+  required,
+  placeholder,
+  readOnly,
+  type,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  required?: boolean;
+  placeholder?: string;
+  readOnly?: boolean;
+  type?: string;
+}) {
   return (
     <label className="space-y-1 text-sm">
       <span className="text-slate-600">{label}</span>
@@ -739,6 +765,8 @@ function Input({ label, value, onChange, required, placeholder }: { label: strin
         onChange={(e) => onChange(e.target.value)}
         required={required}
         placeholder={placeholder}
+        readOnly={readOnly}
+        type={type || "text"}
         className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:border-[#ff1f8f] focus:outline-none"
       />
     </label>

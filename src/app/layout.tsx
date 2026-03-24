@@ -4,6 +4,12 @@ import SiteFooter from "@/components/SiteFooter";
 import { getRegion } from "@/lib/region";
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import { Analytics } from "@vercel/analytics/next";
+import { Anton, Space_Grotesk, Lato, Archivo_Black } from "next/font/google";
+
+const fontSpace = Space_Grotesk({ subsets: ["latin"], weight: ["400", "500", "600", "700"], display: "swap" });
+const fontLato = Lato({ subsets: ["latin"], weight: ["400", "700"], display: "swap" });
+const fontAnton = Anton({ subsets: ["latin"], weight: "400", display: "swap" });
+const fontArchivo = Archivo_Black({ subsets: ["latin"], weight: "400", display: "swap" });
 
 const siteUrlEnv = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3005";
 const domainAT = process.env.NEXT_PUBLIC_DOMAIN_AT;
@@ -95,18 +101,21 @@ export default async function RootLayout({
   return (
     <html lang="de" data-region={region}>
       <head>
-        {/* Web-fonts aus CDN laden, um Offline-Build zu vermeiden */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Lato:wght@400;700&family=Archivo+Black&family=Anton&display=swap"
-          rel="stylesheet"
-        />
         {altLinks.map((l) => (
           <link key={l.hreflang} rel="alternate" hrefLang={l.hreflang} href={l.href} />
         ))}
       </head>
-      <body className="antialiased pt-14 sm:pt-16">
+      <body
+        className={`${fontSpace.className} antialiased pt-14 sm:pt-16`}
+        style={
+          {
+            "--font-sans": fontLato.style.fontFamily,
+            "--font-display": fontSpace.style.fontFamily,
+            "--font-archivo": fontArchivo.style.fontFamily,
+            "--font-anton": fontAnton.style.fontFamily,
+          } as React.CSSProperties
+        }
+      >
         <script type="application/ld+json" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         {children}
         <Analytics />

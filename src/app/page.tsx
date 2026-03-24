@@ -358,22 +358,19 @@ export default async function Home() {
             <div className="h-[80vh] overflow-visible bg-black relative">
               <HeroSlider slides={heroSlides} />
               <div className="absolute inset-0 pointer-events-none">
-                <span
-                  className="block text-center font-anton text-[200px] sm:text-[280px] lg:text-[420px] xl:text-[520px] leading-none text-white/30 select-none whitespace-nowrap"
-                  style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "100%" }}
-                >
+                <span className="hero-watermark block text-center font-anton text-[200px] sm:text-[280px] lg:text-[420px] xl:text-[520px] leading-none text-white/30 select-none whitespace-nowrap">
                   MMI
                 </span>
               </div>
               {/* Lauftext */}
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-[0.2vh] pointer-events-none px-4">
                 <div className="w-full overflow-hidden">
-                  <div className="marquee-track animate-marquee text-white font-bold uppercase tracking-[0.18em] text-[clamp(48px,6vw,96px)] whitespace-nowrap" style={{ fontFamily: "\"Montserrat\", sans-serif" }}>
+                  <div className="marquee-track animate-marquee text-white font-bold uppercase tracking-[0.18em] text-[clamp(48px,6vw,96px)] whitespace-nowrap font-montserrat-custom">
                     Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing &nbsp; Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing
                   </div>
                 </div>
                 <div className="w-full overflow-hidden">
-                  <div className="marquee-track animate-marquee-reverse text-[#ff1f8f] font-bold uppercase tracking-[0.18em] text-[clamp(48px,6vw,96px)] whitespace-nowrap" style={{ fontFamily: "\"Montserrat\", sans-serif" }}>
+                  <div className="marquee-track animate-marquee-reverse text-[#ff1f8f] font-bold uppercase tracking-[0.18em] text-[clamp(48px,6vw,96px)] whitespace-nowrap font-montserrat-custom">
                     Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing &nbsp; Kurse für Musikproduktion, Tontechnik, Live-Tontechnik und DJing
                   </div>
                 </div>

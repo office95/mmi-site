@@ -98,24 +98,76 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     const answersHtml = sections.join("");
 
-    await sendAutomationMail({
-      key: "form_submit_notification",
-      to: "office@musicmission.at",
-      tokens: {
-        form_id: formId,
-        submission_id: submissionId,
-        admin_link: adminLink,
-      },
-      fallbackSubject: "Formular eingereicht",
-      fallbackHtml: `<p>Ein Formular wurde soeben eingereicht.</p>
-             <p><strong>Formular-ID:</strong> {{form_id}}<br/>
-             <strong>Submission:</strong> {{submission_id}}</p>
-             <p><a href="{{admin_link}}" target="_blank" rel="noreferrer">Zum Formular / Admin-Dashboard</a></p>
-             <p style="margin-top:12px;font-weight:700;color:#0f172a;">Antworten</p>
-             <div style="border:1px solid #e2e8f0;border-radius:12px;padding:12px;background:#f8fafc;">
-               ${answersHtml || "<em>Keine Angaben</em>"}
-             </div>`,
-    });
+    const TAG_OPEN_HOUSE_FORM_ID = "dc25157d-fe49-4577-adcf-962c573de612";
+    const userEmail =
+      (fieldsData ?? []).reduce<string | null>((acc, f: any) => {
+        if (acc) return acc;
+        const label = (f.label || "").toLowerCase();
+        if (label.includes("mail")) {
+          const val = valueMap.get(f.id) ?? "";
+          if (val.includes("@")) return val;
+        }
+        return null;
+      }, null) ?? null;
+
+    if (formId === TAG_OPEN_HOUSE_FORM_ID) {
+      // Admin-Mail
+      await sendAutomationMail({
+        key: "form_submit_notification_tagderoffenentuer",
+        to: "office@musicmission.at",
+        tokens: {
+          form_id: formId,
+          submission_id: submissionId,
+          admin_link: adminLink,
+        },
+        fallbackSubject: "Anmeldung Tag der offenen Tür – GOSH Studio Wien",
+        fallbackHtml: `<p>Es ist eine Anmeldung zum Tag der offenen Tür im GOSH! Studio Wien eingelangt.</p>
+               <p><strong>Formular-ID:</strong> {{form_id}}<br/>
+               <strong>Submission:</strong> {{submission_id}}</p>
+               <p><a href="{{admin_link}}" target="_blank" rel="noreferrer">Zum Formular / Admin-Dashboard</a></p>
+               <p style="margin-top:12px;font-weight:700;color:#0f172a;">Antworten</p>
+               <div style="border:1px solid #e2e8f0;border-radius:12px;padding:12px;background:#f8fafc;">
+                 ${answersHtml || "<em>Keine Angaben</em>"}
+               </div>`,
+      });
+
+      // Bestätigung an Absender
+      if (userEmail) {
+        await sendAutomationMail({
+          key: "form_submit_autoreply_tagderoffenentuer",
+          to: userEmail,
+          tokens: {
+            form_id: formId,
+          },
+          fallbackSubject: "Dein Platz ist reserviert – Tag der offenen Tür (GOSH! Studio Wien)",
+          fallbackHtml:
+            "<p>Vielen Dank für die Anmeldung zum Tag der offenen Tür im GOSH! Studio in Wien.</p>" +
+            "<p>Dein Platz ist fix reserviert. Solltest du aus irgendwelchen Gründen nicht kommen können, " +
+            'bitte per E-Mail an <a href="mailto:office@musicmission.at">office@musicmission.at</a> absagen.</p>' +
+            "<p>Adresse: Leystraße 43, 1200 Wien</p>" +
+            "<p>Wir freuen uns, dich begrüßen zu dürfen.</p>",
+        });
+      }
+    } else {
+      await sendAutomationMail({
+        key: "form_submit_notification",
+        to: "office@musicmission.at",
+        tokens: {
+          form_id: formId,
+          submission_id: submissionId,
+          admin_link: adminLink,
+        },
+        fallbackSubject: "Formular eingereicht",
+        fallbackHtml: `<p>Ein Formular wurde soeben eingereicht.</p>
+               <p><strong>Formular-ID:</strong> {{form_id}}<br/>
+               <strong>Submission:</strong> {{submission_id}}</p>
+               <p><a href="{{admin_link}}" target="_blank" rel="noreferrer">Zum Formular / Admin-Dashboard</a></p>
+               <p style="margin-top:12px;font-weight:700;color:#0f172a;">Antworten</p>
+               <div style="border:1px solid #e2e8f0;border-radius:12px;padding:12px;background:#f8fafc;">
+                 ${answersHtml || "<em>Keine Angaben</em>"}
+               </div>`,
+      });
+    }
   } catch (e) {
     console.error("Mail send failed", e);
   }

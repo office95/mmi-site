@@ -12,6 +12,10 @@ const LOGO_INTENSIV_KEY = "site_logo_intensiv_url";
 const AGB_KEY = "pdf_agb_url";
 const DATENSCHUTZ_KEY = "pdf_datenschutz_url";
 const FAVICON_KEY = "site_favicon_url";
+const FAVICON_16_KEY = "site_favicon_16_url";
+const FAVICON_32_KEY = "site_favicon_32_url";
+const FAVICON_ICO_KEY = "site_favicon_ico_url";
+const FAVICON_APPLE_KEY = "site_favicon_apple_url";
 
 export default function SettingsPage() {
   const supabase = getSupabaseBrowserClient();
@@ -21,6 +25,10 @@ export default function SettingsPage() {
   const [agbUrl, setAgbUrl] = useState<string | null>(null);
   const [dsUrl, setDsUrl] = useState<string | null>(null);
   const [faviconUrl, setFaviconUrl] = useState<string | null>(null);
+  const [favicon16Url, setFavicon16Url] = useState<string | null>(null);
+  const [favicon32Url, setFavicon32Url] = useState<string | null>(null);
+  const [faviconIcoUrl, setFaviconIcoUrl] = useState<string | null>(null);
+  const [faviconAppleUrl, setFaviconAppleUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [deletingKey, setDeletingKey] = useState<string | null>(null);
@@ -42,19 +50,34 @@ export default function SettingsPage() {
 
   useEffect(() => {
     const load = async () => {
-      const { data } = await supabase
-        .from("settings")
-        .select("key,value")
-        .in("key", [LOGO_KEY, LOGO_EXTREM_KEY, LOGO_INTENSIV_KEY, AGB_KEY, DATENSCHUTZ_KEY, FAVICON_KEY]);
-      data?.forEach((row) => {
-        if (row.key === LOGO_KEY) setLogoUrl(row.value as string);
-        if (row.key === LOGO_EXTREM_KEY) setLogoExtremUrl(row.value as string);
-        if (row.key === LOGO_INTENSIV_KEY) setLogoIntensivUrl(row.value as string);
-        if (row.key === AGB_KEY) setAgbUrl(row.value as string);
-        if (row.key === DATENSCHUTZ_KEY) setDsUrl(row.value as string);
-        if (row.key === FAVICON_KEY) setFaviconUrl(row.value as string);
-      });
-    };
+    const { data } = await supabase
+      .from("settings")
+      .select("key,value")
+      .in("key", [
+        LOGO_KEY,
+        LOGO_EXTREM_KEY,
+        LOGO_INTENSIV_KEY,
+        AGB_KEY,
+        DATENSCHUTZ_KEY,
+        FAVICON_KEY,
+        FAVICON_16_KEY,
+        FAVICON_32_KEY,
+        FAVICON_ICO_KEY,
+        FAVICON_APPLE_KEY,
+      ]);
+    data?.forEach((row) => {
+      if (row.key === LOGO_KEY) setLogoUrl(row.value as string);
+      if (row.key === LOGO_EXTREM_KEY) setLogoExtremUrl(row.value as string);
+      if (row.key === LOGO_INTENSIV_KEY) setLogoIntensivUrl(row.value as string);
+      if (row.key === AGB_KEY) setAgbUrl(row.value as string);
+      if (row.key === DATENSCHUTZ_KEY) setDsUrl(row.value as string);
+      if (row.key === FAVICON_KEY) setFaviconUrl(row.value as string);
+      if (row.key === FAVICON_16_KEY) setFavicon16Url(row.value as string);
+      if (row.key === FAVICON_32_KEY) setFavicon32Url(row.value as string);
+      if (row.key === FAVICON_ICO_KEY) setFaviconIcoUrl(row.value as string);
+      if (row.key === FAVICON_APPLE_KEY) setFaviconAppleUrl(row.value as string);
+    });
+  };
     load();
   }, [supabase]);
 
@@ -133,6 +156,10 @@ export default function SettingsPage() {
       agbUrl ? { key: AGB_KEY, value: agbUrl } : null,
       dsUrl ? { key: DATENSCHUTZ_KEY, value: dsUrl } : null,
       faviconUrl ? { key: FAVICON_KEY, value: faviconUrl } : null,
+      favicon16Url ? { key: FAVICON_16_KEY, value: favicon16Url } : null,
+      favicon32Url ? { key: FAVICON_32_KEY, value: favicon32Url } : null,
+      faviconIcoUrl ? { key: FAVICON_ICO_KEY, value: faviconIcoUrl } : null,
+      faviconAppleUrl ? { key: FAVICON_APPLE_KEY, value: faviconAppleUrl } : null,
     ].filter(Boolean);
 
     const { error } = await supabase.from("settings").upsert(rows as any[], { onConflict: "key" });
@@ -338,6 +365,68 @@ export default function SettingsPage() {
                     </div>
                   )}
                 </div>
+              </div>
+
+              <div className="pt-1">
+                <button
+                  onClick={save}
+                  disabled={saving}
+                  className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-black shadow-md shadow-[#ff1f8f]/30 hover:bg-[#e40073] disabled:opacity-60"
+                >
+                  {saving ? "Speichern…" : "Speichern"}
+                </button>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+              <h2 className="text-lg font-semibold text-slate-900">Favicon</h2>
+              <p className="text-sm text-slate-600">Lade Favicons in den passenden Größen hoch. Google/Browser nutzen meist PNG/ICO, Apple 180×180.</p>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <FaviconUpload
+                  label="WebP (Hauptfavicon)"
+                  url={faviconUrl}
+                  accept="image/*"
+                  onFile={(f) => uploadFileToSetting(f, setFaviconUrl, FAVICON_KEY)}
+                  onDelete={() => deleteSetting(FAVICON_KEY, setFaviconUrl)}
+                  deleting={deletingKey === FAVICON_KEY}
+                />
+                <FaviconUpload
+                  label="PNG 32×32"
+                  url={favicon32Url}
+                  accept="image/png"
+                  onFile={(f) => uploadFileToSetting(f, setFavicon32Url, FAVICON_32_KEY)}
+                  onDelete={() => deleteSetting(FAVICON_32_KEY, setFavicon32Url)}
+                  deleting={deletingKey === FAVICON_32_KEY}
+                />
+                <FaviconUpload
+                  label="PNG 16×16"
+                  url={favicon16Url}
+                  accept="image/png"
+                  onFile={(f) => uploadFileToSetting(f, setFavicon16Url, FAVICON_16_KEY)}
+                  onDelete={() => deleteSetting(FAVICON_16_KEY, setFavicon16Url)}
+                  deleting={deletingKey === FAVICON_16_KEY}
+                />
+                <FaviconUpload
+                  label="ICO"
+                  url={faviconIcoUrl}
+                  accept=".ico,image/x-icon"
+                  onFile={(f) => uploadFileToSetting(f, setFaviconIcoUrl, FAVICON_ICO_KEY)}
+                  onDelete={() => deleteSetting(FAVICON_ICO_KEY, setFaviconIcoUrl)}
+                  deleting={deletingKey === FAVICON_ICO_KEY}
+                />
+                <FaviconUpload
+                  label="Apple Touch 180×180 (PNG)"
+                  url={faviconAppleUrl}
+                  accept="image/png"
+                  onFile={(f) => uploadFileToSetting(f, setFaviconAppleUrl, FAVICON_APPLE_KEY)}
+                  onDelete={() => deleteSetting(FAVICON_APPLE_KEY, setFaviconAppleUrl)}
+                  deleting={deletingKey === FAVICON_APPLE_KEY}
+                />
+              </div>
+
+              <div className="text-xs text-slate-500">
+                Hinweis: Beim Speichern werden die URLs in der Settings-Tabelle abgelegt und vom Frontend für <code>rel=\"icon\"</code> usw. genutzt.
               </div>
 
               <div className="pt-1">
@@ -567,6 +656,43 @@ function MoreLinks() {
           </a>
         ))}
       </div>
+    </div>
+  );
+}
+
+function FaviconUpload({
+  label,
+  url,
+  accept,
+  onFile,
+  onDelete,
+  deleting,
+}: {
+  label: string;
+  url: string | null;
+  accept?: string;
+  onFile: (file: File) => void;
+  onDelete: () => void;
+  deleting?: boolean;
+}) {
+  return (
+    <div className="space-y-2 rounded-xl border border-slate-200 p-3 bg-slate-50/60">
+      <p className="text-sm font-semibold text-slate-800">{label}</p>
+      <div className="flex items-center gap-3">
+        <input type="file" accept={accept} className="text-sm" onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
+        {url && (
+          <button className="text-xs text-red-600 hover:underline" onClick={onDelete} disabled={deleting}>
+            {deleting ? "Lösche…" : "Entfernen"}
+          </button>
+        )}
+      </div>
+      {url && (
+        <div className="rounded-lg border border-slate-200 bg-white px-2 py-2">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={url} alt={label} className="h-12 w-12 object-contain" />
+          <p className="text-[11px] text-slate-500 break-all mt-1">{url}</p>
+        </div>
+      )}
     </div>
   );
 }

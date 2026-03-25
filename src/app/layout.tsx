@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 
   const defaultImage = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp";
-  const iconVersion = "v20260326-1";
+  const iconVersion = "v20260326-2";
 
   return {
     title: "Musikproduktion & DJ Kurse | Music Mission Institute",
@@ -37,11 +37,11 @@ export async function generateMetadata(): Promise<Metadata> {
       languages: languageAlternates,
     },
     icons: [
-      { rel: "icon", url: `/favicon-32x32.png?${iconVersion}`, type: "image/png", sizes: "32x32" },
-      { rel: "icon", url: `/favicon-16x16.png?${iconVersion}`, type: "image/png", sizes: "16x16" },
-      { rel: "icon", url: `/favicon.png?${iconVersion}`, type: "image/png", sizes: "512x512" },
-      { rel: "shortcut icon", url: `/favicon.ico?${iconVersion}` },
-      { rel: "apple-touch-icon", url: `/apple-touch-icon.png?${iconVersion}`, sizes: "180x180" },
+      { rel: "icon", url: `/mmfavicon-32x32.png?${iconVersion}`, type: "image/png", sizes: "32x32" },
+      { rel: "icon", url: `/mmfavicon-16x16.png?${iconVersion}`, type: "image/png", sizes: "16x16" },
+      { rel: "icon", url: `/mmfavicon.png?${iconVersion}`, type: "image/png", sizes: "512x512" },
+      { rel: "shortcut icon", url: `/mmfavicon.ico?${iconVersion}` },
+      { rel: "apple-touch-icon", url: `/mmapple-touch-icon.png?${iconVersion}`, sizes: "180x180" },
       { rel: "icon", url: `/favicon.svg?${iconVersion}`, type: "image/svg+xml" },
     ],
     keywords: ["Musikproduktion", "Tontechnik", "Live-Sound", "DJing", "Kurse", "Workshops", "Music Mission Institute"],

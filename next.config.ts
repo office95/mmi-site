@@ -22,6 +22,22 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        source: "/:favicon(favicon|mmfavicon|mmfavicon-20260326)\\.(ico|png|svg)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, must-revalidate" },
+        ],
+      },
+      {
+        source: "/:apple(mmapple-touch-icon|apple-touch-icon)-:v(20260326)?\\.(png)",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=0, must-revalidate" },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

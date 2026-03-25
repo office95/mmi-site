@@ -208,6 +208,7 @@ export default function FormsPage() {
               <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">{f.is_live ? "Live" : "Entwurf"}</p>
               <h3 className="text-lg font-semibold">{f.title}</h3>
               <p className="text-sm text-slate-600 line-clamp-2">{f.description}</p>
+              <p className="text-[11px] text-slate-500 font-mono break-all">ID: {f.id}</p>
               <p className="text-xs text-slate-500">{f.form_fields?.length ?? 0} Felder</p>
               <div className="flex gap-2 pt-2">
                 <button
@@ -346,6 +347,23 @@ export default function FormsPage() {
                 value={editing.description ?? ""}
                 onChange={(e) => setEditing({ ...editing, description: e.target.value })}
               />
+            </label>
+            <label className="space-y-1">
+              <span className="text-sm font-semibold">Form ID</span>
+              <div className="flex items-center gap-2">
+                <input
+                  className="w-full rounded-xl border border-slate-200 px-3 py-2 font-mono text-xs bg-slate-50"
+                  value={editing.id}
+                  readOnly
+                />
+                <button
+                  type="button"
+                  className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-800 hover:bg-slate-50"
+                  onClick={() => navigator?.clipboard?.writeText(editing.id || "")}
+                >
+                  Kopieren
+                </button>
+              </div>
             </label>
             <label className="space-y-1">
               <span className="text-sm font-semibold">AGB-Link (optional)</span>

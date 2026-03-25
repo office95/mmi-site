@@ -35,7 +35,7 @@ type FavoriteMeta = {
   location?: string | null;
 };
 
-export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; heroSubline?: string }) {
+export default function EntdeckenClient({ h1, heroSubline, defaultOnlyFavs = false }: { h1?: string; heroSubline?: string; defaultOnlyFavs?: boolean }) {
   const [sessions, setSessions] = useState<SessionCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [qSearch, setQSearch] = useState("");
@@ -46,7 +46,7 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [favoriteMeta, setFavoriteMeta] = useState<FavoriteMeta[]>([]);
-  const [onlyFavs, setOnlyFavs] = useState(false);
+  const [onlyFavs, setOnlyFavs] = useState(defaultOnlyFavs);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showFavPopover, setShowFavPopover] = useState(false);
   const [debugHost, setDebugHost] = useState("");
@@ -132,7 +132,7 @@ export default function EntdeckenClient({ h1, heroSubline }: { h1?: string; hero
     loadSessions();
   }, []);
 
-  // Query-Param onlyFavs=1 initial setzen
+  // Query-Param onlyFavs=1 initial setzen (bleibt optional)
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);

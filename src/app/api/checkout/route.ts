@@ -22,6 +22,7 @@ type CheckoutBody = {
   is_company?: boolean;
   consent_gdpr?: boolean;
   participants?: number;
+  addons?: string[];
 };
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY;

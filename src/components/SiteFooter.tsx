@@ -33,28 +33,28 @@ export default async function SiteFooter() {
     switch (name) {
       case "instagram":
         return (
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="5" ry="5" />
-            <circle cx="12" cy="12" r="3.8" />
-            <circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none" />
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5" ry="5" />
+            <circle cx="12" cy="12" r="3.6" />
+            <circle cx="17" cy="7" r="0.9" fill="currentColor" stroke="none" />
           </svg>
         );
       case "facebook":
         return (
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M13.5 8.5V6.8c0-.9.6-1.3 1.2-1.3H16V3h-2.2C11.3 3 10 4.6 10 6.6v1.9H8v2.5h2V21h3v-8h2.1l.4-2.5h-2.5z" />
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M13.2 10.5h2.2l.3-2.6h-2.5V6.6c0-.7.2-1.2 1.3-1.2H16V3.1C15.6 3 14.5 3 13.3 3 10.8 3 9.1 4.5 9.1 6.9v1H7v2.6h2.1V21h3.1z" />
           </svg>
         );
       case "tiktok":
         return (
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 7.8a5.2 5.2 0 0 1-3-1V15a5.5 5.5 0 1 1-5.5-5.5c.3 0 .6 0 .9.1V7.1c-3 0-5.5 2.4-5.5 5.5S8.4 18 11.5 18a5.5 5.5 0 0 0 5.5-5.5V8.3c.9.6 2 1 3 1V7.8z" />
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12.5 4h2.7c0 1.7 1.3 3 3 3h.9v2.6c-1.1-.1-2.1-.4-3.1-.9v6.2a6.4 6.4 0 1 1-6.4-6.4c.3 0 .6 0 .9.1V11a3.7 3.7 0 1 0 2.7 3.5V4Z" />
           </svg>
         );
       case "youtube":
         return (
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M21.6 7.2s-.2-1.5-.8-2.1c-.7-.8-1.5-.8-1.9-.9-2.6-.2-6.5-.2-6.5-.2h-.1s-3.9 0-6.5.2c-.4 0-1.3.1-2 .9-.6.6-.8 2.1-.8 2.1S3 9 .9 11v2c0 .6.2 1.1.2 1.1s.2 1.5.8 2.1c.7.8 1.7.8 2.1.9 1.5.1 6.3.2 6.3.2s3.9 0 6.5-.2c.4 0 1.3-.1 2-.9.6-.6.8-2.1.8-2.1s.2-.5.2-1.1v-2c0-.6-.2-1.1-.2-1.1s-.2-1.5-.8-2.1zM9.8 14.7V9.3l4.9 2.7-4.9 2.7z" />
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M21.5 8s-.2-1.4-.7-1.9c-.5-.6-1.1-.7-1.7-.8C16.7 5 12 5 12 5s-4.7 0-7.1.3c-.6.1-1.2.2-1.7.8-.5.5-.7 1.9-.7 1.9S2 9.6 2 11.2v1.6c0 1.6.2 3.2.2 3.2s.2 1.4.7 1.9c.5.6 1.1.7 1.7.8 2.4.3 7.1.3 7.1.3s4.7 0 7.1-.3c.6-.1 1.2-.2 1.7-.8.5-.5.7-1.9.7-1.9s.2-1.6.2-3.2v-1.6C21.7 9.6 21.5 8 21.5 8Zm-11 5.9V8.9l4.8 2.5-4.8 2.5Z" />
           </svg>
         );
       default:

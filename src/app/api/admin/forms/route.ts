@@ -33,6 +33,7 @@ export async function POST(req: Request) {
     description: body.description ?? null,
     require_terms: body.require_terms ?? false,
     terms_url: body.terms_url ?? null,
+    terms_text: body.terms_text ?? null,
     is_live: body.is_live ?? false,
     updated_at: new Date().toISOString(),
   };

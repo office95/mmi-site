@@ -21,6 +21,7 @@ type FormModel = {
   description?: string;
   require_terms?: boolean;
   terms_url?: string;
+  terms_text?: string;
   form_fields: FormField[];
 };
 
@@ -249,7 +250,9 @@ export default function DynamicForm() {
         <label className="flex items-center gap-2 text-sm font-semibold text-slate-800">
           <input type="checkbox" checked={acceptTerms} onChange={(e) => setAcceptTerms(e.target.checked)} />
           <span>
-            AGB akzeptieren{" "}
+            {form.terms_text?.trim()
+              ? form.terms_text
+              : "Ich stimme der Verarbeitung meiner Angaben zur Kontaktaufnahme zu. Mehr Infos in unserer Datenschutzerklärung."}{" "}
             {form.terms_url && (
               <a className="underline text-[#ff1f8f]" href={form.terms_url} target="_blank" rel="noreferrer">
                 Link

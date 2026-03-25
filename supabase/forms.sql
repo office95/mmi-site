@@ -13,6 +13,7 @@ create table if not exists public.forms (
   description text,
   require_terms boolean default false,
   terms_url text,
+  terms_text text,
   is_live boolean default false,
   created_at timestamptz default now(),
   updated_at timestamptz default now()

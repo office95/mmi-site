@@ -22,6 +22,7 @@ type FormModel = {
   description?: string;
   require_terms?: boolean;
   terms_url?: string;
+  terms_text?: string;
   is_live?: boolean;
   form_fields: FormField[];
   updated_at?: string;
@@ -41,6 +42,7 @@ const emptyForm: FormModel = {
   description: "",
   require_terms: false,
   terms_url: "",
+  terms_text: "",
   is_live: false,
   form_fields: [],
 };
@@ -362,6 +364,26 @@ export default function FormsPage() {
                 />
                 AGB erforderlich
               </label>
+              {editing.require_terms && (
+                <div className="grid gap-2 md:grid-cols-2">
+                  <textarea
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 md:col-span-2"
+                    rows={3}
+                    placeholder="Standard-AGB-Hinweis"
+                    value={
+                      editing.terms_text ??
+                      "Ich stimme der Verarbeitung meiner Angaben zur Kontaktaufnahme zu. Mehr Infos in unserer Datenschutzerklärung."
+                    }
+                    onChange={(e) => setEditing({ ...editing, terms_text: e.target.value })}
+                  />
+                  <input
+                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800"
+                    placeholder="AGB / Datenschutz Link (optional)"
+                    value={editing.terms_url ?? ""}
+                    onChange={(e) => setEditing({ ...editing, terms_url: e.target.value })}
+                  />
+                </div>
+              )}
               <label className="flex items-center gap-2 text-sm font-semibold">
                 <input
                   type="checkbox"
@@ -575,7 +597,10 @@ export default function FormsPage() {
                 <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
                   <input type="checkbox" disabled />
                   <span>
-                    AGB akzeptieren {editing.terms_url && (<a className="underline text-[#ff1f8f]" href={editing.terms_url}>Link</a>)}
+                    {editing.terms_text?.trim()
+                      ? editing.terms_text
+                      : "Ich stimme der Verarbeitung meiner Angaben zur Kontaktaufnahme zu. Mehr Infos in unserer Datenschutzerklärung."}{" "}
+                    {editing.terms_url && (<a className="underline text-[#ff1f8f]" href={editing.terms_url}>Link</a>)}
                   </span>
                 </label>
               )}

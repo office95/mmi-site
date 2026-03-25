@@ -52,8 +52,7 @@ type HomeSession = {
   courses: { title: string; slug: string | null } | null;
 };
 
-export const revalidate = 0;
-export const dynamic = "force-dynamic";
+export const revalidate = 120;
 
 const homeSeoDefaults = {
   pageKey: "homepage",

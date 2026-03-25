@@ -24,14 +24,8 @@ export async function generateMetadata(): Promise<Metadata> {
     "de-DE": domainDE ? `https://${domainDE}` : siteUrl.replace("musicmission.at", "musicmission.de"),
   };
 
-  let faviconUrl: string | undefined;
-  try {
-    const supabase = getSupabaseServiceClient();
-    const { data } = await supabase.from("settings").select("value").eq("key", "site_favicon_url").maybeSingle();
-    faviconUrl = (data?.value as string | null) || undefined;
-  } catch {
-    faviconUrl = undefined;
-  }
+  const faviconUrl =
+    "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/72aaef04-0439-4790-9493-f97d3a018d73.webp";
 
   const defaultImage = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp";
 

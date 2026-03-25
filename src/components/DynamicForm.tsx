@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 type FieldType = "text" | "textarea" | "select" | "radio" | "checkbox" | "multiselect" | "heading" | "subheading";
 
@@ -27,7 +28,8 @@ type FormModel = {
 
 const FALLBACK_FORM_ID = "a6b28590-9885-42e8-a460-9ffd27b59ae3";
 
-export default function DynamicForm() {
+export default function DynamicForm({ formId }: { formId?: string }) {
+  const searchParams = useSearchParams();
   const [form, setForm] = useState<FormModel | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -36,8 +38,12 @@ export default function DynamicForm() {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [values, setValues] = useState<Record<string, string | string[] | boolean>>({});
 
+  const effectiveId = useMemo(() => {
+    const fromQuery = searchParams?.get("form") || undefined;
+    return formId || fromQuery || FALLBACK_FORM_ID;
+  }, [formId, searchParams]);
+
   useEffect(() => {
-    const effectiveId = FALLBACK_FORM_ID;
     console.info("[DynamicForm] loading form", effectiveId);
     const load = async () => {
       setLoading(true);
@@ -56,7 +62,7 @@ export default function DynamicForm() {
       setForm(loaded);
     };
     load();
-  }, []);
+  }, [effectiveId]);
 
   const sortedFields = useMemo(() => {
     return (form?.form_fields ?? []).slice().sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));

@@ -24,8 +24,8 @@ export async function generateMetadata(): Promise<Metadata> {
     "de-DE": domainDE ? `https://${domainDE}` : siteUrl.replace("musicmission.at", "musicmission.de"),
   };
 
-  const faviconUrl =
-    "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/72aaef04-0439-4790-9493-f97d3a018d73.webp";
+  // Lokale Favicons aus /public (werden via Admin -> Verwaltung gepflegt)
+  const faviconUrl = "/favicon-32x32.png";
 
   const defaultImage = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp";
 
@@ -39,9 +39,11 @@ export async function generateMetadata(): Promise<Metadata> {
       languages: languageAlternates,
     },
     icons: [
-      { rel: "icon", url: faviconUrl },
-      { rel: "shortcut icon", url: faviconUrl },
-      { rel: "apple-touch-icon", url: faviconUrl },
+      { rel: "icon", url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { rel: "icon", url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+      { rel: "shortcut icon", url: "/favicon.ico" },
+      { rel: "apple-touch-icon", url: "/apple-touch-icon.png", sizes: "180x180" },
+      { rel: "icon", url: "/favicon-32x32.png", type: "image/png" },
     ],
     keywords: ["Musikproduktion", "Tontechnik", "Live-Sound", "DJing", "Kurse", "Workshops", "Music Mission Institute"],
     openGraph: {

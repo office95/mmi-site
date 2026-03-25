@@ -44,15 +44,11 @@ export async function generateMetadata(): Promise<Metadata> {
       canonical: "/",
       languages: languageAlternates,
     },
-    icons: faviconUrl
-      ? [
-          { rel: "icon", url: faviconUrl },
-          { rel: "shortcut icon", url: faviconUrl },
-        ]
-      : [
-          { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" },
-          { rel: "shortcut icon", url: "/favicon.svg", type: "image/svg+xml" },
-        ],
+    icons: [
+      { rel: "icon", url: faviconUrl || "/favicon.svg", type: "image/svg+xml" },
+      { rel: "shortcut icon", url: faviconUrl || "/favicon.svg", type: "image/svg+xml" },
+      { rel: "apple-touch-icon", url: "/favicon.svg" },
+    ],
     keywords: ["Musikproduktion", "Tontechnik", "Live-Sound", "DJing", "Kurse", "Workshops", "Music Mission Institute"],
     openGraph: {
       type: "website",

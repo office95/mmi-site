@@ -360,56 +360,24 @@ export default function SettingsPage() {
 
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
               <h2 className="text-lg font-semibold text-slate-900">Favicon</h2>
-              <p className="text-sm text-slate-600">Lade Favicons in den passenden Größen hoch. Google/Browser nutzen meist PNG/ICO, Apple 180×180.</p>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <FaviconUpload
-                  label="WebP (Hauptfavicon)"
-                  url={faviconUrl}
+              <p className="text-sm text-slate-600">Bild für das Browser-Tab/Favicon hochladen (PNG/ICO, quadratisch empfohlen).</p>
+              <div className="flex items-center gap-3">
+                <input
+                  type="file"
                   accept="image/*"
-                  onFile={(f) => uploadFileToSetting(f, setFaviconUrl, FAVICON_KEY)}
-                  onDelete={() => deleteSetting(FAVICON_KEY, setFaviconUrl)}
-                  deleting={deletingKey === FAVICON_KEY}
+                  onChange={(e) => e.target.files?.[0] && uploadFileToSetting(e.target.files[0], setFaviconUrl, FAVICON_KEY)}
+                  className="text-sm"
                 />
-                <FaviconUpload
-                  label="PNG 32×32"
-                  url={favicon32Url}
-                  accept="image/png"
-                  onFile={(f) => uploadFileToSetting(f, setFavicon32Url, FAVICON_32_KEY)}
-                  onDelete={() => deleteSetting(FAVICON_32_KEY, setFavicon32Url)}
-                  deleting={deletingKey === FAVICON_32_KEY}
-                />
-                <FaviconUpload
-                  label="PNG 16×16"
-                  url={favicon16Url}
-                  accept="image/png"
-                  onFile={(f) => uploadFileToSetting(f, setFavicon16Url, FAVICON_16_KEY)}
-                  onDelete={() => deleteSetting(FAVICON_16_KEY, setFavicon16Url)}
-                  deleting={deletingKey === FAVICON_16_KEY}
-                />
-                <FaviconUpload
-                  label="ICO"
-                  url={faviconIcoUrl}
-                  accept=".ico,image/x-icon"
-                  onFile={(f) => uploadFileToSetting(f, setFaviconIcoUrl, FAVICON_ICO_KEY)}
-                  onDelete={() => deleteSetting(FAVICON_ICO_KEY, setFaviconIcoUrl)}
-                  deleting={deletingKey === FAVICON_ICO_KEY}
-                />
-                <FaviconUpload
-                  label="Apple Touch 180×180 (PNG)"
-                  url={faviconAppleUrl}
-                  accept="image/png"
-                  onFile={(f) => uploadFileToSetting(f, setFaviconAppleUrl, FAVICON_APPLE_KEY)}
-                  onDelete={() => deleteSetting(FAVICON_APPLE_KEY, setFaviconAppleUrl)}
-                  deleting={deletingKey === FAVICON_APPLE_KEY}
-                />
+                {uploading && <span className="text-xs text-slate-500">Upload…</span>}
               </div>
-
-              <div className="text-xs text-slate-500">
-                Hinweis: Beim Speichern werden die URLs in der Settings-Tabelle abgelegt und vom Frontend für <code>rel=\"icon\"</code> usw. genutzt.
-              </div>
-
-              <div className="pt-1">
+              {faviconUrl && (
+                <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={faviconUrl} alt="Favicon Preview" className="h-10 w-10 rounded" />
+                  <p className="text-xs text-slate-500 break-all">{faviconUrl}</p>
+                </div>
+              )}
+              <div className="flex items-center gap-3">
                 <button
                   onClick={save}
                   disabled={saving}

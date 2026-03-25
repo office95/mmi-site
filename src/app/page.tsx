@@ -14,6 +14,7 @@ import Link from "next/link";
 import CourseRail from "@/components/CourseRail";
 import { fetchSeoForPage, resolvedSeoToMetadata } from "@/lib/seo-matrix";
 import Script from "next/script";
+import OpenDayPopup from "@/components/OpenDayPopup";
 
 const toUrl = (path: string | null) => {
   if (!path) return null;
@@ -307,6 +308,7 @@ export default async function Home() {
       <SiteHeader />
       <h1 className="sr-only">{seo.h1}</h1>
       <main className="relative">
+        <OpenDayPopup />
         {faqLd ? (
           <Script
             id="home-faq-ld"

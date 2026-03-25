@@ -37,6 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     icons: [
       { rel: "icon", url: "/favicon.ico" },
+      { rel: "icon", url: "/favicon.png", type: "image/png", sizes: "512x512" },
       { rel: "icon", url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
       { rel: "icon", url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
       { rel: "shortcut icon", url: "/favicon.ico" },

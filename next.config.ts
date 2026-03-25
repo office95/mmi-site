@@ -25,16 +25,14 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/:favicon(favicon|mmfavicon|mmfavicon-20260326)\\.(ico|png|svg)",
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=0, must-revalidate" },
-        ],
+        // Root favicons (all variants we ship)
+        source: "/(favicon|mmfavicon|mmfavicon-20260326)\\.(ico|png|svg)",
+        headers: [{ key: "Cache-Control", value: "public, max-age=0, must-revalidate" }],
       },
       {
-        source: "/:apple(mmapple-touch-icon|apple-touch-icon)-:v(20260326)?\\.(png)",
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=0, must-revalidate" },
-        ],
+        // Apple touch icons (versioned + default)
+        source: "/(mmapple-touch-icon-20260326|mmapple-touch-icon|apple-touch-icon)\\.png",
+        headers: [{ key: "Cache-Control", value: "public, max-age=0, must-revalidate" }],
       },
     ];
   },

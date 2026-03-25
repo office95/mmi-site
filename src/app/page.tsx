@@ -58,7 +58,7 @@ export const dynamic = "force-dynamic";
 const homeSeoDefaults = {
   pageKey: "homepage",
   defaultSlug: "/",
-  defaultTitle: "Musikproduktion & Tontechnik Kurse | Music Mission Institute",
+  defaultTitle: "Musikproduktion & Tontechnik | Music Mission Institute",
   defaultDescription:
     "Praxisnahe Kurse in Musikproduktion, Tontechnik, Live-Tontechnik, DJing & Vocalcoaching in Österreich und Deutschland. Lerne im Studio von Profis – jetzt Platz sichern.",
   defaultH1: "Musikproduktion & Tontechnik Kurse – Music Mission Institute",

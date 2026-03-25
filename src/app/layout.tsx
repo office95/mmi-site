@@ -36,7 +36,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const defaultImage = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp";
 
   return {
-    title: "Musikproduktion, Tontechnik, DJ & Vocal Kurse | Music Mission Institute",
+    title: "Musikproduktion, DJ & Vocal Kurse | Music Mission Institute",
     description:
       "Music Mission Institute ist Anbieter für Kurse in Musikproduktion, Tontechnik, Livetontechnik, DJing und Vocalcoaching. Praxisnahe Kurse mit Profis aus der Musikbranche.",
     metadataBase: new URL(siteUrl),
@@ -58,7 +58,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       url: siteUrl,
       siteName: "Music Mission Institute",
-      title: "Musikproduktion, Tontechnik, DJ & Vocal Kurse | Music Mission Institute",
+      title: "Musikproduktion, DJ & Vocal Kurse | Music Mission Institute",
       description:
         "Anbieter für Musikproduktion, Tontechnik, Livetontechnik, DJing und Vocalcoaching – praxisnah mit Profis aus der Musikbranche.",
       locale: "de_AT",
@@ -66,7 +66,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: "Musikproduktion, Tontechnik, DJ & Vocal Kurse | Music Mission Institute",
+      title: "Musikproduktion, DJ & Vocal Kurse | Music Mission Institute",
       description: "Kurse in Musikproduktion, Tontechnik, Livetontechnik, DJing und Vocalcoaching in DACH.",
       images: [defaultImage],
     },

@@ -371,60 +371,67 @@ export function SiteHeader() {
       {mounted &&
         createPortal(
           <div
-            className={`2xl:hidden fixed inset-0 z-50 bg-white px-4 sm:px-6 py-6 overflow-y-auto shadow-2xl transform transition-transform duration-300 ease-out ${
-              mobileOpen ? "translate-x-0" : "translate-x-full"
+            className={`2xl:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${
+              mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
             }`}
-            style={{ pointerEvents: mobileOpen ? "auto" : "none" }}
           >
-            <div className="max-w-4xl mx-auto">
-              <div className="flex items-center justify-between mb-4 sm:mb-6">
-                <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
-                  <Image
-                    src={FALLBACK_LOGO}
-                    alt="Music Mission Institute Logo"
-                    width={40}
-                    height={40}
-                    className="h-10 w-10 object-contain"
-                    priority
-                  />
-                  <span className="text-base font-semibold">Music Mission Institute</span>
-                </Link>
-                <button
-                  className="header-btn inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-slate-800 hover:bg-slate-100"
-                  onClick={() => setMobileOpen(false)}
-                  aria-label="Menü schließen"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              <div className="space-y-5 text-base font-semibold">
-                <div className="rounded-2xl border border-slate-200 bg-white/95 shadow-xl shadow-black/5 px-4 sm:px-6 py-4 sm:py-5 space-y-3 max-w-3xl mx-auto">
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Navigation</p>
-                  <Link
-                    href="/entdecken"
-                    className={`block rounded-xl px-3 py-3 text-[15px] hover:bg-slate-100 ${isActive("/entdecken") ? "underline underline-offset-4" : ""}`}
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    Entdecken
+            <div
+              className={`absolute right-0 top-0 h-full w-full max-w-[480px] sm:max-w-[520px] bg-white shadow-2xl shadow-black/30 transform transition-transform duration-300 ease-out ${
+                mobileOpen ? "translate-x-0" : "translate-x-full"
+              }`}
+            >
+              <div className="h-full flex flex-col">
+                <div className="flex items-center justify-between px-5 py-5 border-b border-slate-200/80">
+                  <Link href="/" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
+                    <Image
+                      src={FALLBACK_LOGO}
+                      alt="Music Mission Institute Logo"
+                      width={40}
+                      height={40}
+                      className="h-10 w-10 object-contain"
+                      priority
+                    />
+                    <span className="text-base font-semibold">Music Mission Institute</span>
                   </Link>
+                  <button
+                    className="header-btn inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-slate-800 hover:bg-slate-100"
+                    onClick={() => setMobileOpen(false)}
+                    aria-label="Menü schließen"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
 
-                  <div className="rounded-xl border border-slate-200 bg-slate-50/70">
+                <div className="flex-1 overflow-y-auto px-5 py-6">
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500 mb-4">Navigation</p>
+
+                  <nav className="space-y-1 text-base font-semibold">
+                    <Link
+                      href="/entdecken"
+                      className={`flex items-center justify-between rounded-lg px-3 py-3 hover:bg-slate-50 ${
+                        isActive("/entdecken") ? "underline underline-offset-4" : ""
+                      }`}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <span>Entdecken</span>
+                    </Link>
+
+                    <div className="border-t border-slate-200/70" />
                     <button
-                      className="flex w-full items-center justify-between px-3 py-3 text-left font-semibold text-[15px]"
+                      className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left font-semibold hover:bg-slate-50"
                       onClick={() => setMobileIntensivOpen((v) => !v)}
                     >
                       <span>Intensivausbildungen</span>
                       <ChevronDown size={16} className={`transition ${mobileIntensivOpen ? "rotate-180" : ""}`} />
                     </button>
                     {mobileIntensivOpen && (
-                      <div className="border-t border-slate-200 bg-white">
-                        <div className="space-y-1.5 px-3 py-3 text-sm font-normal text-slate-800">
+                      <div className="pl-3">
+                        <div className="space-y-1 pb-3">
                           {(intensivSlot?.courses ?? []).map((c) => (
                             <Link
                               key={c.id}
                               href={`/kurs/${c.slug || c.id}`}
-                              className="block rounded-lg px-2 py-2 hover:bg-slate-100"
+                              className="block rounded-md px-3 py-2 text-sm font-normal text-slate-800 hover:bg-slate-50"
                               onClick={() => setMobileOpen(false)}
                             >
                               {c.title}
@@ -432,7 +439,7 @@ export function SiteHeader() {
                           ))}
                           <Link
                             href="/intensiv"
-                            className="block rounded-lg px-2 py-2 font-semibold text-pink-600 hover:bg-pink-50"
+                            className="block rounded-md px-3 py-2 text-sm font-semibold text-pink-600 hover:bg-pink-50"
                             onClick={() => setMobileOpen(false)}
                           >
                             Alle Intensivausbildungen
@@ -440,24 +447,23 @@ export function SiteHeader() {
                         </div>
                       </div>
                     )}
-                  </div>
 
-                  <div className="rounded-xl border border-slate-200 bg-slate-50/70">
+                    <div className="border-t border-slate-200/70" />
                     <button
-                      className="flex w-full items-center justify-between px-3 py-3 text-left font-semibold text-[15px]"
+                      className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-left font-semibold hover:bg-slate-50"
                       onClick={() => setMobileExtremOpen((v) => !v)}
                     >
                       <span>Extremkurse</span>
                       <ChevronDown size={16} className={`transition ${mobileExtremOpen ? "rotate-180" : ""}`} />
                     </button>
                     {mobileExtremOpen && (
-                      <div className="border-t border-slate-200 bg-white">
-                        <div className="space-y-1.5 px-3 py-3 text-sm font-normal text-slate-800">
+                      <div className="pl-3">
+                        <div className="space-y-1 pb-3">
                           {(extremSlot?.courses ?? []).map((c) => (
                             <Link
                               key={c.id}
                               href={`/kurs/${c.slug || c.id}`}
-                              className="block rounded-lg px-2 py-2 hover:bg-slate-100"
+                              className="block rounded-md px-3 py-2 text-sm font-normal text-slate-800 hover:bg-slate-50"
                               onClick={() => setMobileOpen(false)}
                             >
                               {c.title}
@@ -465,7 +471,7 @@ export function SiteHeader() {
                           ))}
                           <Link
                             href="/extremkurs"
-                            className="block rounded-lg px-2 py-2 font-semibold text-pink-600 hover:bg-pink-50"
+                            className="block rounded-md px-3 py-2 text-sm font-semibold text-pink-600 hover:bg-pink-50"
                             onClick={() => setMobileOpen(false)}
                           >
                             Alle Extremkurse
@@ -473,30 +479,35 @@ export function SiteHeader() {
                         </div>
                       </div>
                     )}
-                  </div>
 
-                  <Link
-                    href="/professional-audio-diploma"
-                    className={`block rounded-xl px-3 py-3 text-[15px] hover:bg-slate-100 ${
-                      isActive("/professional-audio-diploma") ? "underline underline-offset-4" : ""
-                    }`}
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    Professional Audio Diploma
-                  </Link>
-                  <Link
-                    href="/kursstandorte"
-                    className={`block rounded-xl px-3 py-3 text-[15px] hover:bg-slate-100 ${isActive("/kursstandorte") ? "underline underline-offset-4" : ""}`}
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    Kursstandorte
-                  </Link>
+                    <div className="border-t border-slate-200/70" />
+                    <Link
+                      href="/professional-audio-diploma"
+                      className={`flex items-center justify-between rounded-lg px-3 py-3 hover:bg-slate-50 ${
+                        isActive("/professional-audio-diploma") ? "underline underline-offset-4" : ""
+                      }`}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <span>Professional Audio Diploma</span>
+                    </Link>
+
+                    <div className="border-t border-slate-200/70" />
+                    <Link
+                      href="/kursstandorte"
+                      className={`flex items-center justify-between rounded-lg px-3 py-3 hover:bg-slate-50 ${
+                        isActive("/kursstandorte") ? "underline underline-offset-4" : ""
+                      }`}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <span>Kursstandorte</span>
+                    </Link>
+                  </nav>
                 </div>
 
-                <div className="max-w-3xl mx-auto rounded-2xl border border-slate-200 bg-white/95 shadow-lg px-4 sm:px-6 py-4 text-sm text-slate-700 flex items-center justify-between gap-3">
-                  <div>
+                <div className="border-t border-slate-200/80 px-5 py-4 flex items-center justify-between gap-3">
+                  <div className="text-sm text-slate-700">
                     <p className="font-semibold text-slate-900">Kontakt</p>
-                    <p className="text-sm text-slate-700">office@musicmission.at</p>
+                    <p className="text-sm">office@musicmission.at</p>
                   </div>
                   <a
                     href="mailto:office@musicmission.at"

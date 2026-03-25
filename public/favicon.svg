@@ -1,19 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="MMI Favicon">
-  <style>
-    @font-face {
-      font-family: 'Anton';
-      src: url('fonts/Anton-Regular.ttf') format('truetype');
-      font-weight: 700;
-      font-display: block;
-    }
-    text {
-      font-family: 'Anton', 'Anton Regular', 'Arial Black', sans-serif;
-      font-size: 52px;
-      font-weight: 700;
-      fill: #000;
-      dominant-baseline: middle;
-      text-anchor: middle;
-    }
-  </style>
-  <text x="32" y="34">M</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="MMI Favicon">
+  <rect width="512" height="512" rx="64" fill="#ff008d" />
+  <text x="50%" y="54%" fill="#ffffff" font-family="'Anton', 'Arial Black', sans-serif" font-size="320" font-weight="700" text-anchor="middle" dominant-baseline="middle">
+    M
+  </text>
 </svg>

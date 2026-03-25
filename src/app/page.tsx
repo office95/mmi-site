@@ -438,7 +438,7 @@ export default async function Home() {
                   </p>
                   <div className="flex flex-wrap gap-3">
                     <Link
-                      href="/beratung?form=dc25157d-fe49-4577-adcf-962c573de612"
+                      href="/tag-der-offenen-tuer"
                       className="inline-flex items-center gap-2 rounded-full bg-[#ff1f8f] px-5 py-3 text-sm font-semibold text-white shadow-xl shadow-[#ff1f8f]/40 transition hover:bg-[#e0007a]"
                     >
                       Jetzt Platz sichern

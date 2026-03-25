@@ -305,9 +305,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen text-foreground bg-white">
       <SiteHeader />
-      <h1 className="px-6 pt-[6.5rem] text-center font-anton text-[clamp(32px,5vw,54px)] leading-tight text-slate-900">
-        {seo.h1}
-      </h1>
+      <h1 className="sr-only">{seo.h1}</h1>
       <main className="relative">
         {faqLd ? (
           <Script

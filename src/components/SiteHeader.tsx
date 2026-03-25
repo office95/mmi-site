@@ -168,7 +168,7 @@ export function SiteHeader() {
         </p>
       </div>
       <div
-        className={`flex h-14 w-full items-center pl-[2vh] pr-3 text-sm font-semibold tracking-tight sm:pr-6 lg:pr-20 shadow-sm transition-colors transition-backdrop duration-200 flex-nowrap ${
+        className={`flex h-14 w-full items-center pl-[2vh] pr-3 text-sm font-semibold tracking-tight sm:pr-6 2xl:pr-20 shadow-sm transition-colors transition-backdrop duration-200 flex-nowrap ${
           scrolled ? "bg-white/88 backdrop-blur-xl" : "bg-white"
         }`}
       >
@@ -187,7 +187,7 @@ export function SiteHeader() {
         </Link>
 
         {/* Mobile/Tablet Suche (verschwindet ab lg, dort übernimmt Desktop-Suche) */}
-        <div className="flex-1 pr-2 lg:pr-4 lg:hidden min-w-[200px] flex justify-center">
+        <div className="flex-1 pr-2 2xl:pr-4 2xl:hidden min-w-[200px] flex justify-center">
           <div className="w-[80%] min-w-[200px]">
             <CourseSearch variant="compact" />
           </div>
@@ -196,14 +196,14 @@ export function SiteHeader() {
         {/* Entdecken-Link bleibt sichtbar, bis kaum Platz bleibt; versteckt nur auf sehr kleinen Screens bzw. wenn Desktop-Navigation aktiv */}
         <Link
           href="/entdecken"
-          className={`nav-link hidden sm:inline-flex items-center px-3 py-2 font-semibold text-[13px] text-slate-900 lg:hidden ${
+          className={`nav-link hidden sm:inline-flex items-center px-3 py-2 font-semibold text-[13px] text-slate-900 2xl:hidden ${
             isActive("/entdecken") ? "underline underline-offset-4" : ""
           }`}
         >
           Entdecken
         </Link>
 
-        <nav className="relative hidden lg:flex flex-1 flex-nowrap whitespace-nowrap items-center justify-center gap-4 lg:gap-5 xl:gap-6 text-[13px] sm:text-sm pl-[1.5vh]">
+        <nav className="relative hidden 2xl:flex flex-1 flex-nowrap whitespace-nowrap items-center justify-center gap-4 lg:gap-5 xl:gap-6 text-[13px] sm:text-sm pl-[1.5vh]">
           <div className="w-full max-w-[18rem] lg:max-w-[20rem] xl:max-w-[22rem] min-w-[14rem] flex-shrink-0">
             <CourseSearch variant="compact" />
           </div>
@@ -268,7 +268,7 @@ export function SiteHeader() {
             Kursstandorte
           </Link>
         </nav>
-        <div className="hidden lg:flex items-center justify-end gap-3 ml-4">
+        <div className="hidden 2xl:flex items-center justify-end gap-3 ml-4">
           <div
             className="relative"
             onMouseEnter={() => setShowFavPopover(true)}
@@ -335,7 +335,7 @@ export function SiteHeader() {
         </div>
 
         {/* Mobile Burger */}
-        <div className="lg:hidden flex items-center gap-2 mr-2 sm:mr-3">
+        <div className="2xl:hidden flex items-center gap-2 mr-2 sm:mr-3">
           <Link
             href="/entdecken?onlyFavs=1"
             aria-label="Favoriten anzeigen"
@@ -358,12 +358,12 @@ export function SiteHeader() {
             )}
           </Link>
           <button
-          className="header-btn lg:hidden inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-slate-800 hover:bg-slate-100 mr-3 sm:mr-4 lg:mr-8"
-          onClick={() => setMobileOpen((v) => !v)}
-          aria-label="Menü"
-        >
-          {mobileOpen ? <X size={18} /> : <Menu size={18} />}
-        </button>
+            className="header-btn 2xl:hidden inline-flex items-center justify-center rounded-full border border-slate-300 p-2 text-slate-800 hover:bg-slate-100 mr-3 sm:mr-4 lg:mr-8"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label="Menü"
+          >
+            {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
         </div>
       </div>
 
@@ -371,7 +371,7 @@ export function SiteHeader() {
       {mounted &&
         createPortal(
           <div
-            className={`xl:hidden fixed inset-0 z-50 bg-white px-6 py-6 overflow-y-auto shadow-2xl transform transition-transform duration-300 ease-out ${
+            className={`2xl:hidden fixed inset-0 z-50 bg-white px-6 py-6 overflow-y-auto shadow-2xl transform transition-transform duration-300 ease-out ${
               mobileOpen ? "translate-x-0" : "translate-x-full"
             }`}
             style={{ pointerEvents: mobileOpen ? "auto" : "none" }}

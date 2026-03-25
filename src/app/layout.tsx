@@ -39,12 +39,9 @@ export async function generateMetadata(): Promise<Metadata> {
       languages: languageAlternates,
     },
     icons: [
-      { rel: "icon", url: faviconUrl, type: "image/webp" },
-      { rel: "icon", url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
-      { rel: "icon", url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
-      { rel: "shortcut icon", url: "/favicon.ico" },
-      { rel: "apple-touch-icon", url: "/apple-touch-icon.png", sizes: "180x180" },
-      { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "icon", url: faviconUrl },
+      { rel: "shortcut icon", url: faviconUrl },
+      { rel: "apple-touch-icon", url: faviconUrl },
     ],
     keywords: ["Musikproduktion", "Tontechnik", "Live-Sound", "DJing", "Kurse", "Workshops", "Music Mission Institute"],
     openGraph: {

@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 
   const defaultImage = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp";
-  const iconVersion = "v20260326-2";
+  const iconVersion = "v20260325-1";
 
   return {
     title: "Musikproduktion & DJ Kurse | Music Mission Institute",

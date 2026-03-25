@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ComingSoonMarquee } from "./ComingSoonMarquee";
-import { ComingSoonSlider } from "./ComingSoonSlider";
 
 export const dynamic = "force-dynamic";
 
@@ -30,10 +29,7 @@ export default function DeComingSoonPage() {
             </h1>
           </div>
 
-          <div className="w-full max-w-5xl space-y-4">
-            <ComingSoonSlider />
-            <ComingSoonMarquee />
-          </div>
+          <ComingSoonMarquee />
 
         </main>
 

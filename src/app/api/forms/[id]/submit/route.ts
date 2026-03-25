@@ -142,6 +142,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
           fallbackSubject: "Dein Platz ist reserviert – Tag der offenen Tür (GOSH! Studio Wien)",
           fallbackHtml:
             "<p>Vielen Dank für die Anmeldung zum Tag der offenen Tür im GOSH! Studio in Wien.</p>" +
+            "<p><strong>Termin:</strong> 10. April 2026 · 15:00–17:00 Uhr</p>" +
             "<p>Dein Platz ist fix reserviert. Solltest du aus irgendwelchen Gründen nicht kommen können, " +
             'bitte per E-Mail an <a href="mailto:office@musicmission.at">office@musicmission.at</a> absagen.</p>' +
             "<p>Adresse: Leystraße 43, 1200 Wien</p>" +

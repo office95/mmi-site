@@ -33,7 +33,7 @@ export default async function SiteFooter() {
     switch (name) {
       case "instagram":
         return (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="5" ry="5" />
             <circle cx="12" cy="12" r="3.8" />
             <circle cx="17.2" cy="6.8" r="0.8" fill="currentColor" stroke="none" />
@@ -41,19 +41,19 @@ export default async function SiteFooter() {
         );
       case "facebook":
         return (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
             <path d="M13.5 8.5V6.8c0-.9.6-1.3 1.2-1.3H16V3h-2.2C11.3 3 10 4.6 10 6.6v1.9H8v2.5h2V21h3v-8h2.1l.4-2.5h-2.5z" />
           </svg>
         );
       case "tiktok":
         return (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
             <path d="M19 7.8a5.2 5.2 0 0 1-3-1V15a5.5 5.5 0 1 1-5.5-5.5c.3 0 .6 0 .9.1V7.1c-3 0-5.5 2.4-5.5 5.5S8.4 18 11.5 18a5.5 5.5 0 0 0 5.5-5.5V8.3c.9.6 2 1 3 1V7.8z" />
           </svg>
         );
       case "youtube":
         return (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
             <path d="M21.6 7.2s-.2-1.5-.8-2.1c-.7-.8-1.5-.8-1.9-.9-2.6-.2-6.5-.2-6.5-.2h-.1s-3.9 0-6.5.2c-.4 0-1.3.1-2 .9-.6.6-.8 2.1-.8 2.1S3 9 .9 11v2c0 .6.2 1.1.2 1.1s.2 1.5.8 2.1c.7.8 1.7.8 2.1.9 1.5.1 6.3.2 6.3.2s3.9 0 6.5-.2c.4 0 1.3-.1 2-.9.6-.6.8-2.1.8-2.1s.2-.5.2-1.1v-2c0-.6-.2-1.1-.2-1.1s-.2-1.5-.8-2.1zM9.8 14.7V9.3l4.9 2.7-4.9 2.7z" />
           </svg>
         );

@@ -1,0 +1,11 @@
+# llms.txt - guidance for AI crawlers
+
+User-agent: *
+Allow: /
+
+# Contact
+Owner: Music Mission Institute
+Contact: info@musicmission.at
+
+# Notes
+# Dieses Dokument erlaubt KI-Crawlern den Zugriff auf die öffentlichen Inhalte.

@@ -1,6 +1,7 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import Link from "next/link";
+import DynamicForm from "@/components/DynamicForm";
 
 const toUrl = (path: string | null) => {
   if (!path) return null;
@@ -66,107 +67,16 @@ export default async function TagDerOffenenTuerPage() {
 
         <section className="px-6 pb-24 pt-16 lg:px-12" id="anmeldung">
           <div className="mx-auto max-w-3xl space-y-8 rounded-[40px] border border-slate-200/80 bg-white px-8 py-12 shadow-[0_30px_70px_-30px_rgba(15,23,42,0.8)]">
-              <div className="space-y-3 text-center">
-                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Bereit?</p>
-                <h2 className="text-3xl font-semibold text-slate-900">Jetzt anmelden</h2>
-                <p className="text-base text-slate-600">
-                  Melde dich jetzt kostenlos zum Tag der offenen Tür des Music Mission Instituts im GOSH! Studio Wien an.
-                </p>
-              </div>
-            <form
-              action="mailto:office@musicmission.at?subject=Anmeldung%20Tag%20der%20offenen%20T%C3%BCr%20Wien&body=Name%3A%0AZusatz%3A%0AE-Mail%3A%0ATelefon%3A%0AKurs%20Interesse%3A"
-              method="post"
-              encType="text/plain"
-              className="space-y-4"
-            >
-              <div className="grid gap-4 md:grid-cols-2">
-                <label className="space-y-1 text-sm text-slate-600">
-                  Vorname *
-                  <input
-                    name="Vorname"
-                    required
-                    className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 shadow-sm outline-none transition focus:border-pink-500 focus:ring-2 focus:ring-pink-200"
-                  />
-                </label>
-                <label className="space-y-1 text-sm text-slate-600">
-                  Nachname *
-                  <input
-                    name="Nachname"
-                    required
-                    className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 shadow-sm outline-none transition focus:border-pink-500 focus:ring-2 focus:ring-pink-200"
-                  />
-                </label>
-              </div>
-              <div className="grid gap-4 md:grid-cols-2">
-                <label className="space-y-1 text-sm text-slate-600">
-                  E-Mail *
-                  <input
-                    type="email"
-                    name="Email"
-                    required
-                    className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 shadow-sm outline-none transition focus:border-pink-500 focus:ring-2 focus:ring-pink-200"
-                  />
-                </label>
-                <label className="space-y-1 text-sm text-slate-600">
-                  Telefon *
-                  <input
-                    name="Telefon"
-                    required
-                    className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 shadow-sm outline-none transition focus:border-pink-500 focus:ring-2 focus:ring-pink-200"
-                  />
-                </label>
-              </div>
-              <label className="space-y-1 text-sm text-slate-600">
-                Kurs-Interesse
-                <input
-                  name="Kurs Interesse"
-                  placeholder="z. B. Intensivkurs Music Production"
-                  className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 shadow-sm outline-none transition focus:border-pink-500 focus:ring-2 focus:ring-pink-200"
-                />
-              </label>
-              <label className="space-y-1 text-sm text-slate-600">
-                Anmerkung
-                <textarea
-                  name="Anmerkung"
-                  rows={3}
-                  placeholder="Was möchtest du live testen oder wissen?"
-                  className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 shadow-sm outline-none transition focus:border-pink-500 focus:ring-2 focus:ring-pink-200"
-                />
-              </label>
-              <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
-                <input
-                  type="checkbox"
-                  name="Einwilligung"
-                  required
-                  className="mt-1 h-4 w-4 rounded border-slate-400 text-pink-600 focus:ring-pink-500"
-                />
-                <span>
-                  Ich stimme der Verarbeitung meiner Angaben zur Kontaktaufnahme für den Tag der offenen Tür zu. Mehr Infos in unserer{" "}
-                  {privacyUrl ? (
-                    <a
-                      href={privacyUrl}
-                      target={privacyUrl.startsWith("http") ? "_blank" : undefined}
-                      rel="noreferrer"
-                      className="font-semibold text-pink-600 hover:text-pink-700 underline underline-offset-2"
-                    >
-                      Datenschutzerklärung
-                    </a>
-                  ) : (
-                    <Link href="/datenschutz" className="font-semibold text-pink-600 hover:text-pink-700 underline underline-offset-2">
-                      Datenschutzerklärung
-                    </Link>
-                  )}
-                  .
-                </span>
-              </label>
-              <p className="text-xs text-slate-500">* Pflichtfelder. Zustimmung zur Datenverarbeitung erforderlich.</p>
-              <button
-                type="submit"
-                className="w-full rounded-full bg-pink-600 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-pink-500"
-              >
-                Anfrage senden
-              </button>
-            </form>
+            <div className="space-y-3 text-center">
+              <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Bereit?</p>
+              <h2 className="text-3xl font-semibold text-slate-900">Jetzt anmelden</h2>
+              <p className="text-base text-slate-600">
+                Melde dich jetzt kostenlos zum Tag der offenen Tür des Music Mission Instituts im GOSH! Studio Wien an.
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm px-2 sm:px-4 py-4">
+              <DynamicForm formId="dc25157d-fe49-4577-adcf-962c573de612" />
+            </div>
           </div>
         </section>
       </main>

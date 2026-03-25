@@ -494,7 +494,7 @@ export default function FormsPage() {
                 <p className="text-lg font-semibold text-slate-900">{editing.title || "Formular Titel"}</p>
                 {editing.description && <p className="text-sm text-slate-600">{editing.description}</p>}
               </div>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid auto-rows-min gap-4 md:grid-cols-12">
                 {editing.form_fields
                   .slice()
                   .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
@@ -504,15 +504,15 @@ export default function FormsPage() {
 
                     const spanClasses =
                       f.type === "heading" || f.type === "subheading"
-                        ? "md:col-span-2 lg:col-span-3"
+                        ? "md:col-span-12"
                         : isFull
-                          ? "md:col-span-2 lg:col-span-3"
+                          ? "md:col-span-12"
                           : isThird
-                            ? "md:col-span-1 lg:col-span-1"
-                            : "md:col-span-1 lg:col-span-2";
+                            ? "md:col-span-4"
+                            : "md:col-span-6";
 
                     return (
-                      <div key={f.id} className={`space-y-1 text-sm text-slate-700 col-span-1 ${spanClasses}`}>
+                      <div key={f.id} className={`space-y-1 text-sm text-slate-700 col-span-12 ${spanClasses}`}>
                         {f.type === "heading" ? (
                           <p className="font-anton text-2xl text-slate-900">{f.label}</p>
                         ) : f.type === "subheading" ? (

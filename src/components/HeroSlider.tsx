@@ -46,7 +46,7 @@ export function HeroSlider({ slides }: { slides?: Slide[] }) {
             fill
             className="object-cover"
             priority={i === 0}
-            sizes="(min-width: 1280px) 80vw, (min-width: 768px) 90vw, 100vw"
+            sizes="(min-width: 1280px) 70vw, (min-width: 768px) 85vw, 100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/20" />
           <div className="absolute inset-0 flex items-center px-6 sm:px-10 lg:px-20">

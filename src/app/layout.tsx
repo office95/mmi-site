@@ -6,7 +6,7 @@ import { getSupabaseServiceClient } from "@/lib/supabase";
 import { Analytics } from "@vercel/analytics/next";
 import { Anton, Space_Grotesk, Lato, Archivo_Black } from "next/font/google";
 
-const fontSpace = Space_Grotesk({ subsets: ["latin"], weight: ["400", "500", "600", "700"], display: "swap" });
+const fontSpace = Space_Grotesk({ subsets: ["latin"], weight: ["400", "700"], display: "swap" });
 const fontLato = Lato({ subsets: ["latin"], weight: ["400", "700"], display: "swap" });
 const fontAnton = Anton({ subsets: ["latin"], weight: "400", display: "swap" });
 const fontArchivo = Archivo_Black({ subsets: ["latin"], weight: "400", display: "swap" });

@@ -26,12 +26,12 @@ const nextConfig: NextConfig = {
     return [
       {
         // Root favicons (all variants we ship)
-        source: "/(favicon|mmfavicon|mmfavicon-20260326|mmfavicon-20260327|mmfavicon-20260328)\\.(ico|png|svg)",
+        source: "/(favicon|mmfavicon|mmfavicon-20260326|mmfavicon-20260327|mmfavicon-20260328|mmfavicon-20260329)\\.(ico|png|svg)",
         headers: [{ key: "Cache-Control", value: "public, max-age=0, must-revalidate" }],
       },
       {
         // Apple touch icons (versioned + default)
-        source: "/(mmapple-touch-icon-20260326|mmapple-touch-icon-20260327|mmapple-touch-icon-20260328|mmapple-touch-icon|apple-touch-icon)\\.png",
+        source: "/(mmapple-touch-icon-20260326|mmapple-touch-icon-20260327|mmapple-touch-icon-20260328|mmapple-touch-icon-20260329|mmapple-touch-icon|apple-touch-icon)\\.png",
         headers: [{ key: "Cache-Control", value: "public, max-age=0, must-revalidate" }],
       },
     ];

@@ -39,6 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
     icons: [
       { rel: "icon", url: `/mmfavicon-20260326-32x32.png?${iconVersion}`, type: "image/png", sizes: "32x32" },
       { rel: "icon", url: `/mmfavicon-20260326-16x16.png?${iconVersion}`, type: "image/png", sizes: "16x16" },
+      { rel: "icon", url: `/mmfavicon-20260326-48x48.png?${iconVersion}`, type: "image/png", sizes: "48x48" },
       { rel: "icon", url: `/mmfavicon-20260326.png?${iconVersion}`, type: "image/png", sizes: "512x512" },
       { rel: "shortcut icon", url: `/mmfavicon-20260326.ico?${iconVersion}` },
       { rel: "apple-touch-icon", url: `/mmapple-touch-icon-20260326.png?${iconVersion}`, sizes: "180x180" },

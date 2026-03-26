@@ -20,6 +20,13 @@ export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const host = url.hostname.toLowerCase();
 
+  // Alte Blog-URLs, die bewusst entfernt wurden → 410 Gone (keine Indexierung mehr)
+  const gonePaths = new Set(["/blog/willkommen", "/blog/willkommen-bei-mmi"]);
+  const normalizedPath = url.pathname.endsWith("/") && url.pathname !== "/" ? url.pathname.slice(0, -1) : url.pathname;
+  if (gonePaths.has(normalizedPath)) {
+    return new NextResponse(null, { status: 410 });
+  }
+
   // Zeitgesteuertes Live-Schalten der DE-Domain (bypasst Coming-Soon)
   // Temporär: musicmission.de live schalten (Coming-Soon aus)
   const liveUntilEnv = process.env.DE_LIVE_UNTIL || "";

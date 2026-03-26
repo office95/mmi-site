@@ -5,6 +5,8 @@ const BASE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ||
   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
+const RETIRED_POST_SLUGS = new Set(["willkommen", "willkommen-bei-mmi"]);
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = getSupabaseServiceClient();
 
@@ -45,6 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     (posts ?? []).forEach((p) => {
       if (!p.slug) return;
+      if (RETIRED_POST_SLUGS.has(p.slug)) return; // Alt-URLs aus der Sitemap ausschließen
       urls.push({
         url: `${BASE_URL}/blog/${p.slug}`,
         lastModified: p.updated_at ? new Date(p.updated_at) : p.published_at ? new Date(p.published_at) : undefined,

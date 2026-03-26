@@ -37,6 +37,8 @@ export async function generateMetadata(): Promise<Metadata> {
       languages: languageAlternates,
     },
     icons: [
+      // Konservativer Fallback ohne Query-String für Crawler/Proxies
+      { rel: "icon", url: "/favicon.ico" },
       { rel: "icon", url: `/mmfavicon-20260326-32x32.png?${iconVersion}`, type: "image/png", sizes: "32x32" },
       { rel: "icon", url: `/mmfavicon-20260326-16x16.png?${iconVersion}`, type: "image/png", sizes: "16x16" },
       { rel: "icon", url: `/mmfavicon-20260326-48x48.png?${iconVersion}`, type: "image/png", sizes: "48x48" },

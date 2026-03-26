@@ -25,7 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 
   const defaultImage = "https://naobgnbpvqgutxsaphci.supabase.co/storage/v1/object/public/media/db3152ef-7e1f-4a78-bb88-7528a892fdc4.webp";
-  const iconVersion = "v20260327-2"; // Cache-Bust für neue Favicons
+  const iconVersion = "v20260328-1"; // Cache-Bust für neue Favicons
 
   return {
     title: "Musikproduktion & DJ Kurse | Music Mission Institute",
@@ -39,12 +39,12 @@ export async function generateMetadata(): Promise<Metadata> {
     icons: [
       // Konservativer Fallback ohne Query-String für Crawler/Proxies
       { rel: "icon", url: "/favicon.ico" },
-      { rel: "icon", url: `/mmfavicon-20260327-32x32.png?${iconVersion}`, type: "image/png", sizes: "32x32" },
-      { rel: "icon", url: `/mmfavicon-20260327-16x16.png?${iconVersion}`, type: "image/png", sizes: "16x16" },
-      { rel: "icon", url: `/mmfavicon-20260327-48x48.png?${iconVersion}`, type: "image/png", sizes: "48x48" },
-      { rel: "icon", url: `/mmfavicon-20260327.png?${iconVersion}`, type: "image/png", sizes: "512x512" },
-      { rel: "shortcut icon", url: `/mmfavicon-20260327.ico?${iconVersion}` },
-      { rel: "apple-touch-icon", url: `/mmapple-touch-icon-20260327.png?${iconVersion}`, sizes: "180x180" },
+      { rel: "icon", url: `/mmfavicon-20260328-32x32.png?${iconVersion}`, type: "image/png", sizes: "32x32" },
+      { rel: "icon", url: `/mmfavicon-20260328-16x16.png?${iconVersion}`, type: "image/png", sizes: "16x16" },
+      { rel: "icon", url: `/mmfavicon-20260328-48x48.png?${iconVersion}`, type: "image/png", sizes: "48x48" },
+      { rel: "icon", url: `/mmfavicon-20260328.png?${iconVersion}`, type: "image/png", sizes: "512x512" },
+      { rel: "shortcut icon", url: `/mmfavicon-20260328.ico?${iconVersion}` },
+      { rel: "apple-touch-icon", url: `/mmapple-touch-icon-20260328.png?${iconVersion}`, sizes: "180x180" },
       { rel: "icon", url: `/favicon.svg?${iconVersion}`, type: "image/svg+xml" },
     ],
     keywords: ["Musikproduktion", "Tontechnik", "Live-Sound", "DJing", "Kurse", "Workshops", "Music Mission Institute"],

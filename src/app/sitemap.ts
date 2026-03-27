@@ -2,7 +2,12 @@ import type { MetadataRoute } from "next";
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import { getSiteUrl } from "@/lib/site-url";
 
-const RETIRED_POST_SLUGS = new Set(["willkommen", "willkommen-bei-mmi"]);
+const RETIRED_POST_SLUGS = new Set([
+  "willkommen",
+  "willkommen-bei-mmi",
+  "welcome-mmi",
+  "fgdfgfdgdfgfg",
+]);
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = getSupabaseServiceClient();

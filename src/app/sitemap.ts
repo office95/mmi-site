@@ -2,6 +2,9 @@ import type { MetadataRoute } from "next";
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import { getSiteUrl } from "@/lib/site-url";
 
+// Refresh sitemap at most hourly to pick up DB changes without redeploy
+export const revalidate = 3600;
+
 const RETIRED_POST_SLUGS = new Set([
   "willkommen",
   "willkommen-bei-mmi",

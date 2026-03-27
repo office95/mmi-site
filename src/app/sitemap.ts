@@ -1,25 +1,23 @@
 import type { MetadataRoute } from "next";
 import { getSupabaseServiceClient } from "@/lib/supabase";
-
-const BASE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+import { getSiteUrl } from "@/lib/site-url";
 
 const RETIRED_POST_SLUGS = new Set(["willkommen", "willkommen-bei-mmi"]);
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = getSupabaseServiceClient();
+  const baseUrl = getSiteUrl();
 
   const urls: MetadataRoute.Sitemap = [
-    { url: `${BASE_URL}/`, lastModified: new Date() },
-    { url: `${BASE_URL}/entdecken`, lastModified: new Date() },
-    { url: `${BASE_URL}/kursstandorte`, lastModified: new Date() },
-    { url: `${BASE_URL}/standorte`, lastModified: new Date() },
-    { url: `${BASE_URL}/intensiv`, lastModified: new Date() },
-    { url: `${BASE_URL}/extremkurs`, lastModified: new Date() },
-    { url: `${BASE_URL}/blog`, lastModified: new Date() },
-    { url: `${BASE_URL}/ueber-uns`, lastModified: new Date() },
-    { url: `${BASE_URL}/professional-audio-diploma`, lastModified: new Date() },
+    { url: `${baseUrl}/`, lastModified: new Date() },
+    { url: `${baseUrl}/entdecken`, lastModified: new Date() },
+    { url: `${baseUrl}/kursstandorte`, lastModified: new Date() },
+    { url: `${baseUrl}/standorte`, lastModified: new Date() },
+    { url: `${baseUrl}/intensiv`, lastModified: new Date() },
+    { url: `${baseUrl}/extremkurs`, lastModified: new Date() },
+    { url: `${baseUrl}/blog`, lastModified: new Date() },
+    { url: `${baseUrl}/ueber-uns`, lastModified: new Date() },
+    { url: `${baseUrl}/professional-audio-diploma`, lastModified: new Date() },
   ];
 
   try {
@@ -32,7 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     (courses ?? []).forEach((c) => {
       if (!c.slug) return;
       urls.push({
-        url: `${BASE_URL}/kurs/${c.slug}`,
+        url: `${baseUrl}/kurs/${c.slug}`,
         lastModified: c.updated_at ? new Date(c.updated_at) : undefined,
       });
     });
@@ -40,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     (partners ?? []).forEach((p) => {
       if (!p.slug) return;
       urls.push({
-        url: `${BASE_URL}/partner/${p.slug}`,
+        url: `${baseUrl}/partner/${p.slug}`,
         lastModified: p.updated_at ? new Date(p.updated_at) : undefined,
       });
     });
@@ -49,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (!p.slug) return;
       if (RETIRED_POST_SLUGS.has(p.slug)) return; // Alt-URLs aus der Sitemap ausschließen
       urls.push({
-        url: `${BASE_URL}/blog/${p.slug}`,
+        url: `${baseUrl}/blog/${p.slug}`,
         lastModified: p.updated_at ? new Date(p.updated_at) : p.published_at ? new Date(p.published_at) : undefined,
       });
     });

@@ -5,13 +5,14 @@ import { getRegion } from "@/lib/region";
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import { Analytics } from "@vercel/analytics/next";
 import { Anton, Space_Grotesk, Lato, Archivo_Black } from "next/font/google";
+import { getSiteUrl } from "@/lib/site-url";
 
 const fontSpace = Space_Grotesk({ subsets: ["latin"], weight: ["400", "700"], display: "swap" });
 const fontLato = Lato({ subsets: ["latin"], weight: ["400", "700"], display: "swap" });
 const fontAnton = Anton({ subsets: ["latin"], weight: "400", display: "swap" });
 const fontArchivo = Archivo_Black({ subsets: ["latin"], weight: "400", display: "swap" });
 
-const siteUrlEnv = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3005";
+const siteUrlEnv = getSiteUrl();
 const domainAT = process.env.NEXT_PUBLIC_DOMAIN_AT;
 const domainDE = process.env.NEXT_PUBLIC_DOMAIN_DE;
 

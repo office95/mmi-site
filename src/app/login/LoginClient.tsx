@@ -351,8 +351,9 @@ export default function LoginClient() {
 function persistSessionCookie(session: Session | null) {
   if (!session?.access_token) return;
   const expires = session.expires_at ? new Date(session.expires_at * 1000) : new Date(Date.now() + 60 * 60 * 1000);
-  document.cookie = `sb-access-token=${session.access_token}; Path=/; SameSite=Lax; Secure; Expires=${expires.toUTCString()}`;
+  const secureFlag = typeof window !== "undefined" && window.location.protocol === "https:" ? "; Secure" : "";
+  document.cookie = `sb-access-token=${session.access_token}; Path=/; SameSite=Lax${secureFlag}; Expires=${expires.toUTCString()}`;
   if (session.refresh_token) {
-    document.cookie = `sb-refresh-token=${session.refresh_token}; Path=/; SameSite=Lax; Secure; Expires=${expires.toUTCString()}`;
+    document.cookie = `sb-refresh-token=${session.refresh_token}; Path=/; SameSite=Lax${secureFlag}; Expires=${expires.toUTCString()}`;
   }
 }

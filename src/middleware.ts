@@ -70,7 +70,6 @@ export async function middleware(req: NextRequest) {
   // Admin-Guard
   const isAdminRoute = url.pathname.startsWith("/admin") || url.pathname.startsWith("/api/admin");
   const isPartnerBlogRoute = url.pathname.startsWith("/partner-blog/create");
-  const isApiRoute = url.pathname.startsWith("/api/");
 
   // Öffentliche GET-Endpunkte unter /api/admin (Lesezugriff für Kursstandorte etc.)
   const publicAdminGet =
@@ -164,22 +163,49 @@ function extractEmail(jwt: string): string | null {
 }
 
 function getAccessToken(req: NextRequest): string | null {
-  const authCookie = req.cookies
-    .getAll()
-    .find(
-      (c) =>
-        c.name === "sb-access-token" || // Supabase standard
-        c.name.endsWith("auth-token") || // NextAuth/Supabase helper
-        c.name.includes("auth-token")
-    );
-  if (!authCookie) return null;
-  try {
-    const raw = decodeURIComponent(authCookie.value);
-    const parsed = JSON.parse(raw);
-    return parsed?.access_token || parsed?.accessToken || parsed?.token || null;
-  } catch {
-    return authCookie.value;
+  const authCookies = req.cookies.getAll().filter(
+    (c) =>
+      c.name === "sb-access-token" || // custom cookie from login page
+      c.name.startsWith("sb-") || // Supabase project cookies
+      c.name.endsWith("auth-token") ||
+      c.name.includes("auth-token")
+  );
+
+  for (const cookie of authCookies) {
+    const raw = decodeURIComponent(cookie.value);
+    const token = extractAccessTokenFromCookieValue(raw);
+    if (token) return token;
   }
+
+  return null;
+}
+
+function extractAccessTokenFromCookieValue(raw: string): string | null {
+  if (!raw) return null;
+
+  // Raw JWT in cookie value.
+  if (raw.split(".").length === 3) return raw;
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (typeof parsed === "string" && parsed.split(".").length === 3) return parsed;
+    if (Array.isArray(parsed)) {
+      const candidate = parsed.find((part) => typeof part === "string" && part.split(".").length === 3);
+      return typeof candidate === "string" ? candidate : null;
+    }
+    if (parsed && typeof parsed === "object") {
+      const record = parsed as Record<string, unknown>;
+      const direct =
+        (record["access_token"] as string | undefined) ||
+        (record["accessToken"] as string | undefined) ||
+        (record["token"] as string | undefined);
+      if (direct) return direct;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
 }
 
 function redirectToLogin(req: NextRequest, url: URL, region: string, extraQuery?: string) {

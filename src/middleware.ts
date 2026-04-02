@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getSupabaseServiceClient } from "@/lib/supabase";
 const FALLBACK_ADMINS = ["office@musicmission.at"];
 const ADMIN_EMAILS = [
   ...(process.env.ADMIN_EMAILS || "")
@@ -9,31 +8,6 @@ const ADMIN_EMAILS = [
     .filter(Boolean),
   ...FALLBACK_ADMINS,
 ];
-
-const EMPLOYEE_PATHS = [
-  "/admin",
-  "/admin/partners",
-  "/admin/courses",
-  "/admin/sessions",
-  "/admin/orders",
-  "/admin/forms",
-];
-
-const EMPLOYEE_API_PREFIXES = [
-  "/api/admin/partners",
-  "/api/admin/courses",
-  "/api/admin/sessions",
-  "/api/admin/orders",
-  "/api/admin/forms",
-];
-
-function isEmployeeAllowedPath(path: string): boolean {
-  return EMPLOYEE_PATHS.some((p) => path === p || path.startsWith(p + "/"));
-}
-
-function isEmployeeAllowedApi(path: string): boolean {
-  return EMPLOYEE_API_PREFIXES.some((p) => path === p || path.startsWith(p + "/"));
-}
 
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
@@ -134,7 +108,7 @@ export async function middleware(req: NextRequest) {
   const needsAdminGuard = isAdminRoute && !publicAdminGet && !publicAdminService;
   if (needsAdminGuard) {
     const accessToken = getAccessToken(req);
-    const evaluation = await evaluateSession(accessToken, req, url.pathname, isApiRoute);
+    const evaluation = await evaluateSession(accessToken);
     if (!evaluation.allowed) {
       if (url.searchParams.get("debug") === "1") {
         const payload = {
@@ -144,13 +118,7 @@ export async function middleware(req: NextRequest) {
         };
         return NextResponse.json(payload, { status: 403 });
       }
-      const extraQuery =
-        evaluation.reason === "pending"
-          ? "pending=1"
-          : evaluation.reason === "blocked"
-          ? "blocked=1"
-          : undefined;
-      return redirectToLogin(req, url, region, extraQuery);
+      return redirectToLogin(req, url, region);
     }
   }
 
@@ -195,26 +163,6 @@ function extractEmail(jwt: string): string | null {
   return (payload?.["email"] as string | undefined)?.toLowerCase() ?? null;
 }
 
-function extractRole(jwt: string): string | null {
-  const payload = parseJwtPayload(jwt);
-  if (!payload) return null;
-  const metadata = payload?.["user_metadata"] as Record<string, unknown> | undefined;
-  return (metadata?.["role"] as string) ?? (payload?.["role"] as string) ?? null;
-}
-
-function extractSub(jwt: string): string | null {
-  const payload = parseJwtPayload(jwt);
-  if (!payload) return null;
-  return (payload?.["sub"] as string) ?? null;
-}
-
-function extractStatus(jwt: string): string | null {
-  const payload = parseJwtPayload(jwt);
-  if (!payload) return null;
-  const metadata = payload?.["user_metadata"] as Record<string, unknown> | undefined;
-  return (metadata?.["status"] as string) ?? (payload?.["status"] as string) ?? null;
-}
-
 function getAccessToken(req: NextRequest): string | null {
   const authCookie = req.cookies
     .getAll()
@@ -234,10 +182,6 @@ function getAccessToken(req: NextRequest): string | null {
   }
 }
 
-function getUserIdFromCookies(req: NextRequest): string | null {
-  return req.cookies.get("sb-user-id")?.value ?? null;
-}
-
 function redirectToLogin(req: NextRequest, url: URL, region: string, extraQuery?: string) {
   const redirectTo = `/login?redirect=${encodeURIComponent(url.pathname)}${extraQuery ? `&${extraQuery}` : ""}`;
   const redirect = NextResponse.redirect(new URL(redirectTo, req.url));
@@ -245,60 +189,12 @@ function redirectToLogin(req: NextRequest, url: URL, region: string, extraQuery?
   return redirect;
 }
 
-async function evaluateSession(
-  token: string | null,
-  req: NextRequest,
-  path: string,
-  isApiRoute: boolean
-): Promise<{ allowed: boolean; reason?: "pending" | "blocked" | "unauthorized" }> {
+async function evaluateSession(token: string | null): Promise<{ allowed: boolean; reason?: "unauthorized" }> {
   if (!token) return { allowed: false };
   const email = extractEmail(token);
-  const role = extractRole(token);
-  const status = extractStatus(token);
-  const allowEmail = email && ADMIN_EMAILS.includes(email);
-
-  if (allowEmail || role === "admin") {
-    if (status === "blocked") return { allowed: false, reason: "blocked" };
-    return { allowed: true };
-  }
-
-  if (role === "employee") {
-    if (status === "blocked") return { allowed: false, reason: "blocked" };
-    if (status !== "approved") return { allowed: false, reason: "pending" };
-    if (isApiRoute) {
-      return { allowed: isEmployeeAllowedApi(path) };
-    }
-    return { allowed: isEmployeeAllowedPath(path) };
-  }
-
-  const userId = getUserIdFromCookies(req) ?? extractSub(token);
-  if (userId) {
-    const supabase = getSupabaseServiceClient();
-    const { data: profile, error: profilesError } = await supabase
-      .from("profiles")
-      .select("role,status")
-      .eq("user_id", userId)
-      .maybeSingle();
-    if (profilesError) {
-      return { allowed: false, reason: "unauthorized" };
-    }
-    if (profile) {
-      const profileRole = profile.role ?? role ?? "employee";
-      const profileStatus = profile.status ?? status ?? "pending";
-      if (profileRole === "admin" || ADMIN_EMAILS.includes(email ?? "")) {
-        if (profileStatus === "blocked") return { allowed: false, reason: "blocked" };
-        return { allowed: true };
-      }
-      if (profileRole === "employee") {
-        if (profileStatus === "blocked") return { allowed: false, reason: "blocked" };
-        if (profileStatus !== "approved") return { allowed: false, reason: "pending" };
-        if (isApiRoute) {
-          return { allowed: isEmployeeAllowedApi(path) };
-        }
-        return { allowed: isEmployeeAllowedPath(path) };
-      }
-    }
-  }
-
-  return { allowed: false, reason: "unauthorized" };
+  if (!email) return { allowed: false, reason: "unauthorized" };
+  const normalized = email.trim().toLowerCase();
+  const allowed = ADMIN_EMAILS.includes(normalized);
+  if (!allowed) return { allowed: false, reason: "unauthorized" };
+  return { allowed: true };
 }

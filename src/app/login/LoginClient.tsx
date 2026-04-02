@@ -132,7 +132,7 @@ export default function LoginClient() {
         password,
         options: {
           emailRedirectTo,
-          data: { role: "employee", status: "pending" },
+          data: { status: "pending" },
         },
       });
       if (signupError) throw signupError;

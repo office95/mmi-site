@@ -13,7 +13,7 @@ export async function GET(req: Request) {
   const supabase = getSupabaseServiceClient();
   const { data, error } = await supabase
     .from("profiles")
-    .select("status, role")
+    .select("status")
     .eq("user_id", userId)
     .maybeSingle();
 
@@ -23,6 +23,5 @@ export async function GET(req: Request) {
 
   return NextResponse.json({
     status: data?.status ?? "pending",
-    role: data?.role ?? "employee",
   });
 }

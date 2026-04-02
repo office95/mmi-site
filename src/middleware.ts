@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getSupabaseServiceClient } from "@/lib/supabase";
 const FALLBACK_ADMINS = ["office@musicmission.at"];
 const ADMIN_EMAILS = [
   ...(process.env.ADMIN_EMAILS || "")
@@ -133,7 +134,7 @@ export async function middleware(req: NextRequest) {
   const needsAdminGuard = isAdminRoute && !publicAdminGet && !publicAdminService;
   if (needsAdminGuard) {
     const accessToken = getAccessToken(req);
-    const evaluation = evaluateSession(accessToken, url.pathname, isApiRoute);
+    const evaluation = await evaluateSession(accessToken, url.pathname, isApiRoute);
     if (!evaluation.allowed) {
       if (url.searchParams.get("debug") === "1") {
         const payload = {
@@ -184,6 +185,16 @@ function extractRole(jwt: string): string | null {
   }
 }
 
+function extractSub(jwt: string): string | null {
+  try {
+    const payload = jwt.split(".")[1];
+    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    return json?.sub ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function extractStatus(jwt: string): string | null {
   try {
     const payload = jwt.split(".")[1];
@@ -220,7 +231,11 @@ function redirectToLogin(req: NextRequest, url: URL, region: string, extraQuery?
   return redirect;
 }
 
-function evaluateSession(token: string | null, path: string, isApiRoute: boolean): { allowed: boolean; reason?: "pending" | "blocked" | "unauthorized" } {
+async function evaluateSession(
+  token: string | null,
+  path: string,
+  isApiRoute: boolean
+): Promise<{ allowed: boolean; reason?: "pending" | "blocked" | "unauthorized" }> {
   if (!token) return { allowed: false };
   const email = extractEmail(token);
   const role = extractRole(token);
@@ -239,6 +254,32 @@ function evaluateSession(token: string | null, path: string, isApiRoute: boolean
       return { allowed: isEmployeeAllowedApi(path) };
     }
     return { allowed: isEmployeeAllowedPath(path) };
+  }
+
+  const userId = extractSub(token);
+  if (userId) {
+    const supabase = getSupabaseServiceClient();
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role,status")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (profile) {
+      const profileRole = profile.role ?? role ?? "employee";
+      const profileStatus = profile.status ?? status ?? "pending";
+      if (profileRole === "admin" || ADMIN_EMAILS.includes(email ?? "")) {
+        if (profileStatus === "blocked") return { allowed: false, reason: "blocked" };
+        return { allowed: true };
+      }
+      if (profileRole === "employee") {
+        if (profileStatus === "blocked") return { allowed: false, reason: "blocked" };
+        if (profileStatus !== "approved") return { allowed: false, reason: "pending" };
+        if (isApiRoute) {
+          return { allowed: isEmployeeAllowedApi(path) };
+        }
+        return { allowed: isEmployeeAllowedPath(path) };
+      }
+    }
   }
 
   return { allowed: false, reason: "unauthorized" };

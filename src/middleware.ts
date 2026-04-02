@@ -135,6 +135,14 @@ export async function middleware(req: NextRequest) {
     const accessToken = getAccessToken(req);
     const evaluation = evaluateSession(accessToken, url.pathname, isApiRoute);
     if (!evaluation.allowed) {
+      if (url.searchParams.get("debug") === "1") {
+        const payload = {
+          reason: evaluation.reason ?? "unauthorized",
+          path: url.pathname,
+          tokenPresent: Boolean(accessToken),
+        };
+        return NextResponse.json(payload, { status: 403 });
+      }
       const extraQuery =
         evaluation.reason === "pending"
           ? "pending=1"

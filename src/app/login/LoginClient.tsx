@@ -6,6 +6,8 @@ import { Loader2, LogIn, UserPlus, KeyRound } from "lucide-react";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
 import type { Session } from "@supabase/supabase-js";
 
+const ADMIN_CONTACT = "office@musicmission.at";
+
 export default function LoginClient() {
   const supabase = getSupabaseBrowserClient();
   const router = useRouter();
@@ -66,14 +68,39 @@ export default function LoginClient() {
     // Bestehende Session -> Cookie syncen für Middleware
     supabase.auth.getSession().then(({ data }) => persistSessionCookie(data.session));
     if (pendingFlag) {
-      setInfo("Dein Account ist noch nicht freigeschaltet. Bitte warte auf Freigabe.");
+      setInfo(`Dein Account ist noch nicht freigeschaltet. ${ADMIN_CONTACT} prüft deine Anmeldung.`);
       setMode("login");
     }
     if (blockedFlag) {
-      setError("Dein Account wurde gesperrt. Bitte Admin kontaktieren.");
+      setError(`Dein Account wurde gesperrt. Bitte ${ADMIN_CONTACT} kontaktieren.`);
       setMode("login");
     }
   }, [redirect, router, supabase.auth, searchParams, pendingFlag, blockedFlag]);
+
+  const ensureUserActive = async (user: Session["user"] | null) => {
+    if (!user) return false;
+    let status = user.user_metadata?.status ?? null;
+    try {
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("status")
+        .eq("user_id", user.id)
+        .single();
+      if (!profileError && profile?.status) {
+        status = profile.status;
+      }
+    } catch {
+      // ignore
+    }
+    if (status === "approved") return true;
+    if (status === "blocked") {
+      setError(`Dein Account ist gesperrt. Bitte ${ADMIN_CONTACT} kontaktieren.`);
+    } else {
+      setInfo(`Dein Account wird noch geprüft. ${ADMIN_CONTACT} schaltet ihn frei.`);
+    }
+    await supabase.auth.signOut();
+    return false;
+  };
 
   const loginWithPassword = async () => {
     setIsLoading(true);
@@ -85,6 +112,8 @@ export default function LoginClient() {
         password,
       });
       if (authError) throw authError;
+      const active = await ensureUserActive(data.user);
+      if (!active) return;
       persistSessionCookie(data.session);
       router.push(redirect);
     } catch (err) {
@@ -109,7 +138,9 @@ export default function LoginClient() {
         },
       });
       if (signupError) throw signupError;
-      setInfo("Registrierung erfolgreich. Bitte E-Mail bestätigen.");
+      setInfo(
+        `Registrierung erfolgreich. ${ADMIN_CONTACT} prüft deine Anfrage und schaltet den Zugang nach Freigabe frei.`
+      );
       setMode("login");
       setPassword("");
     } catch (err) {
@@ -173,6 +204,9 @@ export default function LoginClient() {
           <p className="text-sm text-slate-600">
             {mode === "resetConfirm" ? "Setze jetzt dein neues Passwort." : "Bitte mit E-Mail und Passwort anmelden."}
           </p>
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-700">
+            Neue Mitarbeiter werden von {ADMIN_CONTACT} geprüft und erst nach Freigabe freigeschaltet.
+          </div>
         </div>
 
         <div className="flex gap-2 rounded-full bg-slate-100 p-1 text-xs font-semibold text-slate-600">

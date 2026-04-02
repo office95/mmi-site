@@ -24,6 +24,7 @@ const nav = [
   { href: "/admin/automationen", label: "Automationen" },
   { href: "/admin/seo-matrix", label: "SEO Matrix" },
   { href: "/admin/settings", label: "Verwaltung" },
+  { href: "/admin/users", label: "Benutzer" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {

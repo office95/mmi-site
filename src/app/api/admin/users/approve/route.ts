@@ -18,7 +18,12 @@ export async function POST(req: Request) {
   if (profileError) return NextResponse.json({ error: profileError.message }, { status: 500 });
 
   // Ensure auth user exists (optional email_confirm stays as is)
-  const { error: authError } = await supabase.auth.admin.updateUserById(id, {});
+  const { error: authError } = await supabase.auth.admin.updateUserById(id, {
+    user_metadata: {
+      role,
+      status,
+    },
+  });
   if (authError) return NextResponse.json({ error: authError.message }, { status: 500 });
 
   return NextResponse.json({ ok: true });

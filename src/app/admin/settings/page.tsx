@@ -563,6 +563,7 @@ function MoreLinks() {
           { href: "/admin/hero", label: "Hero" },
           { href: "/admin/media", label: "Medien" },
           { href: "/admin/header-menu", label: "Header-Menü" },
+          { href: "/admin/users", label: "Benutzer" },
           { href: "/admin/automationen", label: "Automationen (Doku)" },
         ].map((item) => (
           <a

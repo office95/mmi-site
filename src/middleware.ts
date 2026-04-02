@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
 const FALLBACK_ADMINS = ["office@musicmission.at"];
 const ADMIN_EMAILS = [
   ...(process.env.ADMIN_EMAILS || "")
@@ -34,28 +32,6 @@ function isEmployeeAllowedPath(path: string): boolean {
 
 function isEmployeeAllowedApi(path: string): boolean {
   return EMPLOYEE_API_PREFIXES.some((p) => path === p || path.startsWith(p + "/"));
-}
-
-function isAllowedSession(token: string | null, path: string, isApi: boolean): boolean {
-  if (!token) return false;
-  const email = extractEmail(token);
-  const role = extractRole(token);
-  const status = extractStatus(token);
-  const allowEmail = email && ADMIN_EMAILS.includes(email);
-
-  // Admin-Whitelist oder role=admin -> erlauben, außer explizit blocked
-  if (allowEmail || role === "admin") {
-    if (status === "blocked") return false;
-    return true;
-  }
-
-  // Mitarbeiter brauchen approved
-  if (role === "employee") {
-    if (status !== "approved") return false;
-    return isApi ? isEmployeeAllowedApi(path) : isEmployeeAllowedPath(path);
-  }
-
-  return false;
 }
 
 export async function middleware(req: NextRequest) {
@@ -154,8 +130,20 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // Admin-Guard vorübergehend deaktiviert: Zugriff frei (kein Login-Zwang)
-  // Hinweis: sensible Bereiche sind damit offen; auf eigenes Risiko.
+  const needsAdminGuard = isAdminRoute && !publicAdminGet && !publicAdminService;
+  if (needsAdminGuard) {
+    const accessToken = getAccessToken(req);
+    const evaluation = evaluateSession(accessToken, url.pathname, isApiRoute);
+    if (!evaluation.allowed) {
+      const extraQuery =
+        evaluation.reason === "pending"
+          ? "pending=1"
+          : evaluation.reason === "blocked"
+          ? "blocked=1"
+          : undefined;
+      return redirectToLogin(req, url, region, extraQuery);
+    }
+  }
 
   res.headers.set("x-region", region);
   if (slugSegment) res.headers.set("x-slug", slugSegment);
@@ -173,16 +161,6 @@ function extractEmail(jwt: string): string | null {
     const payload = jwt.split(".")[1];
     const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
     return json?.email?.toLowerCase() ?? null;
-  } catch {
-    return null;
-  }
-}
-
-function extractSub(jwt: string): string | null {
-  try {
-    const payload = jwt.split(".")[1];
-    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
-    return json?.sub ?? null;
   } catch {
     return null;
   }
@@ -232,4 +210,28 @@ function redirectToLogin(req: NextRequest, url: URL, region: string, extraQuery?
   const redirect = NextResponse.redirect(new URL(redirectTo, req.url));
   redirect.cookies.set("region", region, { path: "/" });
   return redirect;
+}
+
+function evaluateSession(token: string | null, path: string, isApiRoute: boolean): { allowed: boolean; reason?: "pending" | "blocked" | "unauthorized" } {
+  if (!token) return { allowed: false };
+  const email = extractEmail(token);
+  const role = extractRole(token);
+  const status = extractStatus(token);
+  const allowEmail = email && ADMIN_EMAILS.includes(email);
+
+  if (allowEmail || role === "admin") {
+    if (status === "blocked") return { allowed: false, reason: "blocked" };
+    return { allowed: true };
+  }
+
+  if (role === "employee") {
+    if (status === "blocked") return { allowed: false, reason: "blocked" };
+    if (status !== "approved") return { allowed: false, reason: "pending" };
+    if (isApiRoute) {
+      return { allowed: isEmployeeAllowedApi(path) };
+    }
+    return { allowed: isEmployeeAllowedPath(path) };
+  }
+
+  return { allowed: false, reason: "unauthorized" };
 }

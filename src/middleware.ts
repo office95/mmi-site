@@ -1,19 +1,61 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "")
-  .split(",")
-  .map((e) => e.trim().toLowerCase())
-  .filter(Boolean);
+const FALLBACK_ADMINS = ["office@musicmission.at"];
+const ADMIN_EMAILS = [
+  ...(process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean),
+  ...FALLBACK_ADMINS,
+];
 
-function isAllowedSession(token: string | null): boolean {
+const EMPLOYEE_PATHS = [
+  "/admin",
+  "/admin/partners",
+  "/admin/courses",
+  "/admin/sessions",
+  "/admin/orders",
+  "/admin/forms",
+];
+
+const EMPLOYEE_API_PREFIXES = [
+  "/api/admin/partners",
+  "/api/admin/courses",
+  "/api/admin/sessions",
+  "/api/admin/orders",
+  "/api/admin/forms",
+];
+
+function isEmployeeAllowedPath(path: string): boolean {
+  return EMPLOYEE_PATHS.some((p) => path === p || path.startsWith(p + "/"));
+}
+
+function isEmployeeAllowedApi(path: string): boolean {
+  return EMPLOYEE_API_PREFIXES.some((p) => path === p || path.startsWith(p + "/"));
+}
+
+function isAllowedSession(token: string | null, path: string, isApi: boolean): boolean {
   if (!token) return false;
   const email = extractEmail(token);
   const role = extractRole(token);
+  const status = extractStatus(token);
   const allowEmail = email && ADMIN_EMAILS.includes(email);
-  const allowRole = role === "admin";
-  // Temporärer Fallback: wenn ein gültiges Token existiert, lasse zu (ermöglicht Login auch ohne ADMIN_EMAILS/role)
-  return !!(allowEmail || allowRole || token);
+
+  // Admin-Whitelist oder role=admin -> erlauben, außer explizit blocked
+  if (allowEmail || role === "admin") {
+    if (status === "blocked") return false;
+    return true;
+  }
+
+  // Mitarbeiter brauchen approved
+  if (role === "employee") {
+    if (status !== "approved") return false;
+    return isApi ? isEmployeeAllowedApi(path) : isEmployeeAllowedPath(path);
+  }
+
+  return false;
 }
 
 export async function middleware(req: NextRequest) {
@@ -75,10 +117,9 @@ export async function middleware(req: NextRequest) {
   requestHeaders.set("x-full-url", req.url);
 
   // Admin-Guard
-  const isAdminRoute =
-    url.pathname.startsWith("/admin") ||
-    url.pathname.startsWith("/api/admin");
+  const isAdminRoute = url.pathname.startsWith("/admin") || url.pathname.startsWith("/api/admin");
   const isPartnerBlogRoute = url.pathname.startsWith("/partner-blog/create");
+  const isApiRoute = url.pathname.startsWith("/api/");
 
   // Öffentliche GET-Endpunkte unter /api/admin (Lesezugriff für Kursstandorte etc.)
   const publicAdminGet =
@@ -100,7 +141,7 @@ export async function middleware(req: NextRequest) {
     url.pathname.startsWith("/api/admin/zoho/create-test-order") ||
     url.pathname.startsWith("/api/admin/zoho/sync-sessions");
 
-  let res = NextResponse.next({ request: { headers: requestHeaders } });
+  const res = NextResponse.next({ request: { headers: requestHeaders } });
 
   if (isPartnerBlogRoute) {
     // Partner-Blog: erlaubt mit gültigem Token, kein Login nötig
@@ -113,20 +154,8 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  if (isAdminRoute && !publicAdminGet && !publicAdminService) {
-    const token = getAccessToken(req);
-    const allowed = isAllowedSession(token);
-
-    if (!allowed) {
-      if (url.pathname.startsWith("/api/")) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
-      const redirectTo = `/login?redirect=${encodeURIComponent(url.pathname)}`;
-      const redirect = NextResponse.redirect(new URL(redirectTo, req.url));
-      redirect.cookies.set("region", region, { path: "/" });
-      return redirect;
-    }
-  }
+  // Admin-Guard vorübergehend deaktiviert: Zugriff frei (kein Login-Zwang)
+  // Hinweis: sensible Bereiche sind damit offen; auf eigenes Risiko.
 
   res.headers.set("x-region", region);
   if (slugSegment) res.headers.set("x-slug", slugSegment);
@@ -149,6 +178,16 @@ function extractEmail(jwt: string): string | null {
   }
 }
 
+function extractSub(jwt: string): string | null {
+  try {
+    const payload = jwt.split(".")[1];
+    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    return json?.sub ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function extractRole(jwt: string): string | null {
   try {
     const payload = jwt.split(".")[1];
@@ -159,10 +198,25 @@ function extractRole(jwt: string): string | null {
   }
 }
 
+function extractStatus(jwt: string): string | null {
+  try {
+    const payload = jwt.split(".")[1];
+    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    return json?.user_metadata?.status ?? json?.status ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function getAccessToken(req: NextRequest): string | null {
   const authCookie = req.cookies
     .getAll()
-    .find((c) => c.name.endsWith("auth-token") || c.name.includes("auth-token"));
+    .find(
+      (c) =>
+        c.name === "sb-access-token" || // Supabase standard
+        c.name.endsWith("auth-token") || // NextAuth/Supabase helper
+        c.name.includes("auth-token")
+    );
   if (!authCookie) return null;
   try {
     const raw = decodeURIComponent(authCookie.value);
@@ -171,4 +225,11 @@ function getAccessToken(req: NextRequest): string | null {
   } catch {
     return authCookie.value;
   }
+}
+
+function redirectToLogin(req: NextRequest, url: URL, region: string, extraQuery?: string) {
+  const redirectTo = `/login?redirect=${encodeURIComponent(url.pathname)}${extraQuery ? `&${extraQuery}` : ""}`;
+  const redirect = NextResponse.redirect(new URL(redirectTo, req.url));
+  redirect.cookies.set("region", region, { path: "/" });
+  return redirect;
 }

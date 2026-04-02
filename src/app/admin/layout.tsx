@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { LogOut } from "lucide-react";
 
 const nav = [
@@ -24,20 +24,26 @@ const nav = [
   { href: "/admin/automationen", label: "Automationen" },
   { href: "/admin/seo-matrix", label: "SEO Matrix" },
   { href: "/admin/settings", label: "Verwaltung" },
-  { href: "/admin/users", label: "Benutzer" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const supabase = getSupabaseBrowserClient();
   const pathname = usePathname();
-  const [region] = useState<"AT" | "DE">("AT");
 
   const withRegion = (href: string) => href;
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    document.cookie = "sb-access-token=; Max-Age=0; Path=/;";
+    document.cookie = "sb-refresh-token=; Max-Age=0; Path=/;";
     window.location.href = "/login";
   };
+
+  useEffect(() => {
+    // Kein Rollen-Filter mehr: alle Menüpunkte sichtbar
+  }, []);
+
+  const filteredNav = nav;
 
   return (
     <div className="min-h-screen flex bg-white text-slate-900">
@@ -52,7 +58,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
         <nav className="flex-1 px-4 py-4 space-y-1 text-sm font-semibold">
-          {nav.map((item) => {
+          {filteredNav.map((item) => {
             const link = withRegion(item.href);
             const active = pathname === item.href;
             return (

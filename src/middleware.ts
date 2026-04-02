@@ -134,7 +134,7 @@ export async function middleware(req: NextRequest) {
   const needsAdminGuard = isAdminRoute && !publicAdminGet && !publicAdminService;
   if (needsAdminGuard) {
     const accessToken = getAccessToken(req);
-    const evaluation = await evaluateSession(accessToken, url.pathname, isApiRoute);
+    const evaluation = await evaluateSession(accessToken, req, url.pathname, isApiRoute);
     if (!evaluation.allowed) {
       if (url.searchParams.get("debug") === "1") {
         const payload = {
@@ -234,6 +234,10 @@ function getAccessToken(req: NextRequest): string | null {
   }
 }
 
+function getUserIdFromCookies(req: NextRequest): string | null {
+  return req.cookies.get("sb-user-id")?.value ?? null;
+}
+
 function redirectToLogin(req: NextRequest, url: URL, region: string, extraQuery?: string) {
   const redirectTo = `/login?redirect=${encodeURIComponent(url.pathname)}${extraQuery ? `&${extraQuery}` : ""}`;
   const redirect = NextResponse.redirect(new URL(redirectTo, req.url));
@@ -243,6 +247,7 @@ function redirectToLogin(req: NextRequest, url: URL, region: string, extraQuery?
 
 async function evaluateSession(
   token: string | null,
+  req: NextRequest,
   path: string,
   isApiRoute: boolean
 ): Promise<{ allowed: boolean; reason?: "pending" | "blocked" | "unauthorized" }> {
@@ -266,14 +271,17 @@ async function evaluateSession(
     return { allowed: isEmployeeAllowedPath(path) };
   }
 
-  const userId = extractSub(token);
+  const userId = getUserIdFromCookies(req) ?? extractSub(token);
   if (userId) {
     const supabase = getSupabaseServiceClient();
-    const { data: profile } = await supabase
+    const { data: profile, error: profilesError } = await supabase
       .from("profiles")
       .select("role,status")
       .eq("user_id", userId)
       .maybeSingle();
+    if (profilesError) {
+      return { allowed: false, reason: "unauthorized" };
+    }
     if (profile) {
       const profileRole = profile.role ?? role ?? "employee";
       const profileStatus = profile.status ?? status ?? "pending";

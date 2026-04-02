@@ -15,13 +15,13 @@ export async function GET() {
 
   const supabase = getSupabaseServiceClient();
 
-  // 1) hole alle Profile (Status)
+  // 1) hole alle Profile (Role + Status)
   const { data: profiles, error: profilesError } = await supabase
     .from("profiles")
-    .select("user_id, status");
+    .select("user_id, role, status");
   if (profilesError) return NextResponse.json({ error: profilesError.message }, { status: 500 });
-  const profileMap = new Map<string, { status: string | null }>();
-  profiles?.forEach((p) => profileMap.set(p.user_id, { status: p.status }));
+  const profileMap = new Map<string, { role: string | null; status: string | null }>();
+  profiles?.forEach((p) => profileMap.set(p.user_id, { role: p.role, status: p.status }));
 
   // 2) hole alle Auth-User (Email + Timestamps)
   const { data, error } = await supabase.auth.admin.listUsers();
@@ -34,6 +34,7 @@ export async function GET() {
       email: u.email,
       created_at: u.created_at,
       last_sign_in_at: u.last_sign_in_at,
+      role: profile?.role ?? "employee",
       status: profile?.status ?? "pending",
     };
   });

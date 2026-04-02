@@ -5,14 +5,16 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}));
-  const { email, password } = body as {
+  const { email, password, role = "employee" } = body as {
     email?: string;
     password?: string;
+    role?: "employee" | "admin";
   };
 
   if (!email || !password) {
     return NextResponse.json({ error: "email und password sind erforderlich" }, { status: 400 });
   }
+  const normalizedRole = role === "admin" ? "admin" : "employee";
 
   const supabase = getSupabaseServiceClient();
 
@@ -21,12 +23,13 @@ export async function POST(req: Request) {
     email,
     password,
     email_confirm: true,
+    user_metadata: { role: normalizedRole, status: "approved" },
   });
   if (error || !data.user) return NextResponse.json({ error: error?.message || "createUser failed" }, { status: 500 });
 
-  // set status in profiles
+  // set role/status in profiles
   const { error: profileError } = await supabase.from("profiles").upsert(
-    { user_id: data.user.id, status: "approved", updated_at: new Date().toISOString() },
+    { user_id: data.user.id, role: normalizedRole, status: "approved", updated_at: new Date().toISOString() },
     { onConflict: "user_id" }
   );
   if (profileError) return NextResponse.json({ error: profileError.message }, { status: 500 });

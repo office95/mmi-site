@@ -9,6 +9,29 @@ const ADMIN_EMAILS = [
   ...FALLBACK_ADMINS,
 ];
 
+const EMPLOYEE_PATHS = ["/admin", "/admin/partners", "/admin/courses", "/admin/sessions", "/admin/orders"];
+
+const EMPLOYEE_API_PREFIXES = [
+  "/api/admin/dashboard",
+  "/api/admin/partners",
+  "/api/admin/courses",
+  "/api/admin/sessions",
+  "/api/admin/orders",
+  "/api/admin/diploma-applications",
+  "/api/admin/course-categories",
+  "/api/admin/course-types",
+  "/api/admin/course-formats",
+  "/api/admin/course-languages",
+];
+
+function isEmployeeAllowedPath(path: string): boolean {
+  return EMPLOYEE_PATHS.some((p) => path === p || path.startsWith(p + "/"));
+}
+
+function isEmployeeAllowedApi(path: string): boolean {
+  return EMPLOYEE_API_PREFIXES.some((p) => path === p || path.startsWith(p + "/"));
+}
+
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
   const host = url.hostname.toLowerCase();
@@ -70,6 +93,7 @@ export async function middleware(req: NextRequest) {
   // Admin-Guard
   const isAdminRoute = url.pathname.startsWith("/admin") || url.pathname.startsWith("/api/admin");
   const isPartnerBlogRoute = url.pathname.startsWith("/partner-blog/create");
+  const isApiRoute = url.pathname.startsWith("/api/");
 
   // Öffentliche GET-Endpunkte unter /api/admin (Lesezugriff für Kursstandorte etc.)
   const publicAdminGet =
@@ -107,7 +131,7 @@ export async function middleware(req: NextRequest) {
   const needsAdminGuard = isAdminRoute && !publicAdminGet && !publicAdminService;
   if (needsAdminGuard) {
     const accessToken = getAccessToken(req);
-    const evaluation = await evaluateSession(accessToken);
+    const evaluation = await evaluateSession(accessToken, url.pathname, isApiRoute);
     if (!evaluation.allowed) {
       if (url.searchParams.get("debug") === "1") {
         const payload = {
@@ -117,7 +141,13 @@ export async function middleware(req: NextRequest) {
         };
         return NextResponse.json(payload, { status: 403 });
       }
-      return redirectToLogin(req, url, region);
+      const extraQuery =
+        evaluation.reason === "pending"
+          ? "pending=1"
+          : evaluation.reason === "blocked"
+          ? "blocked=1"
+          : undefined;
+      return redirectToLogin(req, url, region, extraQuery);
     }
   }
 
@@ -160,6 +190,20 @@ function extractEmail(jwt: string): string | null {
   const payload = parseJwtPayload(jwt);
   if (!payload) return null;
   return (payload?.["email"] as string | undefined)?.toLowerCase() ?? null;
+}
+
+function extractRole(jwt: string): string | null {
+  const payload = parseJwtPayload(jwt);
+  if (!payload) return null;
+  const metadata = payload?.["user_metadata"] as Record<string, unknown> | undefined;
+  return (metadata?.["role"] as string | undefined) ?? (payload?.["role"] as string | undefined) ?? null;
+}
+
+function extractStatus(jwt: string): string | null {
+  const payload = parseJwtPayload(jwt);
+  if (!payload) return null;
+  const metadata = payload?.["user_metadata"] as Record<string, unknown> | undefined;
+  return (metadata?.["status"] as string | undefined) ?? (payload?.["status"] as string | undefined) ?? null;
 }
 
 function getAccessToken(req: NextRequest): string | null {
@@ -215,12 +259,27 @@ function redirectToLogin(req: NextRequest, url: URL, region: string, extraQuery?
   return redirect;
 }
 
-async function evaluateSession(token: string | null): Promise<{ allowed: boolean; reason?: "unauthorized" }> {
+async function evaluateSession(
+  token: string | null,
+  path: string,
+  isApiRoute: boolean
+): Promise<{ allowed: boolean; reason?: "pending" | "blocked" | "unauthorized" }> {
   if (!token) return { allowed: false };
   const email = extractEmail(token);
-  if (!email) return { allowed: false, reason: "unauthorized" };
-  const normalized = email.trim().toLowerCase();
-  const allowed = ADMIN_EMAILS.includes(normalized);
-  if (!allowed) return { allowed: false, reason: "unauthorized" };
-  return { allowed: true };
+  const role = extractRole(token);
+  const status = extractStatus(token) ?? "pending";
+  const normalizedEmail = email?.trim().toLowerCase() ?? "";
+  const isWhitelistedAdmin = normalizedEmail ? ADMIN_EMAILS.includes(normalizedEmail) : false;
+  if (isWhitelistedAdmin) return { allowed: true };
+  const effectiveRole = role ?? "employee";
+
+  if (status === "blocked") return { allowed: false, reason: "blocked" };
+  if (status !== "approved") return { allowed: false, reason: "pending" };
+
+  if (effectiveRole === "admin") return { allowed: true };
+  if (effectiveRole === "employee") {
+    const allowed = isApiRoute ? isEmployeeAllowedApi(path) : isEmployeeAllowedPath(path);
+    return allowed ? { allowed: true } : { allowed: false, reason: "unauthorized" };
+  }
+  return { allowed: false, reason: "unauthorized" };
 }

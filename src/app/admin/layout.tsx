@@ -4,8 +4,10 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { getSupabaseBrowserClient } from "@/lib/supabase";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { LogOut } from "lucide-react";
+
+const ADMIN_CONTACT = "office@musicmission.at";
 
 const nav = [
   { href: "/admin", label: "Übersicht" },
@@ -27,9 +29,14 @@ const nav = [
   { href: "/admin/users", label: "Benutzer" },
 ];
 
+const employeeNav = nav.filter((item) =>
+  ["/admin", "/admin/partners", "/admin/courses", "/admin/sessions", "/admin/orders"].includes(item.href)
+);
+
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const supabase = getSupabaseBrowserClient();
   const pathname = usePathname();
+  const [role, setRole] = useState<"admin" | "employee">("employee");
 
   const withRegion = (href: string) => href;
 
@@ -41,10 +48,32 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    // Kein Rollen-Filter mehr: alle Menüpunkte sichtbar
-  }, []);
+    const loadRole = async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const user = sessionData.session?.user;
+      if (!user) return;
 
-  const filteredNav = nav;
+      const email = (user.email ?? "").trim().toLowerCase();
+      if (email === ADMIN_CONTACT) {
+        setRole("admin");
+        return;
+      }
+
+      const metadataRole = user.user_metadata?.role;
+      if (metadataRole === "admin") {
+        setRole("admin");
+        return;
+      }
+
+      const res = await fetch(`/api/auth/status?userId=${user.id}`, { cache: "no-store" }).catch(() => null);
+      if (!res?.ok) return;
+      const payload = await res.json().catch(() => ({}));
+      setRole(payload.role === "admin" ? "admin" : "employee");
+    };
+    loadRole();
+  }, [supabase.auth]);
+
+  const filteredNav = useMemo(() => (role === "admin" ? nav : employeeNav), [role]);
 
   return (
     <div className="min-h-screen flex bg-white text-slate-900">

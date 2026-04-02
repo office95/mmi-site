@@ -79,6 +79,8 @@ export default function LoginClient() {
 
   const ensureUserActive = async (user: Session["user"] | null) => {
     if (!user) return false;
+    const normalizedEmail = (user.email ?? "").trim().toLowerCase();
+    if (normalizedEmail === ADMIN_CONTACT) return true;
     try {
       const res = await fetch(`/api/auth/status?userId=${user.id}`, { cache: "no-store" });
       const payload = await res.json();
@@ -132,7 +134,7 @@ export default function LoginClient() {
         password,
         options: {
           emailRedirectTo,
-          data: { status: "pending" },
+          data: { role: "employee", status: "pending" },
         },
       });
       if (signupError) throw signupError;

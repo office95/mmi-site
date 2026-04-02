@@ -171,7 +171,18 @@ function parseJwtPayload(jwt: string): Record<string, unknown> | null {
     if (!payload) return null;
     const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
     const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
-    const decoded = Buffer.from(padded, "base64").toString("utf8");
+    let decoded = "";
+    if (typeof globalThis.atob === "function") {
+      decoded = globalThis.atob(padded);
+    } else if (typeof Buffer !== "undefined") {
+      decoded = Buffer.from(padded, "base64").toString("utf8");
+    } else {
+      const binaryString = Array.from(padded)
+        .map((char) => char.charCodeAt(0))
+        .map((code) => String.fromCharCode(code))
+        .join("");
+      decoded = binaryString;
+    }
     return JSON.parse(decoded);
   } catch {
     return null;

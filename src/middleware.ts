@@ -165,44 +165,43 @@ export const config = {
   matcher: ["/admin/:path*", "/api/admin/:path*", "/partner-blog/create", "/:path*"],
 };
 
-function extractEmail(jwt: string): string | null {
+function parseJwtPayload(jwt: string): Record<string, unknown> | null {
   try {
     const payload = jwt.split(".")[1];
-    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
-    return json?.email?.toLowerCase() ?? null;
+    if (!payload) return null;
+    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+    const decoded = Buffer.from(padded, "base64").toString("utf8");
+    return JSON.parse(decoded);
   } catch {
     return null;
   }
+}
+
+function extractEmail(jwt: string): string | null {
+  const payload = parseJwtPayload(jwt);
+  if (!payload) return null;
+  return (payload?.["email"] as string | undefined)?.toLowerCase() ?? null;
 }
 
 function extractRole(jwt: string): string | null {
-  try {
-    const payload = jwt.split(".")[1];
-    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
-    return json?.user_metadata?.role ?? json?.role ?? null;
-  } catch {
-    return null;
-  }
+  const payload = parseJwtPayload(jwt);
+  if (!payload) return null;
+  const metadata = payload?.["user_metadata"] as Record<string, unknown> | undefined;
+  return (metadata?.["role"] as string) ?? (payload?.["role"] as string) ?? null;
 }
 
 function extractSub(jwt: string): string | null {
-  try {
-    const payload = jwt.split(".")[1];
-    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
-    return json?.sub ?? null;
-  } catch {
-    return null;
-  }
+  const payload = parseJwtPayload(jwt);
+  if (!payload) return null;
+  return (payload?.["sub"] as string) ?? null;
 }
 
 function extractStatus(jwt: string): string | null {
-  try {
-    const payload = jwt.split(".")[1];
-    const json = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
-    return json?.user_metadata?.status ?? json?.status ?? null;
-  } catch {
-    return null;
-  }
+  const payload = parseJwtPayload(jwt);
+  if (!payload) return null;
+  const metadata = payload?.["user_metadata"] as Record<string, unknown> | undefined;
+  return (metadata?.["status"] as string) ?? (payload?.["status"] as string) ?? null;
 }
 
 function getAccessToken(req: NextRequest): string | null {

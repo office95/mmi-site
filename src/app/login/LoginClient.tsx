@@ -79,24 +79,22 @@ export default function LoginClient() {
 
   const ensureUserActive = async (user: Session["user"] | null) => {
     if (!user) return false;
-    let status = user.user_metadata?.status ?? null;
     try {
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("status")
-        .eq("user_id", user.id)
-        .single();
-      if (!profileError && profile?.status) {
-        status = profile.status;
+      const res = await fetch(`/api/auth/status?userId=${user.id}`, { cache: "no-store" });
+      const payload = await res.json();
+      if (!res.ok) {
+        throw new Error(payload.error || "Fehler beim Status");
       }
-    } catch {
-      // ignore
-    }
-    if (status === "approved") return true;
-    if (status === "blocked") {
-      setError(`Dein Account ist gesperrt. Bitte ${ADMIN_CONTACT} kontaktieren.`);
-    } else {
-      setInfo(`Dein Account wird noch geprüft. ${ADMIN_CONTACT} schaltet ihn frei.`);
+      const status = payload.status ?? user.user_metadata?.status ?? "pending";
+      if (status === "approved") return true;
+      if (status === "blocked") {
+        setError(`Dein Account ist gesperrt. Bitte ${ADMIN_CONTACT} kontaktieren.`);
+      } else {
+        setInfo(`Dein Account wird noch geprüft. ${ADMIN_CONTACT} schaltet ihn frei.`);
+      }
+    } catch (err) {
+      if (err instanceof Error) setError(err.message);
+      else setError("Account-Status konnte nicht geprüft werden");
     }
     await supabase.auth.signOut();
     return false;

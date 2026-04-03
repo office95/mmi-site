@@ -207,6 +207,12 @@ function extractStatus(jwt: string): string | null {
 }
 
 function getAccessToken(req: NextRequest): string | null {
+  const projectRef = (() => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+    const match = url.match(/^https?:\/\/([a-z0-9-]+)\.supabase\.co/i);
+    return match?.[1]?.toLowerCase() ?? "";
+  })();
+
   const authCookies = req.cookies.getAll().filter(
     (c) =>
       c.name === "sb-access-token" || // custom cookie from login page
@@ -214,6 +220,17 @@ function getAccessToken(req: NextRequest): string | null {
       c.name.endsWith("auth-token") ||
       c.name.includes("auth-token")
   );
+
+  // Prefer explicit login cookie first, then cookies of this Supabase project.
+  authCookies.sort((a, b) => {
+    const score = (name: string) => {
+      if (name === "sb-access-token") return 100;
+      if (projectRef && name.toLowerCase().includes(projectRef)) return 80;
+      if (name.endsWith("auth-token")) return 60;
+      return 10;
+    };
+    return score(b.name) - score(a.name);
+  });
 
   for (const cookie of authCookies) {
     const raw = decodeURIComponent(cookie.value);

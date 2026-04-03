@@ -38,6 +38,10 @@ type Partner = {
   description?: string | null;
   genres?: string[] | null;
   instructor_profiles?: Instructor[] | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+  created_by?: string | null;
+  updated_by?: string | null;
 };
 
 const countries = ["Österreich", "Deutschland"] as const;
@@ -103,6 +107,24 @@ const emptyPartner: Partner = {
   gallery_paths: [],
   promo_path: null,
   instructor_profiles: [],
+};
+
+const formatAuditDate = (value?: string | null) => {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+  return new Intl.DateTimeFormat("de-AT", { dateStyle: "medium", timeStyle: "short" }).format(date);
+};
+
+const hasMeaningfulUpdate = (createdAt?: string | null, updatedAt?: string | null, createdBy?: string | null, updatedBy?: string | null) => {
+  const cBy = (createdBy ?? "").trim().toLowerCase();
+  const uBy = (updatedBy ?? "").trim().toLowerCase();
+  if (cBy && uBy && cBy !== uBy) return true;
+  if (!createdAt || !updatedAt) return false;
+  const createdMs = new Date(createdAt).getTime();
+  const updatedMs = new Date(updatedAt).getTime();
+  if (Number.isNaN(createdMs) || Number.isNaN(updatedMs)) return false;
+  return updatedMs - createdMs > 60 * 1000;
 };
 
 export default function PartnersPage() {
@@ -322,7 +344,6 @@ const updateInstructor = (id: string, patch: Partial<Instructor>) =>
       <div className="mx-auto max-w-7xl space-y-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="tag">Admin</p>
             <h1 className="text-2xl font-semibold text-slate-900">Partner</h1>
             <p className="text-sm text-slate-500">Übersicht, Suche, Filter, Bearbeiten, Löschen.</p>
           </div>
@@ -446,6 +467,13 @@ const updateInstructor = (id: string, patch: Partial<Instructor>) =>
                   {t === "stammdaten" ? "Stammdaten" : t === "medien" ? "Medien" : t === "website" ? "Website" : "Dozenten"}
                 </button>
               ))}
+            </div>
+
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+              <p>Erstellt: {formatAuditDate(editing.created_at)} · {editing.created_by ?? "—"}</p>
+              {hasMeaningfulUpdate(editing.created_at, editing.updated_at, editing.created_by, editing.updated_by) && (
+                <p>Geändert: {formatAuditDate(editing.updated_at)} · {editing.updated_by ?? "—"}</p>
+              )}
             </div>
 
             {tab === "stammdaten" && (

@@ -1,13 +1,15 @@
 // Kurse Admin Seite mit Preisklassen, Add-ons, Stammdaten-Selects
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { v4 as uuid } from "uuid";
 import RichTextEditor from "@/components/RichTextEditor";
+import { useRouter } from "next/navigation";
 
 type Course = {
   id: string;
-  status?: "active" | "inactive" | string;
+  source_course_id?: string | null;
+  status?: "active" | "inactive" | "archived" | string;
   title: string;
   slug?: string | null;
   region?: string | null;
@@ -37,6 +39,28 @@ type Course = {
   tags?: string[];
   faqs?: { question: string; answer: string }[];
   modules?: { title: string; hours: number | null }[];
+  sessions?: SessionLite[];
+  created_at?: string | null;
+  updated_at?: string | null;
+  created_by?: string | null;
+  updated_by?: string | null;
+};
+
+type SessionLite = {
+  id?: string;
+  course_id?: string | null;
+  partner_id?: string | null;
+  start_date?: string | null;
+  start_time?: string | null;
+  end_time?: string | null;
+  city?: string | null;
+  address?: string | null;
+  price_cents?: number | null;
+  deposit_cents?: number | null;
+  max_participants?: number | null;
+  seats_taken?: number | null;
+  status?: string | null;
+  region?: string | null;
 };
 
 type PriceTier = {
@@ -56,6 +80,18 @@ type Addon = {
   description?: string | null;
   image_url?: string | null;
   tax_rate?: number | null;
+};
+type CourseWizardTab = "stammdaten" | "website" | "medien" | "preise" | "addons" | "tags" | "faqs" | "inhalt";
+type CourseLifecycleState = "planned" | "live" | "archived" | "inactive";
+type FollowUpDraft = {
+  sourceCourse: Course;
+  latestSession: SessionLite | null;
+  newStartDate: string;
+  checks: {
+    dateChecked: boolean;
+    contentChecked: boolean;
+    pricingChecked: boolean;
+  };
 };
 
 const emptyCourse: Course = {
@@ -91,7 +127,72 @@ const emptyCourse: Course = {
   modules: [],
 };
 
+const formatAuditDate = (value?: string | null) => {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+  return new Intl.DateTimeFormat("de-AT", { dateStyle: "medium", timeStyle: "short" }).format(date);
+};
+
+const hasMeaningfulUpdate = (createdAt?: string | null, updatedAt?: string | null, createdBy?: string | null, updatedBy?: string | null) => {
+  const cBy = (createdBy ?? "").trim().toLowerCase();
+  const uBy = (updatedBy ?? "").trim().toLowerCase();
+  if (cBy && uBy && cBy !== uBy) return true;
+  if (!createdAt || !updatedAt) return false;
+  const createdMs = new Date(createdAt).getTime();
+  const updatedMs = new Date(updatedAt).getTime();
+  if (Number.isNaN(createdMs) || Number.isNaN(updatedMs)) return false;
+  return updatedMs - createdMs > 60 * 1000;
+};
+
+const parseIsoDate = (value?: string | null) => {
+  if (!value) return null;
+  const date = new Date(`${value}T00:00:00`);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const getLatestSessionStart = (course: Course): Date | null => {
+  const dates = (course.sessions ?? [])
+    .map((session) => parseIsoDate(session.start_date))
+    .filter((date): date is Date => Boolean(date))
+    .sort((a, b) => b.getTime() - a.getTime());
+  return dates[0] ?? null;
+};
+
+const daysUntil = (date: Date) => Math.ceil((date.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+
+const getFollowUpReferenceStart = (course: Course): Date | null => {
+  const dates = (course.sessions ?? [])
+    .map((session) => parseIsoDate(session.start_date))
+    .filter((date): date is Date => Boolean(date))
+    .filter((date) => daysUntil(date) <= 7)
+    .sort((a, b) => b.getTime() - a.getTime());
+  return dates[0] ?? null;
+};
+
+const getCourseLifecycleState = (course: Course): CourseLifecycleState => {
+  if ((course.status ?? "") === "inactive") return "inactive";
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayMs = today.getTime();
+  const starts = (course.sessions ?? [])
+    .map((session) => parseIsoDate(session.start_date))
+    .filter((date): date is Date => Boolean(date))
+    .map((date) => date.getTime());
+
+  if (!starts.length) return "planned";
+  const hasPast = starts.some((ms) => ms < todayMs);
+  const hasToday = starts.some((ms) => ms === todayMs);
+  const hasFuture = starts.some((ms) => ms > todayMs);
+
+  if (hasToday || (hasPast && hasFuture)) return "live";
+  if (hasFuture) return "planned";
+  return "archived";
+};
+
 export default function CoursesPage() {
+  const router = useRouter();
+  const [followUpOnly, setFollowUpOnly] = useState(false);
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -102,36 +203,72 @@ export default function CoursesPage() {
   const [filterFormat, setFilterFormat] = useState("");
   const [filterRegion, setFilterRegion] = useState("");
   const [editing, setEditing] = useState<Course | null>(null);
-  const [tab, setTab] = useState<"stammdaten" | "website" | "medien" | "preise" | "addons" | "tags" | "faqs" | "inhalt">("stammdaten");
+  const [followUpDraft, setFollowUpDraft] = useState<FollowUpDraft | null>(null);
+  const [tab, setTab] = useState<CourseWizardTab>("stammdaten");
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<{ id: string; name: string; parent_id: string | null }[]>([]);
   const [types, setTypes] = useState<{ id: string; name: string }[]>([]);
   const [formats, setFormats] = useState<{ id: string; name: string }[]>([]);
   const [uploading, setUploading] = useState<"hero" | "heroMobile" | "slogan" | null>(null);
+  const [loadingDetails, setLoadingDetails] = useState(false);
   const regionOptions = [
     { value: "", label: "Global (AT+DE)" },
     { value: "AT", label: "Österreich" },
     { value: "DE", label: "Deutschland" },
   ];
 
+  const successorSourceIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const course of courses) {
+      if (course.source_course_id) ids.add(course.source_course_id);
+    }
+    return ids;
+  }, [courses]);
+
+  const followUpCourseIds = useMemo(() => {
+    const ids = new Set<string>();
+    for (const course of courses) {
+      const refStart = getFollowUpReferenceStart(course);
+      if (!refStart) continue;
+      if (successorSourceIds.has(course.id)) continue;
+      ids.add(course.id);
+    }
+    return ids;
+  }, [courses, successorSourceIds]);
+
   const filtered = useMemo(() => {
     return courses.filter((c) => {
       const s = search.toLowerCase();
       const matchesSearch = !s || c.title.toLowerCase().includes(s);
-      const matchesStatus = !filterStatus || (c.status ?? "") === filterStatus;
+      const lifecycle = getCourseLifecycleState(c);
+      const matchesStatus = !filterStatus || lifecycle === filterStatus;
       const matchesCat = !filterCategory || (c.category_id ?? "") === filterCategory;
       const matchesType = !filterType || (c.type_id ?? "") === filterType;
       const matchesFormat = !filterFormat || (c.format_id ?? "") === filterFormat;
       const matchesRegion = !filterRegion || (c.region ?? "") === filterRegion || (filterRegion === "NULL" && !c.region);
-      return matchesSearch && matchesStatus && matchesCat && matchesType && matchesFormat && matchesRegion;
+      const matchesFollowUp = !followUpOnly || followUpCourseIds.has(c.id);
+      return matchesSearch && matchesStatus && matchesCat && matchesType && matchesFormat && matchesRegion && matchesFollowUp;
     });
-  }, [courses, search, filterStatus, filterCategory, filterType, filterFormat, filterRegion]);
+  }, [courses, search, filterStatus, filterCategory, filterType, filterFormat, filterRegion, followUpOnly, followUpCourseIds]);
 
-  const load = async () => {
+  const followUpAlerts = useMemo(() => {
+    return courses
+      .map((course) => {
+        const latestStart = getFollowUpReferenceStart(course);
+        if (!latestStart) return null;
+        if (successorSourceIds.has(course.id)) return null;
+        const remainingDays = daysUntil(latestStart);
+        return { course, latestStart, remainingDays };
+      })
+      .filter((alert): alert is { course: Course; latestStart: Date; remainingDays: number } => Boolean(alert))
+      .sort((a, b) => a.latestStart.getTime() - b.latestStart.getTime());
+  }, [courses, successorSourceIds]);
+
+  const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/courses");
+      const res = await fetch(`/api/admin/courses?summary=1${followUpOnly ? "&all=1" : ""}`);
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Fehler beim Laden");
       setCourses(json.data ?? []);
@@ -140,11 +277,17 @@ export default function CoursesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [followUpOnly]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    setFollowUpOnly(params.get("followup") === "1");
+  }, []);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   useEffect(() => {
     const fetchTax = async () => {
@@ -164,15 +307,27 @@ export default function CoursesPage() {
     setEditing({ ...emptyCourse, id: uuid() });
     setTab("stammdaten");
   };
-  const openEdit = (c: Course) => {
-    setEditing({
-      ...c,
-      key_facts: c.key_facts ?? [],
-      addons: c.addons ?? [],
-      price_tiers: c.price_tiers ?? [],
-      tags: c.tags ?? [],
-    });
-    setTab("stammdaten");
+  const openEdit = async (c: Course) => {
+    setLoadingDetails(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/courses/${c.id}`, { cache: "no-store" });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Kursdetails konnten nicht geladen werden");
+      const full = json.data as Course;
+      setEditing({
+        ...full,
+        key_facts: full.key_facts ?? [],
+        addons: full.addons ?? [],
+        price_tiers: full.price_tiers ?? [],
+        tags: full.tags ?? [],
+      });
+      setTab("stammdaten");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Kursdetails konnten nicht geladen werden");
+    } finally {
+      setLoadingDetails(false);
+    }
   };
   const closeModal = () => setEditing(null);
 
@@ -215,8 +370,125 @@ export default function CoursesPage() {
     await load();
   };
 
+  const createFollowUpCourse = async (course: Course) => {
+    const latestSession =
+      (course.sessions ?? [])
+        .filter((session) => Boolean(session.start_date))
+        .sort((a, b) => String(b.start_date ?? "").localeCompare(String(a.start_date ?? "")))[0] ?? null;
+    const suggestedDate = latestSession?.start_date ?? new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    setFollowUpDraft({
+      sourceCourse: course,
+      latestSession,
+      newStartDate: suggestedDate,
+      checks: {
+        dateChecked: false,
+        contentChecked: false,
+        pricingChecked: false,
+      },
+    });
+  };
+
+  const submitFollowUpCourse = async () => {
+    if (!followUpDraft) return;
+    const { sourceCourse: course, latestSession, newStartDate } = followUpDraft;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(newStartDate)) {
+      setError("Bitte Startdatum im Format YYYY-MM-DD eingeben.");
+      return;
+    }
+
+    const payload: Course = {
+      ...course,
+      id: uuid(),
+      source_course_id: course.id,
+      status: "active",
+      created_at: null,
+      created_by: null,
+      updated_at: null,
+      updated_by: null,
+      sessions: latestSession
+        ? [
+            {
+              ...latestSession,
+              id: uuid(),
+              course_id: undefined,
+              start_date: newStartDate,
+              seats_taken: 0,
+              status: "active",
+              region: course.region ?? latestSession.region ?? null,
+            },
+          ]
+        : [],
+    };
+
+    setSaving(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/courses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Folgekurs konnte nicht angelegt werden");
+      await load();
+      setFollowUpDraft(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Folgekurs konnte nicht angelegt werden");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const newAddon = (): Addon => ({ id: uuid(), name: "", price_cents: null, price_input: "", description: "", image_url: "", tax_rate: null });
   const newPriceTier = (): PriceTier => ({ id: uuid(), label: "", description: "", price_cents: null, deposit_cents: null, tax_rate: null });
+
+  const wizardTabs = useMemo(() => {
+    if (!editing) return [] as { id: CourseWizardTab; label: string }[];
+    const all: { id: CourseWizardTab; label: string; onlyType?: string }[] = [
+      { id: "stammdaten", label: "Stammdaten" },
+      { id: "website", label: "Website" },
+      { id: "medien", label: "Medien" },
+      { id: "preise", label: "Preis" },
+      { id: "addons", label: "Add-ons" },
+      { id: "tags", label: "Tags" },
+      { id: "faqs", label: "FAQs", onlyType: "Intensiv" },
+      { id: "inhalt", label: "Kursinhalt", onlyType: "Intensiv" },
+    ];
+    return all
+      .filter((item) => !item.onlyType || getName(editing.type_id, types) === item.onlyType || editing.type_id === item.onlyType)
+      .map(({ id, label }) => ({ id, label }));
+  }, [editing, types]);
+
+  const currentStepIndex = useMemo(() => wizardTabs.findIndex((item) => item.id === tab), [wizardTabs, tab]);
+
+  useEffect(() => {
+    if (!editing) return;
+    if (!wizardTabs.some((item) => item.id === tab)) setTab("stammdaten");
+  }, [editing, wizardTabs, tab]);
+
+  const isCourseStepValid = (step: CourseWizardTab, course: Course | null) => {
+    if (!course) return false;
+    if (step === "stammdaten") return Boolean(course.title?.trim());
+    return true;
+  };
+
+  const goNextStep = () => {
+    if (!editing) return;
+    if (!isCourseStepValid(tab, editing)) {
+      return;
+    }
+    setError(null);
+    const next = wizardTabs[currentStepIndex + 1];
+    if (next) setTab(next.id);
+  };
+
+  const goPrevStep = () => {
+    const prev = wizardTabs[currentStepIndex - 1];
+    if (prev) {
+      setError(null);
+      setTab(prev.id);
+    }
+  };
 
   const patchAddon = (id: string, patch: Partial<Addon>) =>
     updateEdit({ addons: (editing?.addons ?? []).map((a) => (a.id === id ? { ...a, ...patch } : a)) });
@@ -283,7 +555,6 @@ export default function CoursesPage() {
       <div className="mx-auto max-w-7xl space-y-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="tag">Admin</p>
             <h1 className="text-2xl font-semibold text-slate-900">Kurse</h1>
             <p className="text-sm text-slate-500">Übersicht, Filter, Bearbeiten, Löschen.</p>
           </div>
@@ -296,14 +567,31 @@ export default function CoursesPage() {
             </button>
             <button
               onClick={load}
+              disabled={loading}
               className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 hover:border-[#ff1f8f] hover:text-[#ff1f8f]"
             >
-              Reload
+              {loading ? "Lade…" : "Reload"}
             </button>
+            {followUpOnly && (
+              <button
+                onClick={() => {
+                  setFollowUpOnly(false);
+                  router.push("/admin/courses");
+                }}
+                className="rounded-xl border border-[#ff1f8f] bg-[#fff0f7] px-3 py-2 text-xs font-semibold text-[#c90068] hover:bg-[#ffe3f2]"
+              >
+                Folgekurs-Filter beenden
+              </button>
+            )}
           </div>
         </div>
 
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-3">
+          {followUpOnly && (
+            <div className="rounded-xl border border-[#ff1f8f]/30 bg-[#fff4fa] px-4 py-3 text-sm text-slate-800">
+              Es werden nur Kurse angezeigt, bei denen aktuell ein Folgekurs fehlt ({followUpCourseIds.size}).
+            </div>
+          )}
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
             <Input label="Suche (Titel)" value={search} onChange={setSearch} />
             <Select
@@ -312,8 +600,10 @@ export default function CoursesPage() {
               onChange={setFilterStatus}
               options={[
                 { value: "", label: "Alle" },
-                { value: "active", label: "Aktiv" },
+                { value: "planned", label: "Geplant" },
+                { value: "live", label: "Live" },
                 { value: "inactive", label: "Inaktiv" },
+                { value: "archived", label: "Archiviert" },
               ]}
             />
             <Select
@@ -347,44 +637,113 @@ export default function CoursesPage() {
             />
           </div>
           {error && <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}
+          {followUpAlerts.length > 0 && (
+            <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="font-semibold">Folgekurs erforderlich ({followUpAlerts.length})</p>
+                {!followUpOnly && (
+                  <button
+                    onClick={() => {
+                      setFollowUpOnly(true);
+                      router.push("/admin/courses?followup=1");
+                    }}
+                    className="rounded-lg bg-[#ff1f8f] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#e40073]"
+                  >
+                    Nur diese Kurse anzeigen
+                  </button>
+                )}
+              </div>
+              <div className="mt-2 space-y-1 text-xs">
+                {followUpAlerts.slice(0, 5).map((alert) => (
+                  <p key={alert.course.id}>
+                    {alert.course.title}:{" "}
+                    {alert.remainingDays < 0 ? "Startdatum liegt in der Vergangenheit" : `Start in ${alert.remainingDays} Tagen`} (
+                    {new Intl.DateTimeFormat("de-AT", { dateStyle: "medium" }).format(alert.latestStart)})
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {loading && <div className="text-sm text-slate-500">Lade…</div>}
             {!loading &&
-              filtered.map((c) => (
-                <div key={c.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition">
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="font-semibold text-slate-900 line-clamp-2">{c.title}</p>
-                      <p className="text-xs text-slate-500 line-clamp-2">
-                        {getName(c.category_id, categories) ?? "–"} · {getName(c.type_id, types) ?? "—"} · {getName(c.format_id, formats) ?? "—"}
-                      </p>
+              filtered.map((c) => {
+                const latestStart = getLatestSessionStart(c);
+                const followUpStart = getFollowUpReferenceStart(c);
+                const remainingDays = followUpStart ? daysUntil(followUpStart) : null;
+                const needsFollowUp = Boolean(followUpStart && !successorSourceIds.has(c.id));
+                const lifecycle = getCourseLifecycleState(c);
+
+                return (
+                  <div key={c.id} className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-semibold text-slate-900 line-clamp-2">{c.title}</p>
+                        <p className="text-xs text-slate-500 line-clamp-2">
+                          {getName(c.category_id, categories) ?? "–"} · {getName(c.type_id, types) ?? "—"} · {getName(c.format_id, formats) ?? "—"}
+                        </p>
+                      </div>
+                      {lifecycle === "live" ? (
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                          Live
+                        </span>
+                      ) : (
+                        <span
+                          className={
+                            lifecycle === "archived"
+                              ? "rounded-full px-2 py-0.5 text-[11px] font-semibold border border-slate-300 text-slate-700"
+                              : lifecycle === "planned"
+                                ? "rounded-full px-2 py-0.5 text-[11px] font-semibold border border-indigo-200 text-indigo-700"
+                                : "rounded-full px-2 py-0.5 text-[11px] font-semibold border border-amber-200 text-amber-700"
+                          }
+                        >
+                          {lifecycle === "planned" ? "Geplant" : lifecycle === "archived" ? "Archiviert" : "Inaktiv"}
+                        </span>
+                      )}
                     </div>
-                    <span
-                      className={
-                        (c.status ?? "active") === "active"
-                          ? "rounded-full px-2 py-0.5 text-[11px] font-semibold border border-emerald-200 text-emerald-700"
-                          : "rounded-full px-2 py-0.5 text-[11px] font-semibold border border-amber-200 text-amber-700"
-                      }
-                    >
-                      {c.status ?? "—"}
-                    </span>
-                  </div>
-                  <div className="mt-3 flex gap-2">
+                    {latestStart && (
+                      <div className="mt-2 space-y-0.5 text-[11px] text-slate-500">
+                        <p>Letzter Start: {new Intl.DateTimeFormat("de-AT", { dateStyle: "medium" }).format(latestStart)}</p>
+                      </div>
+                    )}
+                    {needsFollowUp && (
+                      <div className="mt-2 rounded-lg border border-rose-200 bg-rose-50 px-2 py-1 text-[11px] font-semibold text-rose-800">
+                        {(remainingDays ?? 0) < 0
+                          ? `Folgekurs erforderlich - Start seit ${Math.abs(remainingDays ?? 0)} Tag(en) vorbei`
+                          : `Folgekurs jetzt planen - Start in ${remainingDays ?? 0} Tag(en)`}
+                      </div>
+                    )}
+                    <div className="mt-3 flex gap-2">
                     <button
                       onClick={() => openEdit(c)}
+                      disabled={loadingDetails}
                       className="flex-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-800 hover:border-[#ff1f8f] hover:text-[#ff1f8f]"
                     >
-                      Bearbeiten
+                      {loadingDetails ? "Lade…" : "Bearbeiten"}
                     </button>
-                    <button
-                      onClick={() => remove(c.id)}
-                      className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:border-red-400"
-                    >
-                      Löschen
-                    </button>
+                      <button
+                        onClick={() => router.push(`/admin/sessions?courseId=${encodeURIComponent(c.id)}`)}
+                        className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:border-[#ff1f8f] hover:text-[#ff1f8f]"
+                      >
+                        Neuer Termin
+                      </button>
+                      <button
+                        onClick={() => createFollowUpCourse(c)}
+                        className="rounded-lg border border-[#ff1f8f] px-3 py-1.5 text-xs font-semibold text-[#c90068] hover:bg-[#fff0f7]"
+                      >
+                        Folgekurs
+                      </button>
+                      <button
+                        onClick={() => remove(c.id)}
+                        className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:border-red-400"
+                      >
+                        Löschen
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             {!loading && filtered.length === 0 && <div className="text-sm text-slate-500">Keine Kurse gefunden.</div>}
           </div>
         </div>
@@ -393,29 +752,40 @@ export default function CoursesPage() {
       {editing && (
         <Modal onClose={closeModal} title={editing.title ? "Kurs bearbeiten" : "Neuer Kurs"}>
           <div className="space-y-4">
-            <div className="flex gap-2 text-xs font-semibold flex-wrap">
-              {[
-                { id: "stammdaten", label: "Stammdaten" },
-                { id: "website", label: "Website" },
-                { id: "medien", label: "Medien" },
-                { id: "preise", label: "Preis" },
-                { id: "addons", label: "Add-ons" },
-                { id: "tags", label: "Tags" },
-                { id: "faqs", label: "FAQs", onlyType: "Intensiv" },
-                { id: "inhalt", label: "Kursinhalt", onlyType: "Intensiv" },
-              ]
-                .filter((t) => !t.onlyType || getName(editing?.type_id, types) === t.onlyType || editing?.type_id === t.onlyType)
-                .map((t) => (
+            <div className="grid grid-cols-2 gap-2 text-xs font-semibold md:grid-cols-4">
+              {wizardTabs.map((item, idx) => {
+                const isActive = tab === item.id;
+                const isDone = idx < currentStepIndex;
+                const isAccessible = idx <= currentStepIndex;
+                return (
                   <button
-                    key={t.id}
-                    onClick={() => setTab(t.id as typeof tab)}
+                    key={item.id}
+                    onClick={() => {
+                      if (isAccessible) {
+                        setError(null);
+                        setTab(item.id);
+                      }
+                    }}
+                    disabled={!isAccessible}
                     className={`rounded-full px-3 py-2 border transition ${
-                      tab === t.id ? "border-[#ff1f8f] text-[#ff1f8f] bg-[#ff1f8f]/10" : "border-slate-200 text-slate-600 hover:border-[#ff1f8f]/50"
+                      isActive
+                        ? "border-[#ff1f8f] bg-[#ff1f8f]/10 text-[#ff1f8f]"
+                        : isDone
+                          ? "border-slate-300 bg-white text-slate-700 hover:border-slate-400"
+                          : "border-slate-200 bg-slate-50 text-slate-400"
                     }`}
                   >
-                    {t.label}
+                    {idx + 1}. {item.label}
                   </button>
-                ))}
+                );
+              })}
+            </div>
+
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+              <p>Erstellt: {formatAuditDate(editing.created_at)} · {editing.created_by ?? "—"}</p>
+              {hasMeaningfulUpdate(editing.created_at, editing.updated_at, editing.created_by, editing.updated_by) && (
+                <p>Geändert: {formatAuditDate(editing.updated_at)} · {editing.updated_by ?? "—"}</p>
+              )}
             </div>
 
             {tab === "stammdaten" && (
@@ -427,6 +797,7 @@ export default function CoursesPage() {
                   options={[
                     { value: "active", label: "Aktiv" },
                     { value: "inactive", label: "Inaktiv" },
+                    { value: "archived", label: "Archiviert" },
                   ]}
                 />
                 <Select
@@ -733,14 +1104,106 @@ export default function CoursesPage() {
             )}
 
             <div className="pt-3 flex items-center gap-3">
-              <button
-                onClick={save}
-                disabled={saving}
-                className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-black shadow-md shadow-[#ff1f8f]/30 hover:bg-[#e40073] disabled:opacity-60"
-              >
-                {saving ? "Speichern…" : "Speichern"}
-              </button>
+              {currentStepIndex > 0 && (
+                <button
+                  onClick={goPrevStep}
+                  className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-400"
+                >
+                  Zurück
+                </button>
+              )}
+              {currentStepIndex < wizardTabs.length - 1 ? (
+                <button
+                  onClick={goNextStep}
+                  className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-white shadow-md shadow-[#ff1f8f]/30 hover:bg-[#e40073]"
+                >
+                  Weiter
+                </button>
+              ) : (
+                <button
+                  onClick={save}
+                  disabled={saving}
+                  className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-white shadow-md shadow-[#ff1f8f]/30 hover:bg-[#e40073] disabled:opacity-60"
+                >
+                  {saving ? "Speichern…" : "Speichern"}
+                </button>
+              )}
               <button onClick={closeModal} className="text-sm text-slate-600 underline underline-offset-4 hover:text-slate-900">
+                Abbrechen
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
+      {followUpDraft && (
+        <Modal onClose={() => setFollowUpDraft(null)} title={`Folgekurs anlegen: ${followUpDraft.sourceCourse.title}`}>
+          <div className="space-y-4">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+              <p>
+                Letzter Termin:{" "}
+                <span className="font-semibold">
+                  {followUpDraft.latestSession?.start_date
+                    ? new Intl.DateTimeFormat("de-AT", { dateStyle: "medium" }).format(new Date(`${followUpDraft.latestSession.start_date}T00:00:00`))
+                    : "kein Termin vorhanden"}
+                </span>
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              <Input
+                label="Neues Startdatum"
+                type="date"
+                value={followUpDraft.newStartDate}
+                onChange={(v) => setFollowUpDraft((prev) => (prev ? { ...prev, newStartDate: v } : prev))}
+              />
+            </div>
+
+            <div className="space-y-2 rounded-xl border border-slate-200 bg-white p-3">
+              <label className="flex items-center gap-2 text-sm text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={followUpDraft.checks.dateChecked}
+                  onChange={(e) =>
+                    setFollowUpDraft((prev) => (prev ? { ...prev, checks: { ...prev.checks, dateChecked: e.target.checked } } : prev))
+                  }
+                  className="h-4 w-4 rounded border-slate-300 accent-[#ff1f8f]"
+                />
+                Startdatum geprüft
+              </label>
+              <label className="flex items-center gap-2 text-sm text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={followUpDraft.checks.contentChecked}
+                  onChange={(e) =>
+                    setFollowUpDraft((prev) => (prev ? { ...prev, checks: { ...prev.checks, contentChecked: e.target.checked } } : prev))
+                  }
+                  className="h-4 w-4 rounded border-slate-300 accent-[#ff1f8f]"
+                />
+                Inhalte/Fokus für neuen Durchgang geprüft
+              </label>
+              <label className="flex items-center gap-2 text-sm text-slate-700">
+                <input
+                  type="checkbox"
+                  checked={followUpDraft.checks.pricingChecked}
+                  onChange={(e) =>
+                    setFollowUpDraft((prev) => (prev ? { ...prev, checks: { ...prev.checks, pricingChecked: e.target.checked } } : prev))
+                  }
+                  className="h-4 w-4 rounded border-slate-300 accent-[#ff1f8f]"
+                />
+                Preise/Anzahlung geprüft
+              </label>
+            </div>
+
+            <div className="pt-2 flex items-center gap-3">
+              <button
+                onClick={submitFollowUpCourse}
+                disabled={saving || !followUpDraft.checks.dateChecked || !followUpDraft.checks.contentChecked || !followUpDraft.checks.pricingChecked}
+                className="rounded-xl bg-[#ff1f8f] px-4 py-2 text-sm font-semibold text-white shadow-md shadow-[#ff1f8f]/30 hover:bg-[#e40073] disabled:opacity-50"
+              >
+                {saving ? "Anlegen…" : "Folgekurs anlegen"}
+              </button>
+              <button onClick={() => setFollowUpDraft(null)} className="text-sm text-slate-600 underline underline-offset-4 hover:text-slate-900">
                 Abbrechen
               </button>
             </div>

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseServiceClient } from "@/lib/supabase";
+import { getUserEmailFromRequest } from "@/lib/request-user";
 
 const TABLE = "partners";
 export const dynamic = "force-dynamic";
@@ -16,11 +17,13 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const { id } = await params;
   const supabase = getSupabaseServiceClient();
   const body = await req.json();
+  const actor = getUserEmailFromRequest(req) ?? "system";
   const { data, error } = await supabase
     .from(TABLE)
     .update({
       ...body,
       slug: body.name ? slugify(body.name) : body.slug,
+      updated_by: actor,
       updated_at: new Date().toISOString(),
     })
     .eq("id", id)

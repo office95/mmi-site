@@ -3,6 +3,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { randomUUID } from "crypto";
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import { getRegionFromRequest } from "@/lib/region-request";
+import { getUserEmailFromRequest } from "@/lib/request-user";
 
 const TABLE = "sessions";
 export const dynamic = "force-dynamic";
@@ -22,7 +23,7 @@ export async function GET(req: NextRequest) {
   // 1) Sessions laden
   let query = supabase.from(TABLE).select("*");
   if (!showAll) {
-    query = query.eq("status", "active").or(regionFilter);
+    query = query.or(regionFilter);
   }
   if (!includePast && !showAll) {
     query = query.neq("status", "archived");
@@ -31,7 +32,16 @@ export async function GET(req: NextRequest) {
   if (errSes) return NextResponse.json({ error: errSes.message }, { status: 500 });
   if (!sessions || sessions.length === 0) return NextResponse.json({ data: [] });
 
-  const filteredSessions = (sessions as any[]).filter((s) => {
+  type SessionRow = {
+    id?: string;
+    course_id?: string | null;
+    partner_id?: string | null;
+    max_participants?: number | null;
+    seats_taken?: number | null;
+    [key: string]: unknown;
+  };
+
+  const filteredSessions = (sessions as SessionRow[]).filter((s) => {
     if (!onlyOpen) return true;
     const max = Number(s.max_participants ?? 0);
     const taken = Number(s.seats_taken ?? 0);
@@ -45,11 +55,14 @@ export async function GET(req: NextRequest) {
   );
   let coursesMap: Record<string, { id: string; slug: string; title: string; hero_image_url?: string | null; type_id?: string | null; category_id?: string | null; region?: string | null; created_at?: string | null }> = {};
   if (courseIds.length) {
-    const { data: courses, error: errC } = await supabase
+    let coursesQuery = supabase
       .from("courses")
       .select("id,slug,title,hero_image_url,type_id,category_id,region,created_at")
-      .or(showAll ? undefined! : `region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.,region.eq.%20`)
       .in("id", courseIds);
+    if (!showAll) {
+      coursesQuery = coursesQuery.or(regionFilter);
+    }
+    const { data: courses, error: errC } = await coursesQuery;
     if (errC) return NextResponse.json({ error: errC.message }, { status: 500 });
     coursesMap = Object.fromEntries((courses ?? []).map((c) => [c.id, c]));
   }
@@ -61,11 +74,14 @@ export async function GET(req: NextRequest) {
   let partnersMap: Record<string, { id: string; name?: string | null; city?: string | null; state?: string | null; country?: string | null }> =
     {};
   if (partnerIds.length) {
-    const { data: partners, error: errP } = await supabase
+    let partnersQuery = supabase
       .from("partners")
       .select("id,name,city,state,country,region")
-      .or(showAll ? undefined! : `region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.,region.eq.%20`)
       .in("id", partnerIds);
+    if (!showAll) {
+      partnersQuery = partnersQuery.or(regionFilter);
+    }
+    const { data: partners, error: errP } = await partnersQuery;
     if (errP) return NextResponse.json({ error: errP.message }, { status: 500 });
     partnersMap = Object.fromEntries((partners ?? []).map((p) => [p.id, p]));
   }
@@ -82,8 +98,14 @@ export async function GET(req: NextRequest) {
 export async function POST(req: Request) {
   const body = await req.json();
   const supabase = getSupabaseServiceClient();
+  const actor = getUserEmailFromRequest(req) ?? "system";
 
   const id = body.id ?? randomUUID();
+  const { data: existing } = await supabase
+    .from(TABLE)
+    .select("created_at, created_by")
+    .eq("id", id)
+    .maybeSingle();
   const regionNormalized = body.region ? String(body.region).trim().toUpperCase() : null;
   if (!body.start_date) {
     return NextResponse.json({ error: "start_date ist erforderlich" }, { status: 400 });
@@ -114,7 +136,9 @@ export async function POST(req: Request) {
     tags: body.tags ?? [],
     zip: body.zip ?? null,
     state: body.state ?? null,
-    created_at: body.created_at ?? undefined,
+    created_at: existing?.created_at ?? body.created_at ?? undefined,
+    created_by: existing?.created_by ?? actor,
+    updated_by: actor,
     updated_at: new Date().toISOString(),
   };
 

@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import { randomUUID } from "crypto";
 import { getRegionFromRequest } from "@/lib/region-request";
+import { getUserEmailFromRequest } from "@/lib/request-user";
 
 export const dynamic = "force-dynamic";
 
@@ -31,9 +32,16 @@ export async function GET(req: NextRequest) {
 export async function POST(req: Request) {
   const body = await req.json();
   const supabase = getSupabaseServiceClient();
+  const actor = getUserEmailFromRequest(req) ?? "system";
+  const partnerId = body.id ?? randomUUID();
+  const { data: existing } = await supabase
+    .from(TABLE)
+    .select("created_at, created_by")
+    .eq("id", partnerId)
+    .maybeSingle();
 
   const payload = {
-    id: body.id ?? randomUUID(),
+    id: partnerId,
     slug: slugify(body.name ?? ""),
     status: body.status ?? "active",
     name: body.name,
@@ -58,6 +66,9 @@ export async function POST(req: Request) {
     slogan: body.slogan ?? null,
     description: body.description ?? null,
     instructor_profiles: body.instructor_profiles ?? [],
+    created_at: existing?.created_at ?? body.created_at ?? undefined,
+    created_by: existing?.created_by ?? actor,
+    updated_by: actor,
     updated_at: new Date().toISOString(),
   };
 

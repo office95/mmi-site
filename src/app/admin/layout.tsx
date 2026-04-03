@@ -76,18 +76,21 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const filteredNav = useMemo(() => (role === "admin" ? nav : employeeNav), [role]);
 
   return (
-    <div className="min-h-screen flex bg-white text-slate-900">
-      <aside className="hidden lg:flex w-68 flex-col border-r border-slate-200 bg-white/95 backdrop-blur-xl shadow-sm">
-        <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-200/80">
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#ff1f8f] text-[13px] font-black text-white shadow-lg shadow-[#ff1f8f]/30">
-            MMI
-          </span>
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Dashboard</p>
-            <p className="text-sm font-semibold">Music Mission Institute</p>
+    <div className="admin-ui min-h-screen flex bg-white text-slate-900">
+      <aside className="hidden lg:flex w-72 flex-col border-r border-slate-200 bg-white shadow-[8px_0_24px_-24px_rgba(0,0,0,0.16)]">
+        <div className="border-b border-slate-200/80 px-6 py-5">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#ff1f8f] text-[13px] font-black text-white shadow-lg shadow-[#ff1f8f]/25">
+              MMI
+            </span>
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Dashboard</p>
+              <p className="text-sm font-semibold text-slate-900">Music Mission Institute</p>
+            </div>
           </div>
         </div>
-        <nav className="flex-1 px-4 py-4 space-y-1 text-sm font-semibold">
+        <div className="px-5 pt-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">Navigation</div>
+        <nav className="flex-1 px-4 py-3 space-y-1 text-sm font-medium">
           {filteredNav.map((item) => {
             const link = withRegion(item.href);
             const active = pathname === item.href;
@@ -95,13 +98,18 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               <Link
                 key={item.href}
                 href={link}
-                className={`flex items-center gap-2 rounded-xl px-3 py-2 transition ${
+                className={`group relative flex items-center gap-2 rounded-xl px-3 py-2.5 transition ${
                   active
-                    ? "bg-[#ff1f8f] text-white shadow-md shadow-[#ff1f8f]/30"
-                    : "text-slate-700 hover:bg-slate-100"
+                    ? "bg-[#ff1f8f] text-white shadow-sm shadow-[#ff1f8f]/25"
+                    : "text-slate-700 hover:bg-slate-50"
                 }`}
               >
-                <span>{item.label}</span>
+                <span
+                  className={`absolute left-1 top-1/2 h-5 w-1 -translate-y-1/2 rounded-full transition ${
+                    active ? "bg-white/90" : "bg-transparent group-hover:bg-slate-300"
+                  }`}
+                />
+                <span className="pl-2">{item.label}</span>
               </Link>
             );
           })}
@@ -109,7 +117,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <div className="px-4 pb-4">
           <button
             onClick={signOut}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-800 hover:bg-slate-100"
+            className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-3 text-xs font-semibold text-slate-800 hover:border-slate-400 hover:bg-slate-50"
           >
             <LogOut size={16} />
             Logout
@@ -117,7 +125,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      <div className="flex-1 min-w-0 bg-gradient-to-br from-white via-[#fff5fb] to-[#f3f5ff]">
+      <div className="flex-1 min-w-0 bg-gradient-to-br from-white via-slate-50 to-slate-100">
         <header className="lg:hidden flex items-center justify-between border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur">
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
             <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#ff1f8f] text-[12px] font-black text-white">

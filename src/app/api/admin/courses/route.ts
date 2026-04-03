@@ -3,9 +3,19 @@ import { NextResponse, NextRequest } from "next/server";
 import { randomUUID } from "crypto";
 import { getSupabaseServiceClient } from "@/lib/supabase";
 import { getRegionFromRequest } from "@/lib/region-request";
+import { getUserEmailFromRequest } from "@/lib/request-user";
 
 const TABLE = "courses";
 export const dynamic = "force-dynamic";
+const MISSING_SOURCE_COLUMN = "source_course_id";
+const summarySelectWithFollowup =
+  "id,status,title,region,category_id,type_id,format_id,created_at,updated_at,created_by,updated_by,source_course_id,sessions(start_date)";
+const summarySelectWithoutFollowup =
+  "id,status,title,region,category_id,type_id,format_id,created_at,updated_at,created_by,updated_by,sessions(start_date)";
+const detailSelect = "*, sessions(*), addons(*), course_tags(tag:tags(name))";
+
+const isMissingColumnError = (error: unknown, column: string) =>
+  Boolean(error && typeof (error as { message?: unknown }).message === "string" && (error as { message: string }).message.includes(column));
 
 const slugify = (name: string) =>
   name
@@ -18,13 +28,25 @@ const slugify = (name: string) =>
 export async function GET(req: NextRequest) {
   const region = getRegionFromRequest(req);
   const showAll = req.nextUrl.searchParams.get("all") === "1";
+  const summary = req.nextUrl.searchParams.get("summary") === "1";
   const supabase = getSupabaseServiceClient();
   const regionFilter = `region.eq.${region},region.eq.${region.toLowerCase()},region.ilike.%${region}%,region.is.null,region.eq.,region.eq.%20`;
-  const { data, error } = await supabase
-    .from(TABLE)
-    .select("*, sessions(*), addons(*), course_tags(tag:tags(name))")
-    .or(showAll ? undefined! : regionFilter) // showAll nicht genutzt, aber TS will string; undefined! = noop
-    .order("updated_at", { ascending: false });
+  let query = supabase.from(TABLE).select(summary ? summarySelectWithFollowup : detailSelect);
+  if (!showAll) {
+    query = query.or(regionFilter);
+  }
+  const initialResult = await query.order("updated_at", { ascending: false });
+  let data: any = initialResult.data;
+  let error: any = initialResult.error;
+  if (error && summary && isMissingColumnError(error, MISSING_SOURCE_COLUMN)) {
+    let fallbackQuery = supabase.from(TABLE).select(summarySelectWithoutFollowup);
+    if (!showAll) {
+      fallbackQuery = fallbackQuery.or(regionFilter);
+    }
+    const fallbackResult = await fallbackQuery.order("updated_at", { ascending: false });
+    data = fallbackResult.data;
+    error = fallbackResult.error;
+  }
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   const mapped =
     data?.map((c: any) => ({
@@ -48,8 +70,14 @@ export async function GET(req: NextRequest) {
 export async function POST(req: Request) {
   const body = await req.json();
   const supabase = getSupabaseServiceClient();
+  const actor = getUserEmailFromRequest(req) ?? "system";
 
   const courseId = body.id ?? randomUUID();
+  const { data: existing } = await supabase
+    .from(TABLE)
+    .select("created_at, created_by")
+    .eq("id", courseId)
+    .maybeSingle();
   const baseSlug = slugify(body.slug || body.title || `kurs-${Date.now()}`) || `kurs-${Date.now()}`;
   const regionNormalized = body.region ? String(body.region).trim().toUpperCase() : null;
 
@@ -83,8 +111,9 @@ export async function POST(req: Request) {
     }
     return list;
   })();
-  const payload = {
+  const payload: Record<string, unknown> = {
     id: courseId,
+    source_course_id: body.source_course_id ?? null,
     status: body.status ?? "active",
     title: body.title,
     slug: finalSlug,
@@ -115,8 +144,11 @@ export async function POST(req: Request) {
     duration_hours: body.duration_hours ?? null,
     language: body.language ?? "de",
     price_tiers: body.price_tiers ?? [], // optional array of {label, price_cents, deposit_cents, tax_rate}
-    faqs: body.faqs ?? [],
+  faqs: body.faqs ?? [],
   modules: body.modules ?? [],
+  created_at: existing?.created_at ?? body.created_at ?? undefined,
+  created_by: existing?.created_by ?? actor,
+  updated_by: actor,
   updated_at: new Date().toISOString(),
   };
 
@@ -132,6 +164,19 @@ export async function POST(req: Request) {
     if (!error) break;
     // Bei ANY Fehler neuen Slug probieren, um Unique-Constraint zu umgehen
     attemptSlug = `${baseSlug}-${regionNormalized ? regionNormalized.toLowerCase() : "x"}-${randomUUID().slice(0, 6).toLowerCase()}-${i + 1}`;
+  }
+  if (courseError && isMissingColumnError(courseError, MISSING_SOURCE_COLUMN)) {
+    delete payload.source_course_id;
+    courseError = null;
+    attemptSlug = finalSlug;
+    for (let i = 0; i < 5; i++) {
+      const attemptPayload = { ...payload, slug: attemptSlug };
+      const { data, error } = await supabase.from(TABLE).upsert(attemptPayload, { onConflict: "id" }).select().single();
+      courseData = data;
+      courseError = error;
+      if (!error) break;
+      attemptSlug = `${baseSlug}-${regionNormalized ? regionNormalized.toLowerCase() : "x"}-${randomUUID().slice(0, 6).toLowerCase()}-${i + 1}`;
+    }
   }
   if (courseError) return NextResponse.json({ error: courseError.message }, { status: 500 });
 

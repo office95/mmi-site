@@ -448,3 +448,41 @@ a[class*="bg-\\[\\#ff1f8f"] *, button[class*="bg-\\[\\#ff1f8f"] * {
   color: #ffffff !important;
   fill: #ffffff;
 }
+
+/* Dark-Pink Hex Utilities (bg-[#e40073]) */
+a[class*="bg-\\[\\#e40073"], button[class*="bg-\\[\\#e40073"] {
+  color: #ffffff !important;
+}
+a[class*="bg-\\[\\#e40073"] *, button[class*="bg-\\[\\#e40073"] * {
+  color: #ffffff !important;
+  fill: #ffffff;
+}
+
+/* Admin: einheitliche pinke Primär-Buttons */
+.admin-ui button[class*="bg-\\[\\#ff1f8f"],
+.admin-ui a[class*="bg-\\[\\#ff1f8f"],
+.admin-ui label[class*="bg-\\[\\#ff1f8f"] {
+  color: #ffffff !important;
+  border-radius: 0.75rem !important;
+  padding: 0.5rem 0.875rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  min-height: 2.25rem;
+}
+
+/* Harte Farbsicherung: pinke Hintergrund-Utilities => weiße Schrift */
+.admin-ui .bg-\[\#ff1f8f\],
+.admin-ui .bg-\[\#e40073\] {
+  color: #ffffff !important;
+}
+.admin-ui .bg-\[\#ff1f8f\] *,
+.admin-ui .bg-\[\#e40073\] * {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+.admin-ui .tag {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #475569;
+}

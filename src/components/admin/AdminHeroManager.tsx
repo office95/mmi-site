@@ -49,6 +49,7 @@ export function AdminHeroManager({ initialSlides }: Props) {
   };
 
   const onDelete = async (id: string) => {
+    if (!confirm("Wirklich löschen?")) return;
     setLoading(true);
     setError(null);
     await fetch(`/api/admin/hero/delete?id=${id}`, { method: "DELETE" });

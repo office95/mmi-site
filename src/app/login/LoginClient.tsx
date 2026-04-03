@@ -194,22 +194,24 @@ export default function LoginClient() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-slate-50 to-slate-100 text-slate-900 flex items-center justify-center px-6 py-16">
-      <div className="w-full max-w-md space-y-6 rounded-3xl border border-slate-200 bg-white p-8 shadow-2xl">
+    <div className="relative flex min-h-screen items-center justify-center bg-white px-6 py-16 text-zinc-900">
+      <div className="pointer-events-none absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-pink-300/25 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 right-8 h-64 w-64 rounded-full bg-pink-500/15 blur-3xl" />
+      <div className="relative w-full max-w-md space-y-6 rounded-3xl border border-zinc-200 bg-white p-8 shadow-[0_24px_80px_-36px_rgba(0,0,0,0.45)]">
         <div className="space-y-2">
-          <p className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-slate-500">
+          <p className="inline-flex items-center gap-2 rounded-full border border-pink-200 bg-pink-50 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-pink-700">
             Admin Login
           </p>
-          <h1 className="text-3xl font-semibold text-slate-900">Willkommen zurück</h1>
-          <p className="text-sm text-slate-600">
+          <h1 className="text-3xl font-semibold text-black">Willkommen zurück</h1>
+          <p className="text-sm text-zinc-600">
             {mode === "resetConfirm" ? "Setze jetzt dein neues Passwort." : "Bitte mit E-Mail und Passwort anmelden."}
           </p>
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-700">
+          <div className="rounded-2xl border border-pink-200 bg-pink-50 px-4 py-3 text-xs text-pink-800">
             Neue Mitarbeiter werden von {ADMIN_CONTACT} geprüft und erst nach Freigabe freigeschaltet.
           </div>
         </div>
 
-        <div className="flex gap-2 rounded-full bg-slate-100 p-1 text-xs font-semibold text-slate-600">
+        <div className="flex gap-2 rounded-full border border-zinc-200 bg-zinc-50 p-1 text-xs font-semibold text-zinc-600">
           <button
             onClick={() => {
               setMode("login");
@@ -217,7 +219,7 @@ export default function LoginClient() {
               setInfo(null);
               setShowReset(false);
             }}
-            className={`flex-1 rounded-full px-4 py-2 ${mode === "login" ? "bg-white text-slate-900 shadow" : "hover:bg-white/70"}`}
+            className={`flex-1 rounded-full px-4 py-2 transition ${mode === "login" ? "bg-black text-white shadow-lg shadow-black/15" : "hover:bg-white/80 hover:text-black"}`}
           >
             Login
           </button>
@@ -228,7 +230,7 @@ export default function LoginClient() {
               setInfo(null);
               setShowReset(false);
             }}
-            className={`flex-1 rounded-full px-4 py-2 ${mode === "register" ? "bg-white text-slate-900 shadow" : "hover:bg-white/70"}`}
+            className={`flex-1 rounded-full px-4 py-2 transition ${mode === "register" ? "bg-black text-white shadow-lg shadow-black/15" : "hover:bg-white/80 hover:text-black"}`}
           >
             Registrieren
           </button>
@@ -237,19 +239,19 @@ export default function LoginClient() {
         <div className="space-y-3">
           {mode !== "resetConfirm" && (
             <>
-              <label className="text-sm font-semibold text-slate-800">E-Mail</label>
+              <label className="text-sm font-semibold text-zinc-800">E-Mail</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-slate-400"
+                className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-pink-500 focus:ring-4 focus:ring-pink-500/15"
                 placeholder="you@example.com"
               />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-slate-400"
+                className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-pink-500 focus:ring-4 focus:ring-pink-500/15"
                 placeholder="••••••••"
               />
             </>
@@ -262,7 +264,7 @@ export default function LoginClient() {
             <button
               onClick={loginWithPassword}
               disabled={isLoading || !email || !password}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-400/40 transition hover:-translate-y-0.5 disabled:opacity-50"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-black px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-black/30 transition hover:-translate-y-0.5 hover:bg-zinc-900 disabled:opacity-50"
             >
               {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
               Anmelden
@@ -273,7 +275,7 @@ export default function LoginClient() {
             <button
               onClick={register}
               disabled={isLoading || !email || !password}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white text-slate-900 px-4 py-3 text-sm font-semibold shadow-md shadow-slate-200 transition hover:-translate-y-0.5 disabled:opacity-50 border border-slate-200"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-pink-300 bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-800 shadow-md shadow-pink-200/40 transition hover:-translate-y-0.5 hover:bg-pink-100 disabled:opacity-50"
             >
               {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
               Registrieren
@@ -282,25 +284,25 @@ export default function LoginClient() {
 
           {mode === "resetConfirm" && (
             <>
-              <label className="text-sm font-semibold text-slate-800">Neues Passwort</label>
+              <label className="text-sm font-semibold text-zinc-800">Neues Passwort</label>
               <input
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-slate-400"
+                className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-pink-500 focus:ring-4 focus:ring-pink-500/15"
                 placeholder="Neues Passwort"
               />
               <input
                 type="password"
                 value={newPassword2}
                 onChange={(e) => setNewPassword2(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-slate-400"
+                className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-pink-500 focus:ring-4 focus:ring-pink-500/15"
                 placeholder="Passwort wiederholen"
               />
               <button
                 onClick={confirmNewPassword}
                 disabled={isLoading || !newPassword || !newPassword2}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-400/40 transition hover:-translate-y-0.5 disabled:opacity-50"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-black px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-black/30 transition hover:-translate-y-0.5 hover:bg-zinc-900 disabled:opacity-50"
               >
                 {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
                 Neues Passwort setzen
@@ -316,7 +318,7 @@ export default function LoginClient() {
                   setError(null);
                   setInfo(null);
                 }}
-                className="text-xs text-slate-600 underline underline-offset-4 hover:text-slate-900"
+                className="text-xs text-zinc-600 underline underline-offset-4 transition hover:text-pink-700"
                 type="button"
               >
                 Passwort vergessen?
@@ -325,19 +327,19 @@ export default function LoginClient() {
           )}
 
           {showReset && mode !== "resetConfirm" && (
-            <div className="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-sm font-semibold text-slate-800">Passwort zurücksetzen</p>
+            <div className="space-y-3 rounded-xl border border-pink-200 bg-pink-50/70 p-4">
+              <p className="text-sm font-semibold text-zinc-900">Passwort zurücksetzen</p>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-slate-400"
+                className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-pink-500 focus:ring-4 focus:ring-pink-500/15"
                 placeholder="you@example.com"
               />
               <button
                 onClick={sendResetEmail}
                 disabled={isLoading || !email}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white text-slate-900 px-4 py-3 text-sm font-semibold shadow-md shadow-slate-200 transition hover:-translate-y-0.5 disabled:opacity-50 border border-slate-200"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-pink-300 bg-pink-50 px-4 py-3 text-sm font-semibold text-pink-800 shadow-md shadow-pink-200/40 transition hover:-translate-y-0.5 hover:bg-pink-100 disabled:opacity-50"
               >
                 {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
                 Reset-E-Mail senden

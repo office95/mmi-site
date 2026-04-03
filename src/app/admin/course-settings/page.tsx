@@ -128,7 +128,6 @@ export default function CourseSettingsPage() {
     <div className="px-6 py-10 lg:px-10">
       <div className="mx-auto max-w-6xl space-y-6">
         <div className="flex flex-col gap-2">
-          <p className="tag">Admin</p>
           <h1 className="text-2xl font-semibold text-slate-900">Stammdaten</h1>
           <p className="text-sm text-slate-500">Kategorien, Kurstyp, Format, Sprache verwalten.</p>
         </div>

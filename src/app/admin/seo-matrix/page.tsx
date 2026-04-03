@@ -332,6 +332,7 @@ export default function SeoMatrixPage() {
   };
 
   const deleteRow = async (row: SeoRow) => {
+    if (!confirm("Wirklich löschen?")) return;
     if (!row.id) {
       setRows((prev) => prev.filter((r) => r !== row));
       return;
